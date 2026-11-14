@@ -1,0 +1,588 @@
+{
+  "schemaVersion": 1,
+  "command": "node scripts/acceptance-flow.mjs",
+  "node": "v24.14.1",
+  "authority": "Explicit local host; not CI or human approval evidence",
+  "limits": [
+    "Critical contract comparisons pass for correct/refactor, but full critical gates remain incomplete without authenticated coverage/mutation, production observations and external pipeline protection."
+  ],
+  "correct": {
+    "execution": "correct",
+    "durationMs": 1989,
+    "producerExit": 0,
+    "gateExit": 1,
+    "status": "incomplete",
+    "assurance": {
+      "binding_verified": "pass",
+      "cases_executed": "pass",
+      "contract_declared": "pass",
+      "model_conformance_observed": "unknown",
+      "mutation_sensitivity_observed": "unknown",
+      "production_target_observed": "unknown"
+    },
+    "evaluations": [
+      {
+        "ruleId": "changedLineCoverage",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "changedLineCoverage",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "contractExecution",
+        "status": "pass"
+      },
+      {
+        "ruleId": "contractExecution",
+        "status": "pass"
+      },
+      {
+        "ruleId": "intentApproval",
+        "status": "pass"
+      },
+      {
+        "ruleId": "intentApproval",
+        "status": "pass"
+      },
+      {
+        "ruleId": "mutationScore",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "mutationScore",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "mutationSensitivityObserved",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "negativeCases",
+        "status": "pass"
+      },
+      {
+        "ruleId": "negativeCases",
+        "status": "pass"
+      },
+      {
+        "ruleId": "pipelineIntegrity",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "pipelineIntegrity",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "policyProtection",
+        "status": "pass"
+      },
+      {
+        "ruleId": "policyProtection",
+        "status": "pass"
+      },
+      {
+        "ruleId": "productionTargetObserved",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "testResult",
+        "status": "pass"
+      },
+      {
+        "ruleId": "testResult",
+        "status": "pass"
+      }
+    ]
+  },
+  "refactor": {
+    "execution": "refactor",
+    "durationMs": 2640,
+    "producerExit": 0,
+    "gateExit": 1,
+    "status": "incomplete",
+    "assurance": {
+      "binding_verified": "pass",
+      "cases_executed": "pass",
+      "contract_declared": "pass",
+      "model_conformance_observed": "unknown",
+      "mutation_sensitivity_observed": "unknown",
+      "production_target_observed": "unknown"
+    },
+    "evaluations": [
+      {
+        "ruleId": "changedLineCoverage",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "changedLineCoverage",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "contractExecution",
+        "status": "pass"
+      },
+      {
+        "ruleId": "contractExecution",
+        "status": "pass"
+      },
+      {
+        "ruleId": "intentApproval",
+        "status": "pass"
+      },
+      {
+        "ruleId": "intentApproval",
+        "status": "pass"
+      },
+      {
+        "ruleId": "mutationScore",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "mutationScore",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "mutationSensitivityObserved",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "negativeCases",
+        "status": "pass"
+      },
+      {
+        "ruleId": "negativeCases",
+        "status": "pass"
+      },
+      {
+        "ruleId": "pipelineIntegrity",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "pipelineIntegrity",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "policyProtection",
+        "status": "pass"
+      },
+      {
+        "ruleId": "policyProtection",
+        "status": "pass"
+      },
+      {
+        "ruleId": "productionTargetObserved",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "testResult",
+        "status": "pass"
+      },
+      {
+        "ruleId": "testResult",
+        "status": "pass"
+      }
+    ]
+  },
+  "fake": {
+    "execution": "fake",
+    "durationMs": 3818,
+    "producerExit": 0,
+    "gateExit": 1,
+    "status": "fail",
+    "assurance": {
+      "binding_verified": "pass",
+      "cases_executed": "pass",
+      "contract_declared": "pass",
+      "model_conformance_observed": "unknown",
+      "mutation_sensitivity_observed": "unknown",
+      "production_target_observed": "unknown"
+    },
+    "evaluations": [
+      {
+        "ruleId": "changedLineCoverage",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "changedLineCoverage",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "contractExecution",
+        "status": "pass"
+      },
+      {
+        "ruleId": "contractExecution",
+        "status": "pass"
+      },
+      {
+        "ruleId": "intentApproval",
+        "status": "pass"
+      },
+      {
+        "ruleId": "intentApproval",
+        "status": "pass"
+      },
+      {
+        "ruleId": "mutationScore",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "mutationScore",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "mutationSensitivityObserved",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "mutationSensitivityObserved",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "negativeCases",
+        "status": "pass"
+      },
+      {
+        "ruleId": "negativeCases",
+        "status": "pass"
+      },
+      {
+        "ruleId": "pipelineIntegrity",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "pipelineIntegrity",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "policyProtection",
+        "status": "fail"
+      },
+      {
+        "ruleId": "policyProtection",
+        "status": "fail"
+      },
+      {
+        "ruleId": "productionTargetObserved",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "productionTargetObserved",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "testResult",
+        "status": "pass"
+      },
+      {
+        "ruleId": "testResult",
+        "status": "pass"
+      }
+    ]
+  },
+  "canary": {
+    "execution": "faulty",
+    "durationMs": 2926,
+    "producerExit": 1,
+    "gateExit": 1,
+    "status": "fail",
+    "assurance": {
+      "binding_verified": "unknown",
+      "cases_executed": "unknown",
+      "contract_declared": "pass",
+      "model_conformance_observed": "unknown",
+      "mutation_sensitivity_observed": "unknown",
+      "production_target_observed": "unknown"
+    },
+    "evaluations": [
+      {
+        "ruleId": "changedLineCoverage",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "changedLineCoverage",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "contractExecution",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "contractExecution",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "evidenceIntegrity",
+        "status": "fail"
+      },
+      {
+        "ruleId": "intentApproval",
+        "status": "pass"
+      },
+      {
+        "ruleId": "intentApproval",
+        "status": "pass"
+      },
+      {
+        "ruleId": "mutationScore",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "mutationScore",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "mutationSensitivityObserved",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "negativeCases",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "negativeCases",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "pipelineIntegrity",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "pipelineIntegrity",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "policyProtection",
+        "status": "pass"
+      },
+      {
+        "ruleId": "policyProtection",
+        "status": "pass"
+      },
+      {
+        "ruleId": "productionTargetObserved",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "testResult",
+        "status": "fail"
+      },
+      {
+        "ruleId": "testResult",
+        "status": "fail"
+      }
+    ],
+    "contractId": "ORDER-OWNERSHIP",
+    "caseIds": [
+      "non-owner"
+    ],
+    "target": "src/orders.ts#readOrder",
+    "fault": "ownership predicate always true",
+    "failedComparison": {
+      "contractId": "ORDER-OWNERSHIP",
+      "caseId": "non-owner",
+      "revisionHash": "32dfcfeab9ccb85013b4e8cab71f7fed73ec08b4ff6da45cfe2a7118f70df04b",
+      "bindingHash": "4dde28aa0b96df9c35fe7dc5ea58b20e4df755bb32e7648dcf4f6698ddbaeb99",
+      "bindingScope": "runtime-function-string-v1",
+      "comparisonCount": 1,
+      "targetCalls": [],
+      "status": "fail",
+      "testId": "8470272_1",
+      "testState": "failed"
+    },
+    "subject": {
+      "prHeadSha": "ed8653e6c00103ed80b4ec0d672e2c3ef43f258b",
+      "testedCommitSha": "ed8653e6c00103ed80b4ec0d672e2c3ef43f258b",
+      "sourceTreeHash": "27a77f35b37e5e70372d59a56b08f86c993fd28c3455914fc4361a8beabeb17e",
+      "dirty": false,
+      "baseSha": "ed8653e6c00103ed80b4ec0d672e2c3ef43f258b",
+      "diffBaseSha": "ed8653e6c00103ed80b4ec0d672e2c3ef43f258b"
+    },
+    "diagnosticArtifactSha256": "b35dd50b906f00e935791440e053c60773fb935f9fe25feb76e7f6a689a9143a",
+    "observed": "Required non-owner comparison failed once in the fresh expected-failure run; failed producer sealed no success artifacts",
+    "diagnosticTrust": "Fresh diagnostic bytes observed by the controlled local host; not promoted to successful test evidence or external CI authority"
+  },
+  "skipped": {
+    "execution": "skipped",
+    "durationMs": 2231,
+    "producerExit": 1,
+    "gateExit": 1,
+    "status": "fail",
+    "assurance": {
+      "binding_verified": "unknown",
+      "cases_executed": "unknown",
+      "contract_declared": "pass",
+      "model_conformance_observed": "unknown",
+      "mutation_sensitivity_observed": "unknown",
+      "production_target_observed": "unknown"
+    },
+    "evaluations": [
+      {
+        "ruleId": "changedLineCoverage",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "changedLineCoverage",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "contractExecution",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "contractExecution",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "evidenceIntegrity",
+        "status": "fail"
+      },
+      {
+        "ruleId": "intentApproval",
+        "status": "pass"
+      },
+      {
+        "ruleId": "intentApproval",
+        "status": "pass"
+      },
+      {
+        "ruleId": "mutationScore",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "mutationScore",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "mutationSensitivityObserved",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "negativeCases",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "negativeCases",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "pipelineIntegrity",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "pipelineIntegrity",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "policyProtection",
+        "status": "pass"
+      },
+      {
+        "ruleId": "policyProtection",
+        "status": "pass"
+      },
+      {
+        "ruleId": "productionTargetObserved",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "testResult",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "testResult",
+        "status": "unknown"
+      }
+    ]
+  },
+  "removed": {
+    "execution": "removed",
+    "durationMs": 2604,
+    "producerExit": 0,
+    "gateExit": 1,
+    "status": "fail",
+    "assurance": {
+      "binding_verified": "unknown",
+      "cases_executed": "unknown",
+      "contract_declared": "pass",
+      "model_conformance_observed": "unknown",
+      "mutation_sensitivity_observed": "unknown",
+      "production_target_observed": "unknown"
+    },
+    "evaluations": [
+      {
+        "ruleId": "changedLineCoverage",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "changedLineCoverage",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "contractExecution",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "contractExecution",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "intentApproval",
+        "status": "fail"
+      },
+      {
+        "ruleId": "intentApproval",
+        "status": "fail"
+      },
+      {
+        "ruleId": "mutationScore",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "mutationScore",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "mutationSensitivityObserved",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "negativeCases",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "negativeCases",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "pipelineIntegrity",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "pipelineIntegrity",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "policyProtection",
+        "status": "pass"
+      },
+      {
+        "ruleId": "policyProtection",
+        "status": "pass"
+      },
+      {
+        "ruleId": "productionTargetObserved",
+        "status": "unknown"
+      },
+      {
+        "ruleId": "testResult",
+        "status": "pass"
+      },
+      {
+        "ruleId": "testResult",
+        "status": "pass"
+      }
+    ]
+  }
+}

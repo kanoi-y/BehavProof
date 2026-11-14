@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "command": "node scripts/spikes/report-variants.mjs",
+  "observations": [
+    {
+      "variant": "skipped",
+      "exitCode": 0,
+      "total": 2,
+      "passed": 1,
+      "skipped": 1,
+      "failed": 0,
+      "toolSuccess": true
+    },
+    {
+      "variant": "zero-tests",
+      "exitCode": 0,
+      "total": 0,
+      "passed": 0,
+      "skipped": 0,
+      "failed": 0,
+      "toolSuccess": true
+    }
+  ],
+  "limits": [
+    "Tool success is not proof of required-case execution.",
+    "Fixtures normalize machine-specific paths only."
+  ]
+}

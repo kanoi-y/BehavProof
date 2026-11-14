@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "command": "node scripts/spikes/metadata-binding.mjs",
+  "vitestVersion": "5.1.0",
+  "exitCode": 0,
+  "cases": [
+    {
+      "title": "an unrelated display label",
+      "status": "passed",
+      "declaredIdentity": {
+        "contractId": "ORDER-001",
+        "caseId": "owner",
+        "revisionHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    },
+    {
+      "title": "a second unrelated display label",
+      "status": "skipped",
+      "declaredIdentity": {
+        "contractId": "ORDER-001",
+        "caseId": "non-owner",
+        "revisionHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    }
+  ],
+  "conclusion": "Registration metadata survives JSON reporting for executed and skipped cases independently of their display labels.",
+  "limits": [
+    "Metadata alone is a declaration. Runtime comparisons and binding hashes are separate evidence.",
+    "The public BehavProof helper and reporter are not implemented by this spike."
+  ]
+}

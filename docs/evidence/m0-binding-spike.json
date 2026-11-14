@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "stage": "M0-02 preliminary experiment",
+  "nodeVersion": "v24.14.1",
+  "vitestVersion": "5.1.0",
+  "command": "node scripts/spikes/binding-limit.mjs",
+  "observations": [
+    {
+      "variant": "correct-real",
+      "exitCode": 0,
+      "elapsedMs": 371,
+      "implementationSha256": "cc8d8c6c1570ad6b240fda79998ae889649a8b76a664387e7a681293f348c248",
+      "reportSha256": "bd67021a7fbd49f7bb2560aac3e5604de708a1ad11558d7b337200a342c57ed9",
+      "passed": 2,
+      "failed": 0,
+      "cases": [
+        {
+          "name": "owner",
+          "status": "passed"
+        },
+        {
+          "name": "non-owner",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "variant": "fault-real",
+      "exitCode": 1,
+      "elapsedMs": 278,
+      "implementationSha256": "04f887d2e6a521fba9e0eb07871a68693325967e2ca6037e85a615ce9551444e",
+      "reportSha256": "a4794c82a5ce0620e885a161f6266da650d96c8010d9c95421796a79b9f23ad6",
+      "passed": 1,
+      "failed": 1,
+      "cases": [
+        {
+          "name": "owner",
+          "status": "passed"
+        },
+        {
+          "name": "non-owner",
+          "status": "failed"
+        }
+      ]
+    },
+    {
+      "variant": "fault-fake",
+      "exitCode": 0,
+      "elapsedMs": 226,
+      "implementationSha256": "04f887d2e6a521fba9e0eb07871a68693325967e2ca6037e85a615ce9551444e",
+      "reportSha256": "93c76fad531380e4372e172fc1456f8f22cd2d54f1cf2f41223e042d68feb0ed",
+      "passed": 2,
+      "failed": 0,
+      "cases": [
+        {
+          "name": "owner",
+          "status": "passed"
+        },
+        {
+          "name": "non-owner",
+          "status": "passed"
+        }
+      ]
+    }
+  ],
+  "conclusion": "Case comparison can pass against a fake callback while production is faulty; no production-target claim follows from comparison alone.",
+  "limits": [
+    "Throwaway callback harness, not yet the public BehavProof helper.",
+    "No hosted CI, external approval, or arbitrary malicious-code resistance claim."
+  ]
+}

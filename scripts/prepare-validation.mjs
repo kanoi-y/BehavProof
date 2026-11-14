@@ -1,0 +1,12 @@
+// Prepare consumer integration only. BehavProof implementation stays in its own repo.
+import {parseArgs} from 'node:util';import {mkdir,writeFile} from 'node:fs/promises';import {resolve,join} from 'node:path';import {fileURLToPath} from 'node:url';import {hashBytes,safeRead} from '@behavproof/core';
+const {values}=parseArgs({strict:true,allowPositionals:false,options:{'sdk-sha':{type:'string'},output:{type:'string'},branch:{type:'string'}}});
+if(!/^[a-f0-9]{40}$/.test(values['sdk-sha']??''))throw Error('--sdk-sha must select an immutable kanoi-y/BehavProof commit');
+const branch=values.branch??'codex/behavproof-integration';if(!/^codex\/[a-z0-9-]+$/.test(branch))throw Error('Invalid consumer integration branch');
+const project=fileURLToPath(new URL('..',import.meta.url)),output=resolve(values.output??join(project,'.superpowers/sdd/2026-11-13-behavproof-m2/consumer-integration')),tree=[],files=[];await mkdir(output,{recursive:true});
+async function add(path,bytes){const content=new TextDecoder('utf-8',{fatal:true}).decode(bytes);if(/-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----|gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,}/.test(content))throw Error('Credential-shaped integration input');tree.push({path,mode:'100644',type:'blob',content});files.push({path,sha256:hashBytes(bytes),size:bytes.length});}
+for(const kind of ['producer','publisher'])await add(`.github/workflows/behavproof-${kind}.yml`,await safeRead(project,`templates/protected-github-${kind}.yml`));
+const fixtureFiles=['README.md','behavproof.config.json','package.json','policy.json','src/status.ts','tests/status.test.ts'];
+for(const path of fixtureFiles)await add('validation/behavproof-probe/'+path,await safeRead(join(project,'examples/enforcement-probe'),path));
+await writeFile(join(output,'tree.json'),JSON.stringify({tree}));await writeFile(join(output,'inventory.json'),JSON.stringify({schemaVersion:1,destination:'kanoi-y/pdd-ts',role:'application-under-test',branch,sdk:{repository:'kanoi-y/BehavProof',commit:values['sdk-sha']},files,provisioning:{BEHAVPROOF_SDK_SHA:values['sdk-sha']},notes:['Only consumer workflows and a small verification fixture; no BehavProof packages, root product CI or implementation tree.','No remote writes, repository settings, approvals or merges.','Human enrollment and protected deployment remain separate explicit steps.']},null,2)+'\n');
+console.log(JSON.stringify({output,files:files.length,sdkRepository:'kanoi-y/BehavProof',sdkSha:values['sdk-sha']}));

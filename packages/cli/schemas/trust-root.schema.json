@@ -1,0 +1,1150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "number",
+      "const": 1
+    },
+    "policy": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "type": "number",
+          "const": 1
+        },
+        "profileVersion": {
+          "type": "string",
+          "const": "1"
+        },
+        "rules": {}
+      },
+      "required": [
+        "schemaVersion",
+        "profileVersion",
+        "rules"
+      ],
+      "additionalProperties": false
+    },
+    "config": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "type": "number",
+          "const": 1
+        },
+        "mode": {
+          "default": "audit",
+          "type": "string",
+          "enum": [
+            "audit",
+            "gate"
+          ]
+        },
+        "profile": {
+          "default": "standard",
+          "type": "string",
+          "enum": [
+            "basic",
+            "standard",
+            "critical"
+          ]
+        },
+        "profileVersion": {
+          "default": "1",
+          "type": "string",
+          "const": "1"
+        },
+        "riskOverrides": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "selector": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "path"
+                      },
+                      "value": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "module"
+                      },
+                      "value": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "contract-kind"
+                      },
+                      "value": {
+                        "type": "string",
+                        "enum": [
+                          "examples",
+                          "invariant",
+                          "state_machine",
+                          "api_contract",
+                          "external"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "profile": {
+                "type": "string",
+                "enum": [
+                  "basic",
+                  "standard",
+                  "critical"
+                ]
+              }
+            },
+            "required": [
+              "selector",
+              "profile"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "git": {
+          "default": {
+            "base": "origin/main"
+          },
+          "type": "object",
+          "properties": {
+            "base": {
+              "default": "origin/main",
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "reports": {
+          "default": {},
+          "type": "object",
+          "properties": {
+            "vitest": {
+              "type": "string",
+              "minLength": 1
+            },
+            "coverage": {
+              "type": "string",
+              "minLength": 1
+            },
+            "mutation": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "executionManifests": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "rules": {
+          "default": {}
+        },
+        "contracts": {
+          "default": {
+            "enabled": false,
+            "sources": [],
+            "requireExecutionEvidence": true,
+            "approval": {
+              "provider": "github-protected-review",
+              "requiredForRisk": [
+                "critical"
+              ],
+              "onUnverifiable": "unknown"
+            },
+            "documents": {
+              "output": ".behavproof/generated",
+              "commit": false
+            }
+          },
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "default": false,
+              "type": "boolean"
+            },
+            "sources": {
+              "default": [],
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "vitest-inline",
+                      "manifest",
+                      "external",
+                      "gherkin",
+                      "openapi"
+                    ]
+                  },
+                  "include": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                },
+                "required": [
+                  "type",
+                  "include"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "requireExecutionEvidence": {
+              "default": true,
+              "type": "boolean"
+            },
+            "approval": {
+              "default": {
+                "provider": "github-protected-review",
+                "requiredForRisk": [
+                  "critical"
+                ],
+                "onUnverifiable": "unknown"
+              },
+              "type": "object",
+              "properties": {
+                "provider": {
+                  "type": "string",
+                  "const": "github-protected-review"
+                },
+                "requiredForRisk": {
+                  "default": [
+                    "critical"
+                  ],
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "basic",
+                      "standard",
+                      "critical"
+                    ]
+                  }
+                },
+                "onUnverifiable": {
+                  "default": "unknown",
+                  "type": "string",
+                  "const": "unknown"
+                }
+              },
+              "required": [
+                "provider"
+              ],
+              "additionalProperties": false
+            },
+            "documents": {
+              "default": {
+                "output": ".behavproof/generated",
+                "commit": false
+              },
+              "type": "object",
+              "properties": {
+                "output": {
+                  "default": ".behavproof/generated",
+                  "type": "string",
+                  "minLength": 1
+                },
+                "commit": {
+                  "default": false,
+                  "type": "boolean"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "schemaVersion"
+      ],
+      "additionalProperties": false
+    },
+    "baseline": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "type": "number",
+          "const": 1
+        },
+        "repositoryId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "commitSha": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contracts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "examples",
+                  "invariant",
+                  "state_machine",
+                  "api_contract",
+                  "external"
+                ]
+              },
+              "intentIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "revisionHash": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "sourceRef": {
+                "type": "string",
+                "minLength": 1
+              },
+              "caseIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "risk": {
+                "type": "string",
+                "enum": [
+                  "basic",
+                  "standard",
+                  "critical"
+                ]
+              },
+              "cases": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "input": {
+                      "$ref": "#/$defs/__schema0"
+                    },
+                    "expected": {
+                      "$ref": "#/$defs/__schema1"
+                    },
+                    "negative": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "input",
+                    "expected"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "id",
+              "kind",
+              "intentIds",
+              "revisionHash",
+              "sourceRef"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "intents": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "statement": {
+                "type": "string",
+                "minLength": 1
+              },
+              "risk": {
+                "type": "string",
+                "enum": [
+                  "basic",
+                  "standard",
+                  "critical"
+                ]
+              },
+              "contentHash": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "origin": {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "inline",
+                      "manifest",
+                      "external"
+                    ]
+                  },
+                  "ref": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "kind",
+                  "ref"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "id",
+              "statement",
+              "risk",
+              "contentHash",
+              "origin"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "policyHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "extractorVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scope": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "discoveryDiagnostics": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sourceRef": {
+                "type": "string",
+                "minLength": 1
+              },
+              "message": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "code",
+              "sourceRef",
+              "message"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "commitSha",
+        "contracts",
+        "intents"
+      ],
+      "additionalProperties": false
+    },
+    "inputs": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "qualitySources": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "configPaths": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "dependencyLockPath": {
+      "type": "string",
+      "minLength": 1
+    },
+    "manifests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "manifestHash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "expected": {
+            "type": "object",
+            "properties": {
+              "executionId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "subject": {
+                "type": "object",
+                "properties": {
+                  "repositoryId": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "prHeadSha": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "testedCommitSha": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "testedCommitParents": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "sourceTreeHash": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "dirty": {
+                    "type": "boolean"
+                  },
+                  "baseSha": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "diffBaseSha": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "testedCommitSha",
+                  "sourceTreeHash",
+                  "dirty"
+                ],
+                "additionalProperties": false
+              },
+              "commandHash": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "configHashes": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "additionalProperties": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                }
+              },
+              "dependencyLockHash": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "artifacts": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "ref": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "kind": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "scope": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    }
+                  },
+                  "required": [
+                    "ref",
+                    "kind",
+                    "scope"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "executionId",
+              "subject",
+              "commandHash",
+              "configHashes",
+              "artifacts"
+            ],
+            "additionalProperties": false
+          },
+          "authority": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "ci"
+                  },
+                  "producer": {
+                    "type": "object",
+                    "properties": {
+                      "tool": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "version": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "collectorVersion": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "tool",
+                      "version",
+                      "collectorVersion"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "ci": {
+                    "type": "object",
+                    "properties": {
+                      "repositoryId": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "workflowRef": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "runId": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "runAttempt": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9007199254740991
+                      },
+                      "jobId": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "eventName": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "repositoryId",
+                      "workflowRef",
+                      "runId",
+                      "runAttempt",
+                      "jobId",
+                      "eventName"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "kind",
+                  "producer",
+                  "ci"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "local"
+                  },
+                  "producer": {
+                    "type": "object",
+                    "properties": {
+                      "tool": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "version": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "collectorVersion": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "tool",
+                      "version",
+                      "collectorVersion"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "executionId": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "commandHash": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  }
+                },
+                "required": [
+                  "kind",
+                  "producer",
+                  "executionId",
+                  "commandHash"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          },
+          "github": {
+            "type": "object",
+            "properties": {
+              "repository": {
+                "type": "string",
+                "minLength": 1
+              },
+              "workflowPath": {
+                "type": "string"
+              },
+              "workflowSha": {
+                "type": "string"
+              },
+              "jobName": {
+                "type": "string"
+              },
+              "artifactName": {
+                "type": "string"
+              },
+              "archivePath": {
+                "type": "string",
+                "minLength": 1
+              },
+              "archiveEntries": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "additionalProperties": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "required": [
+              "repository",
+              "workflowPath",
+              "workflowSha",
+              "jobName",
+              "artifactName",
+              "archivePath",
+              "archiveEntries"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "ref",
+          "expected",
+          "authority"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "github": {
+      "type": "object",
+      "properties": {
+        "repository": {
+          "type": "string",
+          "pattern": "^[\\w-]+\\/[\\w.-]+$"
+        },
+        "pr": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        },
+        "reviewers": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "requiredChecks": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "context": {
+                "type": "string",
+                "minLength": 1
+              },
+              "appId": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "context",
+              "appId"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "repository",
+        "pr",
+        "reviewers",
+        "requiredChecks"
+      ],
+      "additionalProperties": false
+    },
+    "notApplicable": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "ruleId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "evidenceRef": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "ruleId",
+          "reason",
+          "evidenceRef"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "claimScopes": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "contractId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "caseIds": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "targetRef": {
+            "type": "string",
+            "minLength": 1
+          },
+          "method": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "contractId",
+          "caseIds",
+          "targetRef",
+          "method"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "pipeline": {
+      "type": "object",
+      "properties": {
+        "workflow": {
+          "type": "string",
+          "minLength": 1
+        },
+        "gateJob": {
+          "type": "string",
+          "minLength": 1
+        },
+        "requiredJobs": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "artifacts": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "protectedBranch": {
+          "type": "string",
+          "minLength": 1
+        },
+        "currentRun": {
+          "type": "object",
+          "properties": {
+            "ci": {
+              "type": "object",
+              "properties": {
+                "repositoryId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "workflowRef": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "runId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "runAttempt": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991
+                },
+                "jobId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "eventName": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "repositoryId",
+                "workflowRef",
+                "runId",
+                "runAttempt",
+                "jobId",
+                "eventName"
+              ],
+              "additionalProperties": false
+            },
+            "workflowPath": {
+              "type": "string",
+              "minLength": 1
+            },
+            "workflowSha": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{40}$"
+            },
+            "workflowHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "ci",
+            "workflowPath",
+            "workflowSha",
+            "workflowHash"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "workflow",
+        "gateJob",
+        "requiredJobs",
+        "artifacts",
+        "protectedBranch"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "policy",
+    "config",
+    "baseline",
+    "inputs",
+    "configPaths",
+    "manifests"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "__schema0": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/__schema0"
+          }
+        },
+        {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema0"
+          }
+        }
+      ]
+    },
+    "__schema1": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/__schema1"
+          }
+        },
+        {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema1"
+          }
+        }
+      ]
+    }
+  }
+}

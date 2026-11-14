@@ -1,0 +1,328 @@
+{
+  "schemaVersion": 1,
+  "command": "node scripts/enforcement-probe-flow.mjs",
+  "node": "v24.14.1",
+  "authority": "Explicit local host only; proposed policy is not human-approved or externally registered",
+  "limits": [
+    "No CI, App issuance or external merge protection claim.",
+    "Critical Node API registration is unchanged."
+  ],
+  "runs": [
+    {
+      "id": "normal",
+      "producerExit": 0,
+      "status": "incomplete",
+      "exitCode": 1,
+      "evaluations": [
+        {
+          "ruleId": "changedLineCoverage",
+          "severity": "warn",
+          "scope": [
+            "ENFORCEMENT-PROBE",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "changedLineCoverage",
+          "severity": "warn",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "contractExecution",
+          "severity": "error",
+          "scope": [
+            "ENFORCEMENT-PROBE",
+            "contract"
+          ],
+          "status": "pass"
+        },
+        {
+          "ruleId": "contractExecution",
+          "severity": "error",
+          "scope": [],
+          "status": "pass"
+        },
+        {
+          "ruleId": "intentApproval",
+          "severity": "error",
+          "scope": [
+            "ENFORCEMENT-PROBE",
+            "contract"
+          ],
+          "status": "pass"
+        },
+        {
+          "ruleId": "intentApproval",
+          "severity": "error",
+          "scope": [],
+          "status": "pass"
+        },
+        {
+          "ruleId": "mutationScore",
+          "severity": "off",
+          "scope": [
+            "ENFORCEMENT-PROBE",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "mutationScore",
+          "severity": "off",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "mutationSensitivityObserved",
+          "severity": "error",
+          "scope": [
+            "ENFORCEMENT-PROBE",
+            "contract"
+          ],
+          "status": "pass"
+        },
+        {
+          "ruleId": "mutationSensitivityObserved",
+          "severity": "error",
+          "scope": [],
+          "status": "pass"
+        },
+        {
+          "ruleId": "negativeCases",
+          "severity": "error",
+          "scope": [
+            "ENFORCEMENT-PROBE",
+            "contract"
+          ],
+          "status": "pass"
+        },
+        {
+          "ruleId": "negativeCases",
+          "severity": "error",
+          "scope": [],
+          "status": "pass"
+        },
+        {
+          "ruleId": "pipelineIntegrity",
+          "severity": "error",
+          "scope": [
+            "ENFORCEMENT-PROBE",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "pipelineIntegrity",
+          "severity": "error",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "policyProtection",
+          "severity": "error",
+          "scope": [
+            "ENFORCEMENT-PROBE",
+            "contract"
+          ],
+          "status": "pass"
+        },
+        {
+          "ruleId": "policyProtection",
+          "severity": "error",
+          "scope": [],
+          "status": "pass"
+        },
+        {
+          "ruleId": "productionTargetObserved",
+          "severity": "error",
+          "scope": [
+            "ENFORCEMENT-PROBE",
+            "contract"
+          ],
+          "status": "pass"
+        },
+        {
+          "ruleId": "productionTargetObserved",
+          "severity": "error",
+          "scope": [],
+          "status": "pass"
+        },
+        {
+          "ruleId": "testResult",
+          "severity": "error",
+          "scope": [
+            "ENFORCEMENT-PROBE",
+            "contract"
+          ],
+          "status": "pass"
+        },
+        {
+          "ruleId": "testResult",
+          "severity": "error",
+          "scope": [],
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "unapproved-intent",
+      "producerExit": 0,
+      "status": "fail",
+      "exitCode": 1,
+      "evaluations": [
+        {
+          "ruleId": "changedLineCoverage",
+          "severity": "warn",
+          "scope": [
+            "ENFORCEMENT-PROBE",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "changedLineCoverage",
+          "severity": "warn",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "contractExecution",
+          "severity": "error",
+          "scope": [
+            "ENFORCEMENT-PROBE",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "contractExecution",
+          "severity": "error",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "intentApproval",
+          "severity": "error",
+          "scope": [
+            "ENFORCEMENT-PROBE",
+            "contract"
+          ],
+          "status": "fail"
+        },
+        {
+          "ruleId": "intentApproval",
+          "severity": "error",
+          "scope": [],
+          "status": "fail"
+        },
+        {
+          "ruleId": "mutationScore",
+          "severity": "off",
+          "scope": [
+            "ENFORCEMENT-PROBE",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "mutationScore",
+          "severity": "off",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "mutationSensitivityObserved",
+          "severity": "error",
+          "scope": [
+            "ENFORCEMENT-PROBE",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "mutationSensitivityObserved",
+          "severity": "error",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "negativeCases",
+          "severity": "error",
+          "scope": [
+            "ENFORCEMENT-PROBE",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "negativeCases",
+          "severity": "error",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "pipelineIntegrity",
+          "severity": "error",
+          "scope": [
+            "ENFORCEMENT-PROBE",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "pipelineIntegrity",
+          "severity": "error",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "policyProtection",
+          "severity": "error",
+          "scope": [
+            "ENFORCEMENT-PROBE",
+            "contract"
+          ],
+          "status": "pass"
+        },
+        {
+          "ruleId": "policyProtection",
+          "severity": "error",
+          "scope": [],
+          "status": "pass"
+        },
+        {
+          "ruleId": "productionTargetObserved",
+          "severity": "error",
+          "scope": [
+            "ENFORCEMENT-PROBE",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "productionTargetObserved",
+          "severity": "error",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "testResult",
+          "severity": "error",
+          "scope": [
+            "ENFORCEMENT-PROBE",
+            "contract"
+          ],
+          "status": "pass"
+        },
+        {
+          "ruleId": "testResult",
+          "severity": "error",
+          "scope": [],
+          "status": "pass"
+        }
+      ]
+    }
+  ]
+}

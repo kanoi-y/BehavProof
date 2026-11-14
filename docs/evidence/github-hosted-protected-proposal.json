@@ -1,0 +1,301 @@
+{
+  "schemaVersion": 1,
+  "repository": "kanoi-y/pdd-ts",
+  "headSha": "7bcfa1d71bbd1686cc2bc5c32721681e6dc3c3d2",
+  "workflowRun": {
+    "id": 43579133741,
+    "url": "https://github.com/kanoi-y/pdd-ts/actions/runs/43579133741",
+    "event": "push",
+    "runAttempt": 1,
+    "status": "completed",
+    "conclusion": "success"
+  },
+  "jobs": [
+    {
+      "id": 132399884455,
+      "name": "verify (macos-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/kanoi-y/pdd-ts/actions/runs/43579133741/job/132399884455",
+      "startedAt": "2026-11-14T09:08:43Z",
+      "completedAt": "2026-11-14T09:10:46Z"
+    },
+    {
+      "id": 132399884697,
+      "name": "verify (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/kanoi-y/pdd-ts/actions/runs/43579133741/job/132399884697",
+      "startedAt": "2026-11-14T09:08:42Z",
+      "completedAt": "2026-11-14T09:10:09Z"
+    },
+    {
+      "id": 132399884743,
+      "name": "verify (windows-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/kanoi-y/pdd-ts/actions/runs/43579133741/job/132399884743",
+      "startedAt": "2026-11-14T09:08:42Z",
+      "completedAt": "2026-11-14T09:11:20Z"
+    },
+    {
+      "id": 132400544689,
+      "name": "prepare-review",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/kanoi-y/pdd-ts/actions/runs/43579133741/job/132400544689",
+      "startedAt": "2026-11-14T09:11:22Z",
+      "completedAt": "2026-11-14T09:11:24Z"
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 14107855476,
+      "name": "local-acceptance-ubuntu-latest-43579133741-1",
+      "digest": "5bfaf965183606defc1b87946cbab8b6b24243df6ecc20b976bbb90250c26e06",
+      "size": 8040,
+      "authenticatedByteBinding": true,
+      "selected": [
+        {
+          "ref": "public-flow.json",
+          "sha256": "816c5c86e4afd821400d7036ed7d083ec39b5ee355e975be6f0b0de5dd9346cd"
+        },
+        {
+          "ref": "protected-probe-flow.json",
+          "sha256": "92b2c819e2025344e46f89a1c5eea671124b9d9112f2cc0220a7d66cc0afa537",
+          "runs": [
+            {
+              "id": "correct",
+              "producerExit": 0,
+              "gateExit": 1
+            },
+            {
+              "id": "fake",
+              "producerExit": 0,
+              "gateExit": 1
+            },
+            {
+              "id": "faulty",
+              "producerExit": 1,
+              "gateExit": 1
+            },
+            {
+              "id": "skipped",
+              "producerExit": 1,
+              "gateExit": 1
+            },
+            {
+              "id": "removed",
+              "producerExit": 0,
+              "gateExit": 1
+            }
+          ]
+        },
+        {
+          "ref": "enforcement-probe-local.json",
+          "sha256": "4eab7ba00512b994d3eaa52b5009cb24c9ca687fc1750bd56b3cff211dcdeec6",
+          "runs": [
+            {
+              "id": "normal",
+              "producerExit": 0,
+              "exitCode": 1,
+              "status": "incomplete"
+            },
+            {
+              "id": "unapproved-intent",
+              "producerExit": 0,
+              "exitCode": 1,
+              "status": "fail"
+            }
+          ]
+        },
+        {
+          "ref": "protected-probe-sandbox.json",
+          "sha256": "882ce661775ff8dc71c2a1835ed1cd383b8b702cbbe3c6af352aa9c8761d706b",
+          "sandbox": {
+            "image": "node:24.14.1-bookworm@sha256:80fc934952c8f1b2b4d39907af7211f8a9fff1a4c2cf673fb49099292c251cec",
+            "network": "none",
+            "source": "read-only",
+            "sdk": "separately sanitized and read-only",
+            "control": "read-only",
+            "output": "fresh writable",
+            "fixtureChecks": [
+              "no external network interfaces",
+              "source writes denied"
+            ]
+          },
+          "runs": [
+            {
+              "id": "correct",
+              "producerExit": 0,
+              "gateExit": 1
+            },
+            {
+              "id": "fake",
+              "producerExit": 0,
+              "gateExit": 1
+            },
+            {
+              "id": "faulty",
+              "producerExit": 1,
+              "gateExit": 1
+            },
+            {
+              "id": "skipped",
+              "producerExit": 1,
+              "gateExit": 1
+            },
+            {
+              "id": "removed",
+              "producerExit": 0,
+              "gateExit": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 14106968610,
+      "name": "local-acceptance-windows-latest-43579133741-1",
+      "digest": "ee8ef9dee52241ac7483da2fa468f9ea2caf18a4673c2363a99644869a1a60e8",
+      "size": 5315,
+      "authenticatedByteBinding": true,
+      "selected": [
+        {
+          "ref": "public-flow.json",
+          "sha256": "00d0e289707ab73053f2563ab957ff89d6d077b20f49b7738bb314375234959c"
+        },
+        {
+          "ref": "protected-probe-flow.json",
+          "sha256": "02e0577ebef75063e977becd87fed42c5a7d574619423123453e957ed9ba0e90",
+          "runs": [
+            {
+              "id": "correct",
+              "producerExit": 0,
+              "gateExit": 1
+            },
+            {
+              "id": "fake",
+              "producerExit": 0,
+              "gateExit": 1
+            },
+            {
+              "id": "faulty",
+              "producerExit": 1,
+              "gateExit": 1
+            },
+            {
+              "id": "skipped",
+              "producerExit": 1,
+              "gateExit": 1
+            },
+            {
+              "id": "removed",
+              "producerExit": 0,
+              "gateExit": 1
+            }
+          ]
+        },
+        {
+          "ref": "enforcement-probe-local.json",
+          "sha256": "4eab7ba00512b994d3eaa52b5009cb24c9ca687fc1750bd56b3cff211dcdeec6",
+          "runs": [
+            {
+              "id": "normal",
+              "producerExit": 0,
+              "exitCode": 1,
+              "status": "incomplete"
+            },
+            {
+              "id": "unapproved-intent",
+              "producerExit": 0,
+              "exitCode": 1,
+              "status": "fail"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 14106544594,
+      "name": "local-acceptance-macos-latest-43579133741-1",
+      "digest": "992a154a8ef078666ec31d4cd4a2cb45901b59d249c5a9861eb4ebdca22bc37b",
+      "size": 5314,
+      "authenticatedByteBinding": true,
+      "selected": [
+        {
+          "ref": "public-flow.json",
+          "sha256": "1d7c9f22be05404ec15949aed90f00c815c783698e8e89929c23c89cb460150c"
+        },
+        {
+          "ref": "protected-probe-flow.json",
+          "sha256": "9dc6e7dd25e6648cceb8154c50185b884f5650f3c19bd5f7340e011b90d70be3",
+          "runs": [
+            {
+              "id": "correct",
+              "producerExit": 0,
+              "gateExit": 1
+            },
+            {
+              "id": "fake",
+              "producerExit": 0,
+              "gateExit": 1
+            },
+            {
+              "id": "faulty",
+              "producerExit": 1,
+              "gateExit": 1
+            },
+            {
+              "id": "skipped",
+              "producerExit": 1,
+              "gateExit": 1
+            },
+            {
+              "id": "removed",
+              "producerExit": 0,
+              "gateExit": 1
+            }
+          ]
+        },
+        {
+          "ref": "enforcement-probe-local.json",
+          "sha256": "4eab7ba00512b994d3eaa52b5009cb24c9ca687fc1750bd56b3cff211dcdeec6",
+          "runs": [
+            {
+              "id": "normal",
+              "producerExit": 0,
+              "exitCode": 1,
+              "status": "incomplete"
+            },
+            {
+              "id": "unapproved-intent",
+              "producerExit": 0,
+              "exitCode": 1,
+              "status": "fail"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "Actual three-platform build/tests/package/Collector/probe validation; not a registered protected producer or dedicated issuer-bound check.",
+    "Protected deployment, new human enrollment and live skip/deleted/wrong-issuer merge acceptance remain pending."
+  ],
+  "testResults": {
+    "linux": {
+      "passed": 287,
+      "skipped": 0
+    },
+    "macos": {
+      "passed": 287,
+      "skipped": 0
+    },
+    "windows": {
+      "passed": 284,
+      "skipped": 3,
+      "skipReason": "POSIX-only SDK staging/alias and Git symlink materialization cases"
+    }
+  }
+}

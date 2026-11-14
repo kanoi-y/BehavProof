@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "repository": "kanoi-y/pdd-ts",
+  "headSha": "16164ab99f587c8791d50f917897da967ad8cc3d",
+  "workflowRun": {
+    "id": 43577566086,
+    "html_url": "https://github.com/kanoi-y/pdd-ts/actions/runs/43577566086",
+    "event": "push",
+    "run_attempt": 1,
+    "status": "completed",
+    "conclusion": "success"
+  },
+  "jobs": [
+    {
+      "id": 132395053910,
+      "name": "verify (macos-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/kanoi-y/pdd-ts/actions/runs/43577566086/job/132395053910",
+      "started_at": "2026-11-14T08:48:45Z",
+      "completed_at": "2026-11-14T08:50:21Z"
+    },
+    {
+      "id": 132395053935,
+      "name": "verify (windows-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/kanoi-y/pdd-ts/actions/runs/43577566086/job/132395053935",
+      "started_at": "2026-11-14T08:48:44Z",
+      "completed_at": "2026-11-14T08:50:59Z"
+    },
+    {
+      "id": 132395053936,
+      "name": "verify (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/kanoi-y/pdd-ts/actions/runs/43577566086/job/132395053936",
+      "started_at": "2026-11-14T08:48:44Z",
+      "completed_at": "2026-11-14T08:49:58Z"
+    },
+    {
+      "id": 132395592541,
+      "name": "prepare-review",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/kanoi-y/pdd-ts/actions/runs/43577566086/job/132395592541",
+      "started_at": "2026-11-14T08:51:01Z",
+      "completed_at": "2026-11-14T08:51:04Z"
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 14107160876,
+      "name": "local-acceptance-ubuntu-latest-43577566086-1",
+      "digest": "sha256:1f160dc29b479534034b25d861cdf1ce1ffc019be7d52baa491572378657e71e",
+      "size_in_bytes": 7225,
+      "expired": false
+    },
+    {
+      "id": 14107106103,
+      "name": "local-acceptance-macos-latest-43577566086-1",
+      "digest": "sha256:4b6b53653cf930d8d92a135bc28b95bc92bff0481e40375b5df3271ce393dd0d",
+      "size_in_bytes": 4484,
+      "expired": false
+    },
+    {
+      "id": 14107007395,
+      "name": "local-acceptance-windows-latest-43577566086-1",
+      "digest": "sha256:d18b6a0fb0ecb567823f23d4a690053057980bc05f70be649fbaaa33e6d2fa56",
+      "size_in_bytes": 4476,
+      "expired": false
+    }
+  ],
+  "limits": [
+    "This is real three-platform library/build/consumer/probe validation, not the protected producer/publisher deployment.",
+    "Dedicated BehavProof issuer-bound merge enforcement remains pending.",
+    "First producer run43559481335 failed the Windows CRLF removal fixture; this subsequent run includes its fix."
+  ]
+}

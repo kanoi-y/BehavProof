@@ -1,0 +1,1035 @@
+{
+  "schemaVersion": 1,
+  "command": "node scripts/protected-probe-flow.mjs --sandbox-sdk <sanitized-linux-sdk>",
+  "sandbox": {
+    "image": "node:24.14.1-bookworm@sha256:80fc934952c8f1b2b4d39907af7211f8a9fff1a4c2cf673fb49099292c251cec",
+    "network": "none",
+    "source": "read-only",
+    "sdk": "separately sanitized and read-only",
+    "control": "read-only",
+    "output": "fresh writable",
+    "fixtureChecks": [
+      "no external network interfaces",
+      "source writes denied"
+    ]
+  },
+  "node": "v24.14.1",
+  "authority": "Explicit local host selected the worker and captured outer Collector manifests; no CI/human/protection claim",
+  "method": "protected-case-observer-and-vitest-canary-v1",
+  "limits": [
+    "Function-declaration instrumentation only; unsupported sources stay unknown.",
+    "Scoped observations assume the selected runner and instrumentation; arbitrary hostile JavaScript can forge in-process metadata.",
+    "The critical gate remains incomplete without authenticated coverage, sufficient mutations and external protection."
+  ],
+  "runs": [
+    {
+      "id": "correct",
+      "producerExit": 0,
+      "gateExit": 1,
+      "subject": {
+        "prHeadSha": "68174f487d569003348a714023e4b27ff8e9e5d1",
+        "testedCommitSha": "68174f487d569003348a714023e4b27ff8e9e5d1",
+        "sourceTreeHash": "c0cc1cfbd0e36331497c62417b8a2baef8ab57249411c57271718574693ef19e",
+        "dirty": false,
+        "baseSha": "68174f487d569003348a714023e4b27ff8e9e5d1",
+        "diffBaseSha": "68174f487d569003348a714023e4b27ff8e9e5d1"
+      },
+      "evaluations": [
+        {
+          "ruleId": "changedLineCoverage",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "changedLineCoverage",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "contractExecution",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "pass"
+        },
+        {
+          "ruleId": "contractExecution",
+          "scope": [],
+          "status": "pass"
+        },
+        {
+          "ruleId": "intentApproval",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "pass"
+        },
+        {
+          "ruleId": "intentApproval",
+          "scope": [],
+          "status": "pass"
+        },
+        {
+          "ruleId": "mutationScore",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "mutationScore",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "mutationSensitivityObserved",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "pass"
+        },
+        {
+          "ruleId": "mutationSensitivityObserved",
+          "scope": [],
+          "status": "pass"
+        },
+        {
+          "ruleId": "negativeCases",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "pass"
+        },
+        {
+          "ruleId": "negativeCases",
+          "scope": [],
+          "status": "pass"
+        },
+        {
+          "ruleId": "pipelineIntegrity",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "pipelineIntegrity",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "policyProtection",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "pass"
+        },
+        {
+          "ruleId": "policyProtection",
+          "scope": [],
+          "status": "pass"
+        },
+        {
+          "ruleId": "productionTargetObserved",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "pass"
+        },
+        {
+          "ruleId": "productionTargetObserved",
+          "scope": [],
+          "status": "pass"
+        },
+        {
+          "ruleId": "testResult",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "pass"
+        },
+        {
+          "ruleId": "testResult",
+          "scope": [],
+          "status": "pass"
+        }
+      ],
+      "claims": [
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "ORDER-OWNERSHIP",
+            "caseIds": [
+              "owner"
+            ],
+            "targetRef": "src/orders.ts#readOrder",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "ORDER-OWNERSHIP",
+            "caseIds": [
+              "non-owner"
+            ],
+            "targetRef": "src/orders.ts#readOrder",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "ORDER-OWNERSHIP",
+            "caseIds": [
+              "owner"
+            ],
+            "targetRef": "src/orders.ts#readOrder",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "ORDER-OWNERSHIP",
+            "caseIds": [
+              "non-owner"
+            ],
+            "targetRef": "src/orders.ts#readOrder",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        }
+      ],
+      "artifactHashes": [
+        {
+          "ref": ".behavproof/collected/correct/vitest.json",
+          "sha256": "455ca79170a554e07e652cb6881c16c4ecdef59835eb26b59756b3bafac5ad1b",
+          "kind": "test",
+          "scope": [
+            "ORDER-OWNERSHIP"
+          ]
+        },
+        {
+          "ref": ".behavproof/collected/correct/contracts.json",
+          "sha256": "37ca2b1ea79481849e48560dd4d0bf601f182ed6ade78d6ec3f871d2ec2af9d0",
+          "kind": "contract_report",
+          "scope": [
+            "ORDER-OWNERSHIP"
+          ]
+        },
+        {
+          "ref": ".behavproof/collected/correct/claims.json",
+          "sha256": "a3ab1e2f4b62200236dba7dd5560e67c4a205ac0b5ee758ea65397f3ee19d0f3",
+          "kind": "claims",
+          "scope": [
+            "ORDER-OWNERSHIP"
+          ]
+        },
+        {
+          "ref": ".behavproof/collected/correct/probe-diagnostics.json",
+          "sha256": "d393303bd2d15dbbd6ad661ee67abe323530cb82a2c7def41cc44a7d2f463608",
+          "kind": "diagnostic",
+          "scope": [
+            "ORDER-OWNERSHIP"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fake",
+      "producerExit": 0,
+      "gateExit": 1,
+      "subject": {
+        "prHeadSha": "3dda383f0ca07d2b3a2d14d3905a9c9aa7ab79c3",
+        "testedCommitSha": "3dda383f0ca07d2b3a2d14d3905a9c9aa7ab79c3",
+        "sourceTreeHash": "f751115917b8ffca6fec2897c14c1fbae307397366799675aea5efdc8b07a8d5",
+        "dirty": false,
+        "baseSha": "3dda383f0ca07d2b3a2d14d3905a9c9aa7ab79c3",
+        "diffBaseSha": "3dda383f0ca07d2b3a2d14d3905a9c9aa7ab79c3"
+      },
+      "evaluations": [
+        {
+          "ruleId": "changedLineCoverage",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "changedLineCoverage",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "contractExecution",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "pass"
+        },
+        {
+          "ruleId": "contractExecution",
+          "scope": [],
+          "status": "pass"
+        },
+        {
+          "ruleId": "intentApproval",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "pass"
+        },
+        {
+          "ruleId": "intentApproval",
+          "scope": [],
+          "status": "pass"
+        },
+        {
+          "ruleId": "mutationScore",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "mutationScore",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "mutationSensitivityObserved",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "mutationSensitivityObserved",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "negativeCases",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "pass"
+        },
+        {
+          "ruleId": "negativeCases",
+          "scope": [],
+          "status": "pass"
+        },
+        {
+          "ruleId": "pipelineIntegrity",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "pipelineIntegrity",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "policyProtection",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "pass"
+        },
+        {
+          "ruleId": "policyProtection",
+          "scope": [],
+          "status": "pass"
+        },
+        {
+          "ruleId": "productionTargetObserved",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "productionTargetObserved",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "testResult",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "pass"
+        },
+        {
+          "ruleId": "testResult",
+          "scope": [],
+          "status": "pass"
+        }
+      ],
+      "claims": [
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "ORDER-OWNERSHIP",
+            "caseIds": [
+              "owner"
+            ],
+            "targetRef": "src/orders.ts#readOrder",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 0,
+            "status": "unknown"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "ORDER-OWNERSHIP",
+            "caseIds": [
+              "non-owner"
+            ],
+            "targetRef": "src/orders.ts#readOrder",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 0,
+            "status": "unknown"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "ORDER-OWNERSHIP",
+            "caseIds": [
+              "owner"
+            ],
+            "targetRef": "src/orders.ts#readOrder",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 0,
+            "total": 0,
+            "status": "unknown"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "ORDER-OWNERSHIP",
+            "caseIds": [
+              "non-owner"
+            ],
+            "targetRef": "src/orders.ts#readOrder",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 0,
+            "total": 0,
+            "status": "unknown"
+          }
+        }
+      ],
+      "artifactHashes": [
+        {
+          "ref": ".behavproof/collected/fake/vitest.json",
+          "sha256": "18180dfbfdda1290fed45ecbfe37e19bb29b834a997b2a3fdd52c4de7e8d44e7",
+          "kind": "test",
+          "scope": [
+            "ORDER-OWNERSHIP"
+          ]
+        },
+        {
+          "ref": ".behavproof/collected/fake/contracts.json",
+          "sha256": "b2aa49f57441dcb4d17a43923f2db6ac5a518da4a03072b0649c0fc3e66a9429",
+          "kind": "contract_report",
+          "scope": [
+            "ORDER-OWNERSHIP"
+          ]
+        },
+        {
+          "ref": ".behavproof/collected/fake/claims.json",
+          "sha256": "a3c6050ffbf60b0f0635e1a86bfefc318b2e8ff1f5a388193c9d3138c4f8dcfd",
+          "kind": "claims",
+          "scope": [
+            "ORDER-OWNERSHIP"
+          ]
+        },
+        {
+          "ref": ".behavproof/collected/fake/probe-diagnostics.json",
+          "sha256": "e129eaaeff145b21cc82a9e2073def51f0fcac33142b365ba6c6a3747247ceee",
+          "kind": "diagnostic",
+          "scope": [
+            "ORDER-OWNERSHIP"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "faulty",
+      "producerExit": 1,
+      "gateExit": 1,
+      "subject": {
+        "prHeadSha": "d856a9e4d07c48ac1472cafb01a5bfcae1e0763c",
+        "testedCommitSha": "d856a9e4d07c48ac1472cafb01a5bfcae1e0763c",
+        "sourceTreeHash": "b96a9e1b3d09d027adde88678423cad1bf17364c73c0af80f1908c07538d5b48",
+        "dirty": false,
+        "baseSha": "d856a9e4d07c48ac1472cafb01a5bfcae1e0763c",
+        "diffBaseSha": "d856a9e4d07c48ac1472cafb01a5bfcae1e0763c"
+      },
+      "evaluations": [
+        {
+          "ruleId": "changedLineCoverage",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "changedLineCoverage",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "contractExecution",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "contractExecution",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "evidenceIntegrity",
+          "scope": [],
+          "status": "fail"
+        },
+        {
+          "ruleId": "intentApproval",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "pass"
+        },
+        {
+          "ruleId": "intentApproval",
+          "scope": [],
+          "status": "pass"
+        },
+        {
+          "ruleId": "mutationScore",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "mutationScore",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "mutationSensitivityObserved",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "mutationSensitivityObserved",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "negativeCases",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "negativeCases",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "pipelineIntegrity",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "pipelineIntegrity",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "policyProtection",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "pass"
+        },
+        {
+          "ruleId": "policyProtection",
+          "scope": [],
+          "status": "pass"
+        },
+        {
+          "ruleId": "productionTargetObserved",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "productionTargetObserved",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "testResult",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "testResult",
+          "scope": [],
+          "status": "unknown"
+        }
+      ],
+      "claims": [],
+      "artifactHashes": []
+    },
+    {
+      "id": "skipped",
+      "producerExit": 1,
+      "gateExit": 1,
+      "subject": {
+        "prHeadSha": "10c617ab9d80a0e64eafcf032cfefc5e2a229f2a",
+        "testedCommitSha": "10c617ab9d80a0e64eafcf032cfefc5e2a229f2a",
+        "sourceTreeHash": "eaa745213b7b820737a926d3c6645484415aa54189c110deff10738d5e41399e",
+        "dirty": false,
+        "baseSha": "10c617ab9d80a0e64eafcf032cfefc5e2a229f2a",
+        "diffBaseSha": "10c617ab9d80a0e64eafcf032cfefc5e2a229f2a"
+      },
+      "evaluations": [
+        {
+          "ruleId": "changedLineCoverage",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "changedLineCoverage",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "contractExecution",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "contractExecution",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "evidenceIntegrity",
+          "scope": [],
+          "status": "fail"
+        },
+        {
+          "ruleId": "intentApproval",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "pass"
+        },
+        {
+          "ruleId": "intentApproval",
+          "scope": [],
+          "status": "pass"
+        },
+        {
+          "ruleId": "mutationScore",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "mutationScore",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "mutationSensitivityObserved",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "mutationSensitivityObserved",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "negativeCases",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "negativeCases",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "pipelineIntegrity",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "pipelineIntegrity",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "policyProtection",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "pass"
+        },
+        {
+          "ruleId": "policyProtection",
+          "scope": [],
+          "status": "pass"
+        },
+        {
+          "ruleId": "productionTargetObserved",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "productionTargetObserved",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "testResult",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "testResult",
+          "scope": [],
+          "status": "unknown"
+        }
+      ],
+      "claims": [],
+      "artifactHashes": []
+    },
+    {
+      "id": "removed",
+      "producerExit": 0,
+      "gateExit": 1,
+      "subject": {
+        "prHeadSha": "33733f7c9f68148d00f5c27f36b1dc717d83942c",
+        "testedCommitSha": "33733f7c9f68148d00f5c27f36b1dc717d83942c",
+        "sourceTreeHash": "b4b22dc552ad811a3751ab956b39176308b4c3682940e7316e6a5ccf932c2a1b",
+        "dirty": false,
+        "baseSha": "33733f7c9f68148d00f5c27f36b1dc717d83942c",
+        "diffBaseSha": "33733f7c9f68148d00f5c27f36b1dc717d83942c"
+      },
+      "evaluations": [
+        {
+          "ruleId": "changedLineCoverage",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "changedLineCoverage",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "contractExecution",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "contractExecution",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "intentApproval",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "fail"
+        },
+        {
+          "ruleId": "intentApproval",
+          "scope": [],
+          "status": "fail"
+        },
+        {
+          "ruleId": "mutationScore",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "mutationScore",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "mutationSensitivityObserved",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "mutationSensitivityObserved",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "negativeCases",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "negativeCases",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "pipelineIntegrity",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "pipelineIntegrity",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "policyProtection",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "pass"
+        },
+        {
+          "ruleId": "policyProtection",
+          "scope": [],
+          "status": "pass"
+        },
+        {
+          "ruleId": "productionTargetObserved",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "productionTargetObserved",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "testResult",
+          "scope": [
+            "ORDER-OWNERSHIP",
+            "contract"
+          ],
+          "status": "pass"
+        },
+        {
+          "ruleId": "testResult",
+          "scope": [],
+          "status": "pass"
+        }
+      ],
+      "claims": [
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "ORDER-OWNERSHIP",
+            "caseIds": [
+              "owner"
+            ],
+            "targetRef": "src/orders.ts#readOrder",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 0,
+            "status": "unknown"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "ORDER-OWNERSHIP",
+            "caseIds": [
+              "non-owner"
+            ],
+            "targetRef": "src/orders.ts#readOrder",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 0,
+            "status": "unknown"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "ORDER-OWNERSHIP",
+            "caseIds": [
+              "owner"
+            ],
+            "targetRef": "src/orders.ts#readOrder",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 0,
+            "total": 0,
+            "status": "unknown"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "ORDER-OWNERSHIP",
+            "caseIds": [
+              "non-owner"
+            ],
+            "targetRef": "src/orders.ts#readOrder",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 0,
+            "total": 0,
+            "status": "unknown"
+          }
+        }
+      ],
+      "artifactHashes": [
+        {
+          "ref": ".behavproof/collected/removed/vitest.json",
+          "sha256": "5bb687bf7dc4f579f7d1ad27560f396249cf8738cae4d0e9726a672dc42ebc0a",
+          "kind": "test",
+          "scope": [
+            "ORDER-OWNERSHIP"
+          ]
+        },
+        {
+          "ref": ".behavproof/collected/removed/contracts.json",
+          "sha256": "3260577c61fa4b65b9165e305d54d15cb91f1a0b8d60da5af015e28e6bfd4845",
+          "kind": "contract_report",
+          "scope": [
+            "ORDER-OWNERSHIP"
+          ]
+        },
+        {
+          "ref": ".behavproof/collected/removed/claims.json",
+          "sha256": "84cd2810787579a0de55a3c2101cd23efbfabf0e19bc819fb5d2d857b47f3076",
+          "kind": "claims",
+          "scope": [
+            "ORDER-OWNERSHIP"
+          ]
+        },
+        {
+          "ref": ".behavproof/collected/removed/probe-diagnostics.json",
+          "sha256": "3079add0d60422f6fcc6aa6ad9505fc1216d8e8ca2770dacd6dfaea4b3d3b841",
+          "kind": "diagnostic",
+          "scope": [
+            "ORDER-OWNERSHIP"
+          ]
+        }
+      ]
+    }
+  ]
+}

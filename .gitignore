@@ -1,0 +1,17 @@
+node_modules/
+**/dist/
+**/*.tsbuildinfo
+coverage/
+.behavproof/
+.npm-cache/
+.superpowers/
+*.log
+
+# Local source specifications and execution plans are not public artifacts.
+/BehavProof_開発仕様書_*.md
+/docs/superpowers/
+
+.env
+.env.*
+!.env.example
+.DS_Store

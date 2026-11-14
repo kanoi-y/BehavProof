@@ -1,0 +1,36 @@
+name: BehavProof verification
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  verify:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24'
+      - run: npm ci --ignore-scripts --cache .npm-cache
+      - run: npm test
+      - run: node scripts/package-smoke.mjs --online
+      - run: node scripts/acceptance-flow.mjs
+      - run: node scripts/protected-probe-flow.mjs
+      - run: node scripts/enforcement-probe-flow.mjs
+      - name: Exercise credential-free Linux container
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          node scripts/prepare-sandbox-sdk.mjs --built --output "$RUNNER_TEMP/behavproof-sdk-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          docker pull --platform linux/amd64 node:24.14.1-bookworm@sha256:80fc934952c8f1b2b4d39907af7211f8a9fff1a4c2cf673fb49099292c251cec
+          node scripts/protected-probe-flow.mjs --sandbox-sdk "$RUNNER_TEMP/behavproof-sdk-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: local-acceptance-${{ matrix.os }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: docs/evidence/
+          if-no-files-found: error

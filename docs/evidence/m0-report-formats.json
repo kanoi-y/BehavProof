@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "stage": "M0 report-format experiment, not a completed provenance acceptance",
+  "nodeVersion": "v24.14.1",
+  "vitestVersion": "5.1.0",
+  "strykerVersion": "10.1.1",
+  "vitest": {
+    "exitCode": 0,
+    "passed": 2,
+    "failed": 0
+  },
+  "mutation": {
+    "exitCode": 0,
+    "statuses": [
+      "Killed",
+      "Killed",
+      "Killed",
+      "Killed",
+      "Killed",
+      "Killed"
+    ],
+    "schemaVersion": "1.0"
+  },
+  "artifacts": [
+    {
+      "fixture": "tests/fixtures/reports/vitest-5.1.0-real.json",
+      "originalSha256": "ede6997b1c4282b5cc5caa89dac64947c6e5c10ea92e6ee02f8483cc354cd041",
+      "fixtureSha256": "d5b5b486213b5070ea4b8cb00c43d7ea357000e65ebf5df42d477ad02eeac12f",
+      "normalization": "replace absolute fixture directory with <project-root>; result fields unchanged"
+    },
+    {
+      "fixture": "tests/fixtures/reports/stryker-10.1.1-real.json",
+      "originalSha256": "dd525a01a2a71213fa914407e0f9ca773944014aeac06dc4b79ab59faf944e1b",
+      "fixtureSha256": "51957601404b37675d0e8e617e46fcaf3ccbb2f60272ef9d870012d477016518",
+      "normalization": "replace absolute fixture directory with <project-root>; result fields unchanged"
+    },
+    {
+      "fixture": "tests/fixtures/reports/vitest-5.1.0-real.lcov",
+      "originalSha256": "1031646f0a827b90997bb92935d4629e4b095b0a899232c8a508869565b60dfd",
+      "fixtureSha256": "1031646f0a827b90997bb92935d4629e4b095b0a899232c8a508869565b60dfd",
+      "normalization": "replace absolute fixture directory with <project-root>; result fields unchanged"
+    }
+  ],
+  "limits": [
+    "Only a two-case authorization fixture.",
+    "Generated before the product Collector; no verified producer or Manifest claim.",
+    "Stryker required elevated execution for its internal local logging socket."
+  ]
+}

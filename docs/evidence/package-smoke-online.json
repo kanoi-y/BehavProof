@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "command": "node scripts/package-smoke.mjs",
+  "node": "v24.14.1",
+  "packages": [
+    "core",
+    "adapter-reports",
+    "contract-registry",
+    "contract-vitest",
+    "adapter-github",
+    "cli"
+  ],
+  "consumerInstall": "pass",
+  "installationMode": "online",
+  "publicExports": "pass",
+  "cliHelp": "pass",
+  "packagedSchemas": "pass",
+  "published": false
+}

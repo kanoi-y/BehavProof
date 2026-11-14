@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "profileVersion": "1",
+  "rules": {
+    "testResult": {
+      "severity": "error"
+    },
+    "changedLineCoverage": {
+      "severity": "error",
+      "min": 80
+    },
+    "mutationScore": {
+      "severity": "error",
+      "min": 70,
+      "minMutants": 10
+    },
+    "pipelineIntegrity": {
+      "severity": "error"
+    },
+    "intentApproval": {
+      "severity": "error"
+    },
+    "negativeCases": {
+      "severity": "error"
+    },
+    "contractExecution": {
+      "severity": "error"
+    },
+    "policyProtection": {
+      "severity": "error"
+    },
+    "productionTargetObserved": {
+      "severity": "error"
+    },
+    "mutationSensitivityObserved": {
+      "severity": "error"
+    }
+  }
+}

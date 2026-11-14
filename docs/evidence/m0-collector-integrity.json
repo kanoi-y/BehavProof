@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "command": "node scripts/spikes/collector-integrity.mjs",
+  "nodeVersion": "v24.14.1",
+  "collectorApi": "@behavproof/adapter-reports collect",
+  "subject": {
+    "testedCommitSha": "064aae91bf167345d389593ac94749053b143507",
+    "sourceTreeHash": "90f82c7143d5dca63134b0d568373d206c410499d5d8a65b00e9780aeb812027",
+    "dirty": false
+  },
+  "vitest": {
+    "payload": {
+      "total": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0
+    },
+    "status": "pass"
+  },
+  "valid": {
+    "artifactIntegrity": "pass",
+    "producerTrust": "pass",
+    "subjectMatch": "pass",
+    "executionStatus": "pass",
+    "reasons": []
+  },
+  "tampered": {
+    "artifactIntegrity": "fail",
+    "producerTrust": "pass",
+    "subjectMatch": "pass",
+    "executionStatus": "pass",
+    "reasons": [
+      "Artifact hash mismatch: .behavproof/collected/m0-valid/vitest.json"
+    ]
+  },
+  "stale": {
+    "artifactIntegrity": "pass",
+    "producerTrust": "pass",
+    "subjectMatch": "fail",
+    "executionStatus": "pass",
+    "reasons": [
+      "Execution ID mismatch"
+    ]
+  },
+  "unauthenticated": {
+    "artifactIntegrity": "pass",
+    "producerTrust": "unknown",
+    "subjectMatch": "pass",
+    "executionStatus": "pass",
+    "reasons": [
+      "External producer authority unavailable"
+    ]
+  },
+  "failedProducer": {
+    "exitCode": 7,
+    "sealedArtifacts": 0
+  },
+  "mutationRejected": true,
+  "limits": [
+    "Local invoker explicitly supplied authority; no CI or human approval claim.",
+    "Root workspace dependencies were used by the controlled fixture.",
+    "Persistent input change was tested; this is not proof against transient mutation or hostile descendants."
+  ]
+}

@@ -1,0 +1,2884 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "type": "number",
+          "const": 1
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": "object",
+          "properties": {
+            "tool": {
+              "type": "string",
+              "minLength": 1
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1
+            },
+            "artifactRef": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "tool",
+            "artifactRef"
+          ],
+          "additionalProperties": false
+        },
+        "context": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "object",
+              "properties": {
+                "repositoryId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "prHeadSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "testedCommitSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "testedCommitParents": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "sourceTreeHash": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "dirty": {
+                  "type": "boolean"
+                },
+                "baseSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "diffBaseSha": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "testedCommitSha",
+                "sourceTreeHash",
+                "dirty"
+              ],
+              "additionalProperties": false
+            },
+            "manifestRef": {
+              "type": "string",
+              "minLength": 1
+            },
+            "protectedPolicySha": {
+              "type": "string",
+              "minLength": 1
+            },
+            "effectivePolicyHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "contractHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "generatedAt": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+            },
+            "collectedAt": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+            }
+          },
+          "required": [
+            "effectivePolicyHash",
+            "collectedAt"
+          ],
+          "additionalProperties": false
+        },
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "artifactIntegrity": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "producerTrust": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "subjectMatch": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "reasons": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "required": [
+            "artifactIntegrity",
+            "producerTrust",
+            "subjectMatch",
+            "reasons"
+          ],
+          "additionalProperties": false
+        },
+        "subjectRefs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "kind": {
+          "type": "string",
+          "const": "test"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "passed": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "failed": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "skipped": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "total",
+            "passed",
+            "failed",
+            "skipped"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "id",
+        "source",
+        "context",
+        "provenance",
+        "subjectRefs",
+        "kind",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "type": "number",
+          "const": 1
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": "object",
+          "properties": {
+            "tool": {
+              "type": "string",
+              "minLength": 1
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1
+            },
+            "artifactRef": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "tool",
+            "artifactRef"
+          ],
+          "additionalProperties": false
+        },
+        "context": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "object",
+              "properties": {
+                "repositoryId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "prHeadSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "testedCommitSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "testedCommitParents": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "sourceTreeHash": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "dirty": {
+                  "type": "boolean"
+                },
+                "baseSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "diffBaseSha": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "testedCommitSha",
+                "sourceTreeHash",
+                "dirty"
+              ],
+              "additionalProperties": false
+            },
+            "manifestRef": {
+              "type": "string",
+              "minLength": 1
+            },
+            "protectedPolicySha": {
+              "type": "string",
+              "minLength": 1
+            },
+            "effectivePolicyHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "contractHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "generatedAt": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+            },
+            "collectedAt": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+            }
+          },
+          "required": [
+            "effectivePolicyHash",
+            "collectedAt"
+          ],
+          "additionalProperties": false
+        },
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "artifactIntegrity": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "producerTrust": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "subjectMatch": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "reasons": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "required": [
+            "artifactIntegrity",
+            "producerTrust",
+            "subjectMatch",
+            "reasons"
+          ],
+          "additionalProperties": false
+        },
+        "subjectRefs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "kind": {
+          "type": "string",
+          "const": "coverage"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "covered": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "total": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "excluded": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "unobserved": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "covered",
+            "total",
+            "excluded",
+            "unobserved"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "id",
+        "source",
+        "context",
+        "provenance",
+        "subjectRefs",
+        "kind",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "type": "number",
+          "const": 1
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": "object",
+          "properties": {
+            "tool": {
+              "type": "string",
+              "minLength": 1
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1
+            },
+            "artifactRef": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "tool",
+            "artifactRef"
+          ],
+          "additionalProperties": false
+        },
+        "context": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "object",
+              "properties": {
+                "repositoryId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "prHeadSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "testedCommitSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "testedCommitParents": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "sourceTreeHash": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "dirty": {
+                  "type": "boolean"
+                },
+                "baseSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "diffBaseSha": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "testedCommitSha",
+                "sourceTreeHash",
+                "dirty"
+              ],
+              "additionalProperties": false
+            },
+            "manifestRef": {
+              "type": "string",
+              "minLength": 1
+            },
+            "protectedPolicySha": {
+              "type": "string",
+              "minLength": 1
+            },
+            "effectivePolicyHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "contractHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "generatedAt": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+            },
+            "collectedAt": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+            }
+          },
+          "required": [
+            "effectivePolicyHash",
+            "collectedAt"
+          ],
+          "additionalProperties": false
+        },
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "artifactIntegrity": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "producerTrust": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "subjectMatch": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "reasons": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "required": [
+            "artifactIntegrity",
+            "producerTrust",
+            "subjectMatch",
+            "reasons"
+          ],
+          "additionalProperties": false
+        },
+        "subjectRefs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "kind": {
+          "type": "string",
+          "const": "mutation"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "killed": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "survived": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "noCoverage": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "timeout": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "excluded": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "unobserved": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "killed",
+            "survived",
+            "noCoverage",
+            "timeout",
+            "excluded",
+            "unobserved"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "id",
+        "source",
+        "context",
+        "provenance",
+        "subjectRefs",
+        "kind",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "type": "number",
+          "const": 1
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": "object",
+          "properties": {
+            "tool": {
+              "type": "string",
+              "minLength": 1
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1
+            },
+            "artifactRef": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "tool",
+            "artifactRef"
+          ],
+          "additionalProperties": false
+        },
+        "context": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "object",
+              "properties": {
+                "repositoryId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "prHeadSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "testedCommitSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "testedCommitParents": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "sourceTreeHash": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "dirty": {
+                  "type": "boolean"
+                },
+                "baseSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "diffBaseSha": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "testedCommitSha",
+                "sourceTreeHash",
+                "dirty"
+              ],
+              "additionalProperties": false
+            },
+            "manifestRef": {
+              "type": "string",
+              "minLength": 1
+            },
+            "protectedPolicySha": {
+              "type": "string",
+              "minLength": 1
+            },
+            "effectivePolicyHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "contractHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "generatedAt": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+            },
+            "collectedAt": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+            }
+          },
+          "required": [
+            "effectivePolicyHash",
+            "collectedAt"
+          ],
+          "additionalProperties": false
+        },
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "artifactIntegrity": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "producerTrust": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "subjectMatch": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "reasons": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "required": [
+            "artifactIntegrity",
+            "producerTrust",
+            "subjectMatch",
+            "reasons"
+          ],
+          "additionalProperties": false
+        },
+        "subjectRefs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "kind": {
+          "type": "string",
+          "const": "pipeline"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "checks": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "pass",
+                      "fail",
+                      "unknown",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "id",
+                  "status"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "status",
+            "checks"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "id",
+        "source",
+        "context",
+        "provenance",
+        "subjectRefs",
+        "kind",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "type": "number",
+          "const": 1
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": "object",
+          "properties": {
+            "tool": {
+              "type": "string",
+              "minLength": 1
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1
+            },
+            "artifactRef": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "tool",
+            "artifactRef"
+          ],
+          "additionalProperties": false
+        },
+        "context": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "object",
+              "properties": {
+                "repositoryId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "prHeadSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "testedCommitSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "testedCommitParents": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "sourceTreeHash": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "dirty": {
+                  "type": "boolean"
+                },
+                "baseSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "diffBaseSha": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "testedCommitSha",
+                "sourceTreeHash",
+                "dirty"
+              ],
+              "additionalProperties": false
+            },
+            "manifestRef": {
+              "type": "string",
+              "minLength": 1
+            },
+            "protectedPolicySha": {
+              "type": "string",
+              "minLength": 1
+            },
+            "effectivePolicyHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "contractHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "generatedAt": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+            },
+            "collectedAt": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+            }
+          },
+          "required": [
+            "effectivePolicyHash",
+            "collectedAt"
+          ],
+          "additionalProperties": false
+        },
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "artifactIntegrity": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "producerTrust": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "subjectMatch": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "reasons": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "required": [
+            "artifactIntegrity",
+            "producerTrust",
+            "subjectMatch",
+            "reasons"
+          ],
+          "additionalProperties": false
+        },
+        "subjectRefs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "kind": {
+          "type": "string",
+          "const": "contract_execution"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "contractId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "caseId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "revisionHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "bindingHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "comparisonCount": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            }
+          },
+          "required": [
+            "contractId",
+            "caseId",
+            "revisionHash",
+            "bindingHash",
+            "comparisonCount",
+            "status"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "id",
+        "source",
+        "context",
+        "provenance",
+        "subjectRefs",
+        "kind",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "type": "number",
+          "const": 1
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": "object",
+          "properties": {
+            "tool": {
+              "type": "string",
+              "minLength": 1
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1
+            },
+            "artifactRef": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "tool",
+            "artifactRef"
+          ],
+          "additionalProperties": false
+        },
+        "context": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "object",
+              "properties": {
+                "repositoryId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "prHeadSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "testedCommitSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "testedCommitParents": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "sourceTreeHash": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "dirty": {
+                  "type": "boolean"
+                },
+                "baseSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "diffBaseSha": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "testedCommitSha",
+                "sourceTreeHash",
+                "dirty"
+              ],
+              "additionalProperties": false
+            },
+            "manifestRef": {
+              "type": "string",
+              "minLength": 1
+            },
+            "protectedPolicySha": {
+              "type": "string",
+              "minLength": 1
+            },
+            "effectivePolicyHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "contractHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "generatedAt": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+            },
+            "collectedAt": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+            }
+          },
+          "required": [
+            "effectivePolicyHash",
+            "collectedAt"
+          ],
+          "additionalProperties": false
+        },
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "artifactIntegrity": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "producerTrust": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "subjectMatch": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "reasons": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "required": [
+            "artifactIntegrity",
+            "producerTrust",
+            "subjectMatch",
+            "reasons"
+          ],
+          "additionalProperties": false
+        },
+        "subjectRefs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "kind": {
+          "type": "string",
+          "const": "approval"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "schemaVersion": {
+              "type": "number",
+              "const": 1
+            },
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "target": {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "intent",
+                    "contract",
+                    "policy",
+                    "registry"
+                  ]
+                },
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "contentHash": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                }
+              },
+              "required": [
+                "kind",
+                "id",
+                "contentHash"
+              ],
+              "additionalProperties": false
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "source": {
+              "type": "object",
+              "properties": {
+                "provider": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "ref": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "provider",
+                "ref"
+              ],
+              "additionalProperties": false
+            },
+            "approvedBy": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "subjectCommitSha": {
+              "type": "string",
+              "minLength": 1
+            },
+            "reasons": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "required": [
+            "schemaVersion",
+            "id",
+            "target",
+            "status",
+            "source",
+            "approvedBy",
+            "reasons"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "id",
+        "source",
+        "context",
+        "provenance",
+        "subjectRefs",
+        "kind",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "type": "number",
+          "const": 1
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": "object",
+          "properties": {
+            "tool": {
+              "type": "string",
+              "minLength": 1
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1
+            },
+            "artifactRef": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "tool",
+            "artifactRef"
+          ],
+          "additionalProperties": false
+        },
+        "context": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "object",
+              "properties": {
+                "repositoryId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "prHeadSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "testedCommitSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "testedCommitParents": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "sourceTreeHash": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "dirty": {
+                  "type": "boolean"
+                },
+                "baseSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "diffBaseSha": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "testedCommitSha",
+                "sourceTreeHash",
+                "dirty"
+              ],
+              "additionalProperties": false
+            },
+            "manifestRef": {
+              "type": "string",
+              "minLength": 1
+            },
+            "protectedPolicySha": {
+              "type": "string",
+              "minLength": 1
+            },
+            "effectivePolicyHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "contractHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "generatedAt": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+            },
+            "collectedAt": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+            }
+          },
+          "required": [
+            "effectivePolicyHash",
+            "collectedAt"
+          ],
+          "additionalProperties": false
+        },
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "artifactIntegrity": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "producerTrust": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "subjectMatch": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "reasons": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "required": [
+            "artifactIntegrity",
+            "producerTrust",
+            "subjectMatch",
+            "reasons"
+          ],
+          "additionalProperties": false
+        },
+        "subjectRefs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "kind": {
+          "type": "string",
+          "const": "execution_manifest"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "schemaVersion": {
+              "type": "number",
+              "const": 1
+            },
+            "executionId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "subject": {
+              "type": "object",
+              "properties": {
+                "repositoryId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "prHeadSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "testedCommitSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "testedCommitParents": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "sourceTreeHash": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "dirty": {
+                  "type": "boolean"
+                },
+                "baseSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "diffBaseSha": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "testedCommitSha",
+                "sourceTreeHash",
+                "dirty"
+              ],
+              "additionalProperties": false
+            },
+            "producer": {
+              "type": "object",
+              "properties": {
+                "tool": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "version": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "collectorVersion": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "tool",
+                "version",
+                "collectorVersion"
+              ],
+              "additionalProperties": false
+            },
+            "commandHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "configHashes": {
+              "type": "object",
+              "propertyNames": {
+                "type": "string",
+                "minLength": 1
+              },
+              "additionalProperties": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            },
+            "dependencyLockHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "environment": {
+              "type": "object",
+              "properties": {
+                "nodeVersion": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "platform": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "nodeVersion",
+                "platform"
+              ],
+              "additionalProperties": false
+            },
+            "startedAt": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+            },
+            "completedAt": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+            },
+            "exitCode": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            "artifacts": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "ref": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "kind": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "scope": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                },
+                "required": [
+                  "ref",
+                  "sha256",
+                  "kind",
+                  "scope"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "ci": {
+              "type": "object",
+              "properties": {
+                "repositoryId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "workflowRef": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "runId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "runAttempt": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991
+                },
+                "jobId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "eventName": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "repositoryId",
+                "workflowRef",
+                "runId",
+                "runAttempt",
+                "jobId",
+                "eventName"
+              ],
+              "additionalProperties": false
+            },
+            "attestationRef": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "schemaVersion",
+            "executionId",
+            "subject",
+            "producer",
+            "commandHash",
+            "configHashes",
+            "environment",
+            "startedAt",
+            "completedAt",
+            "exitCode",
+            "artifacts"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "id",
+        "source",
+        "context",
+        "provenance",
+        "subjectRefs",
+        "kind",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "type": "number",
+          "const": 1
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": "object",
+          "properties": {
+            "tool": {
+              "type": "string",
+              "minLength": 1
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1
+            },
+            "artifactRef": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "tool",
+            "artifactRef"
+          ],
+          "additionalProperties": false
+        },
+        "context": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "object",
+              "properties": {
+                "repositoryId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "prHeadSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "testedCommitSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "testedCommitParents": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "sourceTreeHash": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "dirty": {
+                  "type": "boolean"
+                },
+                "baseSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "diffBaseSha": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "testedCommitSha",
+                "sourceTreeHash",
+                "dirty"
+              ],
+              "additionalProperties": false
+            },
+            "manifestRef": {
+              "type": "string",
+              "minLength": 1
+            },
+            "protectedPolicySha": {
+              "type": "string",
+              "minLength": 1
+            },
+            "effectivePolicyHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "contractHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "generatedAt": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+            },
+            "collectedAt": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+            }
+          },
+          "required": [
+            "effectivePolicyHash",
+            "collectedAt"
+          ],
+          "additionalProperties": false
+        },
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "artifactIntegrity": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "producerTrust": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "subjectMatch": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "reasons": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "required": [
+            "artifactIntegrity",
+            "producerTrust",
+            "subjectMatch",
+            "reasons"
+          ],
+          "additionalProperties": false
+        },
+        "subjectRefs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "kind": {
+          "type": "string",
+          "const": "target_observation"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "contractId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "caseIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "targetRef": {
+              "type": "string",
+              "minLength": 1
+            },
+            "method": {
+              "type": "string",
+              "minLength": 1
+            },
+            "observations": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            }
+          },
+          "required": [
+            "contractId",
+            "caseIds",
+            "targetRef",
+            "method",
+            "observations",
+            "status"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "id",
+        "source",
+        "context",
+        "provenance",
+        "subjectRefs",
+        "kind",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "type": "number",
+          "const": 1
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": "object",
+          "properties": {
+            "tool": {
+              "type": "string",
+              "minLength": 1
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1
+            },
+            "artifactRef": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "tool",
+            "artifactRef"
+          ],
+          "additionalProperties": false
+        },
+        "context": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "object",
+              "properties": {
+                "repositoryId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "prHeadSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "testedCommitSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "testedCommitParents": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "sourceTreeHash": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "dirty": {
+                  "type": "boolean"
+                },
+                "baseSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "diffBaseSha": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "testedCommitSha",
+                "sourceTreeHash",
+                "dirty"
+              ],
+              "additionalProperties": false
+            },
+            "manifestRef": {
+              "type": "string",
+              "minLength": 1
+            },
+            "protectedPolicySha": {
+              "type": "string",
+              "minLength": 1
+            },
+            "effectivePolicyHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "contractHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "generatedAt": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+            },
+            "collectedAt": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+            }
+          },
+          "required": [
+            "effectivePolicyHash",
+            "collectedAt"
+          ],
+          "additionalProperties": false
+        },
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "artifactIntegrity": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "producerTrust": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "subjectMatch": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "reasons": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "required": [
+            "artifactIntegrity",
+            "producerTrust",
+            "subjectMatch",
+            "reasons"
+          ],
+          "additionalProperties": false
+        },
+        "subjectRefs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "kind": {
+          "type": "string",
+          "const": "canary"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "contractId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "caseIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "targetRef": {
+              "type": "string",
+              "minLength": 1
+            },
+            "method": {
+              "type": "string",
+              "minLength": 1
+            },
+            "detected": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "total": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            }
+          },
+          "required": [
+            "contractId",
+            "caseIds",
+            "targetRef",
+            "method",
+            "detected",
+            "total",
+            "status"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "id",
+        "source",
+        "context",
+        "provenance",
+        "subjectRefs",
+        "kind",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "type": "number",
+          "const": 1
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": "object",
+          "properties": {
+            "tool": {
+              "type": "string",
+              "minLength": 1
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1
+            },
+            "artifactRef": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "tool",
+            "artifactRef"
+          ],
+          "additionalProperties": false
+        },
+        "context": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "object",
+              "properties": {
+                "repositoryId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "prHeadSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "testedCommitSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "testedCommitParents": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "sourceTreeHash": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "dirty": {
+                  "type": "boolean"
+                },
+                "baseSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "diffBaseSha": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "testedCommitSha",
+                "sourceTreeHash",
+                "dirty"
+              ],
+              "additionalProperties": false
+            },
+            "manifestRef": {
+              "type": "string",
+              "minLength": 1
+            },
+            "protectedPolicySha": {
+              "type": "string",
+              "minLength": 1
+            },
+            "effectivePolicyHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "contractHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "generatedAt": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+            },
+            "collectedAt": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+            }
+          },
+          "required": [
+            "effectivePolicyHash",
+            "collectedAt"
+          ],
+          "additionalProperties": false
+        },
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "artifactIntegrity": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "producerTrust": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "subjectMatch": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "reasons": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "required": [
+            "artifactIntegrity",
+            "producerTrust",
+            "subjectMatch",
+            "reasons"
+          ],
+          "additionalProperties": false
+        },
+        "subjectRefs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "kind": {
+          "type": "string",
+          "const": "formal_model"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "const": "unknown"
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "status",
+            "reason"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "id",
+        "source",
+        "context",
+        "provenance",
+        "subjectRefs",
+        "kind",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "type": "number",
+          "const": 1
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": "object",
+          "properties": {
+            "tool": {
+              "type": "string",
+              "minLength": 1
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1
+            },
+            "artifactRef": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "tool",
+            "artifactRef"
+          ],
+          "additionalProperties": false
+        },
+        "context": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "object",
+              "properties": {
+                "repositoryId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "prHeadSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "testedCommitSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "testedCommitParents": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "sourceTreeHash": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "dirty": {
+                  "type": "boolean"
+                },
+                "baseSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "diffBaseSha": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "testedCommitSha",
+                "sourceTreeHash",
+                "dirty"
+              ],
+              "additionalProperties": false
+            },
+            "manifestRef": {
+              "type": "string",
+              "minLength": 1
+            },
+            "protectedPolicySha": {
+              "type": "string",
+              "minLength": 1
+            },
+            "effectivePolicyHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "contractHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "generatedAt": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+            },
+            "collectedAt": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+            }
+          },
+          "required": [
+            "effectivePolicyHash",
+            "collectedAt"
+          ],
+          "additionalProperties": false
+        },
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "artifactIntegrity": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "producerTrust": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "subjectMatch": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "reasons": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "required": [
+            "artifactIntegrity",
+            "producerTrust",
+            "subjectMatch",
+            "reasons"
+          ],
+          "additionalProperties": false
+        },
+        "subjectRefs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "kind": {
+          "type": "string",
+          "const": "model_conformance"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "const": "unknown"
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "status",
+            "reason"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "id",
+        "source",
+        "context",
+        "provenance",
+        "subjectRefs",
+        "kind",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "type": "number",
+          "const": 1
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": "object",
+          "properties": {
+            "tool": {
+              "type": "string",
+              "minLength": 1
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1
+            },
+            "artifactRef": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "tool",
+            "artifactRef"
+          ],
+          "additionalProperties": false
+        },
+        "context": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "object",
+              "properties": {
+                "repositoryId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "prHeadSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "testedCommitSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "testedCommitParents": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "sourceTreeHash": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "dirty": {
+                  "type": "boolean"
+                },
+                "baseSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "diffBaseSha": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "testedCommitSha",
+                "sourceTreeHash",
+                "dirty"
+              ],
+              "additionalProperties": false
+            },
+            "manifestRef": {
+              "type": "string",
+              "minLength": 1
+            },
+            "protectedPolicySha": {
+              "type": "string",
+              "minLength": 1
+            },
+            "effectivePolicyHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "contractHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "generatedAt": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+            },
+            "collectedAt": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+            }
+          },
+          "required": [
+            "effectivePolicyHash",
+            "collectedAt"
+          ],
+          "additionalProperties": false
+        },
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "artifactIntegrity": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "producerTrust": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "subjectMatch": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "reasons": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "required": [
+            "artifactIntegrity",
+            "producerTrust",
+            "subjectMatch",
+            "reasons"
+          ],
+          "additionalProperties": false
+        },
+        "subjectRefs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "kind": {
+          "type": "string",
+          "const": "trace"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "const": "unknown"
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "status",
+            "reason"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "id",
+        "source",
+        "context",
+        "provenance",
+        "subjectRefs",
+        "kind",
+        "payload"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}

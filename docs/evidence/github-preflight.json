@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "recordedDate": "2026-11-13",
+  "purpose": "Read-only feasibility inspection; not a BehavProof acceptance pass",
+  "repository": "kanoi-y/pdd-ts",
+  "repositoryId": "1449042266",
+  "baseBranch": "main",
+  "baseSha": "dd06da788bef5cfbe7f9131fe5609a61cefbd458",
+  "protected": true,
+  "requiredChecks": [
+    { "context": "Build, proof and tests", "appId": 15368 },
+    { "context": "PDD protected gate", "appId": 5653976 }
+  ],
+  "strictChecks": true,
+  "enforceAdmins": true,
+  "requiredApprovingReviewCount": 1,
+  "dismissStaleReviews": true,
+  "requireCodeOwnerReviews": true,
+  "rulesets": [],
+  "observations": [
+    "Connected GitHub branch read exposes protected status and app-bound checks.",
+    "Connector direct branch-protection read returned HTTP 403: Resource not accessible by integration.",
+    "Authenticated GitHub CLI GET of branch protection succeeded.",
+    "Existing workflows: CI, Trusted PDD evidence, Prepare human specification review.",
+    "No remote writes or protection changes performed during this inspection."
+  ],
+  "pending": [
+    "BehavProof package implementation and actual hosted execution",
+    "Isolated negative test PRs/checks",
+    "Human review of content-bound contract changes",
+    "External merge-block verification"
+  ]
+}
