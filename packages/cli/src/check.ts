@@ -5,7 +5,7 @@ import { detectProject, gitDiff, gitSubject, normalizeVitest, normalizeLcov, nor
 import { reconcile, evaluateAssurance, bindRegistrations, evaluateScopedClaims, type ExecutionRow, type ReportBinding } from '@behavproof/contract-registry';
 import { GitHubAuthority } from '@behavproof/adapter-github';
 import { config, fileList, select, registry, registryAtGit, ref, exists } from './project.js';
-import { authenticate, isCurrentClaim, loadTrust, approvalKey, type TrustRoot } from './trust.js';
+import { authenticate, selectedRunner, isCurrentClaim, loadTrust, approvalKey, type TrustRoot } from './trust.js';
 export type CheckOptions={config?:string;profile?:string;mode?:string;base?:string;head?:string;'trust-root'?:string};
 const worst=(states:readonly string[]):EvidenceStatus=>states.includes('fail')?'fail':states.length&&states.every(x=>x==='pass')?'pass':'unknown';
 export async function check(root:string,options:CheckOptions){
@@ -16,7 +16,7 @@ export async function check(root:string,options:CheckOptions){
  if(mode==='gate'&&!options['trust-root'])throw Error('Gate mode requires --trust-root outside project authority');
  const trust=options['trust-root']?await loadTrust(root,options['trust-root']):undefined;
  const policy=trust?mergeProtectedPolicy({schemaVersion:1,profileVersion:'1',rules:cfg.rules},trust.policy):{schemaVersion:1 as const,profileVersion:'1' as const,rules:cfg.rules};
- const files=await fileList(root),detection=await detectProject(root);
+ const files=await fileList(root);let detection=await detectProject(root);
  const diff=await gitDiff(root,ref(options.base??cfg.git.base),ref(options.head??'HEAD'));
  const inputPaths=trust?select(files,trust.inputs):files.filter(p=>!p.startsWith('.behavproof/')&&!Object.values(cfg.reports).includes(p));
  if(!inputPaths.length)throw Error('No source inputs in evaluation scope');
@@ -24,6 +24,7 @@ export async function check(root:string,options:CheckOptions){
  const testedRelationship=await verifyMergeSubject(root,subject);
  for(const path of select(files,cfg.executionManifests)) (await import('@behavproof/core')).ExecutionManifestSchema.parse(await safeReadJson(root,path));
  const auth=await authenticate(root,trust,subject);
+ const runner=selectedRunner(trust,auth,cfg.reports.vitest??trust?.config.reports.vitest,inputPaths);if(runner)detection=await detectProject(root,runner);
  const readArtifact=async(path:string)=>auth.artifactBytes.get(path)??await safeRead(root,path);
  const readArtifactJson=async(path:string)=>JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(await readArtifact(path)));
  const head=await registry(root,cfg,files,subject.testedCommitSha,trust?.config.contracts.sources??[]);

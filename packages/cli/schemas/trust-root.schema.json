@@ -520,6 +520,29 @@
       ],
       "additionalProperties": false
     },
+    "runner": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "const": "vitest"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+(?:[-+][\\w.-]+)?$"
+        },
+        "manifestRef": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "kind",
+        "version",
+        "manifestRef"
+      ],
+      "additionalProperties": false
+    },
     "inputs": {
       "minItems": 1,
       "type": "array",

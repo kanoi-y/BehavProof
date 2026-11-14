@@ -42,7 +42,7 @@ export async function candidateCheckout(directory,projectPath,headSha,baseSha){
  return materializeProject({root:directory,projectPath,headSha});
 }
 export async function selectedProjectConfig(root,registration){
- const prefix=registration.source.projectPath+'/',policyRef=registration.source.policyRef;if(!policyRef.startsWith(prefix))throw Error('Reference policy must be within the selected project');const path=RelativePathSchema.parse(policyRef.slice(prefix.length));
+ const prefix=registration.source.projectPath==='.'?'':registration.source.projectPath+'/',policyRef=registration.source.policyRef;if(!policyRef.startsWith(prefix))throw Error('Reference policy must be within the selected project');const path=RelativePathSchema.parse(policyRef.slice(prefix.length));
  if(hashBytes(await safeRead(root,path))!==registration.source.fileHashes[policyRef])throw Error('Proposed policy changed; new approved enrollment required');
  return parseConfig(JSON.parse((await safeRead(root,'behavproof.config.json')).toString('utf8')));
 }

@@ -7,6 +7,7 @@ import { git } from './project.js';
 export const ClaimScopesSchema=z.array(z.strictObject({contractId:z.string().min(1),caseIds:z.array(z.string().min(1)).min(1),targetRef:z.string().min(1),method:z.string().min(1)})).superRefine((scopes,ctx)=>{if(new Set(scopes.map(scope=>scope.contractId)).size!==scopes.length)ctx.addIssue({code:'custom',message:'Only one claim scope per contract is supported'});for(const scope of scopes)if(new Set(scope.caseIds).size!==scope.caseIds.length)ctx.addIssue({code:'custom',message:'Duplicate case IDs in claim scope'});});
 export const TrustRootSchema=z.strictObject({
  schemaVersion:z.literal(1),policy:PolicySchema,config:ConfigSchema,baseline:RegistrySnapshotSchema,
+ runner:z.strictObject({kind:z.literal('vitest'),version:z.string().regex(/^\d+\.\d+\.\d+(?:[-+][\w.-]+)?$/),manifestRef:RelativePathSchema}).optional(),
  inputs:z.array(RelativePathSchema).min(1),qualitySources:z.array(RelativePathSchema).min(1).optional(),configPaths:z.array(RelativePathSchema),dependencyLockPath:RelativePathSchema.optional(),
  manifests:z.array(z.strictObject({ref:RelativePathSchema,manifestHash:HashSchema.optional(),expected:ManifestExpectedSchema,authority:ProducerAuthoritySchema,github:z.strictObject({repository:z.string().min(1),workflowPath:z.string(),workflowSha:z.string(),jobName:z.string(),artifactName:z.string(),archivePath:RelativePathSchema,archiveEntries:z.record(RelativePathSchema,RelativePathSchema)}).optional()}).refine(row=>row.authority.kind!=='local'||row.manifestHash!==undefined,'Local authority requires host-pinned manifestHash')),
  github:z.strictObject({repository:z.string().regex(/^[\w-]+\/[\w.-]+$/),pr:z.number().int().positive(),reviewers:z.array(z.string().min(1)).min(1),requiredChecks:z.array(z.strictObject({context:z.string().min(1),appId:z.number().int().positive()})).min(1)}).optional(),
@@ -51,4 +52,13 @@ export function isCurrentClaim(evidence:Evidence,artifactRef:string,subject:Evid
  const payload=evidence.payload as {contractId?:string};
  const active=contracts.find(c=>c.id===payload.contractId);
  return !!active&&evidence.source.artifactRef===artifactRef&&hash(evidence.context.subject??null)===hash(subject)&&evidence.context.effectivePolicyHash===policyHash&&evidence.context.contractHash===active.revisionHash;
+}
+
+/** Runner selection belongs to the protected invocation and one authenticated
+ * test artifact. It never grants artifact/producer authority by itself. */
+export function selectedRunner(trust:TrustRoot|undefined,auth:{failures:readonly string[];verified:ReadonlySet<string>;manifests:readonly {ref:string;validation:ManifestValidation}[]},testRef:string|undefined,inputs:readonly string[]){
+ const runner=trust?.runner;if(!runner||!testRef||!inputs.includes('package.json')||auth.failures.length||!auth.verified.has(testRef))return undefined;
+ const spec=trust.manifests.find(row=>row.ref===runner.manifestRef),validation=auth.manifests.find(row=>row.ref===runner.manifestRef)?.validation;
+ if(!spec?.expected.artifacts.some(row=>row.kind==='test'&&row.ref===testRef)||!validation||![validation.artifactIntegrity,validation.producerTrust,validation.subjectMatch,validation.executionStatus].every(status=>status==='pass'))return undefined;
+ return {runner:runner.kind,version:runner.version};
 }
