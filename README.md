@@ -52,3 +52,5 @@ The explicit [protected producer components](docs/protected-producer.md) add cas
 [Next-compatible route handler example](examples/next-route/README.md) uses native Web APIs and four executable contract cases without installing Next. Framework server/session/database verification remains an application responsibility.
 
 Protected GitHub integration and remaining real enforcement checks: [deployment proposal](docs/protected-github-deployment.md). The separate [enforcement probe](examples/enforcement-probe/README.md) has an explicit proposed policy and does not alter the approved critical example.
+
+[Actual PDD acceptance experiment](docs/pdd-adoption.md) runs all64 six-condition inputs on PDD's real production predicate, then verifies fake callbacks, an actual always-accept fault and coordinated test/implementation weakening. Product CI and scoped runtime observations remain separate from human approval and live issuer-bound enforcement.

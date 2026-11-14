@@ -44,7 +44,8 @@ export async function candidateCheckout(directory,projectPath,headSha,baseSha){
 export async function selectedProjectConfig(root,registration){
  const prefix=registration.source.projectPath==='.'?'':registration.source.projectPath+'/',policyRef=registration.source.policyRef;if(!policyRef.startsWith(prefix))throw Error('Reference policy must be within the selected project');const path=RelativePathSchema.parse(policyRef.slice(prefix.length));
  if(hashBytes(await safeRead(root,path))!==registration.source.fileHashes[policyRef])throw Error('Proposed policy changed; new approved enrollment required');
- return parseConfig(JSON.parse((await safeRead(root,'behavproof.config.json')).toString('utf8')));
+ const configRef=registration.source.configRef??prefix+'behavproof.config.json';if(!configRef.startsWith(prefix))throw Error('Selected source config lies outside the project');
+ return parseConfig(JSON.parse((await safeRead(root,RelativePathSchema.parse(configRef.slice(prefix.length)))).toString('utf8')));
 }
 export function hostConfig(project,baseSha,executionId,candidateConfig=project.config){const cfg=parseConfig(candidateConfig);return {...cfg,git:{base:sha(baseSha)},reports:{...cfg.reports,vitest:`.behavproof/collected/${executionId}/vitest.json`}};}
 export async function hostWrite(root,path,bytes){RelativePathSchema.parse(path);const {dirname}=await import('node:path');await mkdir(dirname(join(root,path)),{recursive:true});await writeFile(join(root,path),bytes,{flag:'wx',mode:0o600});}

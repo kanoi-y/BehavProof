@@ -112,4 +112,4 @@ PR7の実コミット5cb1133を一時checkoutし、外部登録済みcedc7a15…
 
 [PR8](https://github.com/kanoi-y/pdd-ts/pull/8) の7bcfa1dに対する [run43579133741](https://github.com/kanoi-y/pdd-ts/actions/runs/43579133741) は、Linux/macOS各287件、Windows284件（POSIX限定3件skip）、ビルド・配布consumer・実Collector/probe/CLIが成功。Linuxでは固定イメージのネットワーク無効/読取専用/非rootコンテナの5シナリオも成功。3成果物ZIPのdigest/実バイト/実フロー記録は独立照合済み（github-hosted-protected-proposal.json）。無承認Intentを拒否する新しいbasic-risk正例プロジェクトはcriticalの承認済み基準を変更しない。
 
-このCIはライブラリ・導入案の検証であり、登録済み本番producer/Appによるチェック発行ではない。PR8同一HEADの新しい人間承認と具体的な導入許可を求めている。main/既存環境保護は維持し、外部AC-18/22/50を完了扱いにしない。
+このCIはライブラリ・旧導入案の検証であり、登録済み本番producer/Appによるチェック発行ではない。製品分離後、PR7/8はマージせず終了し、PR8への承認・導入依頼も取り消した。現在の製品は専用のpublicリポジトリ `kanoi-y/BehavProof` で管理し、pdd-ts PR10は固定SDK参照と実PDD受理関数の契約データを持つ検証用の導入案として扱う。新しい同一HEADの人間承認・導入と外部AC-18/22/50は未完了。

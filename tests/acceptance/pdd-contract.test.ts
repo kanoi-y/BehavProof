@@ -1,0 +1,4 @@
+import {test,expect} from 'vitest';import {readFile} from 'node:fs/promises';import {discover} from '@behavproof/contract-registry';
+test('the proposed real-PDD contract enumerates every six-condition input exactly once',async()=>{
+ const source=await readFile('examples/pdd-acceptance/tests/acceptance.contract.ts','utf8'),registry=discover({'validation/behavproof-probe/tests/acceptance.contract.ts':source});expect(registry.diagnostics).toEqual([]);expect(registry.contracts).toHaveLength(1);const cases=registry.contracts[0]!.cases!;expect(cases).toHaveLength(64);expect(cases.filter(row=>row.negative)).toHaveLength(63);expect(new Set(cases.map(row=>JSON.stringify(row.input))).size).toBe(64);expect(cases.every(row=>row.expected===Object.values(row.input as Record<string,boolean>).every(Boolean))).toBe(true);
+});

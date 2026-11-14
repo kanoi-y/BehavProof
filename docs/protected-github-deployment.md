@@ -6,7 +6,7 @@ Status: reviewed integration components; live dedicated-check acceptance remains
 
 BehavProof owns the six packages, CLI, collector/probe/publisher code and product CI. A consumer checks out `kanoi-y/BehavProof` at an explicitly protected full SDK commit into `sdk/`. It installs/builds there with lifecycle scripts disabled. It never copies the product implementation into its application tree.
 
-`node scripts/prepare-validation.mjs --sdk-sha <BehavProof-commit> --output <directory>` prepares only `.github/workflows/behavproof-producer.yml`, `.github/workflows/behavproof-publisher.yml`, and a small `validation/behavproof-probe/` fixture. Review that consumer-only payload independently. No remote settings or branches are modified by the generator. Actual PDD behavior and quality must also be evaluated; this toy fixture is only an isolated enforcement control.
+`node scripts/prepare-validation.mjs --sdk-sha <BehavProof-commit> --output <directory>` prepares only `.github/workflows/behavproof-producer.yml`, `.github/workflows/behavproof-publisher.yml`, and four contract/config files under `validation/behavproof-probe/` for the real PDD acceptance function. Review that consumer-only payload independently. No remote settings or branches are modified by the generator. The64 Boolean cases execute the actual PDD acceptance predicate; whole-PDD coverage/mutation quality remains separate. The toy positive control remains available with `--fixture enforcement-probe`.
 
 ## Trust and execution
 
@@ -26,12 +26,12 @@ The existing experimental adapters target `kanoi-y/pdd-ts` (ID1449042266), isola
 
 A future thin integration requires its own review and provisioning:
 
-- `BEHAVPROOF_SDK_SHA`: reviewed full commit from **kanoi-y/BehavProof**.
+- SDK source: the reviewed full commit from **kanoi-y/BehavProof** is embedded literally in generated workflows; it cannot be redirected through a repository variable. Raw generic templates may still be provisioned with an explicit protected SDK variable.
 - `BEHAVPROOF_WORKFLOW_SHA`: reviewed consumer main commit with the two thin workflows.
 - `BEHAVPROOF_REGISTRATION_JSON` and `BEHAVPROOF_REGISTRATION_DIGEST`: admin-controlled immutable output of actual same-head Policy/Intent/Contract review, never a PR-owned self-declaration.
 - App Checks write, Contents/Pull requests/Actions/Administration read and implicit Metadata read. Confirm read grants separately; never read/copy private key values or expose credentials to the candidate container.
 
-`enroll-enforcement-probe.mjs` now expects the small consumer project at `validation/behavproof-probe`, not a copied product tree. It does not set variables or merge. The existing critical Node API registration remains historical and unchanged; it is not silently reassigned to another repository or source.
+`enroll-enforcement-probe.mjs` defaults to the actual PDD repository root, with contract/policy/config data at `validation/behavproof-probe` and `source.configRef` selecting that enrolled config. `--fixture enforcement-probe` selects the old toy. It verifies source hashes for the actual function, package/lock, declarations and policy before source-bound human approval. It does not set variables or merge. The existing critical Node API registration remains historical and unchanged; it is not silently reassigned to another repository or source.
 
 ## Required live acceptance
 

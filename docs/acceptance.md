@@ -73,6 +73,8 @@ M0終了条件は `docs/m0-results.md` で管理する。実装タスクとレ�
 
 後続head `16164ab99f587c8791d50f917897da967ad8cc3d` の [run43577566086](https://github.com/kanoi-y/pdd-ts/actions/runs/43577566086) はWindows/macOS/Linuxの検証が成功し、Linuxでは固定イメージの隔離コンテナによる正常・偽物・故障・skip・削除も成功した（`docs/evidence/github-hosted-producer.json`）。初回run43559481335のWindows改行依存fixture失敗は修正済み。保護された実producer/publisherの後続実装・導入・App発行元付き外部マージ保護試験は別の検証として残す。
 
-保護CI導入案の最終head `7bcfa1d71bbd1686cc2bc5c32721681e6dc3c3d2` は [run43579133741](https://github.com/kanoi-y/pdd-ts/actions/runs/43579133741) が成功。Linux/macOSは各287成功、Windowsは284成功・POSIX限定3件skip。各OSの新規consumer導入・公開フロー・新しいprobeの正常/無承認Intent変更、Linux Dockerも成功した。3 ZIPを独立ダウンロードしAPI digestと実バイト、実フロー記録を照合した（`docs/evidence/github-hosted-protected-proposal.json`）。[PR8](https://github.com/kanoi-y/pdd-ts/pull/8) はこのHEADでレビュー可能。実Approve後の新Policy登録・main導入・App read権限/保護変数・隔離baseの専用チェック保護と、AC-18/22/50の実地試験を未完了として保持する。
+旧保護CI導入案のhead `7bcfa1d71bbd1686cc2bc5c32721681e6dc3c3d2` は [run43579133741](https://github.com/kanoi-y/pdd-ts/actions/runs/43579133741) が成功。Linux/macOSは各287成功、Windowsは284成功・POSIX限定3件skip。各OSの新規consumer導入・公開フロー・新しいprobeの正常/無承認Intent変更、Linux Dockerも成功した。3 ZIPを独立ダウンロードしAPI digestと実バイト、実フロー記録を照合した（`docs/evidence/github-hosted-protected-proposal.json`）。製品の専用リポジトリへの分離に伴い、PR7/8はマージせず終了し、PR8への承認・導入依頼も取り消した。履歴上の成功・承認を新しい導入の承認として流用しない。
 
 分離後の接続検証では、実Git/実Vitest/Collectorから得たCI形状の成果物を別checkoutへ復元して実CLIで照合する検査を追加した。GitHub control-planeの応答はfixtureであり、外部AC-18/22/50の実証に昇格しない。実PDD main185ファイルのコード非実行auditは未検証runnerを明示しincomplete（`docs/evidence/pdd-adoption-audit.json`）。保護されたrunner選択でwrapper推定を置換する経路は、現在の認証済みmanifestとtest artifactに結合した場合だけ使用できる。
+
+実PDDの受理関数を対象とする64ケースの局所検証では、通常比較・ケース別本番呼び出し・故障感度を確認した。常時受理の改変は63ケースで失敗し、期待値も改変した場合は保持したContract/Intent基準により拒否した（`docs/evidence/pdd-acceptance-flow.json`）。人間承認・外部pipelineがない完全なgateはblockのまま。現在の導入案はBehavProof専用リポジトリのSDKを固定参照するpdd-ts PR10であり、新しい同一HEAD承認と保護環境の実地試験は未完了。

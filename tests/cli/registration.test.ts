@@ -60,3 +60,8 @@ test('multiple target scopes for the same contract are rejected rather than sile
  const data=value();data.claimScopes.push({...data.claimScopes[0]!,targetRef:'src/other.ts#readOther'});expect(()=>createRegistration(data,authority)).toThrow(/scope|duplicate|one/i);
  const {TrustRootSchema}=await import('../../packages/cli/src/trust.js');expect(()=>TrustRootSchema.parse({schemaVersion:1,policy,config:data.config,baseline,inputs:data.inputs,configPaths:[],manifests:[],claimScopes:data.claimScopes})).toThrow(/scope|duplicate|one/i);
 });
+test('an explicit source config reference must be part of the approved source and hashed config scope',()=>{
+ const data:any=value();data.source.configRef='example/integration/behavproof.config.json';data.source.fileHashes[data.source.configRef]='e'.repeat(64);data.configPaths=[data.source.configRef];expect(createRegistration(data,authority).registration.source.configRef).toBe(data.source.configRef);
+ const missing=structuredClone(data);delete missing.source.fileHashes[missing.source.configRef];expect(()=>createRegistration(missing,authority)).toThrow(/source hash/);
+ expect(()=>createRegistration({...data,configPaths:[]},authority)).toThrow(/config/);
+});

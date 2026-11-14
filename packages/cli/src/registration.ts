@@ -7,7 +7,7 @@ import {ClaimScopesSchema} from './trust.js';
 const text=z.string().min(1),sha=z.string().regex(/^[a-f0-9]{40}$/);
 export const RegistrationSchema=z.strictObject({
  schemaVersion:z.literal(1),repository:z.strictObject({id:z.string().regex(/^\d+$/),fullName:z.string().regex(/^[\w-]+\/[\w.-]+$/)}),
- source:z.strictObject({commitSha:sha,prNumber:z.number().int().positive(),projectPath:z.union([z.literal('.'),RelativePathSchema]),policyRef:RelativePathSchema,fileHashes:z.record(RelativePathSchema,HashSchema)}),
+ source:z.strictObject({commitSha:sha,prNumber:z.number().int().positive(),projectPath:z.union([z.literal('.'),RelativePathSchema]),policyRef:RelativePathSchema,configRef:RelativePathSchema.optional(),fileHashes:z.record(RelativePathSchema,HashSchema)}),
  policyId:text,policy:PolicySchema,config:ConfigSchema,baseline:RegistrySnapshotSchema,
  inputs:z.array(RelativePathSchema).min(1),configPaths:z.array(RelativePathSchema),
  claimScopes:ClaimScopesSchema,approvals:z.array(ApprovalSchema),
@@ -23,7 +23,8 @@ export function createRegistration(value:unknown,authority:RegistrationAuthority
  if(authority.verifySource(registration)!==true)throw Error('Source verification unavailable');
  if(registration.baseline.commitSha!==registration.source.commitSha||registration.baseline.repositoryId!==undefined&&registration.baseline.repositoryId!==registration.repository.id)throw Error('Registered source commit/repository mismatch');
  if(registration.baseline.discoveryDiagnostics?.length!==0||!registration.baseline.extractorVersion||!registration.baseline.scope?.length||!registration.baseline.contracts.length||!registration.baseline.intents.length)throw Error('Complete discovery inventory required');
- for(const path of [registration.source.policyRef,...registration.baseline.contracts.map(c=>c.sourceRef),...registration.baseline.intents.map(i=>i.origin.ref)])if(!Object.hasOwn(registration.source.fileHashes,path))throw Error('Missing independently verified source hash');
+ for(const path of [registration.source.policyRef,...(registration.source.configRef?[registration.source.configRef]:[]),...registration.baseline.contracts.map(c=>c.sourceRef),...registration.baseline.intents.map(i=>i.origin.ref)])if(!Object.hasOwn(registration.source.fileHashes,path))throw Error('Missing independently verified source hash');
+ if(registration.source.configRef&&(!registration.configPaths.includes(registration.source.configRef)||registration.source.projectPath!=='.'&&!registration.source.configRef.startsWith(registration.source.projectPath+'/')))throw Error('Selected source config must belong to the project and hashed config scope');
  if(new Set(registration.inputs).size!==registration.inputs.length||new Set(registration.configPaths).size!==registration.configPaths.length)throw Error('Duplicate input scope');
  if(!Object.values(registration.policy.rules).some(rule=>rule.severity==='error'))throw Error('No mandatory policy obligations');
  const targets=[{kind:'policy',id:registration.policyId,contentHash:hash(registration.policy)},...registration.baseline.intents.map(i=>({kind:'intent',id:i.id,contentHash:i.contentHash})),...registration.baseline.contracts.map(c=>({kind:'contract',id:c.id,contentHash:c.revisionHash}))];
@@ -59,5 +60,5 @@ export async function loadRegistration(projectRoot:string,path:string,expectedDi
 export function registrationProjectData(value:Registration){
  const r=RegistrationSchema.parse(structuredClone(value)),prefix=r.source.projectPath==='.'?'':r.source.projectPath+'/';
  const local=(path:string)=>{if(prefix&&!path.startsWith(prefix))throw Error('Registration path lies outside the selected project subtree');const result=prefix?path.slice(prefix.length):path;RelativePathSchema.parse(result);return result;};
- return freeze({policy:r.policy,config:r.config,baseline:{...r.baseline,contracts:r.baseline.contracts.map(c=>({...c,sourceRef:local(c.sourceRef)})),intents:r.baseline.intents.map(i=>({...i,origin:{...i.origin,ref:local(i.origin.ref)}})),...(r.baseline.scope?{scope:r.baseline.scope.map(local)}:{})},inputs:r.inputs.map(local),configPaths:r.configPaths.map(local),claimScopes:r.claimScopes.map(s=>({...s,targetRef:local(s.targetRef)}))});
+ return freeze({policy:r.policy,config:r.config,...(r.source.configRef?{configRef:local(r.source.configRef)}:{}),baseline:{...r.baseline,contracts:r.baseline.contracts.map(c=>({...c,sourceRef:local(c.sourceRef)})),intents:r.baseline.intents.map(i=>({...i,origin:{...i.origin,ref:local(i.origin.ref)}})),...(r.baseline.scope?{scope:r.baseline.scope.map(local)}:{})},inputs:r.inputs.map(local),configPaths:r.configPaths.map(local),claimScopes:r.claimScopes.map(s=>({...s,targetRef:local(s.targetRef)}))});
 }

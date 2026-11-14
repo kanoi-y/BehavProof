@@ -89,3 +89,6 @@ it('records synthetic merge parents and distinguishes a valid PR/base relationsh
   expect(await verifyMergeSubject(dir,{...subject,baseSha:base})).toBe('unknown');
  }finally{await rm(dir,{recursive:true,force:true});}
 });
+it('keeps clean tracked, modified and explicit ignored inputs distinct in a multi-file subject',async()=>{
+ const {gitSubject}=await import('../../packages/adapter-reports/src/index.js'),root=await mkdtemp(join(tmpdir(),'behavproof-tracked-scope-'));try{git(root,'init','-q','-b','main');git(root,'config','user.email','fixture@example.invalid');git(root,'config','user.name','fixture');await writeFile(join(root,'.gitignore'),'ignored/\n');await writeFile(join(root,'with space.ts'),'one');await writeFile(join(root,'other.ts'),'two');git(root,'add','.');git(root,'commit','-qm','Tracked inputs');expect((await gitSubject(root,['with space.ts','other.ts'])).dirty).toBe(false);await mkdir(join(root,'ignored'));await writeFile(join(root,'ignored/input.ts'),'explicit ignored input');expect((await gitSubject(root,['with space.ts','ignored/input.ts'])).dirty).toBe(true);await writeFile(join(root,'other.ts'),'changed');expect((await gitSubject(root,['with space.ts','other.ts'])).dirty).toBe(true);}finally{await rm(root,{recursive:true,force:true});}
+});
