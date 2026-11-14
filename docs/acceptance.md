@@ -36,7 +36,7 @@
 | AC-25 | M2 | Docを生成し再実行 → 差分なし（入力が同じとき） | ローカル検証済み | tests/cli/commands.test.ts |
 | AC-26 | M2 | 追跡中の生成Docを手編集 → `docs check`が差異を検出 | ローカル検証済み | tests/cli/commands.test.ts |
 | AC-27 | M2 | Contractのファイル移動・ID維持 → 不必要なIntent変更承認を要求しない | ローカル検証済み | tests/contracts/registry.test.ts |
-| AC-28 | M2 | 高リスクファイルの影響が不明 → 理由付きunknown、設定によりblock | 修正後の全体検証中 | tests/cli/impact-gate.test.ts：実CLIの解決済み変更gate0→不明変更gate1、criticalの保護floor、実対象の明示対応。従来のRegistry単体検査だけではgate接続を証明できなかった |
+| AC-28 | M2 | 高リスクファイルの影響が不明 → 理由付きunknown、設定によりblock | ローカル検証済み | tests/cli/impact-gate.test.ts：実CLIの解決済み変更gate0→不明変更gate1、criticalの保護floor、実対象の明示対応。従来のRegistry単体検査だけではgate接続を証明できなかった |
 | AC-29 | M2 | AIがIntentとテストを同時に生成 → 未承認なら承認済みと扱わない | ローカル検証済み | tests/contracts/registry.test.ts |
 | AC-30 | M2 | 同一Contract IDの競合ソース → 明示的な重複エラー | ローカル検証済み | tests/contracts/registry.test.ts |
 | AC-31 | M2-F | Quintを未使用 → 依存の追加・既存CIへの影響なし | 任意M2-F（今回の必須範囲外） | — |
@@ -78,3 +78,5 @@ M0終了条件は `docs/m0-results.md` で管理する。実装タスクとレ�
 分離後の接続検証では、実Git/実Vitest/Collectorから得たCI形状の成果物を別checkoutへ復元して実CLIで照合する検査を追加した。GitHub control-planeの応答はfixtureであり、外部AC-18/22/50の実証に昇格しない。実PDD main185ファイルのコード非実行auditは未検証runnerを明示しincomplete（`docs/evidence/pdd-adoption-audit.json`）。保護されたrunner選択でwrapper推定を置換する経路は、現在の認証済みmanifestとtest artifactに結合した場合だけ使用できる。
 
 実PDDの受理関数を対象とする64ケースの局所検証では、通常比較・ケース別本番呼び出し・故障感度を確認した。常時受理の改変は63ケースで失敗し、期待値も改変した場合は保持したContract/Intent基準により拒否した（`docs/evidence/pdd-acceptance-flow.json`）。人間承認・外部pipelineがない完全なgateはblockのまま。現在の導入案はBehavProof専用リポジトリのSDKを固定参照するpdd-ts PR10であり、新しい同一HEAD承認と保護環境の実地試験は未完了。
+
+仕様照合で見つかったgate未接続の影響解析、nested projectのintent diff、Policy差分と対象/対処表示を修正したSDK `a94329e61bd0a56141b5f6c9f9156b9aa3b29b56` は [run43607098197](https://github.com/kanoi-y/BehavProof/actions/runs/43607098197) が3 OSで成功。Linux/macOS各305成功、Windows302成功・POSIX限定3skip。Linuxの実PDD5シナリオではContract無変更のリファクタを含め、正常64比較/64カナリア、偽callbackのunknown、実故障63失敗、無承認期待値変更の拒否を確認し、ZIP digest/内容を独立照合した（`docs/evidence/github-hosted-m2-fixes.json`）。消費側PR10の新HEAD0046da6も [run43607678403](https://github.com/kanoi-y/pdd-ts/actions/runs/43607678403) が既存280テスト・proof・正常/負例デモ・配布CLI検証まで成功。M0と外部ACの未完了を、この製品CIで置換しない。

@@ -98,7 +98,7 @@
 
 3検証job合計は245 runner秒（並列実行）。料金・CPU使用量・人間の作業負荷の測定ではない。これらのCI内fixtureは明示的なローカルhost権威を使い、独立した本番用CI権威やBehavProof必須ゲートの登録へ昇格させない。
 
-NFR-03の初期性能目標について、`node scripts/benchmark-audit.mjs` で9,685,187 bytes／12,000 assertionsの合成JSONを3回監査し、439/851/854ms、中央値851msを観測した。テスト実行を含まない単一ファイルの解析・監査測定であり、合成レポートのtestResultはunknownを保持する。大規模リポジトリ・意味的品質・メモリ・人間の使いやすさの保証ではない。
+NFR-03の初期性能目標について、`node scripts/benchmark-audit.mjs` で9,685,187 bytes／12,000 assertionsの合成JSONを3回監査し、437/714/718ms、中央値714msを観測した。テスト実行を含まない単一ファイルの解析・監査測定であり、合成レポートのtestResultはunknownを保持する。大規模リポジトリ・意味的品質・メモリ・人間の使いやすさの保証ではない。
 
 PR #7のBotレビューで判明した「重複mode/help/versionによる最終コマンドの迂回」「実行要件のない契約が集計から消える」は別途回帰テストで再現し修正した。旧headの3 OS成功を修正後HEADの成功として流用せず、再実行する。人間のApproveは現在未取得で、CLIも承認をunknownとして記録する。
 
@@ -113,3 +113,7 @@ PR7の実コミット5cb1133を一時checkoutし、外部登録済みcedc7a15…
 [PR8](https://github.com/kanoi-y/pdd-ts/pull/8) の7bcfa1dに対する [run43579133741](https://github.com/kanoi-y/pdd-ts/actions/runs/43579133741) は、Linux/macOS各287件、Windows284件（POSIX限定3件skip）、ビルド・配布consumer・実Collector/probe/CLIが成功。Linuxでは固定イメージのネットワーク無効/読取専用/非rootコンテナの5シナリオも成功。3成果物ZIPのdigest/実バイト/実フロー記録は独立照合済み（github-hosted-protected-proposal.json）。無承認Intentを拒否する新しいbasic-risk正例プロジェクトはcriticalの承認済み基準を変更しない。
 
 このCIはライブラリ・旧導入案の検証であり、登録済み本番producer/Appによるチェック発行ではない。製品分離後、PR7/8はマージせず終了し、PR8への承認・導入依頼も取り消した。現在の製品は専用のpublicリポジトリ `kanoi-y/BehavProof` で管理し、pdd-ts PR10は固定SDK参照と実PDD受理関数の契約データを持つ検証用の導入案として扱う。新しい同一HEADの人間承認・導入と外部AC-18/22/50は未完了。
+
+## 初回auditと変更作業の計測
+
+`examples/node-api`を既存Gitプロジェクトとし、Node24/Gitとビルド済み6 tarballを前提に、install / init dry-run / init / doctor / auditの5コマンドを実行した。固定SDK a94329eのインストール済みCLIで計2526ms、doctorはsingle-package、auditはexit0/incomplete。人間のactive時間ではなく、自動実行した操作数・所要時間である（`docs/evidence/first-audit-onboarding.json`）。実PDDのリファクタは本番1ファイルだけを変更し、Contract編集0で64比較と本番呼び出し/故障感度を再検証した。作業差分は`pdd-acceptance-flow.json`のmaintenance、Linux実行の照合済み記録は`github-hosted-m2-fixes.json`に保持する。人間レビュー/管理作業と専用consumer CIの増分測定・最終採用判断は残っている。

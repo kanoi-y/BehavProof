@@ -8,8 +8,8 @@
     "Six built reviewed SDK package tarballs available; their build/packing is prerequisite work, excluded from command count"
   ],
   "sdk": {
-    "sourceCommit": "6b594be5e54cd7caea282ff9ecf215f52577e550",
-    "uncommittedSdkInputs": true,
+    "sourceCommit": "a94329e61bd0a56141b5f6c9f9156b9aa3b29b56",
+    "uncommittedSdkInputs": false,
     "tarballs": [
       {
         "package": "@behavproof/core",
@@ -33,7 +33,7 @@
       },
       {
         "package": "@behavproof/cli",
-        "sha256": "17a2a79ab8242808e37c210eab3b085c88e753020e3e7ff0036d63bdd160c707"
+        "sha256": "f4d31e46955331cbb441209d23a1a67c40a1a7a87436b44600b6f6e7a9f52445"
       }
     ]
   },
@@ -42,30 +42,30 @@
     {
       "command": "npm install --offline --ignore-scripts <six reviewed tarballs>",
       "exit": 0,
-      "durationMs": 1449
+      "durationMs": 1427
     },
     {
       "command": "behavproof init --dry-run",
       "exit": 0,
-      "durationMs": 209
+      "durationMs": 201
     },
     {
       "command": "behavproof init",
       "exit": 0,
-      "durationMs": 230
+      "durationMs": 253
     },
     {
       "command": "behavproof doctor",
       "exit": 0,
-      "durationMs": 255
+      "durationMs": 248
     },
     {
       "command": "behavproof check --mode audit --base HEAD --head HEAD --format json",
       "exit": 0,
-      "durationMs": 387
+      "durationMs": 385
     }
   ],
-  "totalCommandWallMs": 2545,
+  "totalCommandWallMs": 2526,
   "outcome": {
     "doctor": "single-package",
     "auditExit": 0,
