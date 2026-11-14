@@ -19,11 +19,14 @@ Actual results in [pdd-acceptance-flow.json](evidence/pdd-acceptance-flow.json):
 | Scenario | Actual ordinary comparisons | Separate observations | Protected result |
 | --- | --- | --- | --- |
 | Original PDD conjunction | 64 pass, one comparison per input | Per-case target calls and64 real fault comparisons | Required behavioral evidence passes; missing external pipeline blocks full gate |
+| Behavior-preserving real-function refactor | 64 pass with the same Contract revision | Only the production source file changes; Contract source unchanged; calls/fault sensitivity reverified | Required behavioral evidence passes; missing external pipeline still blocks |
 | Callback returns expected value | 64 pass | Target/sensitivity unknown | Block |
 | Actual function changed to always accept | 63 fail, one pass; no sealed success artifacts | Ordinary failure, not canary success | Block |
 | Always-accept plus all expectations changed to true | 64 pass | New unapproved contract revision cannot borrow old observations | Contract/Intent transition fail, block |
 
 The record includes actual subjects, source hashes, artifact hashes, binding/revision hashes, injected fault details, failed canary comparisons and measured duration. Local temporary integration commits are explicitly distinguished from remote PR commits. This establishes scoped value on the real acceptance predicate; it does not establish whole-PDD correctness, coverage/mutation scores, human approval or live protected CI authority.
+
+`--source-repo <existing-local-repository>` reads the same immutable upstream Git objects without a network fetch, materializing raw blobs rather than importing that repository's working tree. The recorded five-scenario local run used this mode. Its maintenance rows count actual tracked-file differences from the unchanged proposed Contract baseline: the refactor changes one production file and zero Contract files. This measures an automated experiment, not human editing time. Linux Docker validation remains separately bound to its actual SDK head/run.
 
 On Linux product CI, `--sandbox-sdk <validated-linux-sdk>` repeats the experiment through the same network-disabled/read-only/non-root container runner used by the live producer. The parent fetches the immutable public source before candidate execution. The Node-only default is an explicit local experiment, not an OS sandbox.
 

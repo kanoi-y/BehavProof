@@ -11,7 +11,7 @@
 | M0-02 認可の最小縦スライス | 実承認ソースのケース別観測・カナリアをローカル検証済み | 実Vitestで正常実装2成功、本番故障1失敗、偽物コールバック2成功。公開ヘルパー＋Collector＋CLIで実行。新workerで本番呼び出し・同一callback故障を別観測し、偽物はunknown。外部CI/保護は未完了 |
 | M0-03 外部承認とPolicy更新 | 実Approveと固定基準の結合済み・保護CI更新待ち | PR #7の実ソースから契約ハッシュを計算。未承認時unknownから、実User Approve後Policy/Intent/Contract passを確認。登録digest固定で実5cbソースを再実行した（approved-probe-live.json） |
 | M0-04 最終ゲートと外部保護 | 事前調査のみ | mainは発行元に結合した2チェックとレビューを必須としている。BehavProof自身のskip・削除・同名偽装への耐性は未検証 |
-| M0-05 作業量・CIコスト | ローカルと3 OS CIの実行時間を計測 | public-flow.json/github-hosted.jsonに時間、audit-throughput.jsonに約10MB解析の中央値。人間の作業時間・料金/CPUは未計測 |
+| M0-05 作業量・CIコスト | 実CI時間・導入ファイル数を記録、導入/変更の作業測定と増分比較は未完了 | [導入負担・CI時間](pdd-adoption-cost.md)にSDK各OS107/182/97s、既存PDD480s、導入6ファイルと別CI修正1件を記録。異なるworkloadを差し引いて増分としない |
 
 ## GitHub事前調査（2026-11-13）
 

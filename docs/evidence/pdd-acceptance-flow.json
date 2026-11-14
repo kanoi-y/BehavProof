@@ -1,6 +1,8 @@
 {
   "schemaVersion": 1,
-  "command": "node scripts/pdd-acceptance-flow.mjs",
+  "command": "node scripts/pdd-acceptance-flow.mjs --source-repo <read-only-local-git-object-source>",
+  "gitObjectSource": "Read-only local Git object source; same immutable upstream commit, no working-tree files imported",
+  "isolation": "Explicit local Node runner; not an OS sandbox",
   "node": "v24.14.1",
   "upstream": {
     "repository": "kanoi-y/pdd-ts",
@@ -20,18 +22,23 @@
     "Actual PDD production function executed, not a copied implementation or toy target.",
     "Only its six-condition acceptance behavior is exercised; no whole-PDD correctness/coverage/mutation-score claim.",
     "Package build/test wrapper is not executed.",
-    "Local Node runner is not an OS sandbox; live protected deployment and human enrollment remain separate.",
+    "Live protected deployment, registered CI producer, App issuance and human enrollment remain separate.",
     "The full gate remains blocked by absent external pipeline authority."
   ],
   "runs": [
     {
       "id": "normal",
-      "durationMs": 9831,
+      "maintenance": {
+        "operator": "automated experiment",
+        "changedTrackedFiles": [],
+        "contractSourceEdited": false
+      },
+      "durationMs": 9777,
       "subject": {
-        "testedCommitSha": "bbe4409521e1750231b3a598ffcd46c3c7203c3a",
+        "testedCommitSha": "7c327f1d969761de3c68f36adb4c7aeff4f19e72",
         "sourceTreeHash": "0595d9a34c9b62c5021e28e401b4cc72b3a0b21871b5e907f231095a91df5219",
         "dirty": false,
-        "prHeadSha": "bbe4409521e1750231b3a598ffcd46c3c7203c3a",
+        "prHeadSha": "7c327f1d969761de3c68f36adb4c7aeff4f19e72",
         "baseSha": "dd06da788bef5cfbe7f9131fe5609a61cefbd458",
         "diffBaseSha": "dd06da788bef5cfbe7f9131fe5609a61cefbd458"
       },
@@ -41,7 +48,7 @@
         "fault": {
           "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
           "originalSha256": "e6b2a26b77d004d89f33ec7ae9b50f8126357127ba584ad1c60db6e5cc783134",
-          "mutatedSha256": "f0b96ea2cedf35237d12d675eec111f20c93e2261a0ca48d8041d891da4391ba",
+          "mutatedSha256": "e7148647ecfcacb226a2e8741b8dbb2574ad1a94c331aa613384c5071f0d79e3",
           "description": "Replace the selected function body with the host-selected distinct JSON fault value"
         },
         "exitCode": 1,
@@ -436,7 +443,7 @@
       "sealedArtifacts": [
         {
           "ref": ".behavproof/collected/normal/vitest.json",
-          "sha256": "4577695e10cd8bbbe02a75c961cb7b897d68dde66a8187a2c3cfbb56333fda5f",
+          "sha256": "353f343e5898676ed1c5b51961df6bfb8f18d6abc3170fe3019489a76d9ee060",
           "kind": "test",
           "scope": [
             "PDD-EVIDENCE-ACCEPTANCE"
@@ -444,7 +451,7 @@
         },
         {
           "ref": ".behavproof/collected/normal/contracts.json",
-          "sha256": "ff3eae1960091be145fb0af336f2f6c847989e3aa2df8a9d1818645ea92f4c96",
+          "sha256": "528b7d9a431be27790c08c54213507926f85f4e6d1ce339a809a3c4cf80ead90",
           "kind": "contract_report",
           "scope": [
             "PDD-EVIDENCE-ACCEPTANCE"
@@ -452,7 +459,7 @@
         },
         {
           "ref": ".behavproof/collected/normal/claims.json",
-          "sha256": "7591b71bfd266184e9f18ac83a5e28307c83f3dd2c6d10f3db142b9824125671",
+          "sha256": "4efd23b61608cb2a758aad33eb318fc7d7709e0bde9540b92c5147e67860573e",
           "kind": "claims",
           "scope": [
             "PDD-EVIDENCE-ACCEPTANCE"
@@ -460,7 +467,7 @@
         },
         {
           "ref": ".behavproof/collected/normal/probe-diagnostics.json",
-          "sha256": "ea65546c98b024d6dd0dc064e7d5cc408e09d171aa054348b58696417ad0421b",
+          "sha256": "06678c43743778f233797957a68302c357d248a36f44815fed14bbada1e26b71",
           "kind": "diagnostic",
           "scope": [
             "PDD-EVIDENCE-ACCEPTANCE"
@@ -2664,6 +2671,2836 @@
         }
       ],
       "evaluations": [
+        {
+          "ruleId": "changeImpact",
+          "severity": "off",
+          "scope": [
+            "PDD-EVIDENCE-ACCEPTANCE",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "changeImpact",
+          "severity": "off",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "changedLineCoverage",
+          "severity": "warn",
+          "scope": [
+            "PDD-EVIDENCE-ACCEPTANCE",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "changedLineCoverage",
+          "severity": "warn",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "contractExecution",
+          "severity": "error",
+          "scope": [
+            "PDD-EVIDENCE-ACCEPTANCE",
+            "contract"
+          ],
+          "status": "pass"
+        },
+        {
+          "ruleId": "contractExecution",
+          "severity": "error",
+          "scope": [],
+          "status": "pass"
+        },
+        {
+          "ruleId": "intentApproval",
+          "severity": "error",
+          "scope": [
+            "PDD-EVIDENCE-ACCEPTANCE",
+            "contract"
+          ],
+          "status": "pass"
+        },
+        {
+          "ruleId": "intentApproval",
+          "severity": "error",
+          "scope": [],
+          "status": "pass"
+        },
+        {
+          "ruleId": "mutationScore",
+          "severity": "off",
+          "scope": [
+            "PDD-EVIDENCE-ACCEPTANCE",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "mutationScore",
+          "severity": "off",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "mutationSensitivityObserved",
+          "severity": "error",
+          "scope": [
+            "PDD-EVIDENCE-ACCEPTANCE",
+            "contract"
+          ],
+          "status": "pass"
+        },
+        {
+          "ruleId": "mutationSensitivityObserved",
+          "severity": "error",
+          "scope": [],
+          "status": "pass"
+        },
+        {
+          "ruleId": "negativeCases",
+          "severity": "error",
+          "scope": [
+            "PDD-EVIDENCE-ACCEPTANCE",
+            "contract"
+          ],
+          "status": "pass"
+        },
+        {
+          "ruleId": "negativeCases",
+          "severity": "error",
+          "scope": [],
+          "status": "pass"
+        },
+        {
+          "ruleId": "pipelineIntegrity",
+          "severity": "error",
+          "scope": [
+            "PDD-EVIDENCE-ACCEPTANCE",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "pipelineIntegrity",
+          "severity": "error",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "policyProtection",
+          "severity": "error",
+          "scope": [
+            "PDD-EVIDENCE-ACCEPTANCE",
+            "contract"
+          ],
+          "status": "pass"
+        },
+        {
+          "ruleId": "policyProtection",
+          "severity": "error",
+          "scope": [],
+          "status": "pass"
+        },
+        {
+          "ruleId": "productionTargetObserved",
+          "severity": "error",
+          "scope": [
+            "PDD-EVIDENCE-ACCEPTANCE",
+            "contract"
+          ],
+          "status": "pass"
+        },
+        {
+          "ruleId": "productionTargetObserved",
+          "severity": "error",
+          "scope": [],
+          "status": "pass"
+        },
+        {
+          "ruleId": "testResult",
+          "severity": "error",
+          "scope": [
+            "PDD-EVIDENCE-ACCEPTANCE",
+            "contract"
+          ],
+          "status": "pass"
+        },
+        {
+          "ruleId": "testResult",
+          "severity": "error",
+          "scope": [],
+          "status": "pass"
+        }
+      ],
+      "drift": []
+    },
+    {
+      "id": "refactor",
+      "maintenance": {
+        "operator": "automated experiment",
+        "changedTrackedFiles": [
+          "src/verification/acceptance.ts"
+        ],
+        "contractSourceEdited": false
+      },
+      "durationMs": 4027,
+      "subject": {
+        "testedCommitSha": "eb84810dc01ea7db081f6fb042705a27c60eedd5",
+        "sourceTreeHash": "1cd21f7d4f42c51455c86e26d14f87ff4a745b9a80ac25a50cc61ef01b8df9f6",
+        "dirty": false,
+        "prHeadSha": "eb84810dc01ea7db081f6fb042705a27c60eedd5",
+        "baseSha": "dd06da788bef5cfbe7f9131fe5609a61cefbd458",
+        "diffBaseSha": "dd06da788bef5cfbe7f9131fe5609a61cefbd458"
+      },
+      "targetSourceSha256": "7fdb96baec9ca3033eff5a1f7b7c1e0644c6cf3d5fdcbba49cc8b69db4815ece",
+      "injectedFault": null,
+      "canary": {
+        "fault": {
+          "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+          "originalSha256": "7fdb96baec9ca3033eff5a1f7b7c1e0644c6cf3d5fdcbba49cc8b69db4815ece",
+          "mutatedSha256": "cb2b0b67645922436f063e71055333914f5fda8df0a0f41fe9c27670a7e75969",
+          "description": "Replace the selected function body with the host-selected distinct JSON fault value"
+        },
+        "exitCode": 1,
+        "failedComparisons": [
+          {
+            "caseId": "mask-00",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-01",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-02",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-03",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-04",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-05",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-06",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-07",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-08",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-09",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-10",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-11",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-12",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-13",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-14",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-15",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-16",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-17",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-18",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-19",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-20",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-21",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-22",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-23",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-24",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-25",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-26",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-27",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-28",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-29",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-30",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-31",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-32",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-33",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-34",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-35",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-36",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-37",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-38",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-39",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-40",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-41",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-42",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-43",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-44",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-45",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-46",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-47",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-48",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-49",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-50",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-51",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-52",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-53",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-54",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-55",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-56",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-57",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-58",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-59",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-60",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-61",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-62",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          },
+          {
+            "caseId": "mask-63",
+            "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+            "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+            "comparisonCount": 1
+          }
+        ]
+      },
+      "producerExit": 0,
+      "sealedArtifacts": [
+        {
+          "ref": ".behavproof/collected/refactor/vitest.json",
+          "sha256": "94ba77b337403f044106e1b5a3a0b64a10174323fc0225e3dfa5910b3f84abc7",
+          "kind": "test",
+          "scope": [
+            "PDD-EVIDENCE-ACCEPTANCE"
+          ]
+        },
+        {
+          "ref": ".behavproof/collected/refactor/contracts.json",
+          "sha256": "528b7d9a431be27790c08c54213507926f85f4e6d1ce339a809a3c4cf80ead90",
+          "kind": "contract_report",
+          "scope": [
+            "PDD-EVIDENCE-ACCEPTANCE"
+          ]
+        },
+        {
+          "ref": ".behavproof/collected/refactor/claims.json",
+          "sha256": "20c18ccac7858d0a3f744b3579c696d782091f50274763b8841c51d12d2dd5c8",
+          "kind": "claims",
+          "scope": [
+            "PDD-EVIDENCE-ACCEPTANCE"
+          ]
+        },
+        {
+          "ref": ".behavproof/collected/refactor/probe-diagnostics.json",
+          "sha256": "c05863eda151a4cf9bb8522982b0f9074bec52b2afa9e6f7f4a60b2af7e78445",
+          "kind": "diagnostic",
+          "scope": [
+            "PDD-EVIDENCE-ACCEPTANCE"
+          ]
+        }
+      ],
+      "gateExit": 1,
+      "gateStatus": "incomplete",
+      "detection": {
+        "evidence": [
+          "package.json",
+          "pnpm-lock.yaml",
+          "vitest.config.ts",
+          ".github/workflows",
+          "git",
+          "vitest dependency",
+          "Protected host selected Vitest 5.1.0; package script is not executed",
+          "Node.js project"
+        ],
+        "reasons": [],
+        "support": "single-package"
+      },
+      "comparisons": [
+        {
+          "caseId": "mask-00",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-01",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-02",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-03",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-04",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-05",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-06",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-07",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-08",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-09",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-10",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-11",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-12",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-13",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-14",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-15",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-16",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-17",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-18",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-19",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-20",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-21",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-22",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-23",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-24",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-25",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-26",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-27",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-28",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-29",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-30",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-31",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-32",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-33",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-34",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-35",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-36",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-37",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-38",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-39",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-40",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-41",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-42",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-43",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-44",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-45",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-46",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-47",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-48",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-49",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-50",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-51",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-52",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-53",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-54",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-55",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-56",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-57",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-58",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-59",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-60",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-61",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-62",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        },
+        {
+          "caseId": "mask-63",
+          "revisionHash": "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580",
+          "bindingHash": "5064bdbdb1a9a7c785379050b6b7e521b0826de7bff900c036808c8cada0d31a",
+          "status": "pass",
+          "comparisonCount": 1
+        }
+      ],
+      "claims": [
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-00"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-01"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-02"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-03"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-04"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-05"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-06"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-07"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-08"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-09"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-10"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-11"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-12"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-13"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-14"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-15"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-16"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-17"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-18"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-19"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-20"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-21"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-22"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-23"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-24"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-25"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-26"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-27"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-28"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-29"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-30"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-31"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-32"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-33"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-34"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-35"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-36"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-37"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-38"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-39"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-40"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-41"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-42"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-43"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-44"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-45"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-46"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-47"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-48"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-49"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-50"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-51"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-52"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-53"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-54"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-55"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-56"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-57"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-58"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-59"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-60"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-61"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-62"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "target_observation",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-63"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "observations": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-00"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-01"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-02"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-03"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-04"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-05"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-06"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-07"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-08"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-09"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-10"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-11"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-12"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-13"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-14"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-15"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-16"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-17"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-18"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-19"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-20"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-21"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-22"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-23"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-24"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-25"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-26"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-27"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-28"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-29"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-30"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-31"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-32"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-33"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-34"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-35"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-36"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-37"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-38"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-39"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-40"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-41"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-42"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-43"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-44"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-45"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-46"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-47"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-48"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-49"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-50"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-51"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-52"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-53"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-54"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-55"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-56"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-57"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-58"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-59"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-60"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-61"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-62"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        },
+        {
+          "kind": "canary",
+          "payload": {
+            "contractId": "PDD-EVIDENCE-ACCEPTANCE",
+            "caseIds": [
+              "mask-63"
+            ],
+            "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+            "method": "protected-case-observer-and-vitest-canary-v1",
+            "detected": 1,
+            "total": 1,
+            "status": "pass"
+          }
+        }
+      ],
+      "evaluations": [
+        {
+          "ruleId": "changeImpact",
+          "severity": "off",
+          "scope": [
+            "PDD-EVIDENCE-ACCEPTANCE",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "changeImpact",
+          "severity": "off",
+          "scope": [],
+          "status": "unknown"
+        },
         {
           "ruleId": "changedLineCoverage",
           "severity": "warn",
@@ -2819,12 +5656,19 @@
     },
     {
       "id": "fake",
-      "durationMs": 3951,
+      "maintenance": {
+        "operator": "automated experiment",
+        "changedTrackedFiles": [
+          "validation/behavproof-probe/tests/acceptance.contract.ts"
+        ],
+        "contractSourceEdited": true
+      },
+      "durationMs": 3898,
       "subject": {
-        "testedCommitSha": "4daf01449e3507924720a7138a73a98bb154a227",
+        "testedCommitSha": "a06785608452043663b2253551dbfb48f5142d8a",
         "sourceTreeHash": "87a4a6c07b3e67e3013f622eed33a074749dcd63fe46cfa71eb7259a1c268e2c",
         "dirty": false,
-        "prHeadSha": "4daf01449e3507924720a7138a73a98bb154a227",
+        "prHeadSha": "a06785608452043663b2253551dbfb48f5142d8a",
         "baseSha": "dd06da788bef5cfbe7f9131fe5609a61cefbd458",
         "diffBaseSha": "dd06da788bef5cfbe7f9131fe5609a61cefbd458"
       },
@@ -2834,7 +5678,7 @@
         "fault": {
           "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
           "originalSha256": "e6b2a26b77d004d89f33ec7ae9b50f8126357127ba584ad1c60db6e5cc783134",
-          "mutatedSha256": "4a843ecaa0dc3364b9060a54801ddff9d31ba2372964a546fc751af0c30e2659",
+          "mutatedSha256": "c0e23f0403b3c5643792f48d549170e2d6ebfb01d5079cda5a159b89db8fcdd4",
           "description": "Replace the selected function body with the host-selected distinct JSON fault value"
         },
         "exitCode": 0,
@@ -2844,7 +5688,7 @@
       "sealedArtifacts": [
         {
           "ref": ".behavproof/collected/fake/vitest.json",
-          "sha256": "026f54cf7fd9bff4eb85008bd13162ead4a0aa495d90dfee7c167fa15c08d4fe",
+          "sha256": "99cde84d51c442615d4a483e611812cff8b68870e4ec9315327974bab50eb90b",
           "kind": "test",
           "scope": [
             "PDD-EVIDENCE-ACCEPTANCE"
@@ -2852,7 +5696,7 @@
         },
         {
           "ref": ".behavproof/collected/fake/contracts.json",
-          "sha256": "d7089f2db77a97b243ad86b123bc0541728162b9ec4293c84808d77ebd81da1a",
+          "sha256": "9f664e39d68b940c678bf7498909258a50927aa2ffb032bd8de7179af55a5609",
           "kind": "contract_report",
           "scope": [
             "PDD-EVIDENCE-ACCEPTANCE"
@@ -2860,7 +5704,7 @@
         },
         {
           "ref": ".behavproof/collected/fake/claims.json",
-          "sha256": "7ea25e9a379dc1c1e1e4cb5210d0488078067f620d960c43f9b6134cdb9e146e",
+          "sha256": "31c4c4e8c02832f38329924151b40bc90bcd8def447b07ca73ce0865b374220d",
           "kind": "claims",
           "scope": [
             "PDD-EVIDENCE-ACCEPTANCE"
@@ -2868,7 +5712,7 @@
         },
         {
           "ref": ".behavproof/collected/fake/probe-diagnostics.json",
-          "sha256": "9edb51a7eb225e5fe9ae646d04f3ccacaabb62cfbfb866fe283a7581489f9a0f",
+          "sha256": "d65b6c87c1a8765f258cb846faa30f16b99ed1525c8cd2f4fbe03ce8067d8361",
           "kind": "diagnostic",
           "scope": [
             "PDD-EVIDENCE-ACCEPTANCE"
@@ -5073,6 +7917,21 @@
       ],
       "evaluations": [
         {
+          "ruleId": "changeImpact",
+          "severity": "off",
+          "scope": [
+            "PDD-EVIDENCE-ACCEPTANCE",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "changeImpact",
+          "severity": "off",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
           "ruleId": "changedLineCoverage",
           "severity": "warn",
           "scope": [
@@ -5227,12 +8086,19 @@
     },
     {
       "id": "faulty",
-      "durationMs": 3116,
+      "maintenance": {
+        "operator": "automated experiment",
+        "changedTrackedFiles": [
+          "src/verification/acceptance.ts"
+        ],
+        "contractSourceEdited": false
+      },
+      "durationMs": 3222,
       "subject": {
-        "testedCommitSha": "401dd7ce922d07b074a57babc5c00194d9a5fb24",
+        "testedCommitSha": "57875e31b81edc8de910871914c68d69c257b0e7",
         "sourceTreeHash": "f62882befe0ff1d37423aa35dde8f8e1c875208fe295d0c484e45139326b60c1",
         "dirty": false,
-        "prHeadSha": "401dd7ce922d07b074a57babc5c00194d9a5fb24",
+        "prHeadSha": "57875e31b81edc8de910871914c68d69c257b0e7",
         "baseSha": "dd06da788bef5cfbe7f9131fe5609a61cefbd458",
         "diffBaseSha": "dd06da788bef5cfbe7f9131fe5609a61cefbd458"
       },
@@ -5711,6 +8577,21 @@
       "claims": [],
       "evaluations": [
         {
+          "ruleId": "changeImpact",
+          "severity": "off",
+          "scope": [
+            "PDD-EVIDENCE-ACCEPTANCE",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "changeImpact",
+          "severity": "off",
+          "scope": [],
+          "status": "unknown"
+        },
+        {
           "ruleId": "changedLineCoverage",
           "severity": "warn",
           "scope": [
@@ -5877,12 +8758,20 @@
     },
     {
       "id": "unapproved-weakening",
-      "durationMs": 4261,
+      "maintenance": {
+        "operator": "automated experiment",
+        "changedTrackedFiles": [
+          "src/verification/acceptance.ts",
+          "validation/behavproof-probe/tests/acceptance.contract.ts"
+        ],
+        "contractSourceEdited": true
+      },
+      "durationMs": 4099,
       "subject": {
-        "testedCommitSha": "63806f8f8af23b4f9c5db595eea51d50d85cbc14",
+        "testedCommitSha": "794a0d9619d6b933531dce466ff147f8400a2167",
         "sourceTreeHash": "6096a66b951ce0fd5c9c06279e7a110bdf8b40394ed0d691361b683f5ad0628c",
         "dirty": false,
-        "prHeadSha": "63806f8f8af23b4f9c5db595eea51d50d85cbc14",
+        "prHeadSha": "794a0d9619d6b933531dce466ff147f8400a2167",
         "baseSha": "dd06da788bef5cfbe7f9131fe5609a61cefbd458",
         "diffBaseSha": "dd06da788bef5cfbe7f9131fe5609a61cefbd458"
       },
@@ -5892,7 +8781,7 @@
         "fault": {
           "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
           "originalSha256": "7fb0ff39ba39465f676755ae79501c5095f4e2d5a8303468fa1b35d8d6981445",
-          "mutatedSha256": "01d02a7f1290f4372fe6f43eb0416333a3fd4ced571d9b826eb21b51581dae79",
+          "mutatedSha256": "9bf91216da766c108d675699d3766b837664cd5f31781d4a5ea065f0c6639e41",
           "description": "Replace the selected function body with the host-selected distinct JSON fault value"
         },
         "exitCode": 1,
@@ -6287,7 +9176,7 @@
       "sealedArtifacts": [
         {
           "ref": ".behavproof/collected/unapproved-weakening/vitest.json",
-          "sha256": "925babb812d8f1f1c6e7da19b5b357b97744c81bcd2713a0ad96263e8a2358ba",
+          "sha256": "b008991b2ce6e5c8cf4723b494e6d90aaf6ca9b2f3dc1fdcf51b14b2801592b6",
           "kind": "test",
           "scope": [
             "PDD-EVIDENCE-ACCEPTANCE"
@@ -6295,7 +9184,7 @@
         },
         {
           "ref": ".behavproof/collected/unapproved-weakening/contracts.json",
-          "sha256": "10e252f7fddbfafcdf59c87d297eb8e76b8ee873154146f88ed8f798dfb0088a",
+          "sha256": "63f4cb1fa88f22745ff60f0e5b3132af67ad171b51d87e3160ded2d1529a3882",
           "kind": "contract_report",
           "scope": [
             "PDD-EVIDENCE-ACCEPTANCE"
@@ -6303,7 +9192,7 @@
         },
         {
           "ref": ".behavproof/collected/unapproved-weakening/claims.json",
-          "sha256": "db1d409fa065a12b914e1acdc8bef53aadf0421eda8cabbe31409536e636ef7d",
+          "sha256": "f216d79b42394225d6e8ad1d679399c37b2cbc0ec6f046ce8f9531f6c88b4b70",
           "kind": "claims",
           "scope": [
             "PDD-EVIDENCE-ACCEPTANCE"
@@ -6311,7 +9200,7 @@
         },
         {
           "ref": ".behavproof/collected/unapproved-weakening/probe-diagnostics.json",
-          "sha256": "4226c90e164677ba07ed7332d796de5cc00e25292ac7097fac3540d84d8273db",
+          "sha256": "6ec6072698e62dbdc7217c5cc547b8e3ed92a2ce0deb25e7f0c60bab14e3050e",
           "kind": "diagnostic",
           "scope": [
             "PDD-EVIDENCE-ACCEPTANCE"
@@ -8515,6 +11404,21 @@
         }
       ],
       "evaluations": [
+        {
+          "ruleId": "changeImpact",
+          "severity": "off",
+          "scope": [
+            "PDD-EVIDENCE-ACCEPTANCE",
+            "contract"
+          ],
+          "status": "unknown"
+        },
+        {
+          "ruleId": "changeImpact",
+          "severity": "off",
+          "scope": [],
+          "status": "unknown"
+        },
         {
           "ruleId": "changedLineCoverage",
           "severity": "warn",

@@ -5,13 +5,8 @@ import { parseConfig, canonicalJson, hash, safeRead, safeReadJson, type CheckRep
 import { detectProject, gitDiff } from '@behavproof/adapter-reports';
 import { renderDocuments, checkDocuments, analyzeImpact, reconcile } from '@behavproof/contract-registry';
 import { check } from './check.js';
+import {formatReport} from './report.js';
 import { config, exists, fileList, registry, git, writeScoped, select, ref } from './project.js';
-function formatReport(report:CheckReport,format:string){
- if(format==='json')return canonicalJson(report)+'\n';
- if(format==='markdown'){const escape=(s:string)=>s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('|','&#124;').replaceAll('\n',' ');return `# BehavProof ${report.status}\n\n| Rule | Severity | Status | Reason |\n| --- | --- | --- | --- |\n${report.evaluations.map(e=>`| ${escape(e.ruleId)} | ${e.severity} | ${e.status} | ${escape(e.message)} |`).join('\n')}\n`;}
- if(format!=='console')throw Error('Unsupported report format');
- return `BehavProof: ${report.status} (${report.mandatoryCount} mandatory rules)\n${report.evaluations.map(e=>`${e.status.padEnd(14)} ${e.severity.padEnd(5)} ${e.ruleId}: ${e.message}`).join('\n')}\n`;
-}
 const help=`BehavProof 0.1.0\nCommands: init, doctor, check, explain <rule>, baseline create, contracts discover|list|validate, intent diff, impact, docs generate|check\ncheck reads artifacts; it never runs tests. Gate requires --trust-root outside project.\nOptions: --config --base --head --profile --mode audit|gate --format console|json|markdown --output --trust-root --dry-run --check --help --version\n`;
 async function main(){
  const {values,positionals}=parseArgs({allowPositionals:true,strict:true,options:{config:{type:'string'},base:{type:'string'},head:{type:'string'},profile:{type:'string'},mode:{type:'string'},format:{type:'string'},output:{type:'string'},'trust-root':{type:'string'},'dry-run':{type:'boolean'},check:{type:'boolean'},help:{type:'boolean'},version:{type:'boolean'},root:{type:'string'}}});
@@ -31,6 +26,7 @@ async function main(){
  }
  if(command==='explain'){
   const explanations:Record<string,string>={testResult:'Vitest assertions must complete; skipped/zero tests or unverified producers remain unknown.',changedLineCoverage:'Changed-line coverage requires current authenticated LCOV, complete executable-line scope and source mapping. Missing data is unknown; collect coverage in the verified execution.',mutationScore:'Score = (Killed + Timeout) / (Killed + Timeout + Survived + NoCoverage). Missing mapping or insufficient comparable mutants is unknown.',pipelineIntegrity:'A final always() gate checks all upstream results and artifacts. External issuer-bound branch protection requires independent verification; unavailable authority is unknown.',contractExecution:'Declared contracts require verified runtime binding and all required cases. A fake callback can pass comparisons; production reach and sensitivity remain separate unknown claims.',intentApproval:'Intent and contract transitions require current content-bound human approval from a protected authority.',policyProtection:'Protected policy is supplied through a trusted external host and cannot be weakened by project configuration.'};
+  Object.assign(explanations,{productionTargetObserved:'Require case-scoped authenticated calls to the registered real production target; comparisons alone cannot prove reach.',mutationSensitivityObserved:'Require an actual failed comparison after the registered case-specific fault; retain it separately from ordinary test evidence.',negativeCases:'Require the registered negative cases to execute and compare their retained expectations.',changeImpact:'Analyze Git changes and the static dependency graph; unresolved critical impact blocks, standard warns. This does not prove behavioral equivalence.'});
   const key=(sub??'').replace(/-([a-z])/g,(_,c:string)=>c.toUpperCase());if(!explanations[key])throw Error('Unknown rule');await emit(explanations[key]+'\n');return 0;
  }
  if(command==='formal')throw Error('Unsupported optional M2-F command; no formal evidence is synthesized');
@@ -68,7 +64,7 @@ async function main(){
    await emit(canonicalJson({...analyzeImpact(sources,diff.files.map(f=>f.path),mappings),diff})+'\n');return 0;
   }
   const baseFiles=(await git(root,['ls-tree','-r','--name-only','-z',diff.diffBaseSha??diff.baseSha])).split('\0').filter(Boolean),sourceRows:{kind:string;ref:string;content:string}[]=[];
-  for(const s of cfg.contracts.sources)for(const p of select(baseFiles,s.include))sourceRows.push({kind:s.type,ref:p,content:await git(root,['show',`${diff.diffBaseSha??diff.baseSha}:${p}`])});
+  for(const s of cfg.contracts.sources)for(const p of select(baseFiles,s.include))sourceRows.push({kind:s.type,ref:p,content:await git(root,['show',`${diff.diffBaseSha??diff.baseSha}:./${p}`])});
   const {discoverSources,snapshot}=await import('@behavproof/contract-registry');const base=snapshot(discoverSources(sourceRows),diff.diffBaseSha??diff.baseSha,cfg.contracts.sources.flatMap(s=>s.include));
   await emit(canonicalJson({...reconcile(base,current),notice:'Git-derived baseline is comparison data, not independent approval authority.'})+'\n');return 0;
  }

@@ -7,6 +7,7 @@ import { git } from './project.js';
 export const ClaimScopesSchema=z.array(z.strictObject({contractId:z.string().min(1),caseIds:z.array(z.string().min(1)).min(1),targetRef:z.string().min(1),method:z.string().min(1)})).superRefine((scopes,ctx)=>{if(new Set(scopes.map(scope=>scope.contractId)).size!==scopes.length)ctx.addIssue({code:'custom',message:'Only one claim scope per contract is supported'});for(const scope of scopes)if(new Set(scope.caseIds).size!==scope.caseIds.length)ctx.addIssue({code:'custom',message:'Duplicate case IDs in claim scope'});});
 export const TrustRootSchema=z.strictObject({
  schemaVersion:z.literal(1),policy:PolicySchema,config:ConfigSchema,baseline:RegistrySnapshotSchema,
+ policySource:z.strictObject({repository:z.string().regex(/^[\w-]+\/[\w.-]+$/),commitSha:z.string().regex(/^[a-f0-9]{40}$/),ref:RelativePathSchema,fileHash:HashSchema,policyHash:HashSchema}).optional(),
  runner:z.strictObject({kind:z.literal('vitest'),version:z.string().regex(/^\d+\.\d+\.\d+(?:[-+][\w.-]+)?$/),manifestRef:RelativePathSchema}).optional(),
  inputs:z.array(RelativePathSchema).min(1),qualitySources:z.array(RelativePathSchema).min(1).optional(),configPaths:z.array(RelativePathSchema),dependencyLockPath:RelativePathSchema.optional(),
  manifests:z.array(z.strictObject({ref:RelativePathSchema,manifestHash:HashSchema.optional(),expected:ManifestExpectedSchema,authority:ProducerAuthoritySchema,github:z.strictObject({repository:z.string().min(1),workflowPath:z.string(),workflowSha:z.string(),jobName:z.string(),artifactName:z.string(),archivePath:RelativePathSchema,archiveEntries:z.record(RelativePathSchema,RelativePathSchema)}).optional()}).refine(row=>row.authority.kind!=='local'||row.manifestHash!==undefined,'Local authority requires host-pinned manifestHash')),
@@ -14,7 +15,7 @@ export const TrustRootSchema=z.strictObject({
  notApplicable:z.array(z.strictObject({ruleId:z.string().min(1),reason:z.string().min(1),evidenceRef:RelativePathSchema})).default([]),
  claimScopes:ClaimScopesSchema.default([]),
  pipeline:z.strictObject({workflow:RelativePathSchema,gateJob:z.string().min(1),requiredJobs:z.array(z.string().min(1)).min(1),artifacts:z.array(RelativePathSchema).min(1),protectedBranch:z.string().min(1),currentRun:z.strictObject({ci:CiIdentitySchema,workflowPath:RelativePathSchema,workflowSha:z.string().regex(/^[a-f0-9]{40}$/),workflowHash:HashSchema}).optional()}).optional(),
-});
+}).refine(trust=>!trust.policySource||trust.policySource.policyHash===hash(trust.policy),'Registered policy source hash does not match policy');
 export type TrustRoot=z.infer<typeof TrustRootSchema>;
 export async function loadTrust(root:string,path:string):Promise<TrustRoot>{
  const actual=await realpath(resolve(root,path)),base=await realpath((await git(root,['rev-parse','--show-toplevel'])).trim()),rel=relative(base,actual);
@@ -22,8 +23,9 @@ export async function loadTrust(root:string,path:string):Promise<TrustRoot>{
  return TrustRootSchema.parse(await safeReadJson(dirname(actual),basename(actual)));
 }
 export async function authenticate(root:string,trust:TrustRoot|undefined,subject:EvidenceSubject){
+ const observations:{manifestRef:string;observation:import('@behavproof/adapter-github').Observation}[]=[];
  const artifactBytes=new Map<string,Uint8Array>();const verified=new Set<string>(),failures:string[]=[],unknowns:string[]=[],manifests:{ref:string;validation:ManifestValidation}[]=[];const configHashes:Record<string,string>={};let dependencyLockHash:string|undefined;let trustedCi=false;
- if(!trust)return {verified,failures,unknowns:['External producer authority unavailable'],manifests,trustedCi,artifactBytes,configHashes,dependencyLockHash};
+ if(!trust)return {verified,failures,unknowns:['External producer authority unavailable'],manifests,trustedCi,artifactBytes,configHashes,dependencyLockHash,observations};
  for(const path of trust.configPaths)configHashes[path]=hashBytes(await safeRead(root,path));
  dependencyLockHash=trust.dependencyLockPath?hashBytes(await safeRead(root,trust.dependencyLockPath)):undefined;
  for(const spec of trust.manifests){
@@ -34,7 +36,7 @@ export async function authenticate(root:string,trust:TrustRoot|undefined,subject
   if((authority.kind==='local'||spec.manifestHash!==undefined)&&hash(manifest)!==spec.manifestHash){failures.push('Host-pinned manifest digest mismatch');continue;}
   if(authority.kind==='ci'){
     if(!spec.github){authority=undefined;unknowns.push('CI authority requires live GitHub verification');}
-    else {const g=spec.github;const archive=await safeRead(root,g.archivePath),digest=hashBytes(archive);const archiveMatch=verifyArtifactArchive(archive,{[spec.ref]:manifestBytes,...bytes},g.archiveEntries);if(archiveMatch.status!=='pass'){unknowns.push(...archiveMatch.reasons);continue;}const result=await new GitHubAuthority({repository:g.repository,...(process.env.GITHUB_TOKEN?{token:process.env.GITHUB_TOKEN}:{})}).producer(manifest.ci,{ci:authority.ci,workflowPath:g.workflowPath,workflowSha:g.workflowSha,jobName:g.jobName,artifactName:g.artifactName,artifactDigest:digest});if(result.status!=='pass'){authority=undefined;unknowns.push(...result.reasons);}}
+    else {const g=spec.github;const archive=await safeRead(root,g.archivePath),digest=hashBytes(archive);const archiveMatch=verifyArtifactArchive(archive,{[spec.ref]:manifestBytes,...bytes},g.archiveEntries);if(archiveMatch.status!=='pass'){unknowns.push(...archiveMatch.reasons);continue;}const result=await new GitHubAuthority({repository:g.repository,...(process.env.GITHUB_TOKEN?{token:process.env.GITHUB_TOKEN}:{})}).producer(manifest.ci,{ci:authority.ci,workflowPath:g.workflowPath,workflowSha:g.workflowSha,jobName:g.jobName,artifactName:g.artifactName,artifactDigest:digest});observations.push({manifestRef:spec.ref,observation:result});if(result.status!=='pass'){authority=undefined;unknowns.push(...result.reasons);}}
   }
   const result=validateManifest(manifest,spec.expected,bytes,authority);
   if(hash(spec.expected.subject)!==hash(subject)||hash(spec.expected.configHashes)!==hash(configHashes)||spec.expected.dependencyLockHash!==dependencyLockHash){result.subjectMatch='fail';result.reasons.push('Host-selected expectation does not match current input/config/lock snapshot');}
@@ -44,7 +46,7 @@ export async function authenticate(root:string,trust:TrustRoot|undefined,subject
   else if(states.every(x=>x==='pass')){for(const a of manifest.artifacts){const captured=bytes[a.ref]!;if(artifactBytes.has(a.ref)&&hashBytes(artifactBytes.get(a.ref)!)!==hashBytes(captured))throw Error('Conflicting authenticated artifact snapshots');artifactBytes.set(a.ref,captured);verified.add(a.ref);}if(authority?.kind==='ci')trustedCi=true;}
   else unknowns.push(...result.reasons);
  }
- return {verified,failures:failures.sort(),unknowns:unknowns.sort(),manifests,trustedCi,artifactBytes,configHashes,dependencyLockHash};
+ return {verified,failures:failures.sort(),unknowns:unknowns.sort(),manifests,trustedCi,artifactBytes,configHashes,dependencyLockHash,observations};
 }
 export const approvalKey=(v:unknown)=>hash(v);
 

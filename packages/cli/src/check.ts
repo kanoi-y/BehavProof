@@ -1,6 +1,8 @@
 import { scopedEvaluations } from './scopes.js';
+import {currentImpact,impactSeverity,impactRemediation} from './impact.js';
+import {remediationFor,type PolicyDiff} from './report.js';
 import { pipelineEvaluation } from './pipeline.js';
-import { safeRead, safeReadJson, parseConfig, hashBytes, mergeProtectedPolicy, evaluateGate, hash, type Evaluation, type EvidenceStatus, type Approval, type Config, EvidenceSchema } from '@behavproof/core';
+import { safeRead, safeReadJson, parseConfig, hashBytes, mergeProtectedPolicy, evaluateGate, hash, resolveRisk, type Evaluation, type EvidenceStatus, type Approval, type Config, EvidenceSchema } from '@behavproof/core';
 import { detectProject, gitDiff, gitSubject, normalizeVitest, normalizeLcov, normalizeStryker, evaluateCoverage, evaluateMutation, lineMapping, verifyMergeSubject } from '@behavproof/adapter-reports';
 import { reconcile, evaluateAssurance, bindRegistrations, evaluateScopedClaims, type ExecutionRow, type ReportBinding } from '@behavproof/contract-registry';
 import { GitHubAuthority } from '@behavproof/adapter-github';
@@ -28,7 +30,7 @@ export async function check(root:string,options:CheckOptions){
  const readArtifact=async(path:string)=>auth.artifactBytes.get(path)??await safeRead(root,path);
  const readArtifactJson=async(path:string)=>JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(await readArtifact(path)));
  const head=await registry(root,cfg,files,subject.testedCommitSha,trust?.config.contracts.sources??[]);
- const approvals:Approval[]=[],approved=new Set<string>();
+ const approvals:Approval[]=[],approved=new Set<string>(),approvalObservations:{target:Approval['target'];observation:import('@behavproof/adapter-github').Observation}[]=[];
  let drift=reconcile(trust?.baseline??{contracts:[],intents:[]},head);
  if(trust?.github){
   const targetsFor=(head:import('@behavproof/core').RegistrySnapshot,drift:ReturnType<typeof reconcile>)=>[...head.intents.map(i=>({kind:'intent' as const,id:i.id,contentHash:i.contentHash})),...head.contracts.map(c=>({kind:'contract' as const,id:c.id,contentHash:c.revisionHash})),...drift.changes.filter(c=>c.contractId||c.intentId).map(c=>({kind:c.intentId?'intent' as const:'contract' as const,id:(c.intentId??c.contractId)!,contentHash:c.transitionHash}))];
@@ -38,12 +40,14 @@ export async function check(root:string,options:CheckOptions){
   const targets=targetsFor(head,drift).filter(target=>permitted.has(hash(target)));
   const unique=[...new Map(targets.map(t=>[hash(t),t])).values()];if(unique.length>200)throw Error('Approval target limit exceeded');
   const g=trust.github,provider=new GitHubAuthority({repository:g.repository,...(process.env.GITHUB_TOKEN?{token:process.env.GITHUB_TOKEN}:{})});
-  for(const target of unique){const result=await provider.approval(g.pr,target,{headSha:diff.headSha,baseSha:diff.baseSha,reviewers:g.reviewers,requiredChecks:g.requiredChecks});if(result.approval&&result.status==='pass'){approvals.push(result.approval);approved.add(approvalKey(result.approval));}}
+  for(const target of unique){const result=await provider.approval(g.pr,target,{headSha:diff.headSha,baseSha:diff.baseSha,reviewers:g.reviewers,requiredChecks:g.requiredChecks});approvalObservations.push({target,observation:result});if(result.approval&&result.status==='pass'){approvals.push(result.approval);approved.add(approvalKey(result.approval));}}
   drift=reconcile(trust.baseline,head,approvals,a=>approved.has(approvalKey(a)));
  }
  const obligations={...head,contracts:drift.obligations,intents:drift.intentObligations};
- const states=new Map<string,{status:EvidenceStatus;message:string;evidenceIds:string[]}>();
+ const states=new Map<string,{status:EvidenceStatus;message:string;evidenceIds:string[];remediation?:string}>();
  const set=(id:string,status:EvidenceStatus,message:string,evidenceIds:string[]=[])=>states.set(id,{status,message,evidenceIds});
+ const impact=await currentImpact(root,inputPaths,files,diff.files.map(f=>f.path),obligations,diff.status==='known'&&testedRelationship==='known'&&subject.testedCommitSha===diff.headSha,trust?.claimScopes??[]);
+ states.set('changeImpact',{status:impact.status,message:impact.message,evidenceIds:[],remediation:impactRemediation});
  const trusted=(path:string|undefined)=>!!path&&auth.verified.has(path)&&auth.failures.length===0&&detection.support==='single-package';
  // Parse configured artifacts even when unauthenticated so malformed input is exit2, not unknown.
  let contractData:any,contractPath:string|undefined;
@@ -97,10 +101,13 @@ export async function check(root:string,options:CheckOptions){
  });
  const scopedClaims=new Map(obligations.contracts.map((c,i)=>[c.id,scoped[i] as Record<string,string>]));
  for(const [rule,key] of [['negativeCases','negative_cases'],['productionTargetObserved','production_target_observed'],['mutationSensitivityObserved','mutation_sensitivity_observed']] as const)set(rule,worst(scoped.map((s:any)=>s[key]??s[rule]??'unknown')),'Requires case-scoped authenticated evidence; aggregate scores do not establish this claim');
+ let policyDiff:PolicyDiff|null=null;
  if(trust){
   const sourceWeakened=trust.config.contracts.enabled&&!cfg.contracts.enabled||trust.config.contracts.sources.some(s=>s.include.some(p=>!cfg.contracts.sources.some(c=>c.type===s.type&&c.include.includes(p))));
   const weakened=sourceWeakened||Object.entries(trust.policy.rules).some(([id,r])=>{const local=cfg.rules[id],levels={off:0,warn:1,error:2};return !local||levels[local.severity]<levels[r.severity]||(r.min!==undefined&&(local.min??-1)<r.min)||(r.minMutants!==undefined&&(local.minMutants??-1)<r.minMutants);});
   set('policyProtection',weakened?'fail':'pass',weakened?'Project policy weakens protected obligations; effective evaluation retains protected thresholds':'Policy supplied outside project authority');
+  const configuration=[{field:'contracts.enabled',protected:trust.config.contracts.enabled,project:cfg.contracts.enabled,effective:trust.config.contracts.enabled||cfg.contracts.enabled},{field:'contracts.sources',protected:trust.config.contracts.sources,project:cfg.contracts.sources,effective:[...new Map([...trust.config.contracts.sources,...cfg.contracts.sources].map(s=>[hash(s),s])).values()]},{field:'riskOverrides',protected:trust.config.riskOverrides,project:cfg.riskOverrides,effective:{protectedFloors:trust.config.riskOverrides,projectRequests:cfg.riskOverrides,selection:'Maximum project/protected/declaration risk'}}].filter(row=>hash(row.protected)!==hash(row.project));
+  policyDiff={weakened,configuration,rules:[...new Set([...Object.keys(trust.policy.rules),...Object.keys(cfg.rules)])].sort().filter(id=>hash(trust.policy.rules[id]??null)!==hash(cfg.rules[id]??null)).map(ruleId=>({ruleId,protected:trust.policy.rules[ruleId]??null,project:cfg.rules[ruleId]??null,effective:policy.rules[ruleId]??null}))};
  }
  const pipelineObservation=trust?.pipeline?await pipelineEvaluation(root,trust,auth):undefined;
  if(pipelineObservation)set('pipelineIntegrity',pipelineObservation.status,'Workflow health, authenticated artifacts, upstream outcomes and issuer-bound external protection evaluated separately');
@@ -108,8 +115,10 @@ export async function check(root:string,options:CheckOptions){
  const evaluations:Evaluation[]=Object.entries(policy.rules).map(([ruleId,rule])=>{
   const exemption=trust?.notApplicable.find(n=>n.ruleId===ruleId&&states.get(ruleId)?.status!=='fail'&&rule.allowNotApplicable?.includes(n.reason)&&trusted(n.evidenceRef));
   if(exemption)return {ruleId,severity:rule.severity,status:'not_applicable',scope:[],evidenceIds:[exemption.evidenceRef],message:exemption.reason,notApplicable:{reason:exemption.reason,allowedReasons:rule.allowNotApplicable!,evidenceIds:[exemption.evidenceRef]}};
-  return {ruleId,severity:rule.severity,status:states.get(ruleId)?.status??'unknown',scope:[],evidenceIds:states.get(ruleId)?.evidenceIds??[],message:states.get(ruleId)?.message??'Required evidence unavailable; collect and authenticate current evidence'};
+  return {ruleId,severity:rule.severity,status:states.get(ruleId)?.status??'unknown',scope:[],evidenceIds:states.get(ruleId)?.evidenceIds??[],message:states.get(ruleId)?.message??'Required evidence unavailable; collect and authenticate current evidence',...(states.get(ruleId)?.remediation?{remediation:states.get(ruleId)!.remediation}:{} )};
  });
+ const impactRisk=resolveRisk({profile:cfg.profile,riskOverrides:[]},{path:'package.json'},trust?.config.profile),impactRow=evaluations.find(e=>e.ruleId==='changeImpact');
+ if(impactRow)impactRow.severity=impactSeverity(impactRisk,policy.rules.changeImpact);else evaluations.push({ruleId:'changeImpact',severity:impactSeverity(impactRisk),status:impact.status,scope:[],evidenceIds:[],message:impact.message,remediation:impactRemediation});
  evaluations.push(...scopedEvaluations({config:cfg,...(trust?{protectedConfig:trust.config}:{}),policy,registry:obligations,files:inputPaths,states,rows,bindings,verifyRow:()=>!!contractPath&&trusted(contractPath),claims:scopedClaims,claimScopes:trust?.claimScopes??[],intentStatus,...(normalizedCoverage?{coverage:normalizedCoverage}:{}),...(normalizedMutation?{mutation:normalizedMutation}:{}),coverageTrusted:trusted(coveragePath),mutationTrusted:trusted(mutationPath),mapping,changed:scope,sources:mutationSources}));
  for(const evaluation of evaluations){const allowed=policy.rules[evaluation.ruleId]?.allowNotApplicable;const exemption=trust?.notApplicable.find(n=>n.ruleId===evaluation.ruleId&&allowed?.includes(n.reason)&&trusted(n.evidenceRef));if(exemption&&evaluation.status==='unknown'){evaluation.status='not_applicable';evaluation.evidenceIds=[exemption.evidenceRef];evaluation.message=exemption.reason;evaluation.notApplicable={reason:exemption.reason,allowedReasons:allowed!,evidenceIds:[exemption.evidenceRef]};}}
  if(auth.failures.length)evaluations.push({ruleId:'evidenceIntegrity',severity:'error',status:'fail',scope:[],evidenceIds:[],message:auth.failures.join('; ')});
@@ -122,6 +131,7 @@ export async function check(root:string,options:CheckOptions){
  const finalConfig=await exists(root,configPath)?await safeRead(root,configPath):undefined;
  const qualityChanged=!!qualityPaths&&hash(select(finalFiles,trust!.qualitySources!))!==hash(qualityPaths);
  if(qualityChanged||configsChanged||hash(finalSubject)!==hash(subject)||(configBytes?hashBytes(configBytes):null)!==(finalConfig?hashBytes(finalConfig):null))evaluations.push({ruleId:'evaluationSnapshot',severity:'error',status:'fail',scope:[],evidenceIds:[],message:'Source, configuration or HEAD changed during evaluation'});
+ for(const e of evaluations)if(e.status==='fail'||e.status==='unknown')e.remediation=remediationFor(e);
  const stable=!evaluations.some(e=>e.ruleId==='evaluationSnapshot'||e.ruleId==='testedCommitRelationship')&&!subject.dirty;
- return {...evaluateGate(evaluations,mode),documentEvidence:{registry:obligations,rows,bindings,authenticatedRows:stable&&contractPath&&trusted(contractPath)?rows.map(row=>hash(row)):[],authenticatedApprovals:stable?[...approved].sort():[]},subject,diff,qualityScope,detection,effectivePolicyHash:hash(policy),pipelineObservation:pipelineObservation??null,provenance:{manifests:auth.manifests,reasons:auth.unknowns},assurance:{...assurance,production_target_observed:states.get('productionTargetObserved')?.status??'unknown',mutation_sensitivity_observed:states.get('mutationSensitivityObserved')?.status??'unknown'},drift:drift.changes,approvals};
+ return {...evaluateGate(evaluations,mode),documentEvidence:{registry:obligations,rows,bindings,authenticatedRows:stable&&contractPath&&trusted(contractPath)?rows.map(row=>hash(row)):[],authenticatedApprovals:stable?[...approved].sort():[]},subject,diff,impact,policyDiff,policySource:trust?.policySource??null,...(trust?.policySource?{protectedPolicySha:trust.policySource.commitSha}:{}),authoritySnapshots:{trustRootHash:trust?hash(trust):null,policyHash:trust?hash(trust.policy):null,baselineHash:trust?hash(trust.baseline):null,approvals:approvalObservations,producers:auth.observations,pipeline:pipelineObservation?.observations??{}},qualityScope,detection,effectivePolicyHash:hash(policy),pipelineObservation:pipelineObservation??null,provenance:{manifests:auth.manifests,reasons:auth.unknowns},assurance:{...assurance,production_target_observed:states.get('productionTargetObserved')?.status??'unknown',mutation_sensitivity_observed:states.get('mutationSensitivityObserved')?.status??'unknown'},drift:drift.changes,approvals};
 }

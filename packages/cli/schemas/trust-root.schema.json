@@ -520,6 +520,39 @@
       ],
       "additionalProperties": false
     },
+    "policySource": {
+      "type": "object",
+      "properties": {
+        "repository": {
+          "type": "string",
+          "pattern": "^[\\w-]+\\/[\\w.-]+$"
+        },
+        "commitSha": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40}$"
+        },
+        "ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fileHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "policyHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "repository",
+        "commitSha",
+        "ref",
+        "fileHash",
+        "policyHash"
+      ],
+      "additionalProperties": false
+    },
     "runner": {
       "type": "object",
       "properties": {

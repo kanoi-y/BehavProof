@@ -35,4 +35,19 @@ A future thin integration requires its own review and provisioning:
 
 ## Required live acceptance
 
-After the reviewed consumer integration and registration are provisioned, protect only the new isolated test base with strict/admin-enforced `{context: "BehavProof protected gate", app_id: 5653976}`. Do not weaken existing main protection. On fresh candidate heads, record actual real-collection success, skipped upstream followed by final-gate failure, missing/deleted dedicated final check, same-name success from another App, and an unapproved Intent/policy change. Confirm merge eligibility/blocking against the dedicated context, retaining actual API/job/check/archive hashes. Do not substitute product CI, the existing PDD check, or local fixtures for these AC-18/22/50 results. Do not merge disposable negative-test PRs.
+After the reviewed consumer integration and registration are provisioned, protect only the new isolated test base with strict/admin-enforced `{context: "BehavProof protected gate", app_id: 5653976}`. Do not weaken existing main protection. Use fresh candidate heads for this complete live matrix:
+
+| Scenario | Required observation |
+| --- | --- |
+| Normal real collection and verification | Registered producer/archive/current subject/case evidence pass; dedicated App success; GitHub merge eligibility recorded |
+| Upstream verify skipped (`skip_verify`) | Verify skipped; unconditional gate executes and fails; dedicated failure or missing required result blocks |
+| Upstream verify failure | Select an unavailable/unregistered producer run; record verify failure, unconditional gate outcome and dedicated-check merge block |
+| Upstream workflow cancellation | Cancel the controlled publisher while verify runs; record actual job outcomes and merge block from failure or absent dedicated result. Do not assume GitHub runs a canceled workflow's gate |
+| Required archive/report missing | Use a disposable successful producer, retain its original evidence, then remove its test artifact or run a producer with no required result; verification fails and merging is blocked |
+| Old attempt remains after a canceled rerun | Keep attempt1's artifact, start and cancel attempt2, then verify the same run ID; old artifacts must not supply current-attempt authority |
+| Dedicated gate absent/skipped | Before dispatch on a fresh head, no required App result exists and GitHub blocks merging |
+| Candidate deletes/replaces gate workflows | Candidate-owned changes cannot alter the protected main publisher or supply its required result; missing/failed dedicated context blocks |
+| Same context succeeds from another App | A GitHub Actions success with the same name cannot satisfy App5653976's required context |
+| Intent/expectations/policy weakened without approval | Retained obligations/current source approval checks reject the change; dedicated failure or missing result blocks |
+
+Record each head/base, workflow/run/attempt/job, internal result or reason it did not run, dedicated issuer/result or absence, GitHub merge state, branch-protection snapshot, and relevant API/artifact hashes. Use a positive control to distinguish the dedicated context from unrelated review/check blockers. Simulated wrong-attempt or missing-result fixtures remain labeled local if no corresponding live manipulation was performed. All live rows are pending; product CI and the existing PDD check do not replace them. Do not merge disposable negative-test PRs.

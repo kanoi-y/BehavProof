@@ -1,0 +1,9 @@
+# Schema compatibility and migration
+
+This first release accepts `schemaVersion: 1` and `profileVersion: "1"` only. Configuration, execution manifests, evidence, contracts, registry snapshots, registrations and external trust roots have strict runtime schemas. Unsupported versions and malformed input fail explicitly; the CLI returns exit2 instead of guessing an upgrade. Generated JSON schemas describe the structural format; cross-field hash/authority checks also run at evaluation time.
+
+No earlier public schema has an automatic converter. For an incompatible future format, retain the original files, use an explicitly supported migration tool or rebuild reports with the corresponding producer, and validate the result before adoption. Recollect execution evidence when execution inputs or producer identity change. A policy/Intent/Contract migration needs the protected host's source-bound human enrollment; editing a JSON version or `approved` field cannot create that authority.
+
+Optional version1 `Registration.source.configRef` and `TrustRoot.policySource` have no default. Their absence does not add a field to an existing registration or change its canonical digest. The version1 profile normalization remains fixed. New evaluator behavior, including the runtime risk-derived `changeImpact` obligation, is selected by the separately pinned SDK revision. A policy hash identifies policy data, not an interchangeable verifier implementation. Keep the SDK revision and complete host snapshots alongside hashes when reproducing a result.
+
+This repository uses Node24 ESM. The tested Node/runtime and pinned parser/runner dependencies are part of the selected SDK installation, not a promise that arbitrary Node or tool upgrades preserve results. Six local package tarballs are tested as an external consumer; this release has not been published to npm.

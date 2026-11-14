@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "sample": "examples/node-api",
+  "operator": "Automated measurement of the five user command invocations; no human active-time claim",
+  "prerequisites": [
+    "Node24 and Git installed",
+    "Existing supported sample project in Git",
+    "Six built reviewed SDK package tarballs available; their build/packing is prerequisite work, excluded from command count"
+  ],
+  "sdk": {
+    "sourceCommit": "6b594be5e54cd7caea282ff9ecf215f52577e550",
+    "uncommittedSdkInputs": true,
+    "tarballs": [
+      {
+        "package": "@behavproof/core",
+        "sha256": "7d29681dc4c4673ef9990a3a9eac1b1310d384d427a436dc98092b6928ca8e24"
+      },
+      {
+        "package": "@behavproof/adapter-reports",
+        "sha256": "f6584987128e4638916e426267f8169f34f8b572e300bc5401d4731de2ae779e"
+      },
+      {
+        "package": "@behavproof/contract-registry",
+        "sha256": "87d2d9651710ddf762bf8d5b680c8ff311a29faa23048fe42e9b2cdfbb51777d"
+      },
+      {
+        "package": "@behavproof/vitest",
+        "sha256": "5819111b46f07e29f8debf44408b820c512ad6085ca1db927b2fd5c50d6fb086"
+      },
+      {
+        "package": "@behavproof/adapter-github",
+        "sha256": "ee05299ef03a9b6862e389512a8d832ae6045fbeacbbe72a0531d8878665829e"
+      },
+      {
+        "package": "@behavproof/cli",
+        "sha256": "17a2a79ab8242808e37c210eab3b085c88e753020e3e7ff0036d63bdd160c707"
+      }
+    ]
+  },
+  "manualCommandCount": 5,
+  "steps": [
+    {
+      "command": "npm install --offline --ignore-scripts <six reviewed tarballs>",
+      "exit": 0,
+      "durationMs": 1449
+    },
+    {
+      "command": "behavproof init --dry-run",
+      "exit": 0,
+      "durationMs": 209
+    },
+    {
+      "command": "behavproof init",
+      "exit": 0,
+      "durationMs": 230
+    },
+    {
+      "command": "behavproof doctor",
+      "exit": 0,
+      "durationMs": 255
+    },
+    {
+      "command": "behavproof check --mode audit --base HEAD --head HEAD --format json",
+      "exit": 0,
+      "durationMs": 387
+    }
+  ],
+  "totalCommandWallMs": 2545,
+  "outcome": {
+    "doctor": "single-package",
+    "auditExit": 0,
+    "auditStatus": "incomplete",
+    "dirty": true,
+    "caseEvidence": "unknown"
+  },
+  "limits": [
+    "No tests, proof tools, project config code or package lifecycle scripts executed.",
+    "Initial audit is deliberately incomplete without current execution/approval evidence; audit exit0 is report generation, not a gate pass.",
+    "Human editing/review/administration time and full protected deployment steps are not measured."
+  ]
+}
