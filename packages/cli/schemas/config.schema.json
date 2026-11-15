@@ -111,6 +111,14 @@
                 "type": "string",
                 "minLength": 1
               },
+              "driverSources": {
+                "maxItems": 10000,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
               "implementation": {
                 "type": "string",
                 "minLength": 1
@@ -125,6 +133,14 @@
                 }
               },
               "conformanceReport": {
+                "type": "string",
+                "minLength": 1
+              },
+              "traceReceipt": {
+                "type": "string",
+                "minLength": 1
+              },
+              "traceDirectory": {
                 "type": "string",
                 "minLength": 1
               },

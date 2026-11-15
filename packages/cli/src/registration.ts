@@ -25,6 +25,14 @@ export function createRegistration(value:unknown,authority:RegistrationAuthority
  if(registration.baseline.discoveryDiagnostics?.length!==0||!registration.baseline.extractorVersion||!registration.baseline.scope?.length||!registration.baseline.contracts.length||!registration.baseline.intents.length)throw Error('Complete discovery inventory required');
  for(const path of [registration.source.policyRef,...(registration.source.configRef?[registration.source.configRef]:[]),...registration.baseline.contracts.map(c=>c.sourceRef),...registration.baseline.intents.map(i=>i.origin.ref)])if(!Object.hasOwn(registration.source.fileHashes,path))throw Error('Missing independently verified source hash');
  if(registration.source.configRef&&(!registration.configPaths.includes(registration.source.configRef)||registration.source.projectPath!=='.'&&!registration.source.configRef.startsWith(registration.source.projectPath+'/')))throw Error('Selected source config must belong to the project and hashed config scope');
+ for(const model of registration.config.formal?.models??[]){
+  const prefix=registration.source.projectPath==='.'?'':registration.source.projectPath+'/';
+  const required=[model.model,...model.modelSources,...(model.driver?[model.driver,...(model.driverSources??[])]:[]),...(model.implementation?[model.implementation,...model.implementationSources]:[]),...(model.canary?[model.canary.implementation]:[])];
+  for(const ref of required)if(!Object.hasOwn(registration.source.fileHashes,prefix+ref))throw Error(`Missing independently verified formal source hash: ${ref}`);
+  const digest=(refs:string[])=>hash(Object.fromEntries([...new Set(refs)].sort().map(ref=>[ref,registration.source.fileHashes[prefix+ref]])));
+  const binding=registration.baseline.contracts.find(c=>c.id===model.contractId)?.formal;
+  if(!binding||binding.modelId!==model.id||binding.modelHash!==digest([model.model,...model.modelSources])||model.driver&&binding.driverHash!==digest([model.driver,...(model.driverSources??[])])||hash([...binding.propertyIds].sort())!==hash([...model.properties].sort()))throw Error(`Formal source/Contract binding mismatch: ${model.id}`);
+ }
  if(new Set(registration.inputs).size!==registration.inputs.length||new Set(registration.configPaths).size!==registration.configPaths.length)throw Error('Duplicate input scope');
  if(!Object.values(registration.policy.rules).some(rule=>rule.severity==='error'))throw Error('No mandatory policy obligations');
  const targets=[{kind:'policy',id:registration.policyId,contentHash:hash(registration.policy)},...registration.baseline.intents.map(i=>({kind:'intent',id:i.id,contentHash:i.contentHash})),...registration.baseline.contracts.map(c=>({kind:'contract',id:c.id,contentHash:c.revisionHash}))];

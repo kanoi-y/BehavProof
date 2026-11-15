@@ -6,10 +6,11 @@ import { detectProject, gitDiff } from '@behavproof/adapter-reports';
 import { renderDocuments, checkDocuments, analyzeImpact, reconcile } from '@behavproof/contract-registry';
 import { check } from './check.js';
 import {formatReport} from './report.js';
+import {executeFormal} from './formal.js';
 import { config, exists, fileList, registry, git, writeScoped, select, ref } from './project.js';
-const help=`BehavProof 0.1.0\nCommands: init, doctor, check, explain <rule>, baseline create, contracts discover|list|validate, intent diff, impact, docs generate|check\ncheck reads artifacts; it never runs tests. Gate requires --trust-root outside project.\nOptions: --config --base --head --profile --mode audit|gate --format console|json|markdown --output --trust-root --dry-run --check --help --version\n`;
+const help=`BehavProof 0.1.0\nCommands: init, doctor, check, explain <rule>, baseline create, contracts discover|list|validate, intent diff, impact, docs generate|check, formal discover|check|replay\ncheck reads artifacts; it never runs tests. Gate requires --trust-root outside project.\nOptions: --config --base --head --profile --mode audit|gate --format console|json|markdown --output --trust-root --dry-run --check --help --version\n`;
 async function main(){
- const {values,positionals}=parseArgs({allowPositionals:true,strict:true,options:{config:{type:'string'},base:{type:'string'},head:{type:'string'},profile:{type:'string'},mode:{type:'string'},format:{type:'string'},output:{type:'string'},'trust-root':{type:'string'},'dry-run':{type:'boolean'},check:{type:'boolean'},help:{type:'boolean'},version:{type:'boolean'},root:{type:'string'}}});
+ const {values,positionals}=parseArgs({allowPositionals:true,strict:true,options:{config:{type:'string'},base:{type:'string'},head:{type:'string'},profile:{type:'string'},mode:{type:'string'},format:{type:'string'},output:{type:'string'},'trust-root':{type:'string'},'dry-run':{type:'boolean'},check:{type:'boolean'},help:{type:'boolean'},version:{type:'boolean'},root:{type:'string'},model:{type:'string'}}});
  const root=resolve(values.root??process.cwd()),[command,sub,...rest]=positionals;
  if(values.version){process.stdout.write('0.1.0\n');return 0;}if(values.help||!command){process.stdout.write(help);return 0;}
  if(rest.length)throw Error('Unexpected command arguments');
@@ -29,7 +30,7 @@ async function main(){
   Object.assign(explanations,{productionTargetObserved:'Require case-scoped authenticated calls to the registered real production target; comparisons alone cannot prove reach.',mutationSensitivityObserved:'Require an actual failed comparison after the registered case-specific fault; retain it separately from ordinary test evidence.',negativeCases:'Require the registered negative cases to execute and compare their retained expectations.',changeImpact:'Analyze Git changes and the static dependency graph; unresolved critical impact blocks, standard warns. This does not prove behavioral equivalence.'});
   const key=(sub??'').replace(/-([a-z])/g,(_,c:string)=>c.toUpperCase());if(!explanations[key])throw Error('Unknown rule');await emit(explanations[key]+'\n');return 0;
  }
- if(command==='formal')throw Error('Unsupported optional M2-F command; no formal evidence is synthesized');
+ if(command==='formal'){const result=await executeFormal(root,sub??'',values);await emit(canonicalJson(result.report)+'\n');return result.exitCode;}
  if(command==='check'){
   if(sub)throw Error('Unexpected check argument');const options=Object.fromEntries(Object.entries(values).filter(([key,value])=>typeof value==='string'&&['config','profile','mode','base','head','trust-root'].includes(key)));
   const report=await check(root,options);await emit(formatReport(report,values.format??'console'));return report.exitCode;

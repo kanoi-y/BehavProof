@@ -213,6 +213,14 @@
                     "type": "string",
                     "minLength": 1
                   },
+                  "driverSources": {
+                    "maxItems": 10000,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
                   "implementation": {
                     "type": "string",
                     "minLength": 1
@@ -227,6 +235,14 @@
                     }
                   },
                   "conformanceReport": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "traceReceipt": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "traceDirectory": {
                     "type": "string",
                     "minLength": 1
                   },
@@ -599,6 +615,38 @@
               "id": {
                 "type": "string",
                 "minLength": 1
+              },
+              "formal": {
+                "type": "object",
+                "properties": {
+                  "modelId": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "modelHash": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "driverHash": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "propertyIds": {
+                    "minItems": 1,
+                    "maxItems": 10000,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                },
+                "required": [
+                  "modelId",
+                  "modelHash",
+                  "propertyIds"
+                ],
+                "additionalProperties": false
               },
               "kind": {
                 "type": "string",

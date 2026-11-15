@@ -65,3 +65,24 @@ test('an explicit source config reference must be part of the approved source an
  const missing=structuredClone(data);delete missing.source.fileHashes[missing.source.configRef];expect(()=>createRegistration(missing,authority)).toThrow(/source hash/);
  expect(()=>createRegistration({...data,configPaths:[]},authority)).toThrow(/config/);
 });
+function formalRegistration(){
+ const data:any=value();data.source.projectPath='.';
+ const sources={'specs/order.qnt':'1'.repeat(64),'driver.mjs':'2'.repeat(64),'src/order.mjs':'3'.repeat(64),'src/fault.mjs':'4'.repeat(64)};
+ data.source.fileHashes={...data.source.fileHashes,...sources};
+ data.config=parseConfig({...data.config,formal:{models:[{id:'ORDER',contractId:'ORDER',model:'specs/order.qnt',quint:{entry:'node_modules/@informalsystems/quint/dist/src/cli.js',version:'0.33.1'},properties:['refundOnce'],checks:['parse','typecheck','run'],maxSteps:8,seed:'42',report:'.behavproof/model.json',driver:'driver.mjs',implementation:'src/order.mjs',canary:{faultId:'double',implementation:'src/fault.mjs',targetRef:'src/order.mjs#refund'}}]}});
+ data.baseline=structuredClone(data.baseline);data.baseline.contracts[0].formal={modelId:'ORDER',modelHash:hash({'specs/order.qnt':sources['specs/order.qnt']}),driverHash:hash({'driver.mjs':sources['driver.mjs']}),propertyIds:['refundOnce']};
+ data.baseline.contracts[0].revisionHash='d'.repeat(64);
+ data.inputs.push('specs/**/*.qnt','driver.mjs','src/**/*.mjs');
+ data.approvals=structuredClone(data.approvals);data.approvals.find((a:any)=>a.target.kind==='contract').target.contentHash='d'.repeat(64);
+ return data;
+}
+test('formal enrollment requires verified selected source bytes and the approved model/Driver/property binding',()=>{
+ const data=formalRegistration();expect(createRegistration(data,authority).registration.config.formal?.models).toHaveLength(1);
+ for(const ref of ['specs/order.qnt','driver.mjs','src/order.mjs','src/fault.mjs']){const bad=structuredClone(data);delete bad.source.fileHashes[ref];expect(()=>createRegistration(bad,authority),ref).toThrow(/formal.*source|source.*formal/i);}
+ for(const key of ['modelHash','driverHash','propertyIds']){const bad=structuredClone(data);bad.baseline.contracts[0].formal[key]=key==='propertyIds'?['another']:'f'.repeat(64);expect(()=>createRegistration(bad,authority),key).toThrow(/formal.*binding|binding.*formal/i);}
+});
+test('formal registration projects source hashes from the selected project subtree',()=>{
+ const data=formalRegistration();data.source.projectPath='example';data.source.fileHashes=Object.fromEntries(Object.entries(data.source.fileHashes).map(([p,h])=>[`example/${p}`,h]));data.source.policyRef='example/'+data.source.policyRef;
+ data.baseline.contracts.forEach((c:any)=>c.sourceRef='example/'+c.sourceRef);data.baseline.intents.forEach((i:any)=>i.origin.ref='example/'+i.origin.ref);
+ expect(createRegistration(data,authority).registration.config.formal?.models[0]?.model).toBe('specs/order.qnt');
+});

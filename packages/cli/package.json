@@ -31,5 +31,17 @@
     "type": "git",
     "url": "git+https://github.com/kanoi-y/BehavProof.git",
     "directory": "packages/cli"
+  },
+  "peerDependencies": {
+    "@behavproof/adapter-quint": "0.1.0",
+    "@behavproof/adapter-model-test": "0.1.0"
+  },
+  "peerDependenciesMeta": {
+    "@behavproof/adapter-quint": {
+      "optional": true
+    },
+    "@behavproof/adapter-model-test": {
+      "optional": true
+    }
   }
 }

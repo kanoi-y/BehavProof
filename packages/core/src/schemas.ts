@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { getProfilePolicy } from './profiles.js';
-import { FormalConfigSchema, FormalModelReportSchema, ModelConformanceReportSchema } from './formal.js';
+import { FormalConfigSchema, FormalModelReportSchema, ModelConformanceReportSchema, FormalContractBindingSchema, FormalTraceReceiptSchema } from './formal.js';
 export const EvidenceStatusSchema=z.enum(['pass','fail','unknown','not_applicable']);
 export const SeveritySchema=z.enum(['off','warn','error']);
 export const RiskSchema=z.enum(['basic','standard','critical']);
@@ -41,7 +41,7 @@ export const ExecutionManifestSchema=z.strictObject({schemaVersion:z.literal(1),
 });
 export const IntentSchema=z.strictObject({id:text,statement:text,risk:RiskSchema,contentHash:HashSchema,origin:z.strictObject({kind:z.enum(['inline','manifest','external']),ref:text})});
 export const ContractCaseSchema=z.strictObject({id:text,input:z.json(),expected:z.json(),negative:z.boolean().optional()});
-export const ContractSchema=z.strictObject({id:text,kind:z.enum(['examples','invariant','state_machine','api_contract','external']),intentIds:strings,revisionHash:HashSchema,sourceRef:text,caseIds:strings.optional(),risk:RiskSchema.optional(),cases:z.array(ContractCaseSchema).optional()}).superRefine((c,ctx)=>{
+export const ContractSchema=z.strictObject({id:text,formal:FormalContractBindingSchema.optional(),kind:z.enum(['examples','invariant','state_machine','api_contract','external']),intentIds:strings,revisionHash:HashSchema,sourceRef:text,caseIds:strings.optional(),risk:RiskSchema.optional(),cases:z.array(ContractCaseSchema).optional()}).superRefine((c,ctx)=>{
   if(c.caseIds&&new Set(c.caseIds).size!==c.caseIds.length)ctx.addIssue({code:'custom',message:'Duplicate case IDs'});
   if(c.cases&&new Set(c.cases.map(x=>x.id)).size!==c.cases.length)ctx.addIssue({code:'custom',message:'Duplicate cases'});
   if(c.caseIds&&c.cases&&(c.caseIds.length!==c.cases.length||c.caseIds.some(id=>!c.cases!.some(x=>x.id===id))))ctx.addIssue({code:'custom',message:'Case inventory mismatch'});
@@ -71,7 +71,7 @@ export const EvidenceSchema=z.discriminatedUnion('kind',[
   z.strictObject({...evidenceBase,kind:z.literal('canary'),payload:z.strictObject({contractId:text,caseIds:strings,targetRef:text,method:text,detected:CountSchema,total:CountSchema,status:EvidenceStatusSchema}).refine(p=>p.detected<=p.total,'Detected exceeds total').refine(p=>p.status!=='pass'||p.total>0&&p.detected>0&&p.caseIds.length>0,'Passing canary requires scoped detections')}),
   z.strictObject({...evidenceBase,kind:z.literal('formal_model'),payload:z.union([FormalModelReportSchema,unsupportedPayload])}),
   z.strictObject({...evidenceBase,kind:z.literal('model_conformance'),payload:z.union([ModelConformanceReportSchema,unsupportedPayload])}),
-  z.strictObject({...evidenceBase,kind:z.literal('trace'),payload:unsupportedPayload})
+  z.strictObject({...evidenceBase,kind:z.literal('trace'),payload:z.union([FormalTraceReceiptSchema,unsupportedPayload])})
 ]);
 export const CheckReportSchema=z.strictObject({schemaVersion:z.literal(1),mode:ModeSchema,status:z.enum(['pass','fail','incomplete']),exitCode:z.union([z.literal(0),z.literal(1),z.literal(2)]),mandatoryCount:CountSchema,evaluations:z.array(EvaluationSchema),reasons:strings});
 export type EvidenceStatus=z.infer<typeof EvidenceStatusSchema>;

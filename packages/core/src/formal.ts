@@ -14,11 +14,12 @@ export const FormalModelConfigSchema=z.strictObject({
  properties:unique(text),checks:unique(FormalStageSchema).min(1),
  maxSteps:count.min(1).max(10000),maxSamples:count.min(1).max(100000).default(100),seed:text,
  timeoutMs:count.min(1).max(3600000).default(60000),report:path,
- driver:path.optional(),implementation:path.optional(),implementationSources:unique(path).default([]),conformanceReport:path.optional(),
+ driver:path.optional(),driverSources:unique(path).optional(),implementation:path.optional(),implementationSources:unique(path).default([]),conformanceReport:path.optional(),traceReceipt:path.optional(),traceDirectory:path.optional(),
  requiredActions:unique(text).default([]),minTraces:count.min(1).default(1),minComparisons:count.min(1).default(1),requireCanary:z.boolean().default(true),
  canary:z.strictObject({faultId:text,implementation:path,targetRef:text}).optional(),
 });
 export const FormalConfigSchema=z.strictObject({models:z.array(FormalModelConfigSchema).min(1).max(100).refine(models=>new Set(models.map(m=>m.id)).size===models.length,'Duplicate model IDs')});
+export const FormalContractBindingSchema=z.strictObject({modelId:text,modelHash:digest,driverHash:digest.optional(),propertyIds:unique(text).min(1)});
 export const FormalInputIdentitySchema=z.strictObject({modelHash:digest,configHash:digest,commandHash:digest,driverHash:digest.optional(),implementationHash:digest.optional(),traceHash:digest.optional()});
 export const FormalStageResultSchema=z.strictObject({
  stage:FormalStageSchema,status:z.enum(['pass','fail','unknown']),complete:z.boolean(),exitCode:z.number().int().nullable(),
@@ -29,6 +30,7 @@ export const FormalStageResultSchema=z.strictObject({
  artifacts:z.array(z.strictObject({ref:path,sha256:digest})).max(1000).optional(),
 });
 export const FormalModelReportSchema=z.strictObject({schemaVersion:z.literal(1),modelId:text,identity:FormalInputIdentitySchema,stages:z.array(FormalStageResultSchema).max(5).refine(s=>new Set(s.map(x=>x.stage)).size===s.length,'Duplicate model stages')});
+export const FormalTraceReceiptSchema=z.strictObject({schemaVersion:z.literal(1),modelId:text,identity:FormalInputIdentitySchema,toolVersion:text,backend:z.enum(['typescript','rust']),maxSteps:count.min(1),maxSamples:count.min(1),seed:text,traces:z.array(z.strictObject({ref:path,sha256:digest})).max(10000).refine(rows=>new Set(rows.map(r=>r.ref)).size===rows.length,'Duplicate trace artifact refs')});
 export const ReplayStepSchema=z.strictObject({index:count,action:text,status:z.enum(['pass','fail','unknown']),parameters:z.json().optional(),expected:z.json(),actual:z.json().optional(),comparisonCount:count.max(1),implementationCalls:count,diagnostic:text.optional()});
 export const ReplayTraceSchema=z.strictObject({id:text,complete:z.boolean(),steps:z.array(ReplayStepSchema).max(10001).refine(steps=>steps.every((s,i)=>s.index===i),'Step indices must be contiguous from zero')});
 export const ConformanceCanarySchema=z.strictObject({faultId:text,implementationHash:digest,originalImplementationHash:digest,driverHash:digest,traceHash:digest,observedCalls:count,comparedSteps:count,detectedMismatches:count,failure:z.strictObject({traceId:text,index:count,action:text,implementationCalls:count,expected:z.json(),actual:z.json()}).optional()});
