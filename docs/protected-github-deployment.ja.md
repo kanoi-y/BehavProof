@@ -26,7 +26,8 @@
 - 手順6の新規ブランチと、strict・管理者適用・専用App5653976の必須チェックを設定済みです。mainの既存保護は維持しています。
 - 正常系[PR11](https://github.com/kanoi-y/pdd-ts/pull/11)：[producer43658241548](https://github.com/kanoi-y/pdd-ts/actions/runs/43658241548)で64/64ケース、本番呼び出し64件、故障感度64件の収集が成功。成果物の実バイトとAPIのSHA-256も一致しました。最初のpublisherはApp権限不足で停止しましたが、その後、手順4のActions/Administration readを保存し、既存インストールへの追加権限を承認済みです。対象リポジトリはpdd-tsだけです。
 - 更新後の[publisher43661718710](https://github.com/kanoi-y/pdd-ts/actions/runs/43661718710)はverifyとApp認証に成功。最終コマンドはCLI実行リンクが無くexit127で停止し、App5653976からfailureを発行しました。成功やマージ可能とは扱っていません。
-- [修正PR16](https://github.com/kanoi-y/pdd-ts/pull/16)は、ビルド直後の `npm rebuild @behavproof/cli --ignore-scripts --offline` 1行を追加します。SDK a943と登録e236は維持します。mainの既存レビュー要件に従って、この新HEADへの人間レビューと必須CIを通してから統合します。
+- [修正PR16](https://github.com/kanoi-y/pdd-ts/pull/16)は、ビルド直後の `npm rebuild @behavproof/cli --ignore-scripts --offline` 1行を追加します。併せて既存PDDの配布検証が180秒の枠で停止したため、`scripts/package-smoke.mjs`の全体検証だけを既存デモと同じ600秒に揃え、対象・経過時間・エラーを表示します。各sampleの180秒、子検証の制限、合否条件、CI15分は維持します。差分は2ファイルで、SDK a943と登録e236は変更しません。
+- PR16の最新HEADはc4efdfa035b560ef2b3b9e18a404b6ca9dbdc7c0です。[既存CI43663733427](https://github.com/kanoi-y/pdd-ts/actions/runs/43663733427)で280テスト・proof/P0・正常/負例デモ・オフライン配布CLI/model/3サンプル/自己検証が成功しました。配布後の全体検証は138380ms、7義務がpassedのtrial・承認pendingです。BehavProof側の[3 OS CI43662903592](https://github.com/kanoi-y/BehavProof/actions/runs/43662903592)も成功済みです。mainの必須CODEOWNERSレビューを満たす、この最新HEADへの人間Approveと、既存PDD protected gateがまだ必要です。
 - 負例[PR12](https://github.com/kanoi-y/pdd-ts/pull/12)：GitHub Actions App15368が同名チェックをsuccessにしても、GitHubはblockedでした。確認後、マージせず閉じました。
 - 候補側でpublisherを削除したPR13と、Intentだけを未承認で変更したPR14は、収集・verifyまで成功しました。両者も同じCLI起動エラーで止まったため、意図した負例が検知された証拠には数えません。PR16統合後、正常系と負例を再実行します。
 

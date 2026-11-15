@@ -171,56 +171,64 @@
   ],
   "pendingFix": {
     "pr": 16,
-    "headSha": "149009a060e0f3011fb0407db2d497914e34f3bd",
-    "filesChanged": 1,
-    "linesAdded": 1,
+    "headSha": "c4efdfa035b560ef2b3b9e18a404b6ca9dbdc7c0",
+    "filesChanged": 2,
+    "linesAdded": 10,
     "sdkShaUnchanged": true,
     "registrationDigestUnchanged": true,
-    "humanReview": "pending",
-    "ciRunId": 43662376701,
-    "validation": {
-      "regression": "Real CLI launch: before fix exit127, after rebuild exit0 and local bin target verified",
-      "focusedTests": {
-        "passed": 7
+    "humanReview": "requested for exact latest head; pending",
+    "ciRunId": 43663733427,
+    "linesDeleted": 4,
+    "previousCi": {
+      "runId": 43662376701,
+      "conclusion": "failure",
+      "testsPassed": 280,
+      "demoRootMs": 187113,
+      "packagedVerifyLoopStatus": null,
+      "outerBudgetMs": 180000,
+      "causeQualification": "Old statusnull does not identify spawn error; root exceeded the same outer budget in the preceding successful demo. Added diagnostics and a larger root-only orchestration budget; live rerun required."
+    },
+    "productValidation": {
+      "sha": "b049d3770c5ee7a298b7c829119e52f069f1b9db",
+      "runId": 43662903592,
+      "allOs": "success",
+      "linux": {
+        "passed": 306
       },
-      "independentReview": {
-        "findingCount": 0,
-        "testsPassed": 29,
-        "lifecycleHooksSuppressed": true,
-        "nonExecutableEntryRestored": true
+      "macos": {
+        "passed": 306
       },
-      "wholeSuite": {
-        "command": "npm test -- --maxWorkers=1",
-        "files": 39,
-        "testsPassed": 306,
-        "seconds": 140.99
+      "windows": {
+        "passed": 302,
+        "posixSkipped": 4
       },
-      "parallelLimit": {
-        "command": "npm test",
-        "testsPassed": 305,
-        "testsTimedOut": 1,
-        "test": "an explicit external local authority gates current bytes, rejects stale/tampered evidence and preserves protected thresholds",
-        "limitMs": 15000,
-        "isolatedTestPassed": true
-      },
-      "hostedProductCi": "pending"
+      "offlineSixPackageConsumer": "pass",
+      "independentReview": "no Critical/Important/Minor findings"
+    },
+    "consumerCi": {
+      "runId": 43663733427,
+      "jobId": 132658452481,
+      "headSha": "c4efdfa035b560ef2b3b9e18a404b6ca9dbdc7c0",
+      "conclusion": "success",
+      "testsPassed": 280,
+      "proofAndP0": "pass",
+      "normalAndNegativeDemos": "pass",
+      "offlinePackedCliModelsAndThreeSamples": "pass",
+      "packedSelfVerification": {
+        "elapsedMs": 138380,
+        "outerBudgetMs": 600000,
+        "gate": "trial",
+        "approval": "pending",
+        "allEvidence": "passed"
+      }
     }
   },
   "status": "incomplete",
-  "experimentCost": {
-    "kind": "observed failed positive-control attempt, not completed healthy gate cost",
-    "additionalJobsSeconds": {
-      "collect": 35,
-      "verify": 14,
-      "gateFailed": 24
-    },
-    "totalAdditionalRunnerSeconds": 73,
-    "humanActiveTime": "not measured"
-  },
   "remaining": [
-    "Protected review/CI/merge of PR16 and workflow SHA update",
-    "positive dedicated App success and GitHub merge eligibility",
-    "skip/failure/cancel/missing-artifact/stale-attempt/candidate-workflow-change/unapproved-weakening live cases",
-    "healthy incremental CI cost and adoption decision"
+    "Actual User review of PR16 latest c4efdfa and existing PDD protected gate, then normal merge",
+    "Update workflow SHA and collect fresh producer runs",
+    "Positive dedicated App success and GitHub merge eligibility",
+    "Remaining independent live negatives",
+    "Healthy incremental CI cost and adoption decision"
   ]
 }

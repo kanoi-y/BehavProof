@@ -6,6 +6,8 @@ Rollout checkpoint (2026-11-15): consumer PR10 was squash-merged at `cbafb22fb31
 
 Status: reviewed integration components; live dedicated-check acceptance remains incomplete. The product lives in [kanoi-y/BehavProof](https://github.com/kanoi-y/BehavProof); [pdd-ts](https://github.com/kanoi-y/pdd-ts) is the application under evaluation. See [repository boundaries](repository-boundaries.md). Earlier copied-source PRs7/8 were closed without merging; their approval/deployment request is superseded.
 
+PR16 now also aligns only the packaged root-verification outer budget with the existing600s demo budget and adds sample/time/error diagnostics; sample/component limits, quality assertions and the15-minute CI job remain unchanged. Its latest head `c4efdfa035b560ef2b3b9e18a404b6ca9dbdc7c0` passed [all existing consumer CI stages](https://github.com/kanoi-y/pdd-ts/actions/runs/43663733427), including280 tests, proof/P0, demos and packed self-verification138380ms. The product fix at `b049d3770c5ee7a298b7c829119e52f069f1b9db` passed [all3 OS](https://github.com/kanoi-y/BehavProof/actions/runs/43662903592). Exact-head human review and the existing PDD protected check are still required before a normal main merge; live BehavProof acceptance remains incomplete.
+
 ## Separate product and consumer
 
 BehavProof owns the six packages, CLI, collector/probe/publisher code and product CI. A consumer checks out `kanoi-y/BehavProof` at an explicitly protected full SDK commit into `sdk/`. It installs/builds there with lifecycle scripts disabled. It never copies the product implementation into its application tree.
