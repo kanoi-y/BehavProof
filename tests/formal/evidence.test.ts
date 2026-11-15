@@ -8,8 +8,8 @@ const identity={modelHash:digest,configHash:digest,commandHash:digest,driverHash
 const model={id:'ORDER',contractId:'ORDER-MODEL',model:'specs/order.qnt',quint:{entry:'.tools/quint.js',version:'0.33.1'},properties:['refundAtMostOnce'],checks:['parse','typecheck','test','run','verify'],maxSteps:8,maxSamples:20,seed:'42',report:'.behavproof/model.json',driver:'driver.mjs',implementation:'src/order.mjs',conformanceReport:'.behavproof/conformance.json',requiredActions:['init','Pay','Refund'],minTraces:1,minComparisons:3,requireCanary:true};
 const stages=['parse','typecheck','test','run','verify'].map(stage=>({stage,status:'pass',complete:true,exitCode:0,toolVersion:'0.33.1',backend:stage==='verify'?'apalache':stage==='run'?'typescript':'quint',method:({parse:'parse',typecheck:'typecheck',test:'spec_test',run:'simulation',verify:'bounded_model_check'} as any)[stage],properties:['refundAtMostOnce'],maxSteps:8,maxSamples:20,seed:'42',diagnostics:[]}));
 const modelReport=()=>({schemaVersion:1,modelId:'ORDER',identity:{modelHash:digest,configHash:digest,commandHash:digest},stages:structuredClone(stages)});
-const replay=()=>({schemaVersion:1,modelId:'ORDER',identity:{...identity},runner:'behavproof-external-driver/1',observation:'module-functions',complete:true,diagnostics:[],traces:[{id:'trace-1',complete:true,steps:['init','Pay','Refund'].map((action,index)=>({index,action,status:'pass',expected:{state:index},actual:{state:index},comparisonCount:1,implementationCalls:1}))}],canary:{faultId:'double-refund',implementationHash:changed,originalImplementationHash:digest,driverHash:digest,traceHash:digest,observedCalls:3,comparedSteps:3,detectedMismatches:1}});
-const expected=()=>({model,identity:{...identity},authenticated:true});
+const replay=()=>({schemaVersion:1,modelId:'ORDER',identity:{...identity},runner:'behavproof-external-driver/1',observation:'module-functions',complete:true,diagnostics:[],traces:[{id:'trace-1',complete:true,steps:['init','Pay','Refund'].map((action,index)=>({index,action,status:'pass',expected:{state:index},actual:{state:index},comparisonCount:1,implementationCalls:1}))}],canary:{faultId:'double-refund',implementationHash:changed,originalImplementationHash:digest,driverHash:digest,traceHash:digest,observedCalls:3,comparedSteps:3,detectedMismatches:1,failure:{traceId:'trace-1',index:2,action:'Refund',implementationCalls:1,expected:{state:2},actual:{state:99}}}});
+const expected=()=>({model,identity:{...identity},authenticated:true,canaryImplementationHash:changed});
 const evaluateModel=(value:unknown,ex:unknown=expected())=>(core as any).evaluateFormalModel(value,ex);
 const evaluateReplay=(value:unknown,ex:unknown=expected())=>(core as any).evaluateModelConformance(value,ex);
 
@@ -84,6 +84,13 @@ describe('independent scoped formal evidence',()=>{
   expect(evaluateModel(modelReport(),ex).status).toBe('unknown');
   const report=modelReport();(report.stages[4] as any).backendVersion='0.56.1';
   expect(evaluateModel(report,ex).status).toBe('pass');
+ });
+ it('requires the canary mismatch to match a real baseline comparison point',()=>{
+  for(const edit of [(r:any)=>delete r.canary.failure,(r:any)=>r.canary.failure.traceId='other-trace',(r:any)=>r.canary.failure.actual={state:2},(r:any)=>r.canary.failure.implementationCalls=0,(r:any)=>r.canary.failure.expected={state:98}]){
+   const report=replay();edit(report);expect(evaluateReplay(report).status).toBe('unknown');
+  }
+  expect(evaluateReplay(replay(),{...expected(),canaryImplementationHash:digest}).status).toBe('unknown');
+  const missing=expected();delete (missing as any).canaryImplementationHash;expect(evaluateReplay(replay(),missing).status).toBe('unknown');
  });
  it('accounts for action names without inheriting object prototype counts',()=>{
   const report=replay();report.traces[0]!.steps[0]!.action='constructor';

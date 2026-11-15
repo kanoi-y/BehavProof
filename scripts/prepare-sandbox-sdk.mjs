@@ -12,7 +12,7 @@ const top=await realpath(git(['rev-parse','--show-toplevel']).trim()),within=(ba
 if(within(top,requested))throw Error('SDK staging must be outside the entire Git checkout');
 const output=join(await realpath(dirname(requested)),basename(requested));
 if(within(top,output))throw Error('SDK staging must be outside the entire Git checkout');
-const packages=['core','adapter-reports','contract-registry','contract-vitest','adapter-github','adapter-quint','cli'];
+const packages=['core','adapter-reports','contract-registry','contract-vitest','adapter-github','adapter-quint','adapter-model-test','cli'];
 const allowed=path=>['package.json','package-lock.json','tsconfig.json','tsconfig.base.json','scripts/build-artifacts.mjs','scripts/protected-probe-worker.mjs'].includes(path)||path.startsWith('templates/')||packages.some(name=>path===`packages/${name}/package.json`||path===`packages/${name}/tsconfig.json`||path.startsWith(`packages/${name}/src/`)&&path.endsWith('.ts'));
 const paths=git(['ls-files','-z','--','.']).split('\0').filter(Boolean).filter(allowed).sort();
 for(const required of ['package.json','package-lock.json','scripts/build-artifacts.mjs','scripts/protected-probe-worker.mjs',...packages.map(name=>`packages/${name}/package.json`)])if(!paths.includes(required))throw Error('Required tracked SDK build input is missing');

@@ -31,7 +31,7 @@ export const FormalStageResultSchema=z.strictObject({
 export const FormalModelReportSchema=z.strictObject({schemaVersion:z.literal(1),modelId:text,identity:FormalInputIdentitySchema,stages:z.array(FormalStageResultSchema).max(5).refine(s=>new Set(s.map(x=>x.stage)).size===s.length,'Duplicate model stages')});
 export const ReplayStepSchema=z.strictObject({index:count,action:text,status:z.enum(['pass','fail','unknown']),parameters:z.json().optional(),expected:z.json(),actual:z.json().optional(),comparisonCount:count.max(1),implementationCalls:count,diagnostic:text.optional()});
 export const ReplayTraceSchema=z.strictObject({id:text,complete:z.boolean(),steps:z.array(ReplayStepSchema).max(10001).refine(steps=>steps.every((s,i)=>s.index===i),'Step indices must be contiguous from zero')});
-export const ConformanceCanarySchema=z.strictObject({faultId:text,implementationHash:digest,originalImplementationHash:digest,driverHash:digest,traceHash:digest,observedCalls:count,comparedSteps:count,detectedMismatches:count});
+export const ConformanceCanarySchema=z.strictObject({faultId:text,implementationHash:digest,originalImplementationHash:digest,driverHash:digest,traceHash:digest,observedCalls:count,comparedSteps:count,detectedMismatches:count,failure:z.strictObject({traceId:text,index:count,action:text,implementationCalls:count,expected:z.json(),actual:z.json()}).optional()});
 export const ModelConformanceReportSchema=z.strictObject({
  schemaVersion:z.literal(1),modelId:text,identity:FormalInputIdentitySchema,runner:text,
  observation:z.enum(['module-functions','unverified']),complete:z.boolean(),diagnostics:z.array(text).max(1000),
@@ -46,7 +46,7 @@ export type FormalModelReport=z.infer<typeof FormalModelReportSchema>;
 export type ModelConformanceReport=z.infer<typeof ModelConformanceReportSchema>;
 export type ReplayTrace=z.infer<typeof ReplayTraceSchema>;
 export type ReplayStep=z.infer<typeof ReplayStepSchema>;
-export type FormalExpectation={model:FormalModelConfig;identity:FormalInputIdentity;authenticated:boolean};
+export type FormalExpectation={model:FormalModelConfig;identity:FormalInputIdentity;authenticated:boolean;canaryImplementationHash?:string};
 const basicKeys=['modelHash','configHash','commandHash'] as const;
 const conformanceKeys=[...basicKeys,'driverHash','implementationHash','traceHash'] as const;
 const identityMatches=(actual:FormalInputIdentity,expected:FormalInputIdentity,keys:readonly (keyof FormalInputIdentity)[])=>keys.every(k=>expected[k]!==undefined&&actual[k]===expected[k]);
@@ -106,7 +106,9 @@ export function evaluateModelConformance(value:unknown,expected:FormalExpectatio
    for(const action of model.requiredActions)if(!Object.hasOwn(counts.actions,action))reasons.push(`Unreached action: ${action}`);
    if(model.requireCanary){
     const c=report.canary;
-    if(!c||c.originalImplementationHash!==expected.identity.implementationHash||c.implementationHash===c.originalImplementationHash||c.driverHash!==expected.identity.driverHash||c.traceHash!==expected.identity.traceHash||c.detectedMismatches<1||c.observedCalls<1||c.comparedSteps<1||c.detectedMismatches>c.comparedSteps||model.canary&&c.faultId!==model.canary.faultId)reasons.push('Current same-Driver/trace fault canary unavailable or undetected');
+    const f=c?.failure,baseline=f?report.traces.find(t=>t.id===f.traceId)?.steps.find(s=>s.index===f.index):undefined;
+    const observedMismatch=!!f&&!!baseline&&f.action===baseline.action&&f.implementationCalls>0&&canonicalJson(f.expected)===canonicalJson(baseline.expected)&&canonicalJson(f.actual)!==canonicalJson(f.expected);
+    if(!c||!observedMismatch||!expected.canaryImplementationHash||c.implementationHash!==expected.canaryImplementationHash||c.originalImplementationHash!==expected.identity.implementationHash||c.implementationHash===c.originalImplementationHash||c.driverHash!==expected.identity.driverHash||c.traceHash!==expected.identity.traceHash||c.detectedMismatches<1||c.observedCalls<1||c.comparedSteps<1||c.detectedMismatches>c.comparedSteps||model.canary&&c.faultId!==model.canary.faultId)reasons.push('Current same-Driver/trace fault canary unavailable or undetected');
    }
   }
  }
