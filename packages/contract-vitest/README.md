@@ -1,8 +1,8 @@
 # @behavproof/vitest
 
-BehavProof 0.1.0 initial restricted distribution. Requires Node.js 24.x.
+BehavProof 0.1.0 initial public preview distribution. Requires Node.js 24.x.
 
-Install with npm read access to the @behavproof scope:
+After publication, install from the public npm registry:
 
 ```sh
 npm install --ignore-scripts @behavproof/vitest@0.1.0
@@ -12,4 +12,4 @@ See the [Japanese deployment guide](https://github.com/kanoi-y/BehavProof/blob/m
 
 Passing evidence applies only to its authenticated source, approved obligations and bounded execution scope. Execute candidate tests and optional model Drivers only in credential-free isolated workers. Keep publishing credentials in a separate trusted host.
 
-No open-source license is granted (UNLICENSED). The GitHub source repository is public; npm restricted access controls package downloads, not source visibility.
+No open-source license is granted (UNLICENSED). Source is public; npm packages will be public after publication. The next dist-tag identifies the preview channel; it does not restrict access.

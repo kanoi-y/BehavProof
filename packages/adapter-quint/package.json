@@ -24,7 +24,7 @@
   },
   "license": "UNLICENSED",
   "publishConfig": {
-    "access": "restricted",
+    "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
   "description": "BehavProof adapter-quint: authenticated behavioral evidence for protected development workflows"
