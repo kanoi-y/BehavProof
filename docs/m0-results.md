@@ -14,7 +14,7 @@
 
 実PDDの `src/verification/acceptance.ts#canAcceptEvidence`、全64 Booleanケース、basic-risk契約と隔離した `behavproof-enforcement-test` での限定的な技術採用を可とする。比較成功から対象観測や故障感度を推論せず、別証拠で判定できること、契約無変更の内部リファクタを受け入れること、未承認緩和を拒否することを確認した。追加CI負担と接続ファイル数は上表の実測に限定して評価する。
 
-この判定は全PDDの品質、coverage/aggregate mutation、production L3、あらゆるGitHub構成の保護を保証しない。人間のactive編集/レビュー時間、長期の保守負担、CPU・料金は未測定。人間のユーザビリティ調査を実施したとはしない。pdd-ts mainの既存保護とmain限定のpdd-publisher環境を維持し、専用必須チェックの追加先は隔離baseだけである。任意M2-F（AC-31〜36）は未実装で必須範囲外。
+この判定は全PDDの品質、coverage/aggregate mutation、production L3、あらゆるGitHub構成の保護を保証しない。人間のactive編集/レビュー時間、長期の保守負担、CPU・料金は未測定。人間のユーザビリティ調査を実施したとはしない。pdd-ts mainの既存保護とmain限定のpdd-publisher環境を維持し、専用必須チェックの追加先は隔離baseだけである。このM0判定時点では任意M2-F（AC-31〜36）は未実装で範囲外だった。その後、ユーザーが明示選択したM2-Fも実装・実ツール/CI検証を完了した。追加範囲と限定採用判断は [M2-F検証記録](formal-validation.ja.md) を参照。
 
 ## 証拠の区別
 
