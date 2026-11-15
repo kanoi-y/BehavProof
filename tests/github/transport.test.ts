@@ -35,3 +35,14 @@ test('bounds pagination, rejects duplicate identities and invalid JSON',async()=
   const malformed=new GitHubTransport({repository:'acme/shop',fetcher:async()=>new Response('test-secret-not-real')});
   await expect(malformed.request('/repos/acme/shop/x')).rejects.toThrow('unavailable or malformed');
 });
+
+test('rejects URL normalization escapes before sending repository credentials',async()=>{
+  const seen:string[]=[];
+  const transport=new GitHubTransport({repository:'acme/shop',token:'fixture-not-a-real-token',fetcher:async(url)=>{seen.push(String(url));return new Response('{}');}});
+  for(const path of ['/repos/acme/shop/%2e%2e/%2e%2e/other/secret','/repos/acme/shop/%2E%2E/secret','/repos/acme/shop/ok#fragment','/repos/acme/shop/ok\\next']){
+    await expect(transport.request(path)).rejects.toThrow('endpoint');
+  }
+  expect(seen).toEqual([]);
+  await expect(transport.request('/repos/acme/shop/branches/feature%2Ftest/protection?per_page=100&page=1')).resolves.toEqual({});
+  expect(seen).toEqual(['https://api.github.com/repos/acme/shop/branches/feature%2Ftest/protection?per_page=100&page=1']);
+});

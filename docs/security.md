@@ -13,3 +13,13 @@ Use a protected verifier workflow with a credential-free candidate worker, then 
 Never put production credentials in candidate CI. The provided workflow template is an internal audit/gate template, not a self-establishing external trust root. It intentionally requires a separately provisioned root before gate mode can pass. Do not install it as a privileged pull_request_target workflow.
 
 GitHub documents [expected status-check sources](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches) and [issuer-bound app_id protection](https://docs.github.com/en/rest/branches/branch-protection). Verify the actual target repository protection and test deleted/skipped/replaced gates before claiming external enforcement. Historical checks or a JSON fixture are not live BehavProof acceptance evidence.
+
+## Distribution security and initial release
+
+Initial npm distribution is explicitly restricted to authorized npm readers. Public GitHub source remains public. `next` is a dist-tag, not an access control. No open-source license has been selected; packages are marked `UNLICENSED` pending a deliberate license decision.
+
+The release helper inspects actual tarball bytes, accepts only regular allowlisted package files, enforces size/structure bounds, rejects common credential shapes and lifecycle scripts, and verifies SHA-512 before publication. It publishes only to the fixed npm registry with restricted access, then reads back private visibility and integrity. Build/test/package steps must run without publishing credentials; use a separate trusted administrator host for publication. Review the manifest because scanning cannot prove absence of all secrets. Do not attach restricted tarballs to public GitHub Releases.
+
+GitHub transport validates canonical URL paths before attaching credentials, including encoded dot segments, backslashes and fragments. This prevents WHATWG URL normalization from escaping the selected repository. It does not expand the authority granted by the token: keep the dedicated App least-privileged and scoped to selected repositories.
+
+Candidate execution, explicit model Drivers, host compromise, transient filesystem changes and the semantic honesty of human-approved obligations remain outside a JSON evidence check's guarantees. Use isolated, credential-free, network-restricted workers; pin verifier source and dependencies; separately protect publisher credentials and gate App identity. Do not market a passing bounded check as proof of arbitrary program correctness or absence of malicious behavior.

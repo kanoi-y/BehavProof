@@ -43,5 +43,11 @@
     "@behavproof/adapter-model-test": {
       "optional": true
     }
-  }
+  },
+  "license": "UNLICENSED",
+  "publishConfig": {
+    "access": "restricted",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "description": "BehavProof cli: authenticated behavioral evidence for protected development workflows"
 }

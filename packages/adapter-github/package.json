@@ -22,5 +22,11 @@
     "type": "git",
     "url": "git+https://github.com/kanoi-y/BehavProof.git",
     "directory": "packages/adapter-github"
-  }
+  },
+  "license": "UNLICENSED",
+  "publishConfig": {
+    "access": "restricted",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "description": "BehavProof adapter-github: authenticated behavioral evidence for protected development workflows"
 }

@@ -2,9 +2,31 @@
   "name": "@behavproof/adapter-model-test",
   "version": "0.1.0",
   "type": "module",
-  "engines": {"node": "24.x"},
-  "files": ["dist"],
-  "exports": {".": {"types": "./dist/index.d.ts", "import": "./dist/index.js"}},
-  "dependencies": {"@behavproof/core": "0.1.0", "@firfi/itf-trace-parser": "0.1.2"},
-  "repository": {"type":"git","url":"git+https://github.com/kanoi-y/BehavProof.git","directory":"packages/adapter-model-test"}
+  "engines": {
+    "node": "24.x"
+  },
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "dependencies": {
+    "@behavproof/core": "0.1.0",
+    "@firfi/itf-trace-parser": "0.1.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kanoi-y/BehavProof.git",
+    "directory": "packages/adapter-model-test"
+  },
+  "license": "UNLICENSED",
+  "publishConfig": {
+    "access": "restricted",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "description": "BehavProof adapter-model-test: authenticated behavioral evidence for protected development workflows"
 }

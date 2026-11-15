@@ -16,11 +16,15 @@ export class GitHubTransport {
   }
   async request(path:string,query?:object):Promise<unknown>{
     if(!(path===this.prefix||path.startsWith(this.prefix+'/')&&!path.includes('..'))&&!(path==='/graphql'&&query))throw Error('Invalid GitHub endpoint');
+    // Validate the actual URL, before attaching credentials. WHATWG URL parsing
+    // resolves encoded dot segments and treats backslashes as path separators.
+    const url=new URL(path,'https://api.github.com');
+    if(url.origin!=='https://api.github.com'||path.includes('\\')||path.includes('#')||url.pathname!==path.split('?')[0])throw Error('Invalid GitHub endpoint');
     const abort=new AbortController();let timer:ReturnType<typeof setTimeout>|undefined;
     const operation=async()=>{
       const headers:Record<string,string>={Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'};
       if(this.options.token)headers.Authorization=`Bearer ${this.options.token}`;
-      const response=await this.fetcher(new URL(path,'https://api.github.com'),{method:query?'POST':'GET',headers,redirect:'manual',signal:abort.signal,...(query?{body:JSON.stringify(query)}:{})});
+      const response=await this.fetcher(url,{method:query?'POST':'GET',headers,redirect:'manual',signal:abort.signal,...(query?{body:JSON.stringify(query)}:{})});
       if(!response.ok)throw Error(`GitHub HTTP ${response.status}`);
       if(!response.body)throw Error('Malformed GitHub response');
       const reader=response.body.getReader();let size=0;const chunks:Uint8Array[]=[];

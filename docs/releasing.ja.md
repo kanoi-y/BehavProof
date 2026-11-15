@@ -1,0 +1,51 @@
+# npm限定公開とRelease手順
+
+初回は全8パッケージを `0.1.0`、npmの `restricted` で配布する。`next` は配布チャネル名であり、非公開を保証する設定ではない。公開範囲は必ずnpmのアクセス設定で確認する。npm公開成功前にGitHub Releaseを正式公開しない。
+
+## アカウントの前提
+
+- `@behavproof` のnpm Organization所有権／書き込み権限と、有料のPrivate Packages契約が必要。npm未ログイン、権限不足、HTTP 402の場合は停止する。公開への自動切替や課金はしない。
+- 管理者自身が `npm login --registry=https://registry.npmjs.org` を実行する。認証情報をチャット・リポジトリ・CI成果物に入れない。2FAが必要な場合も管理者がnpmの案内に従う。
+- GitHubソースはpublicである。npmを限定公開してもソースは非公開にならず、利用者による再配布を技術的に防ぐものでもない。現時点ではオープンソースライセンスを選定していないため、パッケージには `UNLICENSED` を明記する。
+
+npmの条件: [private packages](https://docs.npmjs.com/about-private-packages/)、[private package publishing](https://docs.npmjs.com/creating-and-publishing-private-packages/)。
+
+## 認証情報のない環境での検証と梱包
+
+Node.js 24.xで、変更をレビュー・コミットし、クリーンなチェックアウトから実行する。`SOURCE_SHA` は公開対象の完全な40桁コミット値に置き換える。
+
+```sh
+npm ci --ignore-scripts
+npm test
+npm audit
+node scripts/package-smoke.mjs --online --formal
+mkdir -p .behavproof/releases
+npm run release -- prepare .behavproof/releases/0.1.0
+npm run release -- verify .behavproof/releases/0.1.0 SOURCE_SHA
+```
+
+smokeは記録用 `docs/evidence/formal-package-smoke.json` を更新する場合がある。梱包前に差分を確認し、意図した記録のみコミットする。梱包はバージョン、内部依存の完全一致、固定registry、restrictedアクセス、ライフサイクルスクリプトなしを要求する。tarballの実際の内容を展開せず読み、許可ファイル、サイズ・tar構造・重複・リンク・秘密鍵／既知の認証トークン形式を検査する。SHA-512、ファイル一覧、ソースSHAを `release-manifest.json` に保存する。スキャナーが未知の秘密情報を必ず検出できるわけではないため、最終一覧もレビューする。
+
+## 管理者ホストからの限定公開
+
+梱包済みファイルとmanifestを管理者ホストへ移し、同じソースSHAをチェックアウトする。認証情報を設定したホストでは、ビルドや候補テストを再実行しない。
+
+```sh
+npm whoami --registry=https://registry.npmjs.org
+npm run release -- publish .behavproof/releases/0.1.0 SOURCE_SHA
+```
+
+依存順で全8パッケージを `--access=restricted --tag=next --ignore-scripts` で公開する。既存publicパッケージへの公開を拒否する。公開済みの同一バージョンは、privateかつtarballのSHA-512が完全一致する場合だけ再利用する。途中で失敗した場合、同じmanifestで再実行できる。異なるbytesで同一バージョンを上書きしない。npmの複数パッケージ公開は一括トランザクションではないため、全件確認まで完了扱いにしない。
+
+公開後はnpm APIのアクセス状態 `private`（publishの指定名は `restricted`）と `dist.integrity` を全件読み戻す。read-onlyアクセスを持つ利用者の別ディレクトリで、CLI・Vitestアダプターをregistryから実際にインストールして動作確認する。formalアダプターは必要な利用者のみ追加する。
+
+```sh
+npm install --ignore-scripts @behavproof/cli@0.1.0 @behavproof/vitest@0.1.0 vitest@5.1.0
+npx --no-install behavproof --help
+```
+
+## バージョンタグとGitHub Release
+
+全8件の限定公開とregistryからのインストール確認後、公開ソースの正確なコミットに注釈付き `v0.1.0` タグを作成する。既存タグを移動・上書きしない。GitHub Releaseには対象コミット、導入方法、検証結果、既知の制約、tarballのSHA-512を記載する。限定公開tarballやmanifest内のファイル内容をpublicのReleaseに添付しない。manifestのハッシュ一覧は公開してよい。限定導入期間中はPrereleaseとして公開する。
+
+将来の自動公開は、保護されたRelease環境とnpm Trusted Publishingの設定を確認してから導入する。現在は長寿命npmトークンをGitHub Secretsへ新設しない。private npmパッケージには自動provenanceが付かないため、attestation付きと表示しない（[npm公式](https://docs.npmjs.com/trusted-publishers/)）。
