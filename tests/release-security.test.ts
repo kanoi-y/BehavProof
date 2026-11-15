@@ -65,3 +65,17 @@ test('distinguishes npm phantom-private names from existing private packages',as
   {visibility:'unknown',packageMissing:true,listed:false,owner:true},
  ])expect(()=>publicReleaseState(value)).toThrow();
 });
+
+test('recognizes an owner-visible public name awaiting registry scanning without permitting private publication',async()=>{
+ const {publicReleaseState}=await import('../scripts/release.mjs');
+ expect(publicReleaseState({visibility:'public',packageMissing:true,listed:true,owner:true})).toBe('pending');
+ expect(()=>publicReleaseState({visibility:'public',packageMissing:true,listed:false,owner:true})).toThrow();
+});
+test('waits for every queued package and never treats acceptance as verified availability',async()=>{
+ const {waitForPublications}=await import('../scripts/release.mjs');let time=0;const seen:string[]=[];
+ const rows=[{name:'a',integrity:'hash-a'},{name:'b',integrity:'hash-b'}];
+ await waitForPublications(rows,{read:async row=>{seen.push(row.name);return time>=(row.name==='a'?1:2)?{visibility:'public',integrity:row.integrity}:undefined;},now:()=>time,pause:async()=>{time++;},pollMs:1,timeoutMs:5});
+ expect(time).toBe(2);expect(seen).toEqual(['a','b','a','b','b']);
+ await expect(waitForPublications(rows,{read:async()=>undefined,now:()=>time,pause:async()=>{time++;},pollMs:1,timeoutMs:2})).rejects.toThrow('still pending');
+ for(const bad of [{visibility:'private',integrity:'hash-a'},{visibility:'public',integrity:'different'}])await expect(waitForPublications([rows[0]],{read:async()=>bad,now:()=>0,pause:async()=>{},pollMs:1,timeoutMs:2})).rejects.toThrow('verification failed');
+});

@@ -1,4 +1,5 @@
 /** Approved public npm releases. Never builds or runs package lifecycle scripts with publishing credentials. */
+import {setTimeout as delay} from 'node:timers/promises';
 import {existsSync} from 'node:fs';
 import {execFileSync} from 'node:child_process';
 import {readFile,mkdir,writeFile,lstat,mkdtemp,rm} from 'node:fs/promises';
@@ -61,8 +62,23 @@ const npm=(...args)=>{
  * establish a new name; an existing private package never changes visibility. */
 export function publicReleaseState({visibility,packageMissing,listed,owner}){
  if(visibility==='public'&&packageMissing===false)return 'existing';
+ if(visibility==='public'&&packageMissing===true&&listed===true&&owner===true)return 'pending';
  if(['private','missing'].includes(visibility)&&packageMissing===true&&listed===false&&owner===true)return 'new';
  throw Error('Existing package is not public, or absence cannot be established; refusing publication');
+}
+/** Queue acceptance is not availability. Verify every exact digest, or fail. */
+export async function waitForPublications(rows,{read,now=Date.now,pause=delay,pollMs=20000,timeoutMs=20*60*1000,onPending}={}){
+ if(typeof read!=='function'||!Number.isSafeInteger(pollMs)||pollMs<1||!Number.isSafeInteger(timeoutMs)||timeoutMs<1||timeoutMs>30*60*1000)throw Error('Invalid publication wait limits');
+ const pending=new Map(rows.map(row=>[row.name,row]));const started=now();
+ while(pending.size){
+  for(const [name,row] of pending){const result=await read(row);if(result===undefined)continue;
+   if(!result||result.visibility!=='public'||result.integrity!==row.integrity)throw Error('Published package verification failed: '+name);
+   pending.delete(name);
+  }
+  if(!pending.size)return;
+  if(now()-started>=timeoutMs)throw Error('npm processing still pending: '+[...pending.keys()].join(', '));
+  onPending?.([...pending.keys()]);await pause(pollMs);
+ }
 }
 export async function verifyRelease(directory,expectedCommit){
  const manifest=JSON.parse(await readFile(join(directory,'release-manifest.json'),'utf8'));
@@ -107,16 +123,20 @@ async function main(){
     let visibility;try{visibility=JSON.parse(npm('access','get','status',row.name,'--json','--registry='+registry));}catch(error){if(!/E404/.test(String(error.stderr)))throw Error('Cannot establish package visibility; refusing publication');}
     let packageMissing=false;
     try{npm('view',row.name,'versions','--json');}catch(error){if(/E404/.test(String(error.stderr)))packageMissing=true;else throw Error('Cannot establish package existence');}
-    publicReleaseState({visibility:visibility?.[row.name]??'missing',packageMissing,listed:Object.hasOwn(inventory,row.name),owner});
+    const state=publicReleaseState({visibility:visibility?.[row.name]??'missing',packageMissing,listed:Object.hasOwn(inventory,row.name),owner});
+    if(state==='pending'){console.log(row.name+': already public but processing; do not resubmit');continue;}
     const bytes=await readFile(join(snapshot,row.filename));if(sha512(bytes)!==row.integrity)throw Error('Archive changed before publication');
     let existing;try{existing=JSON.parse(npm('view',row.name+'@'+manifest.version,'dist.integrity','--json','--registry='+registry));}catch(error){if(!/E404/.test(String(error.stderr)))throw Error('Cannot inspect existing version');}
     if(existing&&existing!==row.integrity)throw Error('Existing version differs; versions cannot be overwritten');
     if(!existing)npm('publish',join(snapshot,row.filename),'--access=public','--tag=next','--ignore-scripts','--registry='+registry);
-    const status=JSON.parse(npm('access','get','status',row.name,'--json','--registry='+registry));
-    const integrity=JSON.parse(npm('view',row.name+'@'+manifest.version,'dist.integrity','--json','--registry='+registry));
-    if(status[row.name]!=='public'||integrity!==row.integrity)throw Error('Published package verification failed');
-    console.log(row.name+'@'+manifest.version+': public, integrity verified');
+    console.log(row.name+'@'+manifest.version+': accepted; awaiting registry verification');
    }
+   await waitForPublications(manifest.packages,{read:async row=>{
+    let integrity;try{integrity=JSON.parse(npm('view',row.name+'@'+manifest.version,'dist.integrity','--json'));}catch(error){if(/E404/.test(String(error.stderr)))return undefined;throw Error('Registry verification unavailable');}
+    const status=JSON.parse(npm('access','get','status',row.name,'--json'));
+    return {visibility:status[row.name],integrity};
+   },onPending:names=>console.log('Waiting for npm publish-time scanning: '+names.join(', '))});
+   for(const row of manifest.packages)console.log(row.name+'@'+manifest.version+': public, integrity verified');
    }finally{await rm(snapshot,{recursive:true,force:true});}
   }
  }
