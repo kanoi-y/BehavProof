@@ -5,7 +5,7 @@
 
 基準: `BehavProof_開発仕様書_v0.6.md` §19。既存M1/M2の45件（AC-01〜30、AC-37〜51）に、今回明示選択したM2-Fの6件を追加する。各範囲の実地・実ツール・ローカル検証を区別する。
 
-現在の必須45件は、下記の実行証拠で検証済み。ローカル検査と実GitHub保護を区別する。実地検証の対象はpdd-tsの受理関数と隔離した検証用ブランチであり、全PDDの品質やmainへの追加保護を意味しない。詳しくは[実地検証結果](github-live-validation.ja.md)。
+既存の必須45件と今回選択したM2-Fの6件は、下記の実行証拠で検証済み。ローカル検査と実GitHub保護を区別する。実地検証の対象はpdd-tsの受理関数と隔離した検証用ブランチであり、全PDDの品質やmainへの追加保護を意味しない。詳しくは[実地検証結果](github-live-validation.ja.md)。
 
 | ID | 段階 | 条件と期待結果 | 状態 | 実行証拠 |
 | --- | --- | --- | --- | --- |
@@ -39,12 +39,12 @@
 | AC-28 | M2 | 高リスクファイルの影響が不明 → 理由付きunknown、設定によりblock | ローカル検証済み | tests/cli/impact-gate.test.ts：実CLIの解決済み変更gate0→不明変更gate1、criticalの保護floor、実対象の明示対応。従来のRegistry単体検査だけではgate接続を証明できなかった |
 | AC-29 | M2 | AIがIntentとテストを同時に生成 → 未承認なら承認済みと扱わない | ローカル検証済み | tests/contracts/registry.test.ts |
 | AC-30 | M2 | 同一Contract IDの競合ソース → 明示的な重複エラー | ローカル検証済み | tests/contracts/registry.test.ts |
-| AC-31 | M2-F | Quintを未使用 → 依存の追加・既存CIへの影響なし | ローカル検証済み（最終CI確認中） | scripts/package-smoke.mjs; docs/evidence/package-smoke.json; docs/evidence/formal-package-smoke.json：通常6個では任意アダプターも未導入、任意8個でもQuint/Connectの必須依存なし。既存CIにJava導入なし |
-| AC-32 | M2-F | モデル違反を注入 → モデル側の失敗を検出 | 実ツール・ローカル検証済み（最終CI確認中） | docs/evidence/formal-flow.json：実Quint simulationの2回再現と実Apalache bounded verifyでモデル故障を検出 |
-| AC-33 | M2-F | 実装のみ違反を注入 → conformance失敗を検出 | 実ツール・ローカル検証済み（最終CI確認中） | docs/evidence/formal-flow.json：同じDriver・10トレースで故障実装を90比較し5不一致。モデル検査とは別のconformance |
-| AC-34 | M2-F | モデルチェックが有界 → 上限を表示し無制限保証としない | 実ツール・ローカル検証済み（最終CI確認中） | docs/evidence/formal-flow.json; tests/cli/formal.test.ts：Apalache bounded_model_check、maxSteps=8、simulation maxSamples=100/seed42、再生10件90比較を分離。console/JSON/Markdownもunbounded=false |
-| AC-35 | M2-F | トレース0／比較0 → conformance pass禁止 | ローカル検証済み（最終CI確認中） | tests/formal/evidence.test.ts; tests/formal/replay.test.ts; tests/cli/formal.test.ts：0トレース/0比較/0呼出、未到達、最低件数以上でのsuffix欠落も拒否 |
-| AC-36 | M2-F | モデル／Driver変更後の旧証拠 → ハッシュ不一致で拒否 | ローカル検証済み（最終CI確認中） | tests/cli/formal.test.ts; tests/cli/registration.test.ts：モデル/Driver/実装/config/trace/canary変更と、現在producerで旧結果を再sealする負例を拒否 |
+| AC-31 | M2-F | Quintを未使用 → 依存の追加・既存CIへの影響なし | ローカル・CI検証済み | scripts/package-smoke.mjs; docs/evidence/package-smoke.json; docs/evidence/formal-package-smoke.json：通常6個では任意アダプターも未導入、任意8個でもQuint/Connectの必須依存なし。既存CIにJava導入なし |
+| AC-32 | M2-F | モデル違反を注入 → モデル側の失敗を検出 | 実ツール・CI検証済み | docs/evidence/formal-flow.json：実Quint simulationの2回再現と実Apalache bounded verifyでモデル故障を検出 |
+| AC-33 | M2-F | 実装のみ違反を注入 → conformance失敗を検出 | 実ツール・CI検証済み | docs/evidence/formal-flow.json：同じDriver・10トレースで故障実装を90比較し5不一致。モデル検査とは別のconformance |
+| AC-34 | M2-F | モデルチェックが有界 → 上限を表示し無制限保証としない | 実ツール・CI検証済み | docs/evidence/formal-flow.json; tests/cli/formal.test.ts：Apalache bounded_model_check、maxSteps=8、simulation maxSamples=100/seed42、再生10件90比較を分離。console/JSON/Markdownもunbounded=false |
+| AC-35 | M2-F | トレース0／比較0 → conformance pass禁止 | ローカル・CI検証済み | tests/formal/evidence.test.ts; tests/formal/replay.test.ts; tests/cli/formal.test.ts：0トレース/0比較/0呼出、未到達、最低件数以上でのsuffix欠落も拒否 |
+| AC-36 | M2-F | モデル／Driver変更後の旧証拠 → ハッシュ不一致で拒否 | ローカル・CI検証済み | tests/cli/formal.test.ts; tests/cli/registration.test.ts：モデル/Driver/実装/config/trace/canary変更と、現在producerで旧結果を再sealする負例を拒否 |
 | AC-37 | M1 | 生レポートのみ、または現在SHAを後付けした記録 → 内容をaudit表示できるが鮮度検証済みにせず、必須来歴はunknown | ローカル検証済み | tests/core/trust.test.ts; tests/cli/commands.test.ts |
 | AC-38 | M1 | Manifest確定後に成果物を改変／前回成果物を流用 → 整合不成立でgate block | ローカル検証済み | tests/core/trust.test.ts; tests/cli/commands.test.ts |
 | AC-39 | M1 | PR内JSONが信頼済みproducerを自己申告 → 外部信頼基点と照合できなければproducerTrustはunknown | ローカル検証済み | tests/core/trust.test.ts; tests/cli/commands.test.ts |
@@ -72,3 +72,5 @@ M0の5条件と採用判断は[m0-results.md](m0-results.md)、操作数・CIコ
 全体独立レビューで再現したManifestのSHA付替えとマージ専用の契約変更による承認流用は、tests/acceptance/local-replay.test.tsとmerge-approval.test.tsで回帰検査する。AC-44/46等の契約削除・廃止承認はRegistryの実行済み自動検査を根拠とし、未実施の外部操作へ置換しない。
 
 旧pdd-ts PR7/8と初期の失敗runは履歴資料である。旧承認を新HEADへ流用せず、HTTP422/CLI127による導入途中の失敗はIntent等の負例検知に数えない。過去の記録は各evidence JSONに保持している。[リポジトリ境界](repository-boundaries.md)のとおり、製品本体は別のpublicリポジトリで管理する。
+
+M2-Fの全6条件と付録B.9の7条件は[受入検証・採用判断](formal-validation.ja.md)と[機械可読記録](evidence/formal-validation.json)を参照。通常6/任意8パッケージの導入、全393ローカルテスト、3 OS回帰CI、実Apalacheと故障注入を含む任意formal CIを検証した。無制限証明や新しい実User承認を意味しない。

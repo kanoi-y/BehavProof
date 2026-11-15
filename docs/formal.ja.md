@@ -88,3 +88,5 @@ node scripts/package-smoke.mjs --offline --formal
 `formalModel` と `implementationConformance` は別の結果です。モデル成功だけで実装の適合性を成功にしません。モデル本文・Driver・実装・設定・コマンド・トレースのいずれかが変わると旧結果は採用しません。トレース0、比較0、実装呼出0、必須action未到達、故障canary未検出も成功にしません。
 
 `maxSteps=8` などの上限、simulationの標本数・seedと、実装再生のトレース数・比較数を確認してください。有界モデル検査の成功は無制限の証明ではありません。選択した実装関数への呼出観測と故障検出も、本番到達の完全な証明や悪意のあるDriverへの保証ではありません。Driver・producer・依存関係のレビューと実行環境の隔離は別途必要です。
+
+検証済みのCI・導入コスト・限定した採用判断は [M2-F受入検証記録](formal-validation.ja.md) にまとめています。

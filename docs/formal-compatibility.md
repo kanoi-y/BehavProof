@@ -35,3 +35,5 @@ Evidence and reproducible entry points:
 The evidence scope must be read literally. A local fixture host is not an actual human approval or issuer-bound GitHub enforcement observation. A bounded model result is not an unbounded proof. Calls and selected fault sensitivity do not prove a complete or honest Driver, production reach, runtime isolation or coverage of external services. Explicit source lists must include reviewed runtime dependencies; arbitrary dynamic imports are not automatically discovered.
 
 Automation duration, initial tool download, selected model/Driver/implementation line counts and CI job duration are separate costs. None measures human implementation or review time. Cold tool download can exceed a model-stage deadline; pre-provision a verified cache or retain unknown and retry after setup, rather than treating timeout as a clean model result.
+
+The completed acceptance audit, measured setup/CI/maintenance cost, limited adoption decision and four implementation rulings are recorded in [日本語の検証記録](formal-validation.ja.md) and [machine-readable evidence](evidence/formal-validation.json).
