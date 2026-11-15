@@ -35,7 +35,7 @@
   },
   "license": "UNLICENSED",
   "publishConfig": {
-    "access": "restricted",
+    "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
   "description": "BehavProof contract-vitest: authenticated behavioral evidence for protected development workflows"

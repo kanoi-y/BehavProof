@@ -1,8 +1,8 @@
 # Changelog
 
-## 0.1.0 — release preparation
+## 0.1.0 — public preview
 
-Publication and the `v0.1.0` tag are pending. This entry describes the proposed initial release, not a published npm version.
+Initial release scope. Publication status and the exact tagged source commit are recorded in GitHub Releases; the preview uses npm’s next channel.
 
 - Eight packages: core, report adapters, Contract registry, Vitest integration, GitHub authority/publisher, CLI, and two optional formal adapters.
 - Node.js 24.x and single-package Vitest 5.1.0 integration. Schemas, policy presets and protected GitHub workflow templates are included with the CLI.

@@ -1,6 +1,6 @@
 # Security policy
 
-The initial 0.1.0 release is in preparation. Until it is published, use a verified pinned source commit; no npm version is claimed as released here.
+The initial 0.1.0 distribution is a preview. Confirm availability and exact source identity in GitHub Releases; otherwise use a verified pinned source commit. Fixes are handled on a best-effort basis for the current preview.
 
 Report suspected vulnerabilities through [GitHub private vulnerability reporting](https://github.com/kanoi-y/BehavProof/security/advisories/new). Include the affected commit/version, reproduction, trust assumptions, and expected/observed behavior. Use synthetic credentials and redact personal or customer data. Do not submit live tokens or private keys.
 

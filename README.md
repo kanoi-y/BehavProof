@@ -2,7 +2,7 @@
 
 Canonical public repository: [kanoi-y/BehavProof](https://github.com/kanoi-y/BehavProof). This repository owns the implementation, tests, examples and product CI. [pdd-ts](https://github.com/kanoi-y/pdd-ts) is an application used to evaluate BehavProof; it consumes a pinned BehavProof commit and does not host this product's source tree. See [repository boundaries](docs/repository-boundaries.md).
 
-TypeScript / Node.js 24 / Vitest evidence auditing and executable contract registry. This checkout implements the mandatory M1/M2 libraries and CLI, with live issuer-bound protection verified on an isolated pdd-ts branch. Nothing has been published to npm.
+TypeScript / Node.js 24 / Vitest evidence auditing and executable contract registry. This checkout implements the mandatory M1/M2 libraries and CLI, with live issuer-bound protection verified on an isolated pdd-ts branch. The initial npm release is a public preview on the `next` channel; publication status and the exact source commit are recorded in [GitHub Releases](https://github.com/kanoi-y/BehavProof/releases). Use an explicit published version when installing.
 
 ```sh
 npm ci --ignore-scripts --cache .npm-cache
@@ -57,4 +57,4 @@ Protected GitHub integration: [日本語の導入・検証手順](docs/protected
 
 See [schema compatibility](docs/schema-compatibility.md), [evaluation snapshots and historical replay](docs/evaluation-snapshots.md), and [measured adoption footprint/CI time](docs/pdd-adoption-cost.md). Console/Markdown reports show each target and action; JSON additionally retains policy comparisons and normalized authority observations.
 
-Initial npm distribution preparation: [日本語の公開・タグ・Release手順](docs/releasing.ja.md) and [配布前セキュリティ点検](docs/security-review-2026-11-15.ja.md). The helper defaults to restricted publication; it does not automatically substitute public access. Public GitHub source does not imply an open-source license.
+Initial npm distribution preparation: [日本語の公開・タグ・Release手順](docs/releasing.ja.md) and [配布前セキュリティ点検](docs/security-review-2026-11-15.ja.md). The owner approved initial public publication on the next channel; the helper enforces this policy and refuses to change an existing private package to public. Public GitHub source does not imply an open-source license.

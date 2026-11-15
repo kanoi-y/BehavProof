@@ -1,4 +1,4 @@
-/** Restricted npm releases. Never builds or runs package lifecycle scripts with publishing credentials. */
+/** Approved public npm releases. Never builds or runs package lifecycle scripts with publishing credentials. */
 import {existsSync} from 'node:fs';
 import {execFileSync} from 'node:child_process';
 import {readFile,mkdir,writeFile,lstat,mkdtemp,rm} from 'node:fs/promises';
@@ -12,7 +12,7 @@ const registry='https://registry.npmjs.org/';
 const sha512=bytes=>'sha512-'+createHash('sha512').update(bytes).digest('base64');
 export function validatePackage(p,version){
  if(!/^@behavproof\/[a-z-]+$/.test(p.name)||p.version!==version||!/^\d+\.\d+\.\d+$/.test(version)||p.private||p.license!=='UNLICENSED')throw Error('Invalid release metadata');
- if(p.publishConfig?.access!=='restricted'||p.publishConfig?.registry!==registry||Object.keys(p.publishConfig).some(k=>!['access','registry'].includes(k)))throw Error('Release must use the restricted npm registry');
+ if(p.publishConfig?.access!=='public'||p.publishConfig?.registry!==registry||Object.keys(p.publishConfig).some(k=>!['access','registry'].includes(k)))throw Error('Release must use the approved public npm registry');
  if(p.scripts&&Object.keys(p.scripts).length||p.bundledDependencies||p.bundleDependencies)throw Error('Package lifecycle scripts and bundled dependencies are prohibited');
  for(const group of ['dependencies','peerDependencies','optionalDependencies'])for(const [name,range] of Object.entries(p[group]??{}))if(name.startsWith('@behavproof/')&&range!==version)throw Error('Internal version mismatch');
  if(!Array.isArray(p.files)||!p.files.length||p.files.some(f=>!['dist','schemas','presets','templates'].includes(f)))throw Error('Invalid package allowlist');
@@ -52,13 +52,13 @@ const npm=(...args)=>{
  const cli=npmCliPath();
  if(args[0]==='publish'){
   try{return execFileSync(process.execPath,[cli,...npmArguments(args)],{cwd:project,encoding:'utf8',stdio:'inherit',timeout:300000});}
-  catch{throw Error('npm publish failed. If 2FA is required, rerun this command in an interactive administrator terminal; no public fallback was attempted.');}
+  catch{throw Error('npm publish failed. If 2FA is required, rerun this command in an interactive administrator terminal; no alternative access mode was attempted.');}
  }
  return run(process.execPath,[cli,...npmArguments(args)]);
 };
 export async function verifyRelease(directory,expectedCommit){
  const manifest=JSON.parse(await readFile(join(directory,'release-manifest.json'),'utf8'));
- if(manifest.schemaVersion!==1||manifest.access!=='restricted'||manifest.registry!==registry||manifest.sourceCommit!==expectedCommit||!/^[a-f0-9]{40}$/.test(expectedCommit)||manifest.packages?.length!==packageDirs.length)throw Error('Invalid release identity');
+ if(manifest.schemaVersion!==1||manifest.access!=='public'||manifest.registry!==registry||manifest.sourceCommit!==expectedCommit||!/^[a-f0-9]{40}$/.test(expectedCommit)||manifest.packages?.length!==packageDirs.length)throw Error('Invalid release identity');
  for(const [index,dir] of packageDirs.entries()){
   const p=JSON.parse(await readFile(join(project,'packages',dir,'package.json'),'utf8'));validatePackage(p,manifest.version);
   const row=manifest.packages[index],filename=p.name.replace('@','').replace('/','-')+'-'+p.version+'.tgz';
@@ -79,29 +79,29 @@ async function main(){
    const [meta]=JSON.parse(npm('pack','--workspace='+p.name,'--ignore-scripts','--json','--cache',join(project,'.npm-cache'),'--pack-destination',directory));
    const bytes=await readFile(join(directory,meta.filename));packages.push({name:p.name,filename:meta.filename,integrity:sha512(bytes),files:inspectArchive(bytes,p)});
   }
-  await writeFile(join(directory,'release-manifest.json'),JSON.stringify({schemaVersion:1,version,sourceCommit,registry,access:'restricted',packages},null,2)+'\n',{flag:'wx',mode:0o600});
+  await writeFile(join(directory,'release-manifest.json'),JSON.stringify({schemaVersion:1,version,sourceCommit,registry,access:'public',packages},null,2)+'\n',{flag:'wx',mode:0o600});
  }else{
   if(expectedCommit!==sourceCommit)throw Error('Checkout differs from the exact release source');
   const manifest=await verifyRelease(directory,expectedCommit);
   if(command==='publish'){
-   // No public fallback, automatic payment, staging placeholders or latest promotion.
+   // Explicit public policy approved by the owner; no automatic payment, staging placeholders or latest promotion.
    const snapshot=await mkdtemp(join(tmpdir(),'behavproof-release-'));
    try{
    for(const row of manifest.packages){const bytes=await readFile(join(directory,row.filename));if(sha512(bytes)!==row.integrity)throw Error('Release changed before snapshot');await writeFile(join(snapshot,row.filename),bytes,{flag:'wx',mode:0o600});}
    const username=npm('whoami','--registry='+registry).trim();if(!username)throw Error('npm login required');
-   console.log('Publishing restricted packages as '+username);
+   console.log('Publishing public packages as '+username);
    for(const row of manifest.packages){
-    // Refuse to release a new version of an existing public package.
+    // Never silently change an existing private package to public.
     let visibility;try{visibility=JSON.parse(npm('access','get','status',row.name,'--json','--registry='+registry));}catch(error){if(!/E404/.test(String(error.stderr)))throw Error('Cannot establish package visibility; refusing publication');}
-    if(visibility&&visibility[row.name]!=='private')throw Error('Existing package is not restricted');
+    if(visibility&&visibility[row.name]!=='public')throw Error('Existing package is not public; refuse to change visibility');
     const bytes=await readFile(join(snapshot,row.filename));if(sha512(bytes)!==row.integrity)throw Error('Archive changed before publication');
     let existing;try{existing=JSON.parse(npm('view',row.name+'@'+manifest.version,'dist.integrity','--json','--registry='+registry));}catch(error){if(!/E404/.test(String(error.stderr)))throw Error('Cannot inspect existing version');}
     if(existing&&existing!==row.integrity)throw Error('Existing version differs; versions cannot be overwritten');
-    if(!existing)npm('publish',join(snapshot,row.filename),'--access=restricted','--tag=next','--ignore-scripts','--registry='+registry);
+    if(!existing)npm('publish',join(snapshot,row.filename),'--access=public','--tag=next','--ignore-scripts','--registry='+registry);
     const status=JSON.parse(npm('access','get','status',row.name,'--json','--registry='+registry));
     const integrity=JSON.parse(npm('view',row.name+'@'+manifest.version,'dist.integrity','--json','--registry='+registry));
-    if(status[row.name]!=='private'||integrity!==row.integrity)throw Error('Published package verification failed');
-    console.log(row.name+'@'+manifest.version+': restricted, integrity verified');
+    if(status[row.name]!=='public'||integrity!==row.integrity)throw Error('Published package verification failed');
+    console.log(row.name+'@'+manifest.version+': public, integrity verified');
    }
    }finally{await rm(snapshot,{recursive:true,force:true});}
   }

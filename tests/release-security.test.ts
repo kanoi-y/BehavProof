@@ -1,17 +1,17 @@
 import {test,expect} from 'vitest';
 import {gzipSync} from 'node:zlib';
 import {inspectArchive,validatePackage} from '../scripts/release.mjs';
-const metadata=()=>({name:'@behavproof/core',version:'0.1.0',license:'UNLICENSED',publishConfig:{access:'restricted',registry:'https://registry.npmjs.org/'},files:['dist'],exports:{'.':'./dist/index.js'}});
+const metadata=()=>({name:'@behavproof/core',version:'0.1.0',license:'UNLICENSED',publishConfig:{access:'public',registry:'https://registry.npmjs.org/'},files:['dist'],exports:{'.':'./dist/index.js'}});
 function archive(entries:{name:string;body:string;type?:string}[]){
  const chunks:Buffer[]=[];
  for(const e of entries){const h=Buffer.alloc(512);h.write(e.name);h.write('0000644\0',100);h.write('0000000\0',108);h.write('0000000\0',116);h.write(Buffer.byteLength(e.body).toString(8).padStart(11,'0')+'\0',124);h.write('00000000000\0',136);h.fill(32,148,156);h.write(e.type??'0',156);h.write('ustar\0',257);h.write('00',263);h.write([...h].reduce((a,b)=>a+b,0).toString(8).padStart(6,'0')+'\0 ',148);const b=Buffer.from(e.body);chunks.push(h,b,Buffer.alloc((512-b.length%512)%512));}
  return gzipSync(Buffer.concat([...chunks,Buffer.alloc(1024)]));
 }
-test('inspects actual packed bytes and keeps the restricted registry and exact workspace versions',()=>{
+test('inspects actual packed bytes and keeps the approved public registry and exact workspace versions',()=>{
  expect(validatePackage(metadata(),'0.1.0')).toBeUndefined();
  const files=inspectArchive(archive([{name:'package/package.json',body:JSON.stringify(metadata())},{name:'package/dist/index.js',body:'export const ok=true;'}]),metadata());
  expect(files).toEqual(['package/package.json','package/dist/index.js']);
- for(const bad of [{publishConfig:{access:'public',registry:'https://registry.npmjs.org/'}},{dependencies:{'@behavproof/core':'*'}},{scripts:{prepublishOnly:'curl example.invalid'}},{publishConfig:{access:'restricted',registry:'https://example.invalid/'}}])expect(()=>validatePackage({...metadata(),...bad},'0.1.0')).toThrow();
+ for(const bad of [{publishConfig:{access:'restricted',registry:'https://registry.npmjs.org/'}},{dependencies:{'@behavproof/core':'*'}},{scripts:{prepublishOnly:'curl example.invalid'}},{publishConfig:{access:'public',registry:'https://example.invalid/'}}])expect(()=>validatePackage({...metadata(),...bad},'0.1.0')).toThrow();
 });
 test('rejects credential payloads, unexpected files, duplicate entries and links',()=>{
  const base={name:'package/package.json',body:JSON.stringify(metadata())};
@@ -31,7 +31,7 @@ test('verifies immutable release archive identity and rejects tampering',async()
  const root=await mkdtemp(join(tmpdir(),'behavproof-release-test-'));const packages=[];const commit='a'.repeat(40);
  try{
   for(const dir of packageDirs){const p=JSON.parse(await readFile(new URL(`../packages/${dir}/package.json`,import.meta.url),'utf8'));const filename=p.name.replace('@','').replace('/','-')+'-'+p.version+'.tgz';const targets=new Set<string>();const add=(v:unknown)=>{if(typeof v==='string')targets.add('package/'+v.replace(/^\.\//,''));else if(v&&typeof v==='object')Object.values(v).forEach(add);};add(p.exports);add(p.bin);if(p.name==='@behavproof/cli')for(const asset of ['schemas/config.schema.json','schemas/registration.schema.json','schemas/trust-root.schema.json','presets/basic-v1.json','presets/standard-v1.json','presets/critical-v1.json','templates/audit.yml','templates/protected-github-producer.yml','templates/protected-github-publisher.yml'])targets.add('package/'+asset);const entries=[{name:'package/package.json',body:JSON.stringify(p)},...[...targets].map(name=>({name,body:'fixture'}))];const bytes=archive(entries);await writeFile(join(root,filename),bytes);packages.push({name:p.name,filename,integrity:'sha512-'+createHash('sha512').update(bytes).digest('base64'),files:entries.map(e=>e.name)});}
-  await writeFile(join(root,'release-manifest.json'),JSON.stringify({schemaVersion:1,version:'0.1.0',access:'restricted',registry:'https://registry.npmjs.org/',sourceCommit:commit,packages}));
+  await writeFile(join(root,'release-manifest.json'),JSON.stringify({schemaVersion:1,version:'0.1.0',access:'public',registry:'https://registry.npmjs.org/',sourceCommit:commit,packages}));
   await expect(verifyRelease(root,commit)).resolves.toMatchObject({sourceCommit:commit});
   await expect(verifyRelease(root,'b'.repeat(40))).rejects.toThrow('identity');
   await writeFile(join(root,packages[0].filename),Buffer.from('changed'));

@@ -46,7 +46,7 @@
   },
   "license": "UNLICENSED",
   "publishConfig": {
-    "access": "restricted",
+    "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
   "description": "BehavProof cli: authenticated behavioral evidence for protected development workflows"
