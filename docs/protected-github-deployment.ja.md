@@ -1,57 +1,33 @@
-# BehavProof：pdd-tsへの導入・実地検証手順（日本語）
+# BehavProof：pdd-tsへの導入・実地検証手順
 
-対象は kanoi-y/pdd-ts の検証用導入です。BehavProof本体は別の public リポジトリ kanoi-y/BehavProof で管理し、pdd-ts は固定SDKを参照します。
+BehavProof本体は別のpublicリポジトリ[kanoi-y/BehavProof](https://github.com/kanoi-y/BehavProof)、[pdd-ts](https://github.com/kanoi-y/pdd-ts)は価値検証に使う消費側です。pdd-tsへ製品コードはコピーせず、固定SDKを参照します。
 
-## 現在地と、これから変更する範囲
+## 現在の導入状態（2026-11-15）
 
-2026-11-15時点で、PR10の最新HEAD 0046da6be489e4c4d0992bb6cfa128bddebf063d へのkanoi-yのApproveと、Policy・Intent・Contractの承認登録を確認済みです。
+PR10と修正PR16は、同一HEADへの実User Approveと既存必須チェック成功後に通常のSquash mergeで統合済みです。AppのActions/Administration Read-only追加と既存インストールへの承認、変数3件、隔離baseの保護も適用・読み戻し済みです。以降の手順1〜6は初期設定の記録と再現手順です。**現在のpdd-tsで通常検証する場合は手順7から開始します。**
 
-| 項目 | 値・状態 |
+| 項目 | 現在値 |
 | --- | --- |
-| BehavProof SDK | a94329e61bd0a56141b5f6c9f9156b9aa3b29b56。3 OS CI成功 |
-| 導入するPR | [pdd-ts PR10](https://github.com/kanoi-y/pdd-ts/pull/10)。既存280テスト・proof・配布検証成功 |
-| 承認登録digest | e236a6c6af98ad779a90e5892b35bcfbf427f41224a8c864f42ec2cff3323152 |
-| 検証対象 | 実関数 src/verification/acceptance.ts#canAcceptEvidence、全64 Booleanケース |
-| 新しい必須チェック | BehavProof protected gate |
-| チェック発行元 | 既存GitHub App ID 5653976 |
-| 検証用の比較先ブランチ | behavproof-enforcement-test |
-| App鍵を使う既存環境 | pdd-publisher。main限定の既存設定を利用 |
+| SDK固定参照 | a94329e61bd0a56141b5f6c9f9156b9aa3b29b56 |
+| 保護workflow/main SHA | c9bf2a1a262248540efda0f89d7ed24e5aa566e5（PR16統合） |
+| 初期承認 | PR10 HEAD0046da6…をkanoi-yがApprove |
+| 登録digest | e236a6c6af98ad779a90e5892b35bcfbf427f41224a8c864f42ec2cff3323152 |
+| 実対象 | src/verification/acceptance.ts#canAcceptEvidence、64 Booleanケース |
+| 隔離base | behavproof-enforcement-test、SHA cbafb22fb314c6abf90e624cb5f20d71a4c98175 |
+| 必須チェック/発行元 | BehavProof protected gate / App5653976、strict・管理者適用 |
+| App鍵の環境 | 既存pdd-publisher、main限定。鍵は取り出さず使用 |
 
-これから行う設定変更は、PR10のmain統合、Appへの読取権限2件の追加、Repository Variables 3件、そして新しい検証用ブランチの保護です。この文書の作成だけでは、それらの変更は適用されません。
+[実地検証の結果表](github-live-validation.ja.md)では正常/refactorの成功と、skip・cancel・欠損・古いattempt・偽発行元・未承認変更等の拒否を確認できます。同一HEADの追加CIは74 runner秒（既存529秒比14.0%）。対象はbasic-riskの局所検証で、全PDDのcoverage/mutation品質やproduction L3の保証ではありません。pdd-ts mainの既存保護と環境保護は維持し、BehavProof必須チェックは隔離baseだけに追加しています。
 
-### 2026-11-15の実施記録
+PR16はビルド後にCLI binを作る1行と、既存配布検証の全体タイムアウト/診断を修正しました。[既存CI43663733427](https://github.com/kanoi-y/pdd-ts/actions/runs/43663733427)と[PDD保護CI43665330524](https://github.com/kanoi-y/pdd-ts/actions/runs/43665330524)が成功し、最新HEADへのApprove後にマージ済み。WORKFLOW_SHAはc9へ更新済みで、SDK a943・登録e236は保持しました。初期の権限不足HTTP422とCLI127は修正前の診断履歴であり、負例検知の証拠に数えません。
 
-- PR10を通常のSquash mergeで統合済み。mainはcbafb22fb314c6abf90e624cb5f20d71a4c98175です。mainは線形履歴必須のため、merge commit方式は利用できません。
-- 手順5のRepository Variables 3件を登録し、読み戻した値の完全一致と登録JSONのcanonical digestを確認済みです。
-- 手順6の新規ブランチと、strict・管理者適用・専用App5653976の必須チェックを設定済みです。mainの既存保護は維持しています。
-- 正常系[PR11](https://github.com/kanoi-y/pdd-ts/pull/11)：[producer43658241548](https://github.com/kanoi-y/pdd-ts/actions/runs/43658241548)で64/64ケース、本番呼び出し64件、故障感度64件の収集が成功。成果物の実バイトとAPIのSHA-256も一致しました。最初のpublisherはApp権限不足で停止しましたが、その後、手順4のActions/Administration readを保存し、既存インストールへの追加権限を承認済みです。対象リポジトリはpdd-tsだけです。
-- 更新後の[publisher43661718710](https://github.com/kanoi-y/pdd-ts/actions/runs/43661718710)はverifyとApp認証に成功。最終コマンドはCLI実行リンクが無くexit127で停止し、App5653976からfailureを発行しました。成功やマージ可能とは扱っていません。
-- [修正PR16](https://github.com/kanoi-y/pdd-ts/pull/16)は、ビルド直後の `npm rebuild @behavproof/cli --ignore-scripts --offline` 1行を追加します。併せて既存PDDの配布検証が180秒の枠で停止したため、`scripts/package-smoke.mjs`の全体検証だけを既存デモと同じ600秒に揃え、対象・経過時間・エラーを表示します。各sampleの180秒、子検証の制限、合否条件、CI15分は維持します。差分は2ファイルで、SDK a943と登録e236は変更しません。
-- PR16の最新HEADはc4efdfa035b560ef2b3b9e18a404b6ca9dbdc7c0です。[既存CI43663733427](https://github.com/kanoi-y/pdd-ts/actions/runs/43663733427)で280テスト・proof/P0・正常/負例デモ・オフライン配布CLI/model/3サンプル/自己検証が成功しました。配布後の全体検証は138380ms、7義務がpassedのtrial・承認pendingです。BehavProof側の[3 OS CI43662903592](https://github.com/kanoi-y/BehavProof/actions/runs/43662903592)も成功済みです。mainの必須CODEOWNERSレビューを満たす、この最新HEADへの人間Approveと、既存PDD protected gateがまだ必要です。
-- 負例[PR12](https://github.com/kanoi-y/pdd-ts/pull/12)：GitHub Actions App15368が同名チェックをsuccessにしても、GitHubはblockedでした。確認後、マージせず閉じました。
-- 候補側でpublisherを削除したPR13と、Intentだけを未承認で変更したPR14は、収集・verifyまで成功しました。両者も同じCLI起動エラーで止まったため、意図した負例が検知された証拠には数えません。PR16統合後、正常系と負例を再実行します。
-
-### CLI起動修正を統合した後の再開
-
-PR16統合後は、次のコマンドで保護ワークフローの参照を更新します。未統合でSHAがnullの場合は実行しません。手順5の初回設定にあるPR10のSHAから、この新しいSHAへ更新する工程です。
-
-~~~bash
-BEHAVPROOF_WORKFLOW_SHA="$(gh pr view 16 --repo kanoi-y/pdd-ts --json mergeCommit --jq .mergeCommit.oid)"
-gh variable set BEHAVPROOF_WORKFLOW_SHA --repo kanoi-y/pdd-ts \
-  --body "$BEHAVPROOF_WORKFLOW_SHA"
-~~~
-
-承認登録JSONとdigestは変更しません。新しいworkflow SHAを持つproducer runを各PRで起動し、その新run IDをpublisherへ渡します。旧workflow SHAの収集結果を新しい実行の証拠へ付け替えません。
-
-既存mainの必須チェック・レビューと、pdd-publisherの環境保護を維持します。pdd-tsへの導入差分はワークフロー2件、契約・設定等4件、既存デモの時間枠調整1件です。
-
-CLIの手順はGitHub CLI（gh）がインストールされ、kanoi-y/pdd-tsへの管理権限を持つアカウントでログイン済みであることを前提にしています。現在の承認登録はこのMacに保存済みです。別の端末で操作する場合は、登録を保存した端末で手順5を実行します。Appの追加権限の承認はGitHub画面で行います。
+操作にはGitHub CLI（gh）と、対象リポジトリの必要権限を持つログインを前提とします。登録JSONは登録時のMacに保存済みです。別端末へ秘密鍵をコピーする必要はありません。
 
 ## 1. 人間のApproveを承認登録へ結び付ける【実施済み】
 
-この工程はPR10をマージする前に行います。現在の登録スクリプトは、openなPRの同一HEADのレビュー・権限・保護設定を照合します。
+【実施済み・初期登録の記録】この工程はPR10をマージする前に行いました。現在の登録スクリプトは、openなPRの同一HEADのレビュー・権限・保護設定を照合します。
 
-BehavProof側のビルド済みcheckoutで、必要に応じて同じ登録を確認できます。
+以下のコマンドはPR10がopenだった登録時の実施記録です。現在のPR10はマージ済みなので再実行しません。新しいPolicy/Intent/Contractを採用するときは、openな新PRの同一HEADレビューから新規登録を作成します。
 
 ~~~bash
 BEHAVPROOF_REG_DIR="$HOME/.local/share/behavproof/registrations/kanoi-y-pdd-ts"
@@ -79,7 +55,7 @@ gh workflow run pdd.yml \
 
 ## 3. PR10をpdd-ts mainへ統合する
 
-GitHubの通常のSquash merge操作で取り込みます。CLIなら、HEADを固定して実行します。この工程は上記の実施記録のとおり完了済みです。
+GitHubの通常のSquash merge操作で取り込みます。CLIなら、HEADを固定して実行します。この工程は完了済みです。PR16も同じ保護要件を満たしてSquash merge済みです。
 
 ~~~bash
 gh pr merge 10 --repo kanoi-y/pdd-ts \
@@ -118,14 +94,14 @@ pdd-tsのSettings → Secrets and variables → Actions → Variablesで設定�
 
 | 名前 | 値 |
 | --- | --- |
-| BEHAVPROOF_WORKFLOW_SHA | 手順3で統合したpdd-ts mainの完全なSHA |
+| BEHAVPROOF_WORKFLOW_SHA | 最新の保護workflowを統合したpdd-ts mainの完全なSHA。現在はPR16のc9bf2a… |
 | BEHAVPROOF_REGISTRATION_JSON | 手順1で保存した登録ファイルのJSON全体 |
 | BEHAVPROOF_REGISTRATION_DIGEST | enrollの出力registrationDigest。今回e236a6… |
 
 SDKのSHA a94329e…はワークフローへ固定済みです。ここで登録するWORKFLOW_SHAはpdd-ts側のmainを指します。digestには登録スクリプトの出力を使います。
 
 ~~~bash
-BEHAVPROOF_WORKFLOW_SHA="$(gh pr view 10 --repo kanoi-y/pdd-ts --json mergeCommit --jq .mergeCommit.oid)"
+BEHAVPROOF_WORKFLOW_SHA="$(gh pr view 16 --repo kanoi-y/pdd-ts --json mergeCommit --jq .mergeCommit.oid)"
 BEHAVPROOF_REGISTRATION_FILE="$HOME/.local/share/behavproof/registrations/kanoi-y-pdd-ts/registration-e236a6c6af98ad779a90e5892b35bcfbf427f41224a8c864f42ec2cff3323152.json"
 
 gh variable set BEHAVPROOF_REGISTRATION_JSON --repo kanoi-y/pdd-ts \
@@ -142,7 +118,7 @@ gh variable set BEHAVPROOF_WORKFLOW_SHA --repo kanoi-y/pdd-ts \
 
 ## 6. 新しい検証用ブランチを作り、発行元付き必須チェックを設定する
 
-PR10統合後のmainを起点に作ります。
+【作成・設定済み】初期PR10統合時のcbafb22を起点に作成しました。既存ブランチへの作成コマンドは再実行しません。新環境で再現するときは、その環境のレビュー済みbase SHAを指定します。
 
 ~~~bash
 gh api --method POST repos/kanoi-y/pdd-ts/git/refs \
@@ -182,7 +158,7 @@ JSON
 BEHAVPROOF_TEST_DIR="$(mktemp -d "${TMPDIR:-/tmp}/behavproof-live.XXXXXX")"
 gh repo clone kanoi-y/pdd-ts "$BEHAVPROOF_TEST_DIR/pdd-ts"
 cd "$BEHAVPROOF_TEST_DIR/pdd-ts"
-git switch -c codex/behavproof-positive origin/behavproof-enforcement-test
+git switch -c codex/behavproof-positive origin/main
 printf '\nBehavProof導入の正常系検証。\n' >> README.md
 git add README.md
 git commit -m "docs: add BehavProof positive control"
@@ -250,8 +226,8 @@ gh api "repos/kanoi-y/pdd-ts/commits/PR_HEAD_SHA/check-runs" \
 | 失敗・未登録のproducerを指定 | verify/gateの失敗または専用結果不足でblock |
 | verify中のworkflowをキャンセル | 実際のjob状態と、専用結果の失敗/欠損によるblockを確認 |
 | 検証用の必須artifactを保存後に削除 | 旧成果物に頼れずblock |
-| 成功attempt1を残してrerunのattempt2をキャンセル | 古いattemptの成功を使わずblock |
-| 候補側でgateを削除・skip・偽物へ置換 | protected mainの発行処理を置き換えられず、必須結果不足ならblock |
+| 成功attempt3のarchiveを残してジョブ単位rerunのattempt4をキャンセル | 古いattemptの成功を使わずblock |
+| 候補側でpublisherを削除 | 実行前は専用結果欠損でblock。mainの正規publisherが真正な証拠を検証すればsuccessになり得る |
 | 同名successをGitHub Actionsから出す | App15368の成功では、必須App5653976を満たせずblock |
 | Intent/期待値/Policyを未承認で緩和 | 登録済み義務/承認との不一致でblock |
 
@@ -273,4 +249,4 @@ gh workflow run behavproof-publisher.yml \
 
 初期導入・リファクタ・Contract変更の操作数、既存CIに追加されるproducer/publisherの時間も記録し、保証範囲と導入負担を判断します。製品の3 OS CI成功を、ここでの実マージ保護の成功へ置き換えません。
 
-全ケースが実証され、この記録とM0の採用判断が揃った時点でM2完了を判定します。
+実施済みの結果と採用範囲は[実地検証結果](github-live-validation.ja.md)、[受け入れ表](acceptance.md)、[M0判断](m0-results.md)を参照してください。未実施の新環境や新Policyへの更新まで検証済みとは扱いません。

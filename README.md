@@ -2,7 +2,7 @@
 
 Canonical public repository: [kanoi-y/BehavProof](https://github.com/kanoi-y/BehavProof). This repository owns the implementation, tests, examples and product CI. [pdd-ts](https://github.com/kanoi-y/pdd-ts) is an application used to evaluate BehavProof; it consumes a pinned BehavProof commit and does not host this product's source tree. See [repository boundaries](docs/repository-boundaries.md).
 
-TypeScript / Node.js 24 / Vitest evidence auditing and executable contract registry. This checkout implements M1/M2 libraries and CLI; live external protection acceptance is still in progress. Nothing has been published to npm.
+TypeScript / Node.js 24 / Vitest evidence auditing and executable contract registry. This checkout implements the mandatory M1/M2 libraries and CLI, with live issuer-bound protection verified on an isolated pdd-ts branch. Nothing has been published to npm.
 
 ```sh
 npm ci --ignore-scripts --cache .npm-cache
@@ -51,7 +51,7 @@ The explicit [protected producer components](docs/protected-producer.md) add cas
 
 [Next-compatible route handler example](examples/next-route/README.md) uses native Web APIs and four executable contract cases without installing Next. Framework server/session/database verification remains an application responsibility.
 
-Protected GitHub integration and remaining real enforcement checks: [deployment proposal](docs/protected-github-deployment.md). The separate [enforcement probe](examples/enforcement-probe/README.md) has an explicit proposed policy and does not alter the approved critical example.
+Protected GitHub integration: [日本語の導入・検証手順](docs/protected-github-deployment.ja.md) and [実地検証結果](docs/github-live-validation.ja.md). The separate [enforcement probe](examples/enforcement-probe/README.md) has an explicit proposed policy and does not alter the approved critical example.
 
 [Actual PDD acceptance experiment](docs/pdd-adoption.md) runs all64 six-condition inputs on PDD's real production predicate, then verifies fake callbacks, an actual always-accept fault and coordinated test/implementation weakening. Product CI and scoped runtime observations remain separate from human approval and live issuer-bound enforcement.
 
