@@ -53,3 +53,15 @@ test('forces npm scoped registry over a hostile user configuration',async()=>{
  const output=execFileSync(process.execPath,[cli,...npmArguments(['config','get','@behavproof:registry','--userconfig='+config])],{cwd:root,encoding:'utf8'}).trim();expect(output).toBe('https://registry.npmjs.org/');
  }finally{await rm(root,{recursive:true,force:true});}
 });
+
+test('distinguishes npm phantom-private names from existing private packages',async()=>{
+ const {publicReleaseState}=await import('../scripts/release.mjs');
+ expect(publicReleaseState({visibility:'private',packageMissing:true,listed:false,owner:true})).toBe('new');
+ expect(publicReleaseState({visibility:'public',packageMissing:false,listed:true,owner:false})).toBe('existing');
+ for(const value of [
+  {visibility:'private',packageMissing:false,listed:true,owner:true},
+  {visibility:'private',packageMissing:true,listed:true,owner:true},
+  {visibility:'private',packageMissing:true,listed:false,owner:false},
+  {visibility:'unknown',packageMissing:true,listed:false,owner:true},
+ ])expect(()=>publicReleaseState(value)).toThrow();
+});

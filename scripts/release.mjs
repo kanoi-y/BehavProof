@@ -56,6 +56,14 @@ const npm=(...args)=>{
  }
  return run(process.execPath,[cli,...npmArguments(args)]);
 };
+/** npm's visibility endpoint may report private even for an absent package.
+ * Only an organization owner's complete inventory plus package-level 404 can
+ * establish a new name; an existing private package never changes visibility. */
+export function publicReleaseState({visibility,packageMissing,listed,owner}){
+ if(visibility==='public'&&packageMissing===false)return 'existing';
+ if(['private','missing'].includes(visibility)&&packageMissing===true&&listed===false&&owner===true)return 'new';
+ throw Error('Existing package is not public, or absence cannot be established; refusing publication');
+}
 export async function verifyRelease(directory,expectedCommit){
  const manifest=JSON.parse(await readFile(join(directory,'release-manifest.json'),'utf8'));
  if(manifest.schemaVersion!==1||manifest.access!=='public'||manifest.registry!==registry||manifest.sourceCommit!==expectedCommit||!/^[a-f0-9]{40}$/.test(expectedCommit)||manifest.packages?.length!==packageDirs.length)throw Error('Invalid release identity');
@@ -89,11 +97,17 @@ async function main(){
    try{
    for(const row of manifest.packages){const bytes=await readFile(join(directory,row.filename));if(sha512(bytes)!==row.integrity)throw Error('Release changed before snapshot');await writeFile(join(snapshot,row.filename),bytes,{flag:'wx',mode:0o600});}
    const username=npm('whoami','--registry='+registry).trim();if(!username)throw Error('npm login required');
+   const members=JSON.parse(npm('org','ls','behavproof','--json'));
+   const owner=members?.[username]==='owner';
+   const inventory=owner?JSON.parse(npm('access','list','packages','behavproof','--json')):{};
+   if(!inventory||typeof inventory!=='object'||Array.isArray(inventory))throw Error('Organization inventory unavailable');
    console.log('Publishing public packages as '+username);
    for(const row of manifest.packages){
     // Never silently change an existing private package to public.
     let visibility;try{visibility=JSON.parse(npm('access','get','status',row.name,'--json','--registry='+registry));}catch(error){if(!/E404/.test(String(error.stderr)))throw Error('Cannot establish package visibility; refusing publication');}
-    if(visibility&&visibility[row.name]!=='public')throw Error('Existing package is not public; refuse to change visibility');
+    let packageMissing=false;
+    try{npm('view',row.name,'versions','--json');}catch(error){if(/E404/.test(String(error.stderr)))packageMissing=true;else throw Error('Cannot establish package existence');}
+    publicReleaseState({visibility:visibility?.[row.name]??'missing',packageMissing,listed:Object.hasOwn(inventory,row.name),owner});
     const bytes=await readFile(join(snapshot,row.filename));if(sha512(bytes)!==row.integrity)throw Error('Archive changed before publication');
     let existing;try{existing=JSON.parse(npm('view',row.name+'@'+manifest.version,'dist.integrity','--json','--registry='+registry));}catch(error){if(!/E404/.test(String(error.stderr)))throw Error('Cannot inspect existing version');}
     if(existing&&existing!==row.integrity)throw Error('Existing version differs; versions cannot be overwritten');
