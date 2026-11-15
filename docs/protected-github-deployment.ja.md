@@ -24,9 +24,23 @@
 - PR10を通常のSquash mergeで統合済み。mainはcbafb22fb314c6abf90e624cb5f20d71a4c98175です。mainは線形履歴必須のため、merge commit方式は利用できません。
 - 手順5のRepository Variables 3件を登録し、読み戻した値の完全一致と登録JSONのcanonical digestを確認済みです。
 - 手順6の新規ブランチと、strict・管理者適用・専用App5653976の必須チェックを設定済みです。mainの既存保護は維持しています。
-- 正常系[PR11](https://github.com/kanoi-y/pdd-ts/pull/11)：[producer43658241548](https://github.com/kanoi-y/pdd-ts/actions/runs/43658241548)で64/64ケース、本番呼び出し64件、故障感度64件の収集が成功。成果物の実バイトとAPIのSHA-256も一致しました。[publisher43658317804](https://github.com/kanoi-y/pdd-ts/actions/runs/43658317804)のverifyは成功しましたが、gateはApp追加権限がインストールに未承認のため、トークン作成時にHTTP422で停止しました。最終成功・マージ可能はまだ確認していません。
+- 正常系[PR11](https://github.com/kanoi-y/pdd-ts/pull/11)：[producer43658241548](https://github.com/kanoi-y/pdd-ts/actions/runs/43658241548)で64/64ケース、本番呼び出し64件、故障感度64件の収集が成功。成果物の実バイトとAPIのSHA-256も一致しました。最初のpublisherはApp権限不足で停止しましたが、その後、手順4のActions/Administration readを保存し、既存インストールへの追加権限を承認済みです。対象リポジトリはpdd-tsだけです。
+- 更新後の[publisher43661718710](https://github.com/kanoi-y/pdd-ts/actions/runs/43661718710)はverifyとApp認証に成功。最終コマンドはCLI実行リンクが無くexit127で停止し、App5653976からfailureを発行しました。成功やマージ可能とは扱っていません。
+- [修正PR16](https://github.com/kanoi-y/pdd-ts/pull/16)は、ビルド直後の `npm rebuild @behavproof/cli --ignore-scripts --offline` 1行を追加します。SDK a943と登録e236は維持します。mainの既存レビュー要件に従って、この新HEADへの人間レビューと必須CIを通してから統合します。
 - 負例[PR12](https://github.com/kanoi-y/pdd-ts/pull/12)：GitHub Actions App15368が同名チェックをsuccessにしても、GitHubはblockedでした。確認後、マージせず閉じました。
-- App権限追加の操作はブラウザのGitHubログイン待ちです。残る正常系の最終発行と負例の全ケースは、権限追加後に実行します。
+- 候補側でpublisherを削除したPR13と、Intentだけを未承認で変更したPR14は、収集・verifyまで成功しました。両者も同じCLI起動エラーで止まったため、意図した負例が検知された証拠には数えません。PR16統合後、正常系と負例を再実行します。
+
+### CLI起動修正を統合した後の再開
+
+PR16統合後は、次のコマンドで保護ワークフローの参照を更新します。未統合でSHAがnullの場合は実行しません。手順5の初回設定にあるPR10のSHAから、この新しいSHAへ更新する工程です。
+
+~~~bash
+BEHAVPROOF_WORKFLOW_SHA="$(gh pr view 16 --repo kanoi-y/pdd-ts --json mergeCommit --jq .mergeCommit.oid)"
+gh variable set BEHAVPROOF_WORKFLOW_SHA --repo kanoi-y/pdd-ts \
+  --body "$BEHAVPROOF_WORKFLOW_SHA"
+~~~
+
+承認登録JSONとdigestは変更しません。新しいworkflow SHAを持つproducer runを各PRで起動し、その新run IDをpublisherへ渡します。旧workflow SHAの収集結果を新しい実行の証拠へ付け替えません。
 
 既存mainの必須チェック・レビューと、pdd-publisherの環境保護を維持します。pdd-tsへの導入差分はワークフロー2件、契約・設定等4件、既存デモの時間枠調整1件です。
 

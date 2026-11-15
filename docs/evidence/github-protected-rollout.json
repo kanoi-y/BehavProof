@@ -107,13 +107,120 @@
       }
     },
     "status": "incomplete",
-    "reason": "Existing App installation has not yet accepted Actions/Administration read permissions."
+    "reason": "Final CLI bin unavailable after pre-build npm ci; exact one-line publisher fix is under protected main review.",
+    "publisherAfterAppGrant": {
+      "runId": 43661718710,
+      "attempt": 1,
+      "verify": {
+        "jobId": 132652296641,
+        "conclusion": "success"
+      },
+      "gate": {
+        "jobId": 132652366816,
+        "conclusion": "failure",
+        "reason": "behavproof: command not found; exit127"
+      },
+      "dedicatedCheck": {
+        "id": 132652472794,
+        "appId": 5653976,
+        "conclusion": "failure"
+      }
+    }
+  },
+  "appPermissionUpdate": {
+    "status": "saved-and-installation-accepted",
+    "appId": 5653976,
+    "installationId": 179512413,
+    "permissionsAdded": {
+      "actions": "read",
+      "administration": "read"
+    },
+    "repositoryAccess": [
+      "kanoi-y/pdd-ts"
+    ],
+    "confirmedBy": "user action-time approval",
+    "observedInGitHubUi": true
+  },
+  "preparedCases": [
+    {
+      "name": "candidate-publisher-deleted",
+      "pr": 13,
+      "headSha": "70524dbedf5bc06c38e43d65db73a83bbe35f0b7",
+      "initialMergeState": "blocked",
+      "producerRunId": 43659796478,
+      "publisherRunId": 43661723493,
+      "status": "incomplete",
+      "reason": "Same CLI launch infrastructure failure; intended final behavior not yet verified."
+    },
+    {
+      "name": "unapproved-intent-change",
+      "pr": 14,
+      "headSha": "f55a11c3effa63fd12ae8f3195a7b6c53cb6f584",
+      "producerRunId": 43659751771,
+      "publisherRunId": 43661726973,
+      "status": "incomplete",
+      "reason": "Same CLI launch infrastructure failure; do not count as an Intent rejection."
+    },
+    {
+      "name": "upstream-skip",
+      "pr": 15,
+      "headSha": "64d0ce75447b2f8114a01ec9022e87110f1b2ebf",
+      "producerRunId": 43661804985,
+      "status": "prepared"
+    }
+  ],
+  "pendingFix": {
+    "pr": 16,
+    "headSha": "149009a060e0f3011fb0407db2d497914e34f3bd",
+    "filesChanged": 1,
+    "linesAdded": 1,
+    "sdkShaUnchanged": true,
+    "registrationDigestUnchanged": true,
+    "humanReview": "pending",
+    "ciRunId": 43662376701,
+    "validation": {
+      "regression": "Real CLI launch: before fix exit127, after rebuild exit0 and local bin target verified",
+      "focusedTests": {
+        "passed": 7
+      },
+      "independentReview": {
+        "findingCount": 0,
+        "testsPassed": 29,
+        "lifecycleHooksSuppressed": true,
+        "nonExecutableEntryRestored": true
+      },
+      "wholeSuite": {
+        "command": "npm test -- --maxWorkers=1",
+        "files": 39,
+        "testsPassed": 306,
+        "seconds": 140.99
+      },
+      "parallelLimit": {
+        "command": "npm test",
+        "testsPassed": 305,
+        "testsTimedOut": 1,
+        "test": "an explicit external local authority gates current bytes, rejects stale/tampered evidence and preserves protected thresholds",
+        "limitMs": 15000,
+        "isolatedTestPassed": true
+      },
+      "hostedProductCi": "pending"
+    }
   },
   "status": "incomplete",
+  "experimentCost": {
+    "kind": "observed failed positive-control attempt, not completed healthy gate cost",
+    "additionalJobsSeconds": {
+      "collect": 35,
+      "verify": 14,
+      "gateFailed": 24
+    },
+    "totalAdditionalRunnerSeconds": 73,
+    "humanActiveTime": "not measured"
+  },
   "remaining": [
-    "App Actions/Administration read grants and installation acceptance",
-    "positive dedicated App success and merge eligibility",
+    "Protected review/CI/merge of PR16 and workflow SHA update",
+    "positive dedicated App success and GitHub merge eligibility",
     "skip/failure/cancel/missing-artifact/stale-attempt/candidate-workflow-change/unapproved-weakening live cases",
-    "incremental CI cost and adoption decision"
+    "healthy incremental CI cost and adoption decision"
   ]
 }
