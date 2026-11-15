@@ -32,5 +32,11 @@
     "type": "git",
     "url": "git+https://github.com/kanoi-y/BehavProof.git",
     "directory": "packages/contract-vitest"
-  }
+  },
+  "license": "UNLICENSED",
+  "publishConfig": {
+    "access": "restricted",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "description": "BehavProof contract-vitest: authenticated behavioral evidence for protected development workflows"
 }

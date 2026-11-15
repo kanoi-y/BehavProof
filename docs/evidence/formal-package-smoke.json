@@ -13,8 +13,7 @@
     "adapter-model-test"
   ],
   "consumerInstall": "pass",
-  "installationMode": "offline",
-  "offlineConsumerInstall": "pass",
+  "installationMode": "online",
   "publicExports": "pass",
   "cliHelp": "pass",
   "packagedSchemas": "pass",
