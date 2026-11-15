@@ -4,12 +4,12 @@ BehavProof本体は別のpublicリポジトリ[kanoi-y/BehavProof](https://githu
 
 ## 現在の導入状態（2026-11-15）
 
-PR10と修正PR16は、同一HEADへの実User Approveと既存必須チェック成功後に通常のSquash mergeで統合済みです。AppのActions/Administration Read-only追加と既存インストールへの承認、変数3件、隔離baseの保護も適用・読み戻し済みです。以降の手順1〜6は初期設定の記録と再現手順です。**現在のpdd-tsで通常検証する場合は手順7から開始します。**
+PR10と修正PR16は、同一HEADへの実User Approveと既存必須チェック成功後に通常のSquash mergeで統合済みです。AppのActions/Administration Read-only追加と既存インストールへの承認、変数3件、隔離baseの保護も適用・読み戻し済みです。以降の手順1〜6は初期設定の記録と再現手順です。**現在のpdd-tsで通常検証する場合は手順7から開始します。 SDK更新PR21も実Approveと既存必須チェック後に統合し、新SDKで6ケースを再検証済みです。[SDK3950の再検証結果](#sdk3950の再検証結果)を参照してください。**
 
 | 項目 | 現在値 |
 | --- | --- |
-| SDK固定参照 | a94329e61bd0a56141b5f6c9f9156b9aa3b29b56 |
-| 保護workflow/main SHA | c9bf2a1a262248540efda0f89d7ed24e5aa566e5（PR16統合） |
+| SDK固定参照 | 3950ed506a83697b3927a17e22f147484e9ac335（SDK更新PR21統合） |
+| 保護workflow/main SHA | acd4996232b570fa34542e353e66ce1879c10dad（PR21統合） |
 | 初期承認 | PR10 HEAD0046da6…をkanoi-yがApprove |
 | 登録digest | e236a6c6af98ad779a90e5892b35bcfbf427f41224a8c864f42ec2cff3323152 |
 | 実対象 | src/verification/acceptance.ts#canAcceptEvidence、64 Booleanケース |
@@ -17,9 +17,9 @@ PR10と修正PR16は、同一HEADへの実User Approveと既存必須チェッ�
 | 必須チェック/発行元 | BehavProof protected gate / App5653976、strict・管理者適用 |
 | App鍵の環境 | 既存pdd-publisher、main限定。鍵は取り出さず使用 |
 
-[実地検証の結果表](github-live-validation.ja.md)では正常/refactorの成功と、skip・cancel・欠損・古いattempt・偽発行元・未承認変更等の拒否を確認できます。同一HEADの追加CIは74 runner秒（既存529秒比14.0%）。対象はbasic-riskの局所検証で、全PDDのcoverage/mutation品質やproduction L3の保証ではありません。pdd-ts mainの既存保護と環境保護は維持し、BehavProof必須チェックは隔離baseだけに追加しています。
+[実地検証の結果表](github-live-validation.ja.md)では正常/refactorの成功と、skip・cancel・欠損・古いattempt・偽発行元・未承認変更等の拒否を確認できます。初回SDK a943の同一HEADで測った追加CIは74 runner秒（既存529秒比14.0%）。対象はbasic-riskの局所検証で、全PDDのcoverage/mutation品質やproduction L3の保証ではありません。pdd-ts mainの既存保護と環境保護は維持し、BehavProof必須チェックは隔離baseだけに追加しています。
 
-PR16はビルド後にCLI binを作る1行と、既存配布検証の全体タイムアウト/診断を修正しました。[既存CI43663733427](https://github.com/kanoi-y/pdd-ts/actions/runs/43663733427)と[PDD保護CI43665330524](https://github.com/kanoi-y/pdd-ts/actions/runs/43665330524)が成功し、最新HEADへのApprove後にマージ済み。WORKFLOW_SHAはc9へ更新済みで、SDK a943・登録e236は保持しました。初期の権限不足HTTP422とCLI127は修正前の診断履歴であり、負例検知の証拠に数えません。
+PR16はビルド後にCLI binを作る1行と、既存配布検証の全体タイムアウト/診断を修正しました。[既存CI43663733427](https://github.com/kanoi-y/pdd-ts/actions/runs/43663733427)と[PDD保護CI43665330524](https://github.com/kanoi-y/pdd-ts/actions/runs/43665330524)が成功し、最新HEADへのApprove後にマージ済み。この初回導入時点ではWORKFLOW_SHAをc9へ更新し、SDK a943・登録e236を保持しました。その後のSDK更新PR21でSDK3950・WORKFLOW_SHA acd4996へ更新し、登録e236を維持しています。初期の権限不足HTTP422とCLI127は修正前の診断履歴であり、負例検知の証拠に数えません。
 
 操作にはGitHub CLI（gh）と、対象リポジトリの必要権限を持つログインを前提とします。登録JSONは登録時のMacに保存済みです。別端末へ秘密鍵をコピーする必要はありません。
 
@@ -94,14 +94,14 @@ pdd-tsのSettings → Secrets and variables → Actions → Variablesで設定�
 
 | 名前 | 値 |
 | --- | --- |
-| BEHAVPROOF_WORKFLOW_SHA | 最新の保護workflowを統合したpdd-ts mainの完全なSHA。現在はPR16のc9bf2a… |
+| BEHAVPROOF_WORKFLOW_SHA | 最新の保護workflowを統合したpdd-ts mainの完全なSHA。現在はPR21のacd4996… |
 | BEHAVPROOF_REGISTRATION_JSON | 手順1で保存した登録ファイルのJSON全体 |
 | BEHAVPROOF_REGISTRATION_DIGEST | enrollの出力registrationDigest。今回e236a6… |
 
-SDKのSHA a94329e…はワークフローへ固定済みです。ここで登録するWORKFLOW_SHAはpdd-ts側のmainを指します。digestには登録スクリプトの出力を使います。
+SDKのSHA 3950ed5…はワークフローへ固定済みです。ここで登録するWORKFLOW_SHAはpdd-ts側のmainを指します。digestには登録スクリプトの出力を使います。
 
 ~~~bash
-BEHAVPROOF_WORKFLOW_SHA="$(gh pr view 16 --repo kanoi-y/pdd-ts --json mergeCommit --jq .mergeCommit.oid)"
+BEHAVPROOF_WORKFLOW_SHA="$(gh pr view 21 --repo kanoi-y/pdd-ts --json mergeCommit --jq .mergeCommit.oid)"
 BEHAVPROOF_REGISTRATION_FILE="$HOME/.local/share/behavproof/registrations/kanoi-y-pdd-ts/registration-e236a6c6af98ad779a90e5892b35bcfbf427f41224a8c864f42ec2cff3323152.json"
 
 gh variable set BEHAVPROOF_REGISTRATION_JSON --repo kanoi-y/pdd-ts \
@@ -250,3 +250,36 @@ gh workflow run behavproof-publisher.yml \
 初期導入・リファクタ・Contract変更の操作数、既存CIに追加されるproducer/publisherの時間も記録し、保証範囲と導入負担を判断します。製品の3 OS CI成功を、ここでの実マージ保護の成功へ置き換えません。
 
 実施済みの結果と採用範囲は[実地検証結果](github-live-validation.ja.md)、[受け入れ表](acceptance.md)、[M0判断](m0-results.md)を参照してください。未実施の新環境や新Policyへの更新まで検証済みとは扱いません。
+
+## SDK3950の再検証結果
+
+2026-11-15、[SDK更新PR21](https://github.com/kanoi-y/pdd-ts/pull/21)を最新HEAD 9f8d8acへのkanoi-yの実Approve、[PR21自身の通常CI](https://github.com/kanoi-y/pdd-ts/actions/runs/43698171015)、[既存PDD保護CIのattempt2](https://github.com/kanoi-y/pdd-ts/actions/runs/43697340814)の成功後、保護を迂回せず通常Squash mergeしました。統合後mainはacd4996232b570fa34542e353e66ce1879c10dadで、[統合後CI](https://github.com/kanoi-y/pdd-ts/actions/runs/43699565973)も成功しています。通常CIは型検査・280テスト・実証明・正常/負例デモ・配布後自己検証を含みます。
+
+producer/publisherのSDK固定参照6箇所を3950ed506a83697b3927a17e22f147484e9ac335へ更新し、BEHAVPROOF_WORKFLOW_SHAだけをpdd-tsの統合SHA acd4996へ更新・読み戻しました。登録JSONの実バイトhashと登録digestはともにe236a6c6af98ad779a90e5892b35bcfbf427f41224a8c864f42ec2cff3323152で不変です。main・隔離baseの保護と、pdd-publisher環境の保護/許可ブランチもAPIで更新前後を照合し、一致を確認しました。App権限・秘密鍵は変更していません。
+
+下記は新SDKのmain-only producer/publisherで実行した6ケースです。producerのworkflow sourceはすべてacd4996であり、候補HEADとは別です。発行元はすべてApp5653976の「BehavProof protected gate」です。マージ前に必須だった「PDD protected gate」と混同しません。
+
+| ケース / 対象HEAD | 実際の結果 | producer / publisher |
+| --- | --- | --- |
+| 正常 / 97f7da2 | 64比較・64観測・64カナリアpass。App success、GitHub CLEAN | [収集](https://github.com/kanoi-y/pdd-ts/actions/runs/43699641670) / [判定](https://github.com/kanoi-y/pdd-ts/actions/runs/43699752890) |
+| Contract無変更リファクタ / f26b5a1 | 本番関数の括弧付けだけを変更。同じContract版で64比較・観測・カナリアpass、App success。観測時は任意CI実行中でMERGEABLE/UNSTABLE | [収集](https://github.com/kanoi-y/pdd-ts/actions/runs/43700137597) / [判定](https://github.com/kanoi-y/pdd-ts/actions/runs/43700230838) |
+| 偽callback / da3aa4b | 通常64比較がpassでも観測/カナリア各64 unknown。認証済み準備後のgateがexit1、App failure、GitHub BLOCKED | [収集](https://github.com/kanoi-y/pdd-ts/actions/runs/43699644983) / [判定](https://github.com/kanoi-y/pdd-ts/actions/runs/43699755484) |
+| 実装だけを常時true / b5af889 | 新しい診断manifestがproducer exit1、成功artifact0を記録。未成功producerからの採用を拒否しApp failure、BLOCKED。実比較63失敗は別途新SDKのローカル実PDDフローで確認 | [収集](https://github.com/kanoi-y/pdd-ts/actions/runs/43700139982) / [判定](https://github.com/kanoi-y/pdd-ts/actions/runs/43700233439) |
+| 実装と期待値の未承認同時緩和 / 9b33165 | 通常64比較はpass、Contract版が承認済み版と不一致。verify/認証準備は成功してもgate exit1、App failure、BLOCKED。単一の評価理由だけで失敗したとは断定しない | [収集](https://github.com/kanoi-y/pdd-ts/actions/runs/43700542251) / [判定](https://github.com/kanoi-y/pdd-ts/actions/runs/43700740167) |
+| verify skip / f26b5a1 | 同じ現HEADの有効なリファクタ証拠を使用。verifyが実際にskipped、gateは実行されexit1、App failure、BLOCKED | [有効な収集](https://github.com/kanoi-y/pdd-ts/actions/runs/43700137597) / [判定](https://github.com/kanoi-y/pdd-ts/actions/runs/43700476750) |
+
+正常/リファクタのContract revisionは6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580で一致しました。[検証PR22](https://github.com/kanoi-y/pdd-ts/pull/22)と[検証PR23](https://github.com/kanoi-y/pdd-ts/pull/23)はケースごとにHEADを進め、記録後に未マージで閉じています。PRの現在画面は最終ケースを示すため、過去の成功判定は上記runと対象HEADで確認します。最後のskip判定は同じf26b5a1への先のsuccessをfailureへ更新する、意図した負例です。
+
+5つのZIPを取得し、API digestと実バイトSHA-256、context/manifest hash、対象HEAD、現在の登録digest、workflow/run/attempt/jobを照合しました。成功した4つのproducerの各4レポートもmanifestのSHA-256と照合しています。故障producerのZIPは成功証拠として採用していません。
+
+| producer | ZIP SHA-256 |
+| --- | --- |
+| 43699641670 | f0380e821ef566180657a745b5f8de7254e9bbc2578aaabfe933a8a1f66f2ddc |
+| 43699644983 | ef170bf883c59dd739215df79f9369a74c83fdd6e240302e1e278d0a4597b206 |
+| 43700137597 | bb406a51a13be22939263880b26e63a9fae0bb0202724ac378d9a70c1c258bad |
+| 43700139982 | ab5f97137dc5858cefaadf573cabf2de0a79500c990c028601f8226858f62be0 |
+| 43700542251 | 0c2376cb9b315ff72c86fcf7cec96734a27cfe515a500c7fc3b75b9e123e6ac9 |
+
+運用上の診断として、既存PDD保護CIの初回は候補実行前の公開API取得で停止し、同じ固定HEADのattempt2で成功しました。また旧PR20に紐付いた同一HEADの通常CIだけではmainの条件を満たせなかったため、HEADと実Approveを保ってPR21を再オープンし、PR21自身のCIを実行しました。検証条件や保護設定を緩めて通したものではありません。
+
+今回の保証範囲は既存受理関数の64 Boolean入力と選択済みbasic-riskの保護ゲートです。全PDDのcoverage/aggregate mutationや本番全体の正しさ、人間の作業時間を測定したとは主張しません。初回の16ケースすべてを新SDKで再実行したという記録でもありません。SDK更新に関係する上記6ケースと、統合前後の通常CIを再検証しました。
