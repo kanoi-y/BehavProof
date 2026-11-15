@@ -2446,22 +2446,228 @@
           "const": "formal_model"
         },
         "payload": {
-          "type": "object",
-          "properties": {
-            "status": {
-              "type": "string",
-              "const": "unknown"
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "schemaVersion": {
+                  "type": "number",
+                  "const": 1
+                },
+                "modelId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "identity": {
+                  "type": "object",
+                  "properties": {
+                    "modelHash": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "configHash": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "commandHash": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "driverHash": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "implementationHash": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "traceHash": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    }
+                  },
+                  "required": [
+                    "modelHash",
+                    "configHash",
+                    "commandHash"
+                  ],
+                  "additionalProperties": false
+                },
+                "stages": {
+                  "maxItems": 5,
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "stage": {
+                        "type": "string",
+                        "enum": [
+                          "parse",
+                          "typecheck",
+                          "test",
+                          "run",
+                          "verify"
+                        ]
+                      },
+                      "status": {
+                        "type": "string",
+                        "enum": [
+                          "pass",
+                          "fail",
+                          "unknown"
+                        ]
+                      },
+                      "complete": {
+                        "type": "boolean"
+                      },
+                      "exitCode": {
+                        "anyOf": [
+                          {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "toolVersion": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "backend": {
+                        "type": "string",
+                        "enum": [
+                          "quint",
+                          "typescript",
+                          "rust",
+                          "apalache",
+                          "tlc"
+                        ]
+                      },
+                      "method": {
+                        "type": "string",
+                        "enum": [
+                          "parse",
+                          "typecheck",
+                          "spec_test",
+                          "simulation",
+                          "bounded_model_check",
+                          "finite_state_check"
+                        ]
+                      },
+                      "properties": {
+                        "maxItems": 10000,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "maxSteps": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "maxSamples": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "seed": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "traceSeed": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "backendVersion": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "diagnostics": {
+                        "maxItems": 1000,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "stdoutHash": {
+                        "type": "string",
+                        "pattern": "^[a-f0-9]{64}$"
+                      },
+                      "stderrHash": {
+                        "type": "string",
+                        "pattern": "^[a-f0-9]{64}$"
+                      },
+                      "artifacts": {
+                        "maxItems": 1000,
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "ref": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "sha256": {
+                              "type": "string",
+                              "pattern": "^[a-f0-9]{64}$"
+                            }
+                          },
+                          "required": [
+                            "ref",
+                            "sha256"
+                          ],
+                          "additionalProperties": false
+                        }
+                      }
+                    },
+                    "required": [
+                      "stage",
+                      "status",
+                      "complete",
+                      "exitCode",
+                      "toolVersion",
+                      "backend",
+                      "method",
+                      "properties",
+                      "diagnostics"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "schemaVersion",
+                "modelId",
+                "identity",
+                "stages"
+              ],
+              "additionalProperties": false
             },
-            "reason": {
-              "type": "string",
-              "minLength": 1
+            {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "const": "unknown"
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "status",
+                "reason"
+              ],
+              "additionalProperties": false
             }
-          },
-          "required": [
-            "status",
-            "reason"
-          ],
-          "additionalProperties": false
+          ]
         }
       },
       "required": [
@@ -2648,22 +2854,276 @@
           "const": "model_conformance"
         },
         "payload": {
-          "type": "object",
-          "properties": {
-            "status": {
-              "type": "string",
-              "const": "unknown"
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "schemaVersion": {
+                  "type": "number",
+                  "const": 1
+                },
+                "modelId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "identity": {
+                  "type": "object",
+                  "properties": {
+                    "modelHash": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "configHash": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "commandHash": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "driverHash": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "implementationHash": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "traceHash": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    }
+                  },
+                  "required": [
+                    "modelHash",
+                    "configHash",
+                    "commandHash"
+                  ],
+                  "additionalProperties": false
+                },
+                "runner": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "observation": {
+                  "type": "string",
+                  "enum": [
+                    "module-functions",
+                    "unverified"
+                  ]
+                },
+                "complete": {
+                  "type": "boolean"
+                },
+                "diagnostics": {
+                  "maxItems": 1000,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "traces": {
+                  "maxItems": 10000,
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "complete": {
+                        "type": "boolean"
+                      },
+                      "steps": {
+                        "maxItems": 10001,
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "index": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 9007199254740991
+                            },
+                            "action": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "status": {
+                              "type": "string",
+                              "enum": [
+                                "pass",
+                                "fail",
+                                "unknown"
+                              ]
+                            },
+                            "parameters": {
+                              "$ref": "#/$defs/__schema0"
+                            },
+                            "expected": {
+                              "$ref": "#/$defs/__schema1"
+                            },
+                            "actual": {
+                              "$ref": "#/$defs/__schema2"
+                            },
+                            "comparisonCount": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 1
+                            },
+                            "implementationCalls": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 9007199254740991
+                            },
+                            "diagnostic": {
+                              "type": "string",
+                              "minLength": 1
+                            }
+                          },
+                          "required": [
+                            "index",
+                            "action",
+                            "status",
+                            "expected",
+                            "comparisonCount",
+                            "implementationCalls"
+                          ],
+                          "additionalProperties": false
+                        }
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "complete",
+                      "steps"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "canary": {
+                  "type": "object",
+                  "properties": {
+                    "faultId": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "implementationHash": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "originalImplementationHash": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "driverHash": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "traceHash": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "observedCalls": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "comparedSteps": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "detectedMismatches": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "failure": {
+                      "type": "object",
+                      "properties": {
+                        "traceId": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "index": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "action": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "implementationCalls": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "expected": {
+                          "$ref": "#/$defs/__schema3"
+                        },
+                        "actual": {
+                          "$ref": "#/$defs/__schema4"
+                        }
+                      },
+                      "required": [
+                        "traceId",
+                        "index",
+                        "action",
+                        "implementationCalls",
+                        "expected",
+                        "actual"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "faultId",
+                    "implementationHash",
+                    "originalImplementationHash",
+                    "driverHash",
+                    "traceHash",
+                    "observedCalls",
+                    "comparedSteps",
+                    "detectedMismatches"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "schemaVersion",
+                "modelId",
+                "identity",
+                "runner",
+                "observation",
+                "complete",
+                "diagnostics",
+                "traces"
+              ],
+              "additionalProperties": false
             },
-            "reason": {
-              "type": "string",
-              "minLength": 1
+            {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "const": "unknown"
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "status",
+                "reason"
+              ],
+              "additionalProperties": false
             }
-          },
-          "required": [
-            "status",
-            "reason"
-          ],
-          "additionalProperties": false
+          ]
         }
       },
       "required": [
@@ -2850,22 +3310,133 @@
           "const": "trace"
         },
         "payload": {
-          "type": "object",
-          "properties": {
-            "status": {
-              "type": "string",
-              "const": "unknown"
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "schemaVersion": {
+                  "type": "number",
+                  "const": 1
+                },
+                "modelId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "identity": {
+                  "type": "object",
+                  "properties": {
+                    "modelHash": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "configHash": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "commandHash": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "driverHash": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "implementationHash": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "traceHash": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    }
+                  },
+                  "required": [
+                    "modelHash",
+                    "configHash",
+                    "commandHash"
+                  ],
+                  "additionalProperties": false
+                },
+                "toolVersion": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "backend": {
+                  "type": "string",
+                  "enum": [
+                    "typescript",
+                    "rust"
+                  ]
+                },
+                "maxSteps": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991
+                },
+                "maxSamples": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991
+                },
+                "seed": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "traces": {
+                  "maxItems": 10000,
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "ref": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "sha256": {
+                        "type": "string",
+                        "pattern": "^[a-f0-9]{64}$"
+                      }
+                    },
+                    "required": [
+                      "ref",
+                      "sha256"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "schemaVersion",
+                "modelId",
+                "identity",
+                "toolVersion",
+                "backend",
+                "maxSteps",
+                "maxSamples",
+                "seed",
+                "traces"
+              ],
+              "additionalProperties": false
             },
-            "reason": {
-              "type": "string",
-              "minLength": 1
+            {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "const": "unknown"
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "status",
+                "reason"
+              ],
+              "additionalProperties": false
             }
-          },
-          "required": [
-            "status",
-            "reason"
-          ],
-          "additionalProperties": false
+          ]
         }
       },
       "required": [
@@ -2880,5 +3451,162 @@
       ],
       "additionalProperties": false
     }
-  ]
+  ],
+  "$defs": {
+    "__schema0": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/__schema0"
+          }
+        },
+        {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema0"
+          }
+        }
+      ]
+    },
+    "__schema1": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/__schema1"
+          }
+        },
+        {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema1"
+          }
+        }
+      ]
+    },
+    "__schema2": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/__schema2"
+          }
+        },
+        {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema2"
+          }
+        }
+      ]
+    },
+    "__schema3": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/__schema3"
+          }
+        },
+        {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema3"
+          }
+        }
+      ]
+    },
+    "__schema4": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/__schema4"
+          }
+        },
+        {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema4"
+          }
+        }
+      ]
+    }
+  }
 }

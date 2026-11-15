@@ -16,5 +16,7 @@
   "publicExports": "pass",
   "cliHelp": "pass",
   "packagedSchemas": "pass",
-  "published": false
+  "published": false,
+  "formalAdapters": "absent",
+  "externalFormalTools": "absent"
 }

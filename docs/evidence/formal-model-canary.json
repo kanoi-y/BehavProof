@@ -1,0 +1,26 @@
+{
+  "quint": "0.33.1",
+  "backend": "typescript",
+  "maxSteps": 8,
+  "maxSamples": 20,
+  "originalModelHash": "7c39c8aa7e9e5106721142d2ed047e7aad6bf3bd5e814996d7d5f2af56519a70",
+  "faultyModelHash": "b045d0fd05f4adf6f5471b60bf231c8c5830d0e970d06480474d91d6b661e8c6",
+  "fault": "Cancel after Refund refunds twice",
+  "rows": [
+    {
+      "status": "fail",
+      "seed": "42",
+      "traceSeed": "74",
+      "traceHash": "427806d40307789723c88b97b8878a060d61ee94b7573ff03f3319756a361c8e",
+      "steps": 5
+    },
+    {
+      "status": "fail",
+      "seed": "42",
+      "traceSeed": "74",
+      "traceHash": "427806d40307789723c88b97b8878a060d61ee94b7573ff03f3319756a361c8e",
+      "steps": 5
+    }
+  ],
+  "scope": "Actual sampled Quint model counterexample, not bounded verification or implementation conformance."
+}

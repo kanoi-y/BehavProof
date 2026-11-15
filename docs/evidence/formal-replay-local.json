@@ -1,0 +1,2341 @@
+{
+  "authority": "Explicit local test host, no human approval or external protected gate claimed",
+  "model": {
+    "id": "ORDER",
+    "contractId": "ORDER-MODEL",
+    "model": "specs/order.qnt",
+    "modelSources": [],
+    "quint": {
+      "entry": "node_modules/@informalsystems/quint/dist/src/cli.js",
+      "version": "0.33.1"
+    },
+    "properties": [
+      "refundAtMostOnce",
+      "noRefundAfterShipping"
+    ],
+    "checks": [
+      "run"
+    ],
+    "maxSteps": 8,
+    "maxSamples": 20,
+    "seed": "42",
+    "timeoutMs": 60000,
+    "report": ".behavproof/model.json",
+    "driver": "driver.mjs",
+    "implementation": "src/order.mjs",
+    "implementationSources": [],
+    "requiredActions": [
+      "init",
+      "Pay",
+      "Ship",
+      "Cancel",
+      "Refund",
+      "Wait"
+    ],
+    "minTraces": 10,
+    "minComparisons": 90,
+    "requireCanary": true
+  },
+  "report": {
+    "schemaVersion": 1,
+    "modelId": "ORDER",
+    "identity": {
+      "modelHash": "7c39c8aa7e9e5106721142d2ed047e7aad6bf3bd5e814996d7d5f2af56519a70",
+      "configHash": "de6e03c04e8df1738ad873784bcdfb1cd67cfe5f569d6adc4e93118b8d9fe927",
+      "commandHash": "f4c314f364772fd27507da4178933eb2c09d79b5120cbd2c69c9088fc9f1ce48",
+      "driverHash": "a071706992f9f61e28682f0db8db452bae536b9943502c2511b4604ab27962e9",
+      "implementationHash": "ddbc5155d23e2971509de6b84e4e414811ff1142c8b08b73475d8d128d621013",
+      "traceHash": "f9ee54fff09245456aba0f79f08d4626181c83d101a9ec38b69756c5681bd6bb"
+    },
+    "runner": "@behavproof/adapter-model-test/1",
+    "observation": "module-functions",
+    "complete": true,
+    "diagnostics": [],
+    "traces": [
+      {
+        "id": "trace_0.itf.json",
+        "complete": true,
+        "steps": [
+          {
+            "index": 0,
+            "action": "init",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 1,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 2,
+            "action": "Cancel",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 3,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 4,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 5,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 6,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 7,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 8,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          }
+        ]
+      },
+      {
+        "id": "trace_1.itf.json",
+        "complete": true,
+        "steps": [
+          {
+            "index": 0,
+            "action": "init",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 1,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 2,
+            "action": "Pay",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 3,
+            "action": "Refund",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 4,
+            "action": "Cancel",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 5,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 6,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 7,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 8,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          }
+        ]
+      },
+      {
+        "id": "trace_2.itf.json",
+        "complete": true,
+        "steps": [
+          {
+            "index": 0,
+            "action": "init",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 1,
+            "action": "Cancel",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 2,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 3,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 4,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 5,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 6,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 7,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 8,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          }
+        ]
+      },
+      {
+        "id": "trace_3.itf.json",
+        "complete": true,
+        "steps": [
+          {
+            "index": 0,
+            "action": "init",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 1,
+            "action": "Cancel",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 2,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 3,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 4,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 5,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 6,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 7,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 8,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          }
+        ]
+      },
+      {
+        "id": "trace_4.itf.json",
+        "complete": true,
+        "steps": [
+          {
+            "index": 0,
+            "action": "init",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 1,
+            "action": "Pay",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 2,
+            "action": "Ship",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "actual": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 3,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "actual": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 4,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "actual": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 5,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "actual": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 6,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "actual": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 7,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "actual": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 8,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "actual": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          }
+        ]
+      },
+      {
+        "id": "trace_5.itf.json",
+        "complete": true,
+        "steps": [
+          {
+            "index": 0,
+            "action": "init",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 1,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 2,
+            "action": "Cancel",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 3,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 4,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 5,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 6,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 7,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 8,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          }
+        ]
+      },
+      {
+        "id": "trace_6.itf.json",
+        "complete": true,
+        "steps": [
+          {
+            "index": 0,
+            "action": "init",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 1,
+            "action": "Cancel",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 2,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 3,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 4,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 5,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 6,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 7,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 8,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          }
+        ]
+      },
+      {
+        "id": "trace_7.itf.json",
+        "complete": true,
+        "steps": [
+          {
+            "index": 0,
+            "action": "init",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 1,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 2,
+            "action": "Pay",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 3,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 4,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 5,
+            "action": "Ship",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "actual": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 6,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "actual": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 7,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "actual": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 8,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "actual": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          }
+        ]
+      },
+      {
+        "id": "trace_8.itf.json",
+        "complete": true,
+        "steps": [
+          {
+            "index": 0,
+            "action": "init",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 1,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 2,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 3,
+            "action": "Pay",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 4,
+            "action": "Cancel",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 5,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 6,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 7,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 8,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          }
+        ]
+      },
+      {
+        "id": "trace_9.itf.json",
+        "complete": true,
+        "steps": [
+          {
+            "index": 0,
+            "action": "init",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 1,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 2,
+            "action": "Cancel",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 3,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 4,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 5,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 6,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 7,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          },
+          {
+            "index": 8,
+            "action": "Wait",
+            "status": "pass",
+            "parameters": {},
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "implementationCalls": 1
+          }
+        ]
+      }
+    ],
+    "canary": {
+      "faultId": "double-refund",
+      "implementationHash": "fd31dc3a14f57ccd3ef0d045e4191ab13a49324b13484afd7cfc6dc2b33012bd",
+      "originalImplementationHash": "ddbc5155d23e2971509de6b84e4e414811ff1142c8b08b73475d8d128d621013",
+      "driverHash": "a071706992f9f61e28682f0db8db452bae536b9943502c2511b4604ab27962e9",
+      "traceHash": "f9ee54fff09245456aba0f79f08d4626181c83d101a9ec38b69756c5681bd6bb",
+      "observedCalls": 90,
+      "comparedSteps": 90,
+      "detectedMismatches": 5,
+      "failure": {
+        "traceId": "trace_1.itf.json",
+        "index": 4,
+        "action": "Cancel",
+        "implementationCalls": 1,
+        "expected": {
+          "cancelled": true,
+          "paid": true,
+          "refunds": {
+            "#bigint": "1"
+          },
+          "shipped": false
+        },
+        "actual": {
+          "cancelled": true,
+          "paid": true,
+          "refunds": {
+            "#bigint": "2"
+          },
+          "shipped": false
+        }
+      }
+    }
+  },
+  "evaluation": {
+    "status": "pass",
+    "reasons": [],
+    "scope": {
+      "modelId": "ORDER",
+      "model": "specs/order.qnt",
+      "contractId": "ORDER-MODEL",
+      "properties": [
+        "refundAtMostOnce",
+        "noRefundAfterShipping"
+      ],
+      "maxSteps": 8,
+      "maxSamples": 20,
+      "seed": "42",
+      "unbounded": false
+    },
+    "counts": {
+      "replayedTraces": 10,
+      "replayedSteps": 90,
+      "comparedSteps": 90,
+      "implementationCalls": 90,
+      "actions": {
+        "init": 10,
+        "Wait": 65,
+        "Cancel": 8,
+        "Pay": 4,
+        "Refund": 1,
+        "Ship": 2
+      }
+    }
+  },
+  "scope": "Actual Quint ITF \u2192 selected module exports \u2192 adapter-owned comparisons and same-Driver canary. Explicit local test host; not human approval or protected-production enforcement."
+}

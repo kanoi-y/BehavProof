@@ -1,115 +1,28 @@
-# M0検証記録
+# M0検証結果と採用判断
 
-> Repository ownership update: BehavProof is now managed in [kanoi-y/BehavProof](https://github.com/kanoi-y/BehavProof). The copied-source pdd-ts PRs7/8 were closed without merging. Their run/review records below are historical evidence; the old PR8 approval/deployment request is superseded. Future pdd-ts changes are thin consumer integration only. See [repository boundaries](repository-boundaries.md).
+対象仕様: `BehavProof_開発仕様書_v0.6.md`。2026-11-15にM0の5条件を下記の限定範囲で確認した。実地結果は[日本語の結果表](github-live-validation.ja.md)、必須45件は[受け入れ表](acceptance.md)、操作数・CI増分は[導入負担](pdd-adoption-cost.md)にまとめた。
 
-
-対象仕様: `BehavProof_開発仕様書_v0.6.md`。この記録は実装・検証に応じて更新する。未検証を合格として扱わない。
-
-| 条件 | 現在の状態 | 証拠・次の確認 |
-| --- | --- | --- |
-| M0-01 生成記録と対象の結合 | ローカル正負検証・CI成果物の同一性を検証 | 公開Collectorの正負例と3 OSの実CI・ZIP digest/内容を確認。独立した本番用producer権威の登録は未完了 |
-| M0-02 認可の最小縦スライス | 実承認ソースのケース別観測・カナリアをローカル検証済み | 実Vitestで正常実装2成功、本番故障1失敗、偽物コールバック2成功。公開ヘルパー＋Collector＋CLIで実行。新workerで本番呼び出し・同一callback故障を別観測し、偽物はunknown。外部CI/保護は未完了 |
-| M0-03 外部承認とPolicy更新 | 実Approveと固定基準の結合済み・保護CI更新待ち | PR #7の実ソースから契約ハッシュを計算。未承認時unknownから、実User Approve後Policy/Intent/Contract passを確認。登録digest固定で実5cbソースを再実行した（approved-probe-live.json） |
-| M0-04 最終ゲートと外部保護 | 事前調査のみ | mainは発行元に結合した2チェックとレビューを必須としている。BehavProof自身のskip・削除・同名偽装への耐性は未検証 |
-| M0-05 作業量・CIコスト | ローカルと3 OS CIの実行時間を計測 | public-flow.json/github-hosted.jsonに時間、audit-throughput.jsonに約10MB解析の中央値。人間の作業時間・料金/CPUは未計測 |
-
-## GitHub事前調査（2026-11-13）
-
-ユーザー指定の検証先は `https://github.com/kanoi-y/pdd-ts`。mainの観測SHAは `dd06da788bef5cfbe7f9131fe5609a61cefbd458`。既存のmainや保護設定は変更していない。
-
-接続ツールでは一般のbranch情報は取得できたが、branch-protection詳細は403だった。権限を持つGitHub CLIのGETで、必須チェック名／App ID、strict、admin適用、承認数、古いレビューの失効を確認できた。これらは検証先の現状であり、BehavProofの完成証拠ではない。
-
-構造化した観測値は `docs/evidence/github-preflight.json` に記録した。秘密情報や認証トークンは記録していない。実地検証は独立した候補を準備してから行い、必要な人間のレビューや保護設定変更を自動的に代行・捏造しない。
-
-## コールバックの保証限界の予備実験
-
-実行: `node scripts/spikes/binding-limit.mjs`。Node.js v24.14.1／Vitest 5.1.0で、実際のVitestプロセスとJSON reporterを使った。
-
-| 入力・操作 | 実際の結果 |
+| 条件 | 判定と根拠 |
 | --- | --- |
-| 正常な本番関数を呼び、owner／non-ownerを比較 | exit 0、2成功 |
-| 本番関数を常にallowedへ変更し、同じ関数を呼ぶ | exit 1、owner成功／non-owner失敗 |
-| 本番関数を壊したまま、コールバック内で期待動作を再実装 | exit 0、2成功 |
+| M0-01 生成記録と対象の結合 | 検証済み。Collectorの改変/別run/未登録producer拒否に加え、実GitHubのrun/attempt/job/対象SHAとarchive digestを照合。成功attempt3のarchiveを実際に残した最新attempt4キャンセルでも古い成功を拒否 |
+| M0-02 認可の縦スライスと保証限界 | 検証済み。owner/non-ownerの実Vitest正負例・本番故障・偽callbackを公開APIで実行。実PDD受理関数でも正常64比較/観測/カナリア成功、偽callbackは64比較成功でも観測/感度unknownでgate拒否 |
+| M0-03 外部承認と保護基準 | 検証済み。PR10の同一HEADを実UserがApproveしPolicy/Intent/Contractを外部登録e236へ固定。未承認Intent/期待値/設定/Policy変更を実保護CIで拒否。初期承認の登録であり、新しいPolicy更新を承認して移行する実地遷移とは呼ばない |
+| M0-04 最終gateと外部保護 | 検証済み。strict/admin適用の隔離baseでApp5653976を必須化。結果欠損、skip、失敗、cancel、archive欠損、別attemptをblock。同名App15368 successでは必須発行元を満たさない。正常PR19はApp successかつGitHub CLEAN |
+| M0-05 作業量・CIコスト・判断 | 検証済み。初回audit5コマンド2526ms（前提付き）、最終接続/CI支援8ファイル、本番初期変更0、リファクタ本番1/Contract0。同一HEADの既存CI529秒に追加74 runner秒（14.0%）。下記の限定採用判断へ反映 |
 
-実装とレポートのハッシュ、ケース別状態、実行時間は `docs/evidence/m0-binding-spike.json` に記録した。実験コードはthrowawayと明記している。これは比較成功から本番到達を推論できないことの観測であり、まだ製品のContractヘルパー・Collector・外部承認の完成証拠ではない。
+## 採用判断と範囲
 
-## 実ツールのレポート形式
+実PDDの `src/verification/acceptance.ts#canAcceptEvidence`、全64 Booleanケース、basic-risk契約と隔離した `behavproof-enforcement-test` での限定的な技術採用を可とする。比較成功から対象観測や故障感度を推論せず、別証拠で判定できること、契約無変更の内部リファクタを受け入れること、未承認緩和を拒否することを確認した。追加CI負担と接続ファイル数は上表の実測に限定して評価する。
 
-同じ認可2ケースについてVitest 5.1.0（coverage-v8 5.1.0）とStrykerJS 10.1.1／Vitest runner 10.1.1を実行した。Vitestは2成功・0失敗、Strykerは6変異を生成して6件Killed、Survived／Timeout／NoCoverage／Errorsは0件だった。これは当該小規模関数の観測であり、製品や要求全体の完全性を示さない。
+この判定は全PDDの品質、coverage/aggregate mutation、production L3、あらゆるGitHub構成の保護を保証しない。人間のactive編集/レビュー時間、長期の保守負担、CPU・料金は未測定。人間のユーザビリティ調査を実施したとはしない。pdd-ts mainの既存保護とmain限定のpdd-publisher環境を維持し、専用必須チェックの追加先は隔離baseだけである。このM0判定時点では任意M2-F（AC-31〜36）は未実装で範囲外だった。その後、ユーザーが明示選択したM2-Fも実装・実ツール/CI検証を完了した。追加範囲と限定採用判断は [M2-F検証記録](formal-validation.ja.md) を参照。
 
-生成したJSON／LCOVを `tests/fixtures/reports/` に置いた。機械固有の絶対パスだけを `<project-root>` へ正規化し、元の成果物とfixtureのハッシュ・変換内容を `docs/evidence/m0-report-formats.json` に記録した。製品Collectorによる生成記録の検証は未完了であり、レポートの存在だけを来歴の証拠とはしない。
+## 証拠の区別
 
-追加実行: `node scripts/spikes/report-variants.mjs`。1件成功・1件skipでもVitestはexit 0／success=true、`passWithNoTests`で0件でもexit 0／success=trueとなった。結果は `docs/evidence/m0-report-variants.json` と実JSON fixtureに保存した。アダプターはツール全体のsuccessだけを見ず、必須ケース一覧・実行件数・skipを別に検査する必要がある。
+- [実GitHub保護と全ケース](evidence/github-protected-rollout.json)：SDK a943、workflow c9、登録e236に結合した最新結果。初期のHTTP422/CLI127は診断履歴として分離し、負例成功に数えない。
+- [実PDD公開フロー](evidence/pdd-acceptance-flow.json)、[3 OSのM2修正検証](evidence/github-hosted-m2-fixes.json)：CLI/Collector/workerと実ソースの正常・refactor・偽物・故障・期待値緩和。Linuxでは固定Docker、ネットワーク無効、非root、読取専用入力を使用。
+- [公開APIフロー](evidence/public-flow.json)、[保護probeフロー](evidence/protected-probe-flow.json)：owner/non-owner、skip/削除/偽物の限界を検証。明示的なローカルhost権威は実CI権威とは区別。
+- [Collector整合性](evidence/m0-collector-integrity.json)：実Vitest、成果物改変、別run、権威欠損、producer exit7、残存入力変更を検査。悪意ある子孫の完全隔離を単独で証明するものではない。
+- [形式調査](evidence/m0-report-formats.json)、[skip/0件](evidence/m0-report-variants.json)、[meta](evidence/m0-metadata-binding.json)、[callback限界](evidence/m0-binding-spike.json)：実ツールの予備実験。ハッシュと出力形式を保持し、ツール全体successをケース実行や本番到達へ昇格させない。
+- [初回audit](evidence/first-audit-onboarding.json)、[同一HEADのCIコスト](evidence/pdd-live-adoption-cost.json)：自動処理と操作/編集数の測定。人間active時間は含まない。
 
-## IDバインディングに使うVitest API
-
-実行: `node scripts/spikes/metadata-binding.mjs`。Vitest 5.1.0の`test`オプションの`meta`へContract ID／Case ID／契約版を登録した。表示名をこれらと無関係にしても、JSON reporterは実行したownerとskipしたnon-ownerの両方で同じIDメタデータを保持した。5.1.0のケース状態はskip時に`skipped`であり、古い形式を想定した予備実験の`pending`期待値を実レポート確認後に修正した。
-
-結果は `docs/evidence/m0-metadata-binding.json`。登録時メタデータは宣言にすぎず、比較処理の実行数・結果・バインディングハッシュは製品ヘルパーが別途記録・検証する。本番実装への到達はこのメタデータから推定しない。
-
-## 外部権威のAPI形状の確認
-
-検証先の過去PR #6について、PR作成者がgithub-actions[bot]、承認者がkanoi-y、レビュー対象コミットが当該PR先端と一致していることをRESTの実データで確認した。同じコミット上に独立したApp ID 5653976のPDDチェックがあることも確認した。観測値は `docs/evidence/github-historical-authority.json`、元の公開API応答は `tests/fixtures/github/` に保存した。
-
-これは外部レビュー・発行元・コミットの識別が取得できるという実現性確認である。過去のPDD承認／チェックを、新規BehavProof契約の承認やBehavProofの合格として流用しない。新しい変更に対する実地検証は未完了。
-
-## 公開Collectorと生成記録のローカル検証
-
-実行: `node scripts/spikes/collector-integrity.mjs`。クリーンな一時Gitリポジトリを作り、公開`collect` APIで実Vitestの認可2ケースを実行した。期待する入力ツリー・設定・実行ID・コマンド・出力一覧・ローカルproducer権威は、呼び出し側で実行前に決めた。Manifest自身の値から権威を作ってはいない。
-
-| 操作 | 実際の結果 |
-| --- | --- |
-| 正常な実行・生成記録・成果物を照合 | integrity／producer／subject／executionの各軸がpass |
-| JSONとして有効な空白を成果物に追加 | integrity fail |
-| 現在の必須実行IDを別runへ変更 | subject fail |
-| 呼出側のproducer権威を与えない | producer unknown |
-| producerをexit 7で終了 | sealed artifact 0件 |
-| 実行中に入力ソースを変更して残す | Collectorが入力変更を拒否 |
-
-結果は `docs/evidence/m0-collector-integrity.json`。ローカル呼出側が明示的に選んだ権威と共有依存を使った実験であり、CI認証・人間の承認・一時的に変更して戻す攻撃・悪意ある子孫プロセスの隔離を実証したものではない。最終版でも同じ実験を再実行して確認する。
-
-## 製品の公開フロー（現行版）
-
-`node scripts/acceptance-flow.mjs` は公開Collector・Vitestヘルパー/reporter・ビルド済みCLIを使い、一時Gitリポジトリで実行する。明示したローカルhost権威であり、人間承認やCI認証の代替にはしない。
-
-- 正常なowner/non-owner：2ケースの比較・bindingはpass。契約を変更しない内部リファクタ後もpass。
-- 偽コールバック：比較はpassになり得るが、本番観測・変異感度はunknown。
-- 所有権判定の故障：実Vitestが失敗し、Collectorのsealed artifactは0。
-- non-ownerのskip/削除：必須ケース比較はunknown、ゲートexit1。
-- criticalの完全ゲートは、正常ケースでもcoverage/mutation・個別観測・外部パイプライン保護が未充足のためexit1。比較成功と完全ゲートを区別する。
-- 認証された比較をMarkdown文書へ生成し、owner/non-ownerのpassを確認した。宣言・比較から本番到達は推論しない。
-
-初回観測（macOS / Node24.14.1、この小規模fixtureのみ）：収集＋CLI評価は正常2255ms、リファクタ2755ms、偽物2850ms、故障2692ms、skip2190ms、削除2787ms。各実行の実測は `docs/evidence/public-flow.json` に記録。人間の導入・変更判断時間、CPU、料金、実運用の保守負荷を示す測定ではない。
-
-`node scripts/package-smoke.mjs` で6パッケージをnpm packし、別の一時consumerにoffline install、公開export・CLI help・同梱schemaを確認した。npm公開はしていない。
-
-`node scripts/github-live.mjs` の実API観測では既存PDD保護はpass、BehavProof用contextはunknown。mainや保護設定は変更していない。新しいBehavProof変更への人間承認とskip/削除/偽発行元への実地保護は引き続き未完了。
-
-
-## 実CI・性能の追加検証
-
-検証先のhead `285d7f5ce5df0607ae1e1bb6b65af978a5afe24b` に対する [run43544612600](https://github.com/kanoi-y/pdd-ts/actions/runs/43544612600) で、Windows/macOS/Linuxの各182テスト・クリーンビルド・6パッケージのオンライン新規導入・公開フローが成功した。Node24.22.2/npm11.19.1。3成果物のZIPをダウンロードし、GitHub APIのdigest、展開した既知の2ファイルと公開ZIP検証APIを照合した。詳細は `docs/evidence/github-hosted.json`。
-
-| OS | 検証job占有時間 | 正常な収集＋監査 | リファクタ後 |
-| --- | ---: | ---: | ---: |
-| Linux | 49秒 | 1460ms | 1322ms |
-| macOS | 62秒 | 1651ms | 1481ms |
-| Windows | 134秒 | 4307ms | 4191ms |
-
-3検証job合計は245 runner秒（並列実行）。料金・CPU使用量・人間の作業負荷の測定ではない。これらのCI内fixtureは明示的なローカルhost権威を使い、独立した本番用CI権威やBehavProof必須ゲートの登録へ昇格させない。
-
-NFR-03の初期性能目標について、`node scripts/benchmark-audit.mjs` で9,685,187 bytes／12,000 assertionsの合成JSONを3回監査し、439/851/854ms、中央値851msを観測した。テスト実行を含まない単一ファイルの解析・監査測定であり、合成レポートのtestResultはunknownを保持する。大規模リポジトリ・意味的品質・メモリ・人間の使いやすさの保証ではない。
-
-PR #7のBotレビューで判明した「重複mode/help/versionによる最終コマンドの迂回」「実行要件のない契約が集計から消える」は別途回帰テストで再現し修正した。旧headの3 OS成功を修正後HEADの成功として流用せず、再実行する。人間のApproveは現在未取得で、CLIも承認をunknownとして記録する。
-
-修正版head `5cb1133` の [run43548473145](https://github.com/kanoi-y/pdd-ts/actions/runs/43548473145) は各OS192テスト・ビルド・新規consumer導入・公開フローまで成功した。3 ZIPのdigestと内容を再照合し、故障注入ではnon-ownerの実際の失敗比較1回・契約版・binding・診断ハッシュを確認した。記録は `docs/evidence/github-hosted-review-fixes.json`。失敗runの診断を正常テスト証拠や本番CI権威へ昇格させない。
-
-## 承認済み実ソースと収集の結合
-
-PR7の実コミット5cb1133を一時checkoutし、外部登録済みcedc7a15…の全source hashと照合。Git SHAを付け替えず、nested projectの元のGit履歴・base・clean subjectを保持して新worker→Collector→CLIを実行した。Intent/Contract/Policyの保持、本番呼び出しと同一callbackのケース別故障検知を確認した（docs/evidence/approved-probe-live.json）。実行権威は明示的なローカルhostであり、CI producer・外部必須ゲートの登録には昇格しない。coverage・十分なmutation score・外部保護がないcritical全体はexit1/incompleteのまま。
-
-## 保護CI導入案の最終実CI
-
-[PR8](https://github.com/kanoi-y/pdd-ts/pull/8) の7bcfa1dに対する [run43579133741](https://github.com/kanoi-y/pdd-ts/actions/runs/43579133741) は、Linux/macOS各287件、Windows284件（POSIX限定3件skip）、ビルド・配布consumer・実Collector/probe/CLIが成功。Linuxでは固定イメージのネットワーク無効/読取専用/非rootコンテナの5シナリオも成功。3成果物ZIPのdigest/実バイト/実フロー記録は独立照合済み（github-hosted-protected-proposal.json）。無承認Intentを拒否する新しいbasic-risk正例プロジェクトはcriticalの承認済み基準を変更しない。
-
-このCIはライブラリ・導入案の検証であり、登録済み本番producer/Appによるチェック発行ではない。PR8同一HEADの新しい人間承認と具体的な導入許可を求めている。main/既存環境保護は維持し、外部AC-18/22/50を完了扱いにしない。
+初期のpdd-ts PR7/8は製品分離時にマージせず閉じた。旧承認・旧HEADのCIは現在の承認/実行として流用しない。製品本体は別publicリポジトリ[kanoi-y/BehavProof](https://github.com/kanoi-y/BehavProof)で管理し、pdd-tsは固定SDKを参照する消費側である。[リポジトリ境界](repository-boundaries.md)を参照。

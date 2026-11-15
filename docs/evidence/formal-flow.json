@@ -1,0 +1,4970 @@
+{
+  "rawBundleRoot": ".behavproof/formal-acceptance-artifacts/behavproof-formal-flow-dojjMi",
+  "schemaVersion": 1,
+  "command": "node examples/formal-order/formal-flow.mjs",
+  "node": "v24.14.1",
+  "platform": "darwin",
+  "authority": "Explicit external local acceptance host; fixture baseline represents a selected meaning. This is not actual human approval, production reach or issuer-bound GitHub enforcement.",
+  "sourceHashes": "c2a8673a07465cb2e7c04f38e8d1e1885c0c07e1875343da96d55585d8ca90e3",
+  "negativeSourceHashes": "26d9ec326dd0162ace3161af77d10a2ab618600b28b3b0dfc48c6bbd9dad8e6d",
+  "hostScriptSha256": "965b44d4db25d22813efe923ac9c907e9899bca54ecc44a654c1a541c64418ed",
+  "modelReport": {
+    "identity": {
+      "commandHash": "a7d891f9ce4397dab5b76aeee029620b96a8a194021b1767c648719eca0f2f62",
+      "configHash": "06fd83512281b7ac4aff23c1b55366494bafe247546759eac6f0e2088aa550ec",
+      "modelHash": "46c78b3aa8801ccdd6fcea74a403e20486b2d4cf77f8cca877164492e3537719"
+    },
+    "modelId": "ORDER",
+    "schemaVersion": 1,
+    "stages": [
+      {
+        "artifacts": [
+          {
+            "ref": ".behavproof/collected/correct/raw/parse/quint.json",
+            "sha256": "2c7cb1519e0d5b4ad396957f1091341875a432d104f69e6978102a42d25bf0e8"
+          },
+          {
+            "ref": ".behavproof/collected/correct/raw/parse/stderr.txt",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "ref": ".behavproof/collected/correct/raw/parse/stdout.txt",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "backend": "quint",
+        "complete": true,
+        "diagnostics": [],
+        "exitCode": 0,
+        "method": "parse",
+        "properties": [],
+        "stage": "parse",
+        "status": "pass",
+        "stderrHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdoutHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "toolVersion": "0.33.1"
+      },
+      {
+        "artifacts": [
+          {
+            "ref": ".behavproof/collected/correct/raw/typecheck/quint.json",
+            "sha256": "2774d483d353874ce230fead9da06989513afe29c792b290dc55b46c844a1ffa"
+          },
+          {
+            "ref": ".behavproof/collected/correct/raw/typecheck/stderr.txt",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "ref": ".behavproof/collected/correct/raw/typecheck/stdout.txt",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "backend": "quint",
+        "complete": true,
+        "diagnostics": [],
+        "exitCode": 0,
+        "method": "typecheck",
+        "properties": [],
+        "stage": "typecheck",
+        "status": "pass",
+        "stderrHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdoutHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "toolVersion": "0.33.1"
+      },
+      {
+        "artifacts": [
+          {
+            "ref": ".behavproof/collected/correct/raw/test/quint.json",
+            "sha256": "1640b1e63e0541b085ef74a78d377160e505540f05e7eb66004211033c4586f4"
+          },
+          {
+            "ref": ".behavproof/collected/correct/raw/test/stderr.txt",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "ref": ".behavproof/collected/correct/raw/test/stdout.txt",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "backend": "typescript",
+        "complete": true,
+        "diagnostics": [],
+        "exitCode": 0,
+        "method": "spec_test",
+        "properties": [],
+        "stage": "test",
+        "status": "pass",
+        "stderrHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdoutHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "toolVersion": "0.33.1"
+      },
+      {
+        "artifacts": [
+          {
+            "ref": ".behavproof/collected/correct/raw/run/quint.json",
+            "sha256": "bb96bdc9cefa138cba8d0eea65148bb8d32926c62b7c55fc086efbf4d2f9eb9b"
+          },
+          {
+            "ref": ".behavproof/collected/correct/raw/run/stderr.txt",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "ref": ".behavproof/collected/correct/raw/run/stdout.txt",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "ref": ".behavproof/formal-runs/cd8c13a6-54eb-4f2a-a184-b332dfeed5dd/run/trace_0.itf.json",
+            "sha256": "f8c303f2524341f6a07e4548fd8810ebc03cf38ea0f445dd8bb8edea2b3015b9"
+          },
+          {
+            "ref": ".behavproof/formal-runs/cd8c13a6-54eb-4f2a-a184-b332dfeed5dd/run/trace_1.itf.json",
+            "sha256": "ba82d93e55a151b5c5590de46c12e551bc93e5c8f36f442da8a0e95e815b3ec9"
+          },
+          {
+            "ref": ".behavproof/formal-runs/cd8c13a6-54eb-4f2a-a184-b332dfeed5dd/run/trace_2.itf.json",
+            "sha256": "068c31d40f7be071ec77197e8c93ccfba12731087c8101ee3a5ca3ee546f187d"
+          },
+          {
+            "ref": ".behavproof/formal-runs/cd8c13a6-54eb-4f2a-a184-b332dfeed5dd/run/trace_3.itf.json",
+            "sha256": "068c31d40f7be071ec77197e8c93ccfba12731087c8101ee3a5ca3ee546f187d"
+          },
+          {
+            "ref": ".behavproof/formal-runs/cd8c13a6-54eb-4f2a-a184-b332dfeed5dd/run/trace_4.itf.json",
+            "sha256": "9190dcec1450c78ddac0b0b2b226894286ab8cb3708937791dd51d9c30e09c24"
+          },
+          {
+            "ref": ".behavproof/formal-runs/cd8c13a6-54eb-4f2a-a184-b332dfeed5dd/run/trace_5.itf.json",
+            "sha256": "d04cb72c4f8c3f7d7894dc73151234069c9a448b5f422cba3fff7fda730b5695"
+          },
+          {
+            "ref": ".behavproof/formal-runs/cd8c13a6-54eb-4f2a-a184-b332dfeed5dd/run/trace_6.itf.json",
+            "sha256": "0dad189aec1505029c9e2beb4f9960b892397cd21cddc9bcb976d5a93fe5190d"
+          },
+          {
+            "ref": ".behavproof/formal-runs/cd8c13a6-54eb-4f2a-a184-b332dfeed5dd/run/trace_7.itf.json",
+            "sha256": "946acc235d6b783c6cff460ee2360dc1935658ea82fdd50b5168703c3da9693f"
+          },
+          {
+            "ref": ".behavproof/formal-runs/cd8c13a6-54eb-4f2a-a184-b332dfeed5dd/run/trace_8.itf.json",
+            "sha256": "ac27638d13d69d5914bd082331bdbe0ddeacb109e8a9e63829a3b0bd3dc26b3c"
+          },
+          {
+            "ref": ".behavproof/formal-runs/cd8c13a6-54eb-4f2a-a184-b332dfeed5dd/run/trace_9.itf.json",
+            "sha256": "7d2fddba4d514c8d08040f26d671097b49894cdca277afca01c45758398a266e"
+          }
+        ],
+        "backend": "typescript",
+        "complete": true,
+        "diagnostics": [],
+        "exitCode": 0,
+        "maxSamples": 100,
+        "maxSteps": 8,
+        "method": "simulation",
+        "properties": [
+          "refundAtMostOnce",
+          "noRefundAfterShipping"
+        ],
+        "seed": "42",
+        "stage": "run",
+        "status": "pass",
+        "stderrHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdoutHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "toolVersion": "0.33.1",
+        "traceSeed": "42"
+      },
+      {
+        "artifacts": [
+          {
+            "ref": ".behavproof/collected/correct/raw/verify/quint.json",
+            "sha256": "eca37ccdd04b8142d2e2196efafefbfb83f3904a93a89f7143c31306976a5c6d"
+          },
+          {
+            "ref": ".behavproof/collected/correct/raw/verify/stderr.txt",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "ref": ".behavproof/collected/correct/raw/verify/stdout.txt",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "backend": "apalache",
+        "backendVersion": "0.62.4",
+        "complete": true,
+        "diagnostics": [],
+        "exitCode": 0,
+        "maxSteps": 8,
+        "method": "bounded_model_check",
+        "properties": [
+          "refundAtMostOnce",
+          "noRefundAfterShipping"
+        ],
+        "stage": "verify",
+        "status": "pass",
+        "stderrHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdoutHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "toolVersion": "0.33.1"
+      }
+    ]
+  },
+  "conformance": {
+    "canary": {
+      "comparedSteps": 90,
+      "detectedMismatches": 5,
+      "driverHash": "2c2dc1c0fff9508c8b7f1d4a08df12948dc8832cab95bcf0c56ba048c1c46e13",
+      "failure": {
+        "action": "Cancel",
+        "actual": {
+          "cancelled": true,
+          "paid": true,
+          "refunds": {
+            "#bigint": "2"
+          },
+          "shipped": false
+        },
+        "expected": {
+          "cancelled": true,
+          "paid": true,
+          "refunds": {
+            "#bigint": "1"
+          },
+          "shipped": false
+        },
+        "implementationCalls": 1,
+        "index": 4,
+        "traceId": "trace_1.itf.json"
+      },
+      "faultId": "double-refund",
+      "implementationHash": "3fb1f1d58bc45b004d17b1617955fb83c71a19ab031bfd6724d741d482071087",
+      "observedCalls": 90,
+      "originalImplementationHash": "1d3eb3d94977254992efabaa5fa30754f8341bf4fa302388e3db0297955c0863",
+      "traceHash": "f9ee54fff09245456aba0f79f08d4626181c83d101a9ec38b69756c5681bd6bb"
+    },
+    "complete": true,
+    "diagnostics": [],
+    "identity": {
+      "commandHash": "43becf8f02f115e1a08029618fd1891bee8518759bc19ed5abf1c1b66356194f",
+      "configHash": "06fd83512281b7ac4aff23c1b55366494bafe247546759eac6f0e2088aa550ec",
+      "driverHash": "2c2dc1c0fff9508c8b7f1d4a08df12948dc8832cab95bcf0c56ba048c1c46e13",
+      "implementationHash": "1d3eb3d94977254992efabaa5fa30754f8341bf4fa302388e3db0297955c0863",
+      "modelHash": "46c78b3aa8801ccdd6fcea74a403e20486b2d4cf77f8cca877164492e3537719",
+      "traceHash": "f9ee54fff09245456aba0f79f08d4626181c83d101a9ec38b69756c5681bd6bb"
+    },
+    "modelId": "ORDER",
+    "observation": "module-functions",
+    "runner": "@behavproof/adapter-model-test/1",
+    "schemaVersion": 1,
+    "traces": [
+      {
+        "complete": true,
+        "id": "trace_0.itf.json",
+        "steps": [
+          {
+            "action": "init",
+            "actual": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 0,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 1,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Cancel",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 2,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 3,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 4,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 5,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 6,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 7,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 8,
+            "parameters": {},
+            "status": "pass"
+          }
+        ]
+      },
+      {
+        "complete": true,
+        "id": "trace_1.itf.json",
+        "steps": [
+          {
+            "action": "init",
+            "actual": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 0,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 1,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Pay",
+            "actual": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 2,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Refund",
+            "actual": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 3,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Cancel",
+            "actual": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 4,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 5,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 6,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 7,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 8,
+            "parameters": {},
+            "status": "pass"
+          }
+        ]
+      },
+      {
+        "complete": true,
+        "id": "trace_2.itf.json",
+        "steps": [
+          {
+            "action": "init",
+            "actual": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 0,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Cancel",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 1,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 2,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 3,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 4,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 5,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 6,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 7,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 8,
+            "parameters": {},
+            "status": "pass"
+          }
+        ]
+      },
+      {
+        "complete": true,
+        "id": "trace_3.itf.json",
+        "steps": [
+          {
+            "action": "init",
+            "actual": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 0,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Cancel",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 1,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 2,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 3,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 4,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 5,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 6,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 7,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 8,
+            "parameters": {},
+            "status": "pass"
+          }
+        ]
+      },
+      {
+        "complete": true,
+        "id": "trace_4.itf.json",
+        "steps": [
+          {
+            "action": "init",
+            "actual": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 0,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Pay",
+            "actual": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 1,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Ship",
+            "actual": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "implementationCalls": 1,
+            "index": 2,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "implementationCalls": 1,
+            "index": 3,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "implementationCalls": 1,
+            "index": 4,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "implementationCalls": 1,
+            "index": 5,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "implementationCalls": 1,
+            "index": 6,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "implementationCalls": 1,
+            "index": 7,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "implementationCalls": 1,
+            "index": 8,
+            "parameters": {},
+            "status": "pass"
+          }
+        ]
+      },
+      {
+        "complete": true,
+        "id": "trace_5.itf.json",
+        "steps": [
+          {
+            "action": "init",
+            "actual": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 0,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 1,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Cancel",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 2,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 3,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 4,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 5,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 6,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 7,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 8,
+            "parameters": {},
+            "status": "pass"
+          }
+        ]
+      },
+      {
+        "complete": true,
+        "id": "trace_6.itf.json",
+        "steps": [
+          {
+            "action": "init",
+            "actual": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 0,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Cancel",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 1,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 2,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 3,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 4,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 5,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 6,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 7,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 8,
+            "parameters": {},
+            "status": "pass"
+          }
+        ]
+      },
+      {
+        "complete": true,
+        "id": "trace_7.itf.json",
+        "steps": [
+          {
+            "action": "init",
+            "actual": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 0,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 1,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Pay",
+            "actual": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 2,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 3,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 4,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Ship",
+            "actual": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "implementationCalls": 1,
+            "index": 5,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "implementationCalls": 1,
+            "index": 6,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "implementationCalls": 1,
+            "index": 7,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": true
+            },
+            "implementationCalls": 1,
+            "index": 8,
+            "parameters": {},
+            "status": "pass"
+          }
+        ]
+      },
+      {
+        "complete": true,
+        "id": "trace_8.itf.json",
+        "steps": [
+          {
+            "action": "init",
+            "actual": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 0,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 1,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 2,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Pay",
+            "actual": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": false,
+              "paid": true,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 3,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Cancel",
+            "actual": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 4,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 5,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 6,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 7,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": true,
+              "refunds": {
+                "#bigint": "1"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 8,
+            "parameters": {},
+            "status": "pass"
+          }
+        ]
+      },
+      {
+        "complete": true,
+        "id": "trace_9.itf.json",
+        "steps": [
+          {
+            "action": "init",
+            "actual": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 0,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": false,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 1,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Cancel",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 2,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 3,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 4,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 5,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 6,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 7,
+            "parameters": {},
+            "status": "pass"
+          },
+          {
+            "action": "Wait",
+            "actual": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "comparisonCount": 1,
+            "expected": {
+              "cancelled": true,
+              "paid": false,
+              "refunds": {
+                "#bigint": "0"
+              },
+              "shipped": false
+            },
+            "implementationCalls": 1,
+            "index": 8,
+            "parameters": {},
+            "status": "pass"
+          }
+        ]
+      }
+    ]
+  },
+  "gate": {
+    "exit": 0,
+    "status": "pass",
+    "assurance": {
+      "binding_verified": "unknown",
+      "cases_executed": "unknown",
+      "contract_declared": "pass",
+      "model_conformance_observed": "pass",
+      "mutation_sensitivity_observed": "unknown",
+      "production_target_observed": "unknown"
+    },
+    "formal": {
+      "models": [
+        {
+          "binding": {
+            "reasons": [],
+            "status": "pass"
+          },
+          "conformance": {
+            "counts": {
+              "actions": {
+                "Cancel": 8,
+                "Pay": 4,
+                "Refund": 1,
+                "Ship": 2,
+                "Wait": 65,
+                "init": 10
+              },
+              "comparedSteps": 90,
+              "implementationCalls": 90,
+              "replayedSteps": 90,
+              "replayedTraces": 10
+            },
+            "reasons": [],
+            "scope": {
+              "contractId": "ORDER-MODEL",
+              "maxSamples": 100,
+              "maxSteps": 8,
+              "model": "specs/order.qnt",
+              "modelId": "ORDER",
+              "properties": [
+                "refundAtMostOnce",
+                "noRefundAfterShipping"
+              ],
+              "seed": "42",
+              "unbounded": false
+            },
+            "status": "pass"
+          },
+          "contractId": "ORDER-MODEL",
+          "model": {
+            "reasons": [],
+            "scope": {
+              "contractId": "ORDER-MODEL",
+              "maxSamples": 100,
+              "maxSteps": 8,
+              "model": "specs/order.qnt",
+              "modelId": "ORDER",
+              "properties": [
+                "refundAtMostOnce",
+                "noRefundAfterShipping"
+              ],
+              "seed": "42",
+              "unbounded": false
+            },
+            "stages": [
+              {
+                "artifacts": [
+                  {
+                    "ref": ".behavproof/collected/correct/raw/parse/quint.json",
+                    "sha256": "2c7cb1519e0d5b4ad396957f1091341875a432d104f69e6978102a42d25bf0e8"
+                  },
+                  {
+                    "ref": ".behavproof/collected/correct/raw/parse/stderr.txt",
+                    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                  },
+                  {
+                    "ref": ".behavproof/collected/correct/raw/parse/stdout.txt",
+                    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                  }
+                ],
+                "backend": "quint",
+                "complete": true,
+                "diagnostics": [],
+                "exitCode": 0,
+                "method": "parse",
+                "properties": [],
+                "stage": "parse",
+                "status": "pass",
+                "stderrHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "stdoutHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "toolVersion": "0.33.1"
+              },
+              {
+                "artifacts": [
+                  {
+                    "ref": ".behavproof/collected/correct/raw/typecheck/quint.json",
+                    "sha256": "2774d483d353874ce230fead9da06989513afe29c792b290dc55b46c844a1ffa"
+                  },
+                  {
+                    "ref": ".behavproof/collected/correct/raw/typecheck/stderr.txt",
+                    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                  },
+                  {
+                    "ref": ".behavproof/collected/correct/raw/typecheck/stdout.txt",
+                    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                  }
+                ],
+                "backend": "quint",
+                "complete": true,
+                "diagnostics": [],
+                "exitCode": 0,
+                "method": "typecheck",
+                "properties": [],
+                "stage": "typecheck",
+                "status": "pass",
+                "stderrHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "stdoutHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "toolVersion": "0.33.1"
+              },
+              {
+                "artifacts": [
+                  {
+                    "ref": ".behavproof/collected/correct/raw/test/quint.json",
+                    "sha256": "1640b1e63e0541b085ef74a78d377160e505540f05e7eb66004211033c4586f4"
+                  },
+                  {
+                    "ref": ".behavproof/collected/correct/raw/test/stderr.txt",
+                    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                  },
+                  {
+                    "ref": ".behavproof/collected/correct/raw/test/stdout.txt",
+                    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                  }
+                ],
+                "backend": "typescript",
+                "complete": true,
+                "diagnostics": [],
+                "exitCode": 0,
+                "method": "spec_test",
+                "properties": [],
+                "stage": "test",
+                "status": "pass",
+                "stderrHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "stdoutHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "toolVersion": "0.33.1"
+              },
+              {
+                "artifacts": [
+                  {
+                    "ref": ".behavproof/collected/correct/raw/run/quint.json",
+                    "sha256": "bb96bdc9cefa138cba8d0eea65148bb8d32926c62b7c55fc086efbf4d2f9eb9b"
+                  },
+                  {
+                    "ref": ".behavproof/collected/correct/raw/run/stderr.txt",
+                    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                  },
+                  {
+                    "ref": ".behavproof/collected/correct/raw/run/stdout.txt",
+                    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                  },
+                  {
+                    "ref": ".behavproof/formal-runs/cd8c13a6-54eb-4f2a-a184-b332dfeed5dd/run/trace_0.itf.json",
+                    "sha256": "f8c303f2524341f6a07e4548fd8810ebc03cf38ea0f445dd8bb8edea2b3015b9"
+                  },
+                  {
+                    "ref": ".behavproof/formal-runs/cd8c13a6-54eb-4f2a-a184-b332dfeed5dd/run/trace_1.itf.json",
+                    "sha256": "ba82d93e55a151b5c5590de46c12e551bc93e5c8f36f442da8a0e95e815b3ec9"
+                  },
+                  {
+                    "ref": ".behavproof/formal-runs/cd8c13a6-54eb-4f2a-a184-b332dfeed5dd/run/trace_2.itf.json",
+                    "sha256": "068c31d40f7be071ec77197e8c93ccfba12731087c8101ee3a5ca3ee546f187d"
+                  },
+                  {
+                    "ref": ".behavproof/formal-runs/cd8c13a6-54eb-4f2a-a184-b332dfeed5dd/run/trace_3.itf.json",
+                    "sha256": "068c31d40f7be071ec77197e8c93ccfba12731087c8101ee3a5ca3ee546f187d"
+                  },
+                  {
+                    "ref": ".behavproof/formal-runs/cd8c13a6-54eb-4f2a-a184-b332dfeed5dd/run/trace_4.itf.json",
+                    "sha256": "9190dcec1450c78ddac0b0b2b226894286ab8cb3708937791dd51d9c30e09c24"
+                  },
+                  {
+                    "ref": ".behavproof/formal-runs/cd8c13a6-54eb-4f2a-a184-b332dfeed5dd/run/trace_5.itf.json",
+                    "sha256": "d04cb72c4f8c3f7d7894dc73151234069c9a448b5f422cba3fff7fda730b5695"
+                  },
+                  {
+                    "ref": ".behavproof/formal-runs/cd8c13a6-54eb-4f2a-a184-b332dfeed5dd/run/trace_6.itf.json",
+                    "sha256": "0dad189aec1505029c9e2beb4f9960b892397cd21cddc9bcb976d5a93fe5190d"
+                  },
+                  {
+                    "ref": ".behavproof/formal-runs/cd8c13a6-54eb-4f2a-a184-b332dfeed5dd/run/trace_7.itf.json",
+                    "sha256": "946acc235d6b783c6cff460ee2360dc1935658ea82fdd50b5168703c3da9693f"
+                  },
+                  {
+                    "ref": ".behavproof/formal-runs/cd8c13a6-54eb-4f2a-a184-b332dfeed5dd/run/trace_8.itf.json",
+                    "sha256": "ac27638d13d69d5914bd082331bdbe0ddeacb109e8a9e63829a3b0bd3dc26b3c"
+                  },
+                  {
+                    "ref": ".behavproof/formal-runs/cd8c13a6-54eb-4f2a-a184-b332dfeed5dd/run/trace_9.itf.json",
+                    "sha256": "7d2fddba4d514c8d08040f26d671097b49894cdca277afca01c45758398a266e"
+                  }
+                ],
+                "backend": "typescript",
+                "complete": true,
+                "diagnostics": [],
+                "exitCode": 0,
+                "maxSamples": 100,
+                "maxSteps": 8,
+                "method": "simulation",
+                "properties": [
+                  "refundAtMostOnce",
+                  "noRefundAfterShipping"
+                ],
+                "seed": "42",
+                "stage": "run",
+                "status": "pass",
+                "stderrHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "stdoutHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "toolVersion": "0.33.1",
+                "traceSeed": "42"
+              },
+              {
+                "artifacts": [
+                  {
+                    "ref": ".behavproof/collected/correct/raw/verify/quint.json",
+                    "sha256": "eca37ccdd04b8142d2e2196efafefbfb83f3904a93a89f7143c31306976a5c6d"
+                  },
+                  {
+                    "ref": ".behavproof/collected/correct/raw/verify/stderr.txt",
+                    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                  },
+                  {
+                    "ref": ".behavproof/collected/correct/raw/verify/stdout.txt",
+                    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                  }
+                ],
+                "backend": "apalache",
+                "backendVersion": "0.62.4",
+                "complete": true,
+                "diagnostics": [],
+                "exitCode": 0,
+                "maxSteps": 8,
+                "method": "bounded_model_check",
+                "properties": [
+                  "refundAtMostOnce",
+                  "noRefundAfterShipping"
+                ],
+                "stage": "verify",
+                "status": "pass",
+                "stderrHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "stdoutHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "toolVersion": "0.33.1"
+              }
+            ],
+            "status": "pass"
+          },
+          "modelId": "ORDER",
+          "risk": "basic"
+        }
+      ],
+      "policyChanged": false
+    },
+    "evaluations": [
+      {
+        "evidenceIds": [],
+        "message": "No code changes in the verified Git comparison",
+        "remediation": "Review changed files, affected contracts and unresolved dependencies; complete the hashed source scope or supported mappings, then rerun check. Passing tests alone cannot resolve unknown impact.",
+        "ruleId": "changeImpact",
+        "scope": [
+          "ORDER-MODEL",
+          "contract"
+        ],
+        "severity": "off",
+        "status": "pass"
+      },
+      {
+        "evidenceIds": [],
+        "message": "No code changes in the verified Git comparison",
+        "remediation": "Review changed files, affected contracts and unresolved dependencies; complete the hashed source scope or supported mappings, then rerun check. Passing tests alone cannot resolve unknown impact.",
+        "ruleId": "changeImpact",
+        "scope": [],
+        "severity": "off",
+        "status": "pass"
+      },
+      {
+        "evidenceIds": [],
+        "message": "Scoped coverage unavailable",
+        "remediation": "Collect complete LCOV for the changed source scope and meet the protected coverage threshold.",
+        "ruleId": "changedLineCoverage",
+        "scope": [
+          "ORDER-MODEL",
+          "contract"
+        ],
+        "severity": "warn",
+        "status": "unknown"
+      },
+      {
+        "evidenceIds": [],
+        "message": "Required evidence unavailable; collect and authenticate current evidence",
+        "remediation": "Collect complete LCOV for the changed source scope and meet the protected coverage threshold.",
+        "ruleId": "changedLineCoverage",
+        "scope": [],
+        "severity": "warn",
+        "status": "unknown"
+      },
+      {
+        "evidenceIds": [
+          "contract.json"
+        ],
+        "message": "Current formalBinding evidence within the selected model scope; model=ORDER; maxSteps=8; maxSamples=100; seed=42; unbounded=false",
+        "remediation": "Collect current model, trace and observed replay reports with the protected producer; retain configured bounds and obtain model/Driver mapping approval separately.",
+        "ruleId": "formalBinding",
+        "scope": [
+          "ORDER",
+          "model"
+        ],
+        "severity": "error",
+        "status": "pass"
+      },
+      {
+        "evidenceIds": [
+          "contract.json"
+        ],
+        "message": "Per-model formal evidence; model properties, observed conformance and approved meaning are independent",
+        "ruleId": "formalBinding",
+        "scope": [
+          "ORDER-MODEL",
+          "contract"
+        ],
+        "severity": "error",
+        "status": "pass"
+      },
+      {
+        "evidenceIds": [
+          "contract.json"
+        ],
+        "message": "Per-model formal evidence; model properties, observed conformance and approved meaning are independent",
+        "ruleId": "formalBinding",
+        "scope": [],
+        "severity": "error",
+        "status": "pass"
+      },
+      {
+        "evidenceIds": [
+          ".behavproof/collected/correct/model.json"
+        ],
+        "message": "Current formalModel evidence within the selected model scope; model=ORDER; maxSteps=8; maxSamples=100; seed=42; unbounded=false; recorded methods: parse/quint/parse, typecheck/quint/typecheck, test/typescript/spec_test, run/typescript/simulation, verify/apalache/bounded_model_check",
+        "remediation": "Collect current model, trace and observed replay reports with the protected producer; retain configured bounds and obtain model/Driver mapping approval separately.",
+        "ruleId": "formalModel",
+        "scope": [
+          "ORDER",
+          "model"
+        ],
+        "severity": "error",
+        "status": "pass"
+      },
+      {
+        "evidenceIds": [
+          ".behavproof/collected/correct/model.json"
+        ],
+        "message": "Per-model formal evidence; model properties, observed conformance and approved meaning are independent",
+        "ruleId": "formalModel",
+        "scope": [
+          "ORDER-MODEL",
+          "contract"
+        ],
+        "severity": "error",
+        "status": "pass"
+      },
+      {
+        "evidenceIds": [
+          ".behavproof/collected/correct/model.json"
+        ],
+        "message": "Per-model formal evidence; model properties, observed conformance and approved meaning are independent",
+        "ruleId": "formalModel",
+        "scope": [],
+        "severity": "error",
+        "status": "pass"
+      },
+      {
+        "evidenceIds": [
+          ".behavproof/collected/correct/model.json"
+        ],
+        "message": "Syntax parsing is separate from model property checking; model=ORDER; maxSteps=8; maxSamples=100; seed=42; unbounded=false",
+        "remediation": "Collect current model, trace and observed replay reports with the protected producer; retain configured bounds and obtain model/Driver mapping approval separately.",
+        "ruleId": "formalSyntax",
+        "scope": [
+          "ORDER",
+          "model"
+        ],
+        "severity": "error",
+        "status": "pass"
+      },
+      {
+        "evidenceIds": [
+          ".behavproof/collected/correct/model.json"
+        ],
+        "message": "Per-model formal evidence; model properties, observed conformance and approved meaning are independent",
+        "ruleId": "formalSyntax",
+        "scope": [
+          "ORDER-MODEL",
+          "contract"
+        ],
+        "severity": "error",
+        "status": "pass"
+      },
+      {
+        "evidenceIds": [
+          ".behavproof/collected/correct/model.json"
+        ],
+        "message": "Per-model formal evidence; model properties, observed conformance and approved meaning are independent",
+        "ruleId": "formalSyntax",
+        "scope": [],
+        "severity": "error",
+        "status": "pass"
+      },
+      {
+        "evidenceIds": [
+          ".behavproof/collected/correct/model.json"
+        ],
+        "message": "Typechecking is separate from model property checking; model=ORDER; maxSteps=8; maxSamples=100; seed=42; unbounded=false",
+        "remediation": "Collect current model, trace and observed replay reports with the protected producer; retain configured bounds and obtain model/Driver mapping approval separately.",
+        "ruleId": "formalTypecheck",
+        "scope": [
+          "ORDER",
+          "model"
+        ],
+        "severity": "error",
+        "status": "pass"
+      },
+      {
+        "evidenceIds": [
+          ".behavproof/collected/correct/model.json"
+        ],
+        "message": "Per-model formal evidence; model properties, observed conformance and approved meaning are independent",
+        "ruleId": "formalTypecheck",
+        "scope": [
+          "ORDER-MODEL",
+          "contract"
+        ],
+        "severity": "error",
+        "status": "pass"
+      },
+      {
+        "evidenceIds": [
+          ".behavproof/collected/correct/model.json"
+        ],
+        "message": "Per-model formal evidence; model properties, observed conformance and approved meaning are independent",
+        "ruleId": "formalTypecheck",
+        "scope": [],
+        "severity": "error",
+        "status": "pass"
+      },
+      {
+        "evidenceIds": [
+          ".behavproof/collected/correct/conformance.json",
+          ".behavproof/collected/correct/receipt.json"
+        ],
+        "message": "Current implementationConformance evidence within the selected model scope; model=ORDER; maxSteps=8; maxSamples=100; seed=42; unbounded=false; traces=10; comparedStates=90; calls=90",
+        "remediation": "Collect current model, trace and observed replay reports with the protected producer; retain configured bounds and obtain model/Driver mapping approval separately.",
+        "ruleId": "implementationConformance",
+        "scope": [
+          "ORDER",
+          "model"
+        ],
+        "severity": "error",
+        "status": "pass"
+      },
+      {
+        "evidenceIds": [
+          ".behavproof/collected/correct/conformance.json",
+          ".behavproof/collected/correct/receipt.json"
+        ],
+        "message": "Per-model formal evidence; model properties, observed conformance and approved meaning are independent",
+        "ruleId": "implementationConformance",
+        "scope": [
+          "ORDER-MODEL",
+          "contract"
+        ],
+        "severity": "error",
+        "status": "pass"
+      },
+      {
+        "evidenceIds": [
+          ".behavproof/collected/correct/conformance.json",
+          ".behavproof/collected/correct/receipt.json"
+        ],
+        "message": "Per-model formal evidence; model properties, observed conformance and approved meaning are independent",
+        "ruleId": "implementationConformance",
+        "scope": [],
+        "severity": "error",
+        "status": "pass"
+      },
+      {
+        "evidenceIds": [],
+        "message": "Scoped mutation data unavailable",
+        "remediation": "Collect current scoped mutants, inspect survivors and uncovered/error cases, and meet the protected score and minimum count.",
+        "ruleId": "mutationScore",
+        "scope": [
+          "ORDER-MODEL",
+          "contract"
+        ],
+        "severity": "off",
+        "status": "unknown"
+      },
+      {
+        "evidenceIds": [],
+        "message": "Required evidence unavailable; collect and authenticate current evidence",
+        "remediation": "Collect current scoped mutants, inspect survivors and uncovered/error cases, and meet the protected score and minimum count.",
+        "ruleId": "mutationScore",
+        "scope": [],
+        "severity": "off",
+        "status": "unknown"
+      },
+      {
+        "evidenceIds": [],
+        "message": "Evidence unavailable for basic scope",
+        "remediation": "Inspect required upstream jobs, current run/attempt artifacts, protected workflow and issuer-bound required checks.",
+        "ruleId": "pipelineIntegrity",
+        "scope": [
+          "ORDER-MODEL",
+          "contract"
+        ],
+        "severity": "warn",
+        "status": "unknown"
+      },
+      {
+        "evidenceIds": [],
+        "message": "Required evidence unavailable; collect and authenticate current evidence",
+        "remediation": "Inspect required upstream jobs, current run/attempt artifacts, protected workflow and issuer-bound required checks.",
+        "ruleId": "pipelineIntegrity",
+        "scope": [],
+        "severity": "warn",
+        "status": "unknown"
+      },
+      {
+        "evidenceIds": [],
+        "message": "Policy supplied outside project authority",
+        "ruleId": "policyProtection",
+        "scope": [
+          "ORDER-MODEL",
+          "contract"
+        ],
+        "severity": "error",
+        "status": "pass"
+      },
+      {
+        "evidenceIds": [],
+        "message": "Policy supplied outside project authority",
+        "ruleId": "policyProtection",
+        "scope": [],
+        "severity": "error",
+        "status": "pass"
+      },
+      {
+        "evidenceIds": [
+          ".behavproof/collected/correct/vitest.json"
+        ],
+        "message": "Vitest {\"total\":1,\"passed\":1,\"failed\":0,\"skipped\":0}; verified current producer",
+        "ruleId": "testResult",
+        "scope": [
+          "ORDER-MODEL",
+          "contract"
+        ],
+        "severity": "error",
+        "status": "pass"
+      },
+      {
+        "evidenceIds": [
+          ".behavproof/collected/correct/vitest.json"
+        ],
+        "message": "Vitest {\"total\":1,\"passed\":1,\"failed\":0,\"skipped\":0}; verified current producer",
+        "ruleId": "testResult",
+        "scope": [],
+        "severity": "error",
+        "status": "pass"
+      }
+    ]
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "executionId": "correct",
+    "subject": {
+      "prHeadSha": "f58f533473669af212a5a74868e9ef171af352c4",
+      "testedCommitSha": "f58f533473669af212a5a74868e9ef171af352c4",
+      "sourceTreeHash": "cf91c9537aee8c5a693d4671d9a024af292f9fd1b44adc2fcf745ff16c8a3e65",
+      "dirty": false,
+      "baseSha": "f58f533473669af212a5a74868e9ef171af352c4",
+      "diffBaseSha": "f58f533473669af212a5a74868e9ef171af352c4"
+    },
+    "producer": {
+      "tool": "behavproof-formal-acceptance",
+      "version": "1",
+      "collectorVersion": "0.1.0"
+    },
+    "commandHash": "0ae25ff016943d704f2f714b6f38f9c632b4519a843de8b635c97a3b4987e977",
+    "configHashes": {
+      "behavproof.config.json": "ecc3d982ba3d807f0afc1213b10a1e4aa8b42328dbaeede2b4d7d695e127ca68",
+      "vitest.config.mjs": "3b1d448de2ebccb9c616b83fb0264039c77cce4766aa276ad54b0dd020c6a4fd"
+    },
+    "dependencyLockHash": "fb9fb30fb689700b93e1f1d673698c5b8c973af8e4fd2178e96521b3fea4ee34",
+    "environment": {
+      "nodeVersion": "v24.14.1",
+      "platform": "darwin"
+    },
+    "startedAt": "2026-11-15T07:30:32.826Z",
+    "completedAt": "2026-11-15T07:30:41.729Z",
+    "exitCode": 0,
+    "artifacts": [
+      {
+        "ref": ".behavproof/collected/correct/model.json",
+        "sha256": "3f05df3bf80cd5c2b4ef9d2bded7f84cac0776fe8f2416b425e4ef1eab5742f5",
+        "kind": "formal_model",
+        "scope": [
+          "ORDER-MODEL"
+        ]
+      },
+      {
+        "ref": ".behavproof/collected/correct/conformance.json",
+        "sha256": "6a19f38bb5c9a659034b41caa387ff38491d58aec6d65cf67174df977322789f",
+        "kind": "model_conformance",
+        "scope": [
+          "ORDER-MODEL"
+        ]
+      },
+      {
+        "ref": ".behavproof/collected/correct/receipt.json",
+        "sha256": "b67d28c3c7a31d4daa886ea2099f557682d303c88ecf24ebefcbd18675b4834b",
+        "kind": "formal_trace",
+        "scope": [
+          "ORDER-MODEL"
+        ]
+      },
+      {
+        "ref": ".behavproof/collected/correct/vitest.json",
+        "sha256": "f96712e5e05454e9f3daf470fcda58b39727db3b96e441e957a018e4320f7f43",
+        "kind": "test",
+        "scope": [
+          "ORDER-MODEL"
+        ]
+      },
+      {
+        "ref": ".behavproof/collected/correct/traces/trace_0.itf.json",
+        "sha256": "f8c303f2524341f6a07e4548fd8810ebc03cf38ea0f445dd8bb8edea2b3015b9",
+        "kind": "trace",
+        "scope": [
+          "ORDER-MODEL"
+        ]
+      },
+      {
+        "ref": ".behavproof/collected/correct/traces/trace_1.itf.json",
+        "sha256": "ba82d93e55a151b5c5590de46c12e551bc93e5c8f36f442da8a0e95e815b3ec9",
+        "kind": "trace",
+        "scope": [
+          "ORDER-MODEL"
+        ]
+      },
+      {
+        "ref": ".behavproof/collected/correct/traces/trace_2.itf.json",
+        "sha256": "068c31d40f7be071ec77197e8c93ccfba12731087c8101ee3a5ca3ee546f187d",
+        "kind": "trace",
+        "scope": [
+          "ORDER-MODEL"
+        ]
+      },
+      {
+        "ref": ".behavproof/collected/correct/traces/trace_3.itf.json",
+        "sha256": "068c31d40f7be071ec77197e8c93ccfba12731087c8101ee3a5ca3ee546f187d",
+        "kind": "trace",
+        "scope": [
+          "ORDER-MODEL"
+        ]
+      },
+      {
+        "ref": ".behavproof/collected/correct/traces/trace_4.itf.json",
+        "sha256": "9190dcec1450c78ddac0b0b2b226894286ab8cb3708937791dd51d9c30e09c24",
+        "kind": "trace",
+        "scope": [
+          "ORDER-MODEL"
+        ]
+      },
+      {
+        "ref": ".behavproof/collected/correct/traces/trace_5.itf.json",
+        "sha256": "d04cb72c4f8c3f7d7894dc73151234069c9a448b5f422cba3fff7fda730b5695",
+        "kind": "trace",
+        "scope": [
+          "ORDER-MODEL"
+        ]
+      },
+      {
+        "ref": ".behavproof/collected/correct/traces/trace_6.itf.json",
+        "sha256": "0dad189aec1505029c9e2beb4f9960b892397cd21cddc9bcb976d5a93fe5190d",
+        "kind": "trace",
+        "scope": [
+          "ORDER-MODEL"
+        ]
+      },
+      {
+        "ref": ".behavproof/collected/correct/traces/trace_7.itf.json",
+        "sha256": "946acc235d6b783c6cff460ee2360dc1935658ea82fdd50b5168703c3da9693f",
+        "kind": "trace",
+        "scope": [
+          "ORDER-MODEL"
+        ]
+      },
+      {
+        "ref": ".behavproof/collected/correct/traces/trace_8.itf.json",
+        "sha256": "ac27638d13d69d5914bd082331bdbe0ddeacb109e8a9e63829a3b0bd3dc26b3c",
+        "kind": "trace",
+        "scope": [
+          "ORDER-MODEL"
+        ]
+      },
+      {
+        "ref": ".behavproof/collected/correct/traces/trace_9.itf.json",
+        "sha256": "7d2fddba4d514c8d08040f26d671097b49894cdca277afca01c45758398a266e",
+        "kind": "trace",
+        "scope": [
+          "ORDER-MODEL"
+        ]
+      },
+      {
+        "ref": ".behavproof/collected/correct/raw/parse/quint.json",
+        "sha256": "2c7cb1519e0d5b4ad396957f1091341875a432d104f69e6978102a42d25bf0e8",
+        "kind": "tool_raw",
+        "scope": [
+          "ORDER-MODEL"
+        ]
+      },
+      {
+        "ref": ".behavproof/collected/correct/raw/parse/stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "kind": "tool_raw",
+        "scope": [
+          "ORDER-MODEL"
+        ]
+      },
+      {
+        "ref": ".behavproof/collected/correct/raw/parse/stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "kind": "tool_raw",
+        "scope": [
+          "ORDER-MODEL"
+        ]
+      },
+      {
+        "ref": ".behavproof/collected/correct/raw/typecheck/quint.json",
+        "sha256": "2774d483d353874ce230fead9da06989513afe29c792b290dc55b46c844a1ffa",
+        "kind": "tool_raw",
+        "scope": [
+          "ORDER-MODEL"
+        ]
+      },
+      {
+        "ref": ".behavproof/collected/correct/raw/typecheck/stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "kind": "tool_raw",
+        "scope": [
+          "ORDER-MODEL"
+        ]
+      },
+      {
+        "ref": ".behavproof/collected/correct/raw/typecheck/stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "kind": "tool_raw",
+        "scope": [
+          "ORDER-MODEL"
+        ]
+      },
+      {
+        "ref": ".behavproof/collected/correct/raw/test/quint.json",
+        "sha256": "1640b1e63e0541b085ef74a78d377160e505540f05e7eb66004211033c4586f4",
+        "kind": "tool_raw",
+        "scope": [
+          "ORDER-MODEL"
+        ]
+      },
+      {
+        "ref": ".behavproof/collected/correct/raw/test/stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "kind": "tool_raw",
+        "scope": [
+          "ORDER-MODEL"
+        ]
+      },
+      {
+        "ref": ".behavproof/collected/correct/raw/test/stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "kind": "tool_raw",
+        "scope": [
+          "ORDER-MODEL"
+        ]
+      },
+      {
+        "ref": ".behavproof/collected/correct/raw/run/quint.json",
+        "sha256": "bb96bdc9cefa138cba8d0eea65148bb8d32926c62b7c55fc086efbf4d2f9eb9b",
+        "kind": "tool_raw",
+        "scope": [
+          "ORDER-MODEL"
+        ]
+      },
+      {
+        "ref": ".behavproof/collected/correct/raw/run/stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "kind": "tool_raw",
+        "scope": [
+          "ORDER-MODEL"
+        ]
+      },
+      {
+        "ref": ".behavproof/collected/correct/raw/run/stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "kind": "tool_raw",
+        "scope": [
+          "ORDER-MODEL"
+        ]
+      },
+      {
+        "ref": ".behavproof/collected/correct/raw/verify/quint.json",
+        "sha256": "eca37ccdd04b8142d2e2196efafefbfb83f3904a93a89f7143c31306976a5c6d",
+        "kind": "tool_raw",
+        "scope": [
+          "ORDER-MODEL"
+        ]
+      },
+      {
+        "ref": ".behavproof/collected/correct/raw/verify/stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "kind": "tool_raw",
+        "scope": [
+          "ORDER-MODEL"
+        ]
+      },
+      {
+        "ref": ".behavproof/collected/correct/raw/verify/stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "kind": "tool_raw",
+        "scope": [
+          "ORDER-MODEL"
+        ]
+      }
+    ]
+  },
+  "modelNegative": [
+    {
+      "stage": "run",
+      "result": {
+        "stage": "run",
+        "status": "fail",
+        "complete": true,
+        "exitCode": 1,
+        "toolVersion": "0.33.1",
+        "backend": "typescript",
+        "method": "simulation",
+        "properties": [
+          "refundAtMostOnce",
+          "noRefundAfterShipping"
+        ],
+        "maxSteps": 8,
+        "maxSamples": 100,
+        "seed": "42",
+        "traceSeed": "74",
+        "diagnostics": [],
+        "stdoutHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "artifacts": [
+          {
+            "ref": ".behavproof/negative-run-1/quint.json",
+            "sha256": "faf33449152ae74f75cef2a31e8007a4708c703d3b23e1847efc8b525b26ec26"
+          },
+          {
+            "ref": ".behavproof/negative-run-1/stderr.txt",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "ref": ".behavproof/negative-run-1/stdout.txt",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "ref": ".behavproof/negative-run-1/trace_0.itf.json",
+            "sha256": "85eff2874f73f549e7c619570bb1ad768ef814c683574c0aeb6223b4a4b3f78a"
+          },
+          {
+            "ref": ".behavproof/negative-run-1/trace_1.itf.json",
+            "sha256": "ce2295e167bff6b5846b17fc728cf913bc77fcd6d589f4b78173c5c66bb212ff"
+          },
+          {
+            "ref": ".behavproof/negative-run-1/trace_2.itf.json",
+            "sha256": "ce2295e167bff6b5846b17fc728cf913bc77fcd6d589f4b78173c5c66bb212ff"
+          },
+          {
+            "ref": ".behavproof/negative-run-1/trace_3.itf.json",
+            "sha256": "856f578b63a4864b4830aad448bdb4839e1636e9dba030ee74897717a3a2490a"
+          },
+          {
+            "ref": ".behavproof/negative-run-1/trace_4.itf.json",
+            "sha256": "bc1c28058abee750b09a6449188e590fe6e57124a607fdbb7e2b043109821dda"
+          },
+          {
+            "ref": ".behavproof/negative-run-1/trace_5.itf.json",
+            "sha256": "8d2cff5f8f47f5a6f8c48f4acbb40d9f3df6d528dc99139e6473e587f740bc17"
+          },
+          {
+            "ref": ".behavproof/negative-run-1/trace_6.itf.json",
+            "sha256": "4c01adb7b081b94361fd9b047b416f67be77f6322bd1b9f7ed758a1d453d306b"
+          },
+          {
+            "ref": ".behavproof/negative-run-1/trace_7.itf.json",
+            "sha256": "cd9d533ce17df12021431d52d8330bc52d2932c8449292cc442af2523b7e1fa0"
+          },
+          {
+            "ref": ".behavproof/negative-run-1/trace_8.itf.json",
+            "sha256": "34b53580d6854601d013686471e7c0f2c0449b837a49357f5fb0a41fb70c9adf"
+          },
+          {
+            "ref": ".behavproof/negative-run-1/trace_9.itf.json",
+            "sha256": "4c5f2d1a3fd6053f1108c5c36b62fc8a4ec441fef2797aedd8af9a8d81f8050f"
+          }
+        ]
+      },
+      "rawSummary": {
+        "stage": "running",
+        "status": "violation",
+        "errors": [],
+        "seed": 74
+      },
+      "counterexample": [
+        {
+          "id": 0,
+          "kind": "app",
+          "opcode": "Rec",
+          "args": [
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "cancelled"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": false
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "mbt::actionTaken"
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "init"
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "mbt::nondetPicks"
+            },
+            {
+              "id": 0,
+              "kind": "app",
+              "opcode": "Rec",
+              "args": []
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "paid"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": false
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "refunds"
+            },
+            {
+              "id": 0,
+              "kind": "int",
+              "value": 0
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "shipped"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 0,
+          "kind": "app",
+          "opcode": "Rec",
+          "args": [
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "cancelled"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": false
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "mbt::actionTaken"
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "Wait"
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "mbt::nondetPicks"
+            },
+            {
+              "id": 0,
+              "kind": "app",
+              "opcode": "Rec",
+              "args": []
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "paid"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": false
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "refunds"
+            },
+            {
+              "id": 0,
+              "kind": "int",
+              "value": 0
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "shipped"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 0,
+          "kind": "app",
+          "opcode": "Rec",
+          "args": [
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "cancelled"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": false
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "mbt::actionTaken"
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "Pay"
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "mbt::nondetPicks"
+            },
+            {
+              "id": 0,
+              "kind": "app",
+              "opcode": "Rec",
+              "args": []
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "paid"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": true
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "refunds"
+            },
+            {
+              "id": 0,
+              "kind": "int",
+              "value": 0
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "shipped"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 0,
+          "kind": "app",
+          "opcode": "Rec",
+          "args": [
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "cancelled"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": false
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "mbt::actionTaken"
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "Refund"
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "mbt::nondetPicks"
+            },
+            {
+              "id": 0,
+              "kind": "app",
+              "opcode": "Rec",
+              "args": []
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "paid"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": true
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "refunds"
+            },
+            {
+              "id": 0,
+              "kind": "int",
+              "value": 1
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "shipped"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 0,
+          "kind": "app",
+          "opcode": "Rec",
+          "args": [
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "cancelled"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": true
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "mbt::actionTaken"
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "Cancel"
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "mbt::nondetPicks"
+            },
+            {
+              "id": 0,
+              "kind": "app",
+              "opcode": "Rec",
+              "args": []
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "paid"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": true
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "refunds"
+            },
+            {
+              "id": 0,
+              "kind": "int",
+              "value": 2
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "shipped"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 0,
+          "kind": "app",
+          "opcode": "Rec",
+          "args": [
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "cancelled"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": true
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "mbt::actionTaken"
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "Wait"
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "mbt::nondetPicks"
+            },
+            {
+              "id": 0,
+              "kind": "app",
+              "opcode": "Rec",
+              "args": []
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "paid"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": true
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "refunds"
+            },
+            {
+              "id": 0,
+              "kind": "int",
+              "value": 2
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "shipped"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 0,
+          "kind": "app",
+          "opcode": "Rec",
+          "args": [
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "cancelled"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": true
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "mbt::actionTaken"
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "Wait"
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "mbt::nondetPicks"
+            },
+            {
+              "id": 0,
+              "kind": "app",
+              "opcode": "Rec",
+              "args": []
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "paid"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": true
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "refunds"
+            },
+            {
+              "id": 0,
+              "kind": "int",
+              "value": 2
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "shipped"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 0,
+          "kind": "app",
+          "opcode": "Rec",
+          "args": [
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "cancelled"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": true
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "mbt::actionTaken"
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "Wait"
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "mbt::nondetPicks"
+            },
+            {
+              "id": 0,
+              "kind": "app",
+              "opcode": "Rec",
+              "args": []
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "paid"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": true
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "refunds"
+            },
+            {
+              "id": 0,
+              "kind": "int",
+              "value": 2
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "shipped"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 0,
+          "kind": "app",
+          "opcode": "Rec",
+          "args": [
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "cancelled"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": true
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "mbt::actionTaken"
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "Wait"
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "mbt::nondetPicks"
+            },
+            {
+              "id": 0,
+              "kind": "app",
+              "opcode": "Rec",
+              "args": []
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "paid"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": true
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "refunds"
+            },
+            {
+              "id": 0,
+              "kind": "int",
+              "value": 2
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "shipped"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": false
+            }
+          ]
+        }
+      ],
+      "counterexampleHash": "84d843ce16c3acd5e5ce09c6234b4fb11bf95bd620ccf21508bb25169a6fdcc2",
+      "elapsedMs": 441
+    },
+    {
+      "stage": "run",
+      "result": {
+        "stage": "run",
+        "status": "fail",
+        "complete": true,
+        "exitCode": 1,
+        "toolVersion": "0.33.1",
+        "backend": "typescript",
+        "method": "simulation",
+        "properties": [
+          "refundAtMostOnce",
+          "noRefundAfterShipping"
+        ],
+        "maxSteps": 8,
+        "maxSamples": 100,
+        "seed": "42",
+        "traceSeed": "74",
+        "diagnostics": [],
+        "stdoutHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "artifacts": [
+          {
+            "ref": ".behavproof/negative-run-2/quint.json",
+            "sha256": "faf33449152ae74f75cef2a31e8007a4708c703d3b23e1847efc8b525b26ec26"
+          },
+          {
+            "ref": ".behavproof/negative-run-2/stderr.txt",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "ref": ".behavproof/negative-run-2/stdout.txt",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "ref": ".behavproof/negative-run-2/trace_0.itf.json",
+            "sha256": "7cbbe758339c563b0c1a75d972c06743f9acf507d609d321215bcd19eb50087a"
+          },
+          {
+            "ref": ".behavproof/negative-run-2/trace_1.itf.json",
+            "sha256": "40eb9a217143b5665d3313bf767c4948e045f8af645509b969490a93b5c81233"
+          },
+          {
+            "ref": ".behavproof/negative-run-2/trace_2.itf.json",
+            "sha256": "3328da4977c65e8add7be5ab98ee966fe50d30f725aa9a3679e414136ac2bd78"
+          },
+          {
+            "ref": ".behavproof/negative-run-2/trace_3.itf.json",
+            "sha256": "1415ea600f48cb1f8bfd1e49142661942992f9972ec795aa5feeb50dc5342dde"
+          },
+          {
+            "ref": ".behavproof/negative-run-2/trace_4.itf.json",
+            "sha256": "8607f81a3502e7df9a300e38dfaef220fa20ca9b900b62fc724b8a0faaa753cd"
+          },
+          {
+            "ref": ".behavproof/negative-run-2/trace_5.itf.json",
+            "sha256": "3328da4977c65e8add7be5ab98ee966fe50d30f725aa9a3679e414136ac2bd78"
+          },
+          {
+            "ref": ".behavproof/negative-run-2/trace_6.itf.json",
+            "sha256": "48875b46faaf68a61069d2e3a5d7e09a60f507ebd3c3edad0bafb8a8f50be966"
+          },
+          {
+            "ref": ".behavproof/negative-run-2/trace_7.itf.json",
+            "sha256": "fd761c497471c1c17a2204d922530ef778635b43317cfffecbf4906d8c2d6bf7"
+          },
+          {
+            "ref": ".behavproof/negative-run-2/trace_8.itf.json",
+            "sha256": "cdb8bdd8ccb7f10f690fdbf3c1deed7463e7eac2444a739f62a7008bb60149b6"
+          },
+          {
+            "ref": ".behavproof/negative-run-2/trace_9.itf.json",
+            "sha256": "23496b2b078496f7c50fcda588e3e2986f94eac020ba4d6e12248d71b909416e"
+          }
+        ]
+      },
+      "rawSummary": {
+        "stage": "running",
+        "status": "violation",
+        "errors": [],
+        "seed": 74
+      },
+      "counterexample": [
+        {
+          "id": 0,
+          "kind": "app",
+          "opcode": "Rec",
+          "args": [
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "cancelled"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": false
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "mbt::actionTaken"
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "init"
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "mbt::nondetPicks"
+            },
+            {
+              "id": 0,
+              "kind": "app",
+              "opcode": "Rec",
+              "args": []
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "paid"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": false
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "refunds"
+            },
+            {
+              "id": 0,
+              "kind": "int",
+              "value": 0
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "shipped"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 0,
+          "kind": "app",
+          "opcode": "Rec",
+          "args": [
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "cancelled"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": false
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "mbt::actionTaken"
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "Wait"
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "mbt::nondetPicks"
+            },
+            {
+              "id": 0,
+              "kind": "app",
+              "opcode": "Rec",
+              "args": []
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "paid"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": false
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "refunds"
+            },
+            {
+              "id": 0,
+              "kind": "int",
+              "value": 0
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "shipped"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 0,
+          "kind": "app",
+          "opcode": "Rec",
+          "args": [
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "cancelled"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": false
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "mbt::actionTaken"
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "Pay"
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "mbt::nondetPicks"
+            },
+            {
+              "id": 0,
+              "kind": "app",
+              "opcode": "Rec",
+              "args": []
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "paid"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": true
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "refunds"
+            },
+            {
+              "id": 0,
+              "kind": "int",
+              "value": 0
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "shipped"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 0,
+          "kind": "app",
+          "opcode": "Rec",
+          "args": [
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "cancelled"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": false
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "mbt::actionTaken"
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "Refund"
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "mbt::nondetPicks"
+            },
+            {
+              "id": 0,
+              "kind": "app",
+              "opcode": "Rec",
+              "args": []
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "paid"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": true
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "refunds"
+            },
+            {
+              "id": 0,
+              "kind": "int",
+              "value": 1
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "shipped"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 0,
+          "kind": "app",
+          "opcode": "Rec",
+          "args": [
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "cancelled"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": true
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "mbt::actionTaken"
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "Cancel"
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "mbt::nondetPicks"
+            },
+            {
+              "id": 0,
+              "kind": "app",
+              "opcode": "Rec",
+              "args": []
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "paid"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": true
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "refunds"
+            },
+            {
+              "id": 0,
+              "kind": "int",
+              "value": 2
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "shipped"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 0,
+          "kind": "app",
+          "opcode": "Rec",
+          "args": [
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "cancelled"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": true
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "mbt::actionTaken"
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "Wait"
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "mbt::nondetPicks"
+            },
+            {
+              "id": 0,
+              "kind": "app",
+              "opcode": "Rec",
+              "args": []
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "paid"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": true
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "refunds"
+            },
+            {
+              "id": 0,
+              "kind": "int",
+              "value": 2
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "shipped"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 0,
+          "kind": "app",
+          "opcode": "Rec",
+          "args": [
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "cancelled"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": true
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "mbt::actionTaken"
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "Wait"
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "mbt::nondetPicks"
+            },
+            {
+              "id": 0,
+              "kind": "app",
+              "opcode": "Rec",
+              "args": []
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "paid"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": true
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "refunds"
+            },
+            {
+              "id": 0,
+              "kind": "int",
+              "value": 2
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "shipped"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 0,
+          "kind": "app",
+          "opcode": "Rec",
+          "args": [
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "cancelled"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": true
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "mbt::actionTaken"
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "Wait"
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "mbt::nondetPicks"
+            },
+            {
+              "id": 0,
+              "kind": "app",
+              "opcode": "Rec",
+              "args": []
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "paid"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": true
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "refunds"
+            },
+            {
+              "id": 0,
+              "kind": "int",
+              "value": 2
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "shipped"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 0,
+          "kind": "app",
+          "opcode": "Rec",
+          "args": [
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "cancelled"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": true
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "mbt::actionTaken"
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "Wait"
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "mbt::nondetPicks"
+            },
+            {
+              "id": 0,
+              "kind": "app",
+              "opcode": "Rec",
+              "args": []
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "paid"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": true
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "refunds"
+            },
+            {
+              "id": 0,
+              "kind": "int",
+              "value": 2
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "shipped"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": false
+            }
+          ]
+        }
+      ],
+      "counterexampleHash": "84d843ce16c3acd5e5ce09c6234b4fb11bf95bd620ccf21508bb25169a6fdcc2",
+      "elapsedMs": 441
+    },
+    {
+      "stage": "verify",
+      "result": {
+        "stage": "verify",
+        "status": "fail",
+        "complete": true,
+        "exitCode": 1,
+        "toolVersion": "0.33.1",
+        "backend": "apalache",
+        "method": "bounded_model_check",
+        "properties": [
+          "refundAtMostOnce",
+          "noRefundAfterShipping"
+        ],
+        "maxSteps": 8,
+        "backendVersion": "0.62.4",
+        "diagnostics": [],
+        "stdoutHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "artifacts": [
+          {
+            "ref": ".behavproof/negative-verify/counterexample.itf.json",
+            "sha256": "cf23b58baee46fb428a30cc17d9dbcb03890ea2207703f59b62e0ec49b2ff032"
+          },
+          {
+            "ref": ".behavproof/negative-verify/quint.json",
+            "sha256": "cb9f23a730ca7464da6633ed5296ad693ace1dc0996bde76ddacbc89e71e4b80"
+          },
+          {
+            "ref": ".behavproof/negative-verify/stderr.txt",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "ref": ".behavproof/negative-verify/stdout.txt",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      },
+      "rawSummary": {
+        "stage": "verifying",
+        "status": "violation",
+        "errors": []
+      },
+      "counterexample": [
+        {
+          "id": 0,
+          "kind": "app",
+          "opcode": "Rec",
+          "args": [
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "cancelled"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": false
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "paid"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": false
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "refunds"
+            },
+            {
+              "id": 0,
+              "kind": "int",
+              "value": 0
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "shipped"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 0,
+          "kind": "app",
+          "opcode": "Rec",
+          "args": [
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "cancelled"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": false
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "paid"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": true
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "refunds"
+            },
+            {
+              "id": 0,
+              "kind": "int",
+              "value": 0
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "shipped"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 0,
+          "kind": "app",
+          "opcode": "Rec",
+          "args": [
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "cancelled"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": false
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "paid"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": true
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "refunds"
+            },
+            {
+              "id": 0,
+              "kind": "int",
+              "value": 1
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "shipped"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 0,
+          "kind": "app",
+          "opcode": "Rec",
+          "args": [
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "cancelled"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": true
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "paid"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": true
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "refunds"
+            },
+            {
+              "id": 0,
+              "kind": "int",
+              "value": 2
+            },
+            {
+              "id": 0,
+              "kind": "str",
+              "value": "shipped"
+            },
+            {
+              "id": 0,
+              "kind": "bool",
+              "value": false
+            }
+          ]
+        }
+      ],
+      "counterexampleHash": "2b04796cf1105537f070fcbccf58fe58f414a57ca86d1a95d524ddb59273a6d0",
+      "elapsedMs": 7683
+    }
+  ],
+  "elapsedMs": 21518,
+  "maintenance": {
+    "modelLines": 41,
+    "driverLines": 13,
+    "implementationLines": 18
+  },
+  "limits": [
+    "Bounds are eight transitions, 100 simulator samples and ten selected replay traces; no unbounded proof.",
+    "Canary verifies selected module-function observations and actual compared mismatch. It does not prove an honest or complete Driver.",
+    "Measured elapsed time is automated execution, not human effort.",
+    "The selected model, Driver and runtime dependency closure require independent review; evidence grants no execution isolation."
+  ]
+}

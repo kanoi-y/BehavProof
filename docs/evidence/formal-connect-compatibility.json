@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "scope": "Opt-in compatibility PoC; actual stateCheck and module calls. Community run return alone is not authenticated conformance evidence.",
+  "quintVersion": "0.33.1",
+  "connectVersion": "2.1.0",
+  "backend": "typescript",
+  "node": "v24.14.1",
+  "modelSha256": "7c39c8aa7e9e5106721142d2ed047e7aad6bf3bd5e814996d7d5f2af56519a70",
+  "implementationSha256": "ddbc5155d23e2971509de6b84e4e414811ff1142c8b08b73475d8d128d621013",
+  "driverSha256": "b7a59f71602534aaff10557544543453f21df2112d51066eaa911c4f93e07f6a",
+  "maxSteps": 8,
+  "maxSamples": 100,
+  "requestedTraces": 20,
+  "seed": "42",
+  "results": [
+    {
+      "name": "normal",
+      "status": "pass",
+      "tracesReplayed": 20,
+      "seed": "42",
+      "comparisons": 180,
+      "calls": 180,
+      "elapsedMs": 471
+    },
+    {
+      "name": "implementation-fault",
+      "status": "fail",
+      "errorTag": "StateMismatchError",
+      "comparisons": 14,
+      "calls": 14,
+      "elapsedMs": 376
+    }
+  ]
+}

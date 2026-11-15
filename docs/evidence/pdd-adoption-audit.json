@@ -1,0 +1,154 @@
+{
+  "schemaVersion": 1,
+  "repository": "kanoi-y/pdd-ts",
+  "headSha": "dd06da788bef5cfbe7f9131fe5609a61cefbd458",
+  "materializedInputCount": 185,
+  "doctor": {
+    "exit": 1,
+    "report": {
+      "node": "v24.14.1",
+      "support": "unsupported",
+      "evidence": [
+        "package.json",
+        "pnpm-lock.yaml",
+        "vitest.config.ts",
+        ".github/workflows",
+        "git",
+        "vitest dependency",
+        "Node.js project"
+      ],
+      "reasons": [
+        "Selected test script uses an unsupported or unverified runner"
+      ],
+      "trust": "External producer and protection authority must be configured separately."
+    }
+  },
+  "audit": {
+    "exit": 0,
+    "report": {
+      "approvals": [],
+      "assurance": {
+        "binding_verified": "unknown",
+        "cases_executed": "unknown",
+        "contract_declared": "unknown",
+        "model_conformance_observed": "unknown",
+        "mutation_sensitivity_observed": "unknown",
+        "production_target_observed": "unknown"
+      },
+      "detection": {
+        "evidence": [
+          "package.json",
+          "pnpm-lock.yaml",
+          "vitest.config.ts",
+          ".github/workflows",
+          "git",
+          "vitest dependency",
+          "Node.js project"
+        ],
+        "reasons": [
+          "Selected test script uses an unsupported or unverified runner"
+        ],
+        "support": "unsupported"
+      },
+      "diff": {
+        "baseSha": "dd06da788bef5cfbe7f9131fe5609a61cefbd458",
+        "diffBaseSha": "dd06da788bef5cfbe7f9131fe5609a61cefbd458",
+        "files": [],
+        "headSha": "dd06da788bef5cfbe7f9131fe5609a61cefbd458",
+        "status": "known"
+      },
+      "documentEvidence": {
+        "authenticatedApprovals": [],
+        "authenticatedRows": [],
+        "bindings": {},
+        "registry": {
+          "commitSha": "dd06da788bef5cfbe7f9131fe5609a61cefbd458",
+          "contracts": [],
+          "discoveryDiagnostics": [],
+          "extractorVersion": "1",
+          "intents": [],
+          "schemaVersion": 1,
+          "scope": []
+        },
+        "rows": []
+      },
+      "drift": [],
+      "effectivePolicyHash": "39cdf8dc00a5f53d18b21962e9cf768261c73885c4de8d2e474a8321276160ef",
+      "evaluations": [
+        {
+          "evidenceIds": [],
+          "message": "Required evidence unavailable; collect and authenticate current evidence",
+          "ruleId": "changedLineCoverage",
+          "scope": [],
+          "severity": "warn",
+          "status": "unknown"
+        },
+        {
+          "evidenceIds": [],
+          "message": "Selected test script uses an unsupported or unverified runner",
+          "ruleId": "evaluationEnvironment",
+          "scope": [],
+          "severity": "error",
+          "status": "unknown"
+        },
+        {
+          "evidenceIds": [],
+          "message": "Required evidence unavailable; collect and authenticate current evidence",
+          "ruleId": "mutationScore",
+          "scope": [],
+          "severity": "warn",
+          "status": "unknown"
+        },
+        {
+          "evidenceIds": [],
+          "message": "Required evidence unavailable; collect and authenticate current evidence",
+          "ruleId": "pipelineIntegrity",
+          "scope": [],
+          "severity": "warn",
+          "status": "unknown"
+        },
+        {
+          "evidenceIds": [],
+          "message": "Required evidence unavailable; collect and authenticate current evidence",
+          "ruleId": "testResult",
+          "scope": [],
+          "severity": "error",
+          "status": "unknown"
+        }
+      ],
+      "exitCode": 0,
+      "mandatoryCount": 2,
+      "mode": "audit",
+      "pipelineObservation": null,
+      "provenance": {
+        "manifests": [],
+        "reasons": [
+          "External producer authority unavailable"
+        ]
+      },
+      "qualityScope": {
+        "excludedPaths": [],
+        "patterns": null
+      },
+      "reasons": [
+        "evaluationEnvironment: unknown",
+        "testResult: unknown"
+      ],
+      "schemaVersion": 1,
+      "status": "incomplete",
+      "subject": {
+        "baseSha": "dd06da788bef5cfbe7f9131fe5609a61cefbd458",
+        "diffBaseSha": "dd06da788bef5cfbe7f9131fe5609a61cefbd458",
+        "dirty": false,
+        "prHeadSha": "dd06da788bef5cfbe7f9131fe5609a61cefbd458",
+        "sourceTreeHash": "8273c65b44bd6b697f2229dcdc90aa2f5d676879cc3aef04efc8dc06b29dd0b0",
+        "testedCommitSha": "dd06da788bef5cfbe7f9131fe5609a61cefbd458"
+      }
+    }
+  },
+  "limits": [
+    "Actual immutable PDD source inspected; no candidate source/config/test/build executed.",
+    "No reports or producer/human authority supplied; audit cannot establish test or quality success.",
+    "The separate enforcement toy is not actual PDD value evidence."
+  ]
+}

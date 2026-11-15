@@ -1,0 +1,44 @@
+{
+  "quintVersion": "0.33.1",
+  "backend": "typescript",
+  "seed": "42",
+  "maxSteps": 8,
+  "maxSamples": 20,
+  "originalSources": [
+    "https://github.com/quint-co/quint/tree/v0.33.1/quint/src"
+  ],
+  "fixtures": [
+    {
+      "stage": "parse",
+      "originalSha256": "2c7cb1519e0d5b4ad396957f1091341875a432d104f69e6978102a42d25bf0e8",
+      "fixtureSha256": "8c11860be8c8abffd1f3bd54c3c69096407d1beb8d7851574537dacfa22bf91b",
+      "transform": "Select adapter-consumed fields; omit unused IR entries, retain module names/one trace state and original result metadata."
+    },
+    {
+      "stage": "typecheck",
+      "originalSha256": "2774d483d353874ce230fead9da06989513afe29c792b290dc55b46c844a1ffa",
+      "fixtureSha256": "ce08c729a67fde0e3c4f02250fec1a179c553824617d339c6aa870f7a7f5ff9e",
+      "transform": "Select adapter-consumed fields; omit unused IR entries, retain module names/one trace state and original result metadata."
+    },
+    {
+      "stage": "test",
+      "originalSha256": "1640b1e63e0541b085ef74a78d377160e505540f05e7eb66004211033c4586f4",
+      "fixtureSha256": "4b7a7fc00ba0ab67cb5c3ce55e9f03d73fd9a0330389d6ae60e41fa7ce0fe38b",
+      "transform": "Select adapter-consumed fields; omit unused IR entries, retain module names/one trace state and original result metadata."
+    },
+    {
+      "stage": "run",
+      "originalSha256": "8d9ba270fdf70a715c536f7d719fedf215f1bc07fad96b6741f6a3a375f4cbb4",
+      "fixtureSha256": "4fb0d0194f7acf59246d3a4ae20a049a63df6b9a927145d6df19b313dc2f7362",
+      "transform": "Select adapter-consumed fields; omit unused IR entries, retain module names/one trace state and original result metadata."
+    },
+    {
+      "stage": "verify",
+      "backend": "apalache",
+      "backendVersion": "0.62.4",
+      "originalSha256": "eca37ccdd04b8142d2e2196efafefbfb83f3904a93a89f7143c31306976a5c6d",
+      "fixtureSha256": "7ae38211e2b4f27b77b06f42c9ec88a73e5813b6778d34dc9990b6bd6b9c976e",
+      "transform": "Select adapter-consumed stage/status/errors; omit unused IR. Actual bounded backend, maxSteps=8 and two invariants; full tool/Collector/gate execution recorded in docs/evidence/formal-flow.json."
+    }
+  ]
+}

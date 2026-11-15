@@ -1,5 +1,5 @@
 import { beforeEach, afterEach, test, expect } from 'vitest';
-import { mkdtemp, writeFile, readFile, rm, mkdir } from 'node:fs/promises';
+import { mkdtemp, writeFile, readFile, rm, mkdir,rename } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -34,6 +34,7 @@ test('renders deterministic JSON/markdown/console and safely writes an output',a
 test('doctor and explain disclose support and claim limits',()=>{
  expect(run(['doctor']).status).toBe(0);expect(run(['doctor']).stdout).toContain('single-package');
  expect(run(['explain','changed-line-coverage']).stdout).toContain('unknown');expect(run(['formal','check']).status).toBe(2);
+ expect(run(['explain','production-target-observed']).stdout).toContain('case-scoped');expect(run(['explain','mutation-sensitivity-observed']).stdout).toContain('fault');expect(run(['explain','change-impact']).stdout).toContain('dependency');
 });
 test('static discovery, baseline, impact, diff and generated docs use no imported code',async()=>{
  await mkdir(join(root,'tests'));await writeFile(join(root,'tests/order.test.ts'),`import {defineContract} from '@behavproof/vitest';\nthrow Error('must never execute');\nconst order=defineContract({id:'ORDER',intent:'positive',risk:'critical',cases:[{id:'yes',input:2,expected:3}]});\n`);
@@ -66,6 +67,7 @@ test('an explicit external local authority gates current bytes, rejects stale/ta
  try {
   await writeFile(rootFile,JSON.stringify(trust));const args=['check','--mode','gate','--trust-root',rootFile,'--format','json'];
   const valid=run(args);expect(valid.status,valid.stderr+valid.stdout).toBe(0);expect(JSON.parse(valid.stdout).evaluations.find((e:any)=>e.ruleId==='testResult').status).toBe('pass');
+  for(const format of ['console','markdown']){const text=run([...args.slice(0,-2),'--format',format]).stdout;expect(text).toContain(reportPath);expect(text).toContain(head);}
   await writeFile(join(root,reportPath),JSON.stringify({...report,success:false}));expect(run(args).status).toBe(1);
   await writeFile(join(root,reportPath),reportBytes);await writeFile(join(root,manifestPath),JSON.stringify({...manifest,executionId:'old'}));expect(run(args).status).toBe(1);
   await writeFile(join(root,manifestPath),JSON.stringify(manifest));trust.policy.rules={testResult:{severity:'error'},changedLineCoverage:{severity:'error',min:95}} as any;await writeFile(rootFile,JSON.stringify(trust));
@@ -95,6 +97,15 @@ test('protected CI generated config must retain candidate weakening for policyPr
  const {hostConfig}=await import('../../scripts/github-control.mjs'),{parseConfig}=await import('../../packages/core/src/index.js');const registered=parseConfig({schemaVersion:1,profile:'basic',rules:{testResult:{severity:'error'},policyProtection:{severity:'error'}},git:{base:'HEAD'}}),candidate={...registered,rules:{...registered.rules,testResult:{severity:'off'}}},head=spawnSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).stdout.trim(),generated=hostConfig({config:registered},head,'run1',candidate);
  await mkdir(join(root,'.behavproof'));await writeFile(join(root,'.behavproof/host-config.json'),JSON.stringify(generated));const control=await mkdtemp(join(tmpdir(),'behavproof-policy-host-')),trustPath=join(control,'root.json');try{
   await writeFile(trustPath,JSON.stringify({schemaVersion:1,policy:{schemaVersion:1,profileVersion:'1',rules:registered.rules},config:registered,baseline:{schemaVersion:1,commitSha:head,contracts:[],intents:[],extractorVersion:'1',discoveryDiagnostics:[],scope:[]},inputs:['package.json'],configPaths:[],manifests:[]}));
-  const result=run(['check','--mode','gate','--config','.behavproof/host-config.json','--trust-root',trustPath,'--format','json']);expect(result.status,result.stderr).toBe(1);expect(JSON.parse(result.stdout).evaluations.find((row:any)=>row.ruleId==='policyProtection').status).toBe('fail');
+  const result=run(['check','--mode','gate','--config','.behavproof/host-config.json','--trust-root',trustPath,'--format','json']);expect(result.status,result.stderr).toBe(1);const report=JSON.parse(result.stdout);expect(report.evaluations.find((row:any)=>row.ruleId==='policyProtection').status).toBe('fail');expect(report.policyDiff.rules).toContainEqual(expect.objectContaining({ruleId:'testResult',protected:expect.objectContaining({severity:'error'}),project:expect.objectContaining({severity:'off'}),effective:expect.objectContaining({severity:'error'})}));
  }finally{await rm(control,{recursive:true,force:true});}
+});
+test('nested intent diff reads the immutable base relative to the selected project',async()=>{
+ const nested=join(root,'apps/api');await mkdir(join(nested,'tests'),{recursive:true});await writeFile(join(nested,'package.json'),JSON.stringify({name:'nested',scripts:{test:'vitest run'},devDependencies:{vitest:'5.1.0'}}));await writeFile(join(nested,'behavproof.config.json'),JSON.stringify({schemaVersion:1,contracts:{enabled:true,sources:[{type:'vitest-inline',include:['tests/**/*.ts']}]}}));await writeFile(join(nested,'tests/a.ts'),"import {defineContract} from '@behavproof/vitest';const c=defineContract({id:'MOVE',intent:'stable intent',risk:'basic',cases:[{id:'yes',input:1,expected:1}]});");
+ const git=(...args:string[])=>spawnSync('git',['-c','user.name=Test','-c','user.email=test@example.invalid',...args],{cwd:root,encoding:'utf8'});git('add','.');git('commit','-qm','nested baseline');const base=git('rev-parse','HEAD').stdout.trim();await rename(join(nested,'tests/a.ts'),join(nested,'tests/b.ts'));git('add','.');git('commit','-qm','move contract');
+ const result=spawnSync(process.execPath,[binary,'intent','diff','--base',base,'--head','HEAD'],{cwd:nested,encoding:'utf8'});expect(result.status,result.stderr).toBe(0);const diff=JSON.parse(result.stdout);expect(diff.changes).toEqual([]);expect(diff.obligations.map((c:any)=>c.id)).toContain('MOVE');
+});
+test('console and Markdown failures identify scoped targets and a concrete action',async()=>{
+ await mkdir(join(root,'src'));await writeFile(join(root,'src/auth.ts'),'export function authorize(){return true;}');await writeFile(join(root,'behavproof.config.json'),JSON.stringify({schemaVersion:1,profile:'basic',riskOverrides:[{selector:{kind:'path',value:'src/auth.ts'},profile:'critical'}]}));
+ for(const format of ['console','markdown']){const result=run(['check','--base','HEAD','--format',format]);expect(result.status,result.stderr).toBe(0);expect(result.stdout).toContain('src/auth.ts');expect(result.stdout).toMatch(/Action|Remediation/);}
 });

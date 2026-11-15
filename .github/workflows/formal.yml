@@ -1,0 +1,46 @@
+name: Optional formal verification
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'packages/adapter-quint/**'
+      - 'packages/adapter-model-test/**'
+      - 'packages/core/src/formal.ts'
+      - 'packages/cli/src/formal*.ts'
+      - 'examples/formal-order/**'
+      - '.github/workflows/formal.yml'
+permissions:
+  contents: read
+jobs:
+  formal-order:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: npm ci --ignore-scripts --cache .npm-cache
+      - run: npm run build
+      - run: npm ci --prefix examples/formal-order --ignore-scripts --cache .npm-cache
+      - name: Verify explicitly selected formal packages
+        run: node scripts/package-smoke.mjs --online --formal
+      - name: Run actual model, replay, canaries and authenticated gate
+        run: node examples/formal-order/formal-flow.mjs
+      - name: Verify community Connect compatibility with actual state comparisons
+        run: node examples/formal-order/connect-compatibility.mjs
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: optional-formal-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            docs/evidence/formal-*.json
+            .behavproof/formal-acceptance-artifacts/
+          include-hidden-files: true
+          if-no-files-found: error

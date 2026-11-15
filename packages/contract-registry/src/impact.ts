@@ -13,6 +13,7 @@ export function analyzeImpact(
   }[] = [];
   for (const [path, source] of Object.entries(files)) {
     const f = ts.createSourceFile(path, source, ts.ScriptTarget.Latest, true);
+    if((f as ts.SourceFile&{parseDiagnostics?:unknown[]}).parseDiagnostics?.length)unknown.push(`${path}: incomplete source parse`);
     const deps = new Set<string>();
     dependencies.set(path, deps);
     const knownCalls = new Set<string>(["require"]);

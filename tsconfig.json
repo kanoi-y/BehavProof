@@ -17,6 +17,12 @@
       "path": "./packages/adapter-github"
     },
     {
+      "path": "./packages/adapter-quint"
+    },
+    {
+      "path": "./packages/adapter-model-test"
+    },
+    {
       "path": "./packages/cli"
     }
   ]

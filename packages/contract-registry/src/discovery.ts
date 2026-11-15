@@ -60,6 +60,8 @@ function add(
 ) {
   const v = raw as {
     id: string;
+    kind?: Contract['kind'];
+    formal?: Contract['formal'];
     intent: string;
     risk: "basic" | "standard" | "critical";
     cases: {
@@ -93,10 +95,13 @@ function add(
     intent: v.intent,
     risk: v.risk,
     cases: v.cases,
+    ...(v.kind !== undefined ? {kind:v.kind} : {}),
+    ...(v.formal !== undefined ? {formal:v.formal} : {}),
   });
   const contract = ContractSchema.parse({
     id: v.id,
-    kind: "examples",
+    kind: v.kind ?? "examples",
+    ...(v.formal !== undefined ? {formal:v.formal} : {}),
     intentIds: [intentId],
     revisionHash,
     sourceRef: ref,

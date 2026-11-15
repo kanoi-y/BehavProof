@@ -1,0 +1,1459 @@
+{
+  "schemaVersion": 1,
+  "observedDate": "2026-11-15",
+  "repository": "kanoi-y/pdd-ts",
+  "sdkSha": "a94329e61bd0a56141b5f6c9f9156b9aa3b29b56",
+  "workflowSha": "c9bf2a1a262248540efda0f89d7ed24e5aa566e5",
+  "sourceApproval": {
+    "pr": 10,
+    "headSha": "0046da6be489e4c4d0992bb6cfa128bddebf063d",
+    "reviewer": "kanoi-y",
+    "state": "APPROVED"
+  },
+  "registrationDigest": "e236a6c6af98ad779a90e5892b35bcfbf427f41224a8c864f42ec2cff3323152",
+  "sourceScope": {
+    "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+    "risk": "basic",
+    "booleanCases": 64,
+    "wholePddQuality": false,
+    "productionL3": false
+  },
+  "integration": {
+    "pr10": {
+      "headSha": "0046da6be489e4c4d0992bb6cfa128bddebf063d",
+      "mergeSha": "cbafb22fb314c6abf90e624cb5f20d71a4c98175",
+      "method": "squash",
+      "actualUserApproval": true
+    },
+    "pr16": {
+      "headSha": "c4efdfa035b560ef2b3b9e18a404b6ca9dbdc7c0",
+      "reviewer": "kanoi-y",
+      "reviewState": "APPROVED",
+      "mergeSha": "c9bf2a1a262248540efda0f89d7ed24e5aa566e5",
+      "method": "squash",
+      "existingCiRunId": 43663733427,
+      "existingPddProtectedRunId": 43665330524,
+      "sdkAndRegistrationUnchanged": true
+    }
+  },
+  "protectedBranch": "behavproof-enforcement-test",
+  "protectedBaseSha": "cbafb22fb314c6abf90e624cb5f20d71a4c98175",
+  "requiredCheck": {
+    "context": "BehavProof protected gate",
+    "appId": 5653976
+  },
+  "variables": {
+    "count": 3,
+    "exactReadback": true
+  },
+  "appPermissionUpdate": {
+    "status": "saved-and-installation-accepted",
+    "appId": 5653976,
+    "installationId": 179512413,
+    "permissionsAdded": {
+      "actions": "read",
+      "administration": "read"
+    },
+    "repositoryAccess": [
+      "kanoi-y/pdd-ts"
+    ],
+    "confirmedBy": "user action-time approval",
+    "observedInGitHubUi": true
+  },
+  "protectionAudit": {
+    "mainOriginalFieldsExactlyPreserved": true,
+    "main": {
+      "url": "https://api.github.com/repos/kanoi-y/pdd-ts/branches/main/protection",
+      "required_status_checks": {
+        "url": "https://api.github.com/repos/kanoi-y/pdd-ts/branches/main/protection/required_status_checks",
+        "strict": true,
+        "contexts": [
+          "Build, proof and tests",
+          "PDD protected gate"
+        ],
+        "contexts_url": "https://api.github.com/repos/kanoi-y/pdd-ts/branches/main/protection/required_status_checks/contexts",
+        "checks": [
+          {
+            "context": "Build, proof and tests",
+            "app_id": 15368
+          },
+          {
+            "context": "PDD protected gate",
+            "app_id": 5653976
+          }
+        ]
+      },
+      "required_pull_request_reviews": {
+        "url": "https://api.github.com/repos/kanoi-y/pdd-ts/branches/main/protection/required_pull_request_reviews",
+        "dismiss_stale_reviews": true,
+        "require_code_owner_reviews": true,
+        "require_last_push_approval": false,
+        "required_approving_review_count": 1
+      },
+      "required_signatures": {
+        "url": "https://api.github.com/repos/kanoi-y/pdd-ts/branches/main/protection/required_signatures",
+        "enabled": false
+      },
+      "enforce_admins": {
+        "url": "https://api.github.com/repos/kanoi-y/pdd-ts/branches/main/protection/enforce_admins",
+        "enabled": true
+      },
+      "required_linear_history": {
+        "enabled": true
+      },
+      "allow_force_pushes": {
+        "enabled": false
+      },
+      "allow_deletions": {
+        "enabled": false
+      },
+      "block_creations": {
+        "enabled": false
+      },
+      "required_conversation_resolution": {
+        "enabled": true
+      },
+      "lock_branch": {
+        "enabled": false
+      },
+      "allow_fork_syncing": {
+        "enabled": false
+      }
+    },
+    "testBase": {
+      "url": "https://api.github.com/repos/kanoi-y/pdd-ts/branches/behavproof-enforcement-test/protection",
+      "required_status_checks": {
+        "url": "https://api.github.com/repos/kanoi-y/pdd-ts/branches/behavproof-enforcement-test/protection/required_status_checks",
+        "strict": true,
+        "contexts": [
+          "BehavProof protected gate"
+        ],
+        "contexts_url": "https://api.github.com/repos/kanoi-y/pdd-ts/branches/behavproof-enforcement-test/protection/required_status_checks/contexts",
+        "checks": [
+          {
+            "context": "BehavProof protected gate",
+            "app_id": 5653976
+          }
+        ]
+      },
+      "required_signatures": {
+        "url": "https://api.github.com/repos/kanoi-y/pdd-ts/branches/behavproof-enforcement-test/protection/required_signatures",
+        "enabled": false
+      },
+      "enforce_admins": {
+        "url": "https://api.github.com/repos/kanoi-y/pdd-ts/branches/behavproof-enforcement-test/protection/enforce_admins",
+        "enabled": true
+      },
+      "required_linear_history": {
+        "enabled": false
+      },
+      "allow_force_pushes": {
+        "enabled": false
+      },
+      "allow_deletions": {
+        "enabled": false
+      },
+      "block_creations": {
+        "enabled": false
+      },
+      "required_conversation_resolution": {
+        "enabled": false
+      },
+      "lock_branch": {
+        "enabled": false
+      },
+      "allow_fork_syncing": {
+        "enabled": false
+      }
+    },
+    "additionalRulesetsOnTestBase": [],
+    "environment": {
+      "name": "pdd-publisher",
+      "updatedAt": "2026-11-07T08:31:04Z",
+      "deploymentBranchPolicy": {
+        "protected_branches": false,
+        "custom_branch_policies": true
+      },
+      "branches": [
+        {
+          "name": "main",
+          "type": "branch"
+        }
+      ]
+    },
+    "secretsReadOrCopied": false
+  },
+  "cases": [
+    {
+      "pr": 11,
+      "headSha": "f3e4bc74e10e9238b9c35ce2a82d0c22b14e6559",
+      "baseSha": "cbafb22fb314c6abf90e624cb5f20d71a4c98175",
+      "mergeable": true,
+      "mergeState": "blocked",
+      "checks": [
+        {
+          "name": "Build, proof and tests",
+          "appId": 15368,
+          "conclusion": null
+        }
+      ],
+      "observation": "Required dedicated check absent; GitHub reports blocked before producer/publisher dispatch.",
+      "id": "required-check-absent",
+      "observationState": "open at capture; disposable PR subsequently closed unmerged"
+    },
+    {
+      "pr": 12,
+      "headSha": "644b6cac8782f2faf88a5eb1cfec7e97d0acaf04",
+      "baseSha": "cbafb22fb314c6abf90e624cb5f20d71a4c98175",
+      "mergeState": "blocked",
+      "checks": [
+        {
+          "id": 132641991092,
+          "name": "BehavProof protected gate",
+          "appId": 15368,
+          "conclusion": "success"
+        },
+        {
+          "id": 132641968225,
+          "name": "BehavProof protected gate",
+          "appId": 15368,
+          "conclusion": "success"
+        }
+      ],
+      "result": "blocked",
+      "observation": "Both GitHub Actions App15368 checks succeeded with the required context name; no App5653976 check exists and GitHub reports blocked.",
+      "id": "wrong-issuer-same-context-success",
+      "observationState": "open at capture; disposable PR subsequently closed unmerged"
+    },
+    {
+      "type": "case",
+      "id": "normal",
+      "pr": 11,
+      "headSha": "f3e4bc74e10e9238b9c35ce2a82d0c22b14e6559",
+      "baseSha": "cbafb22fb314c6abf90e624cb5f20d71a4c98175",
+      "producer": {
+        "runId": 43665812270,
+        "attempt": 1,
+        "jobId": 132664790519,
+        "conclusion": "success"
+      },
+      "publisher": {
+        "runId": 43665923330,
+        "attempt": 1,
+        "verify": {
+          "jobId": 132665143183,
+          "conclusion": "success"
+        },
+        "gate": {
+          "jobId": 132665206710,
+          "conclusion": "success"
+        }
+      },
+      "dedicatedCheck": {
+        "id": 132665331109,
+        "appId": 5653976,
+        "conclusion": "success"
+      },
+      "github": {
+        "mergeable": true,
+        "mergeState": "unstable",
+        "nonRequiredNativePddCheck": "failure from earlier packaged root time limit; not a required context on the isolated branch",
+        "eligible": true
+      },
+      "result": "merge eligible to isolated base; optional native status failed",
+      "observationState": "open at capture; disposable PR subsequently closed unmerged"
+    },
+    {
+      "type": "case",
+      "id": "candidate-publisher-deletion",
+      "pr": 13,
+      "headSha": "70524dbedf5bc06c38e43d65db73a83bbe35f0b7",
+      "baseSha": "cbafb22fb314c6abf90e624cb5f20d71a4c98175",
+      "producer": {
+        "runId": 43665817455,
+        "attempt": 1,
+        "jobId": 132664809163,
+        "conclusion": "success"
+      },
+      "publisher": {
+        "runId": 43666046833,
+        "attempt": 1,
+        "verify": {
+          "jobId": 132665534901,
+          "conclusion": "success"
+        },
+        "gate": {
+          "jobId": 132665646980,
+          "conclusion": "success",
+          "preparation": "success",
+          "evaluation": "success",
+          "cliExitCodes": [],
+          "failureFallbackUsed": false
+        }
+      },
+      "dedicatedCheck": {
+        "id": 132665768579,
+        "appId": 5653976,
+        "conclusion": "success",
+        "protection": "pass"
+      },
+      "github": {
+        "mergeable": true,
+        "mergeState": "unstable"
+      },
+      "result": "candidate deletion cannot remove main authority; genuine main verification passes",
+      "initialObservation": {
+        "mergeState": "blocked",
+        "requiredDedicatedResult": "absent"
+      },
+      "observationState": "open at capture; disposable PR subsequently closed unmerged"
+    },
+    {
+      "type": "case",
+      "id": "unapproved-intent",
+      "pr": 14,
+      "headSha": "f55a11c3effa63fd12ae8f3195a7b6c53cb6f584",
+      "baseSha": "cbafb22fb314c6abf90e624cb5f20d71a4c98175",
+      "producer": {
+        "runId": 43665821450,
+        "attempt": 1,
+        "jobId": 132664820701,
+        "conclusion": "success"
+      },
+      "publisher": {
+        "runId": 43666057505,
+        "attempt": 1,
+        "verify": {
+          "jobId": 132665569427,
+          "conclusion": "success"
+        },
+        "gate": {
+          "jobId": 132665632264,
+          "conclusion": "failure",
+          "preparation": "success",
+          "evaluation": "failure",
+          "cliExitCodes": [
+            1,
+            1
+          ],
+          "failureFallbackUsed": false
+        }
+      },
+      "dedicatedCheck": {
+        "id": 132665811778,
+        "appId": 5653976,
+        "conclusion": "failure",
+        "protection": "pass"
+      },
+      "github": {
+        "mergeable": true,
+        "mergeState": "blocked"
+      },
+      "result": "blocked",
+      "observationState": "open at capture; disposable PR subsequently closed unmerged"
+    },
+    {
+      "type": "case",
+      "id": "upstream-skipped",
+      "pr": 15,
+      "headSha": "64d0ce75447b2f8114a01ec9022e87110f1b2ebf",
+      "baseSha": "cbafb22fb314c6abf90e624cb5f20d71a4c98175",
+      "producer": {
+        "runId": 43665824910,
+        "attempt": 1,
+        "jobId": 132664831937,
+        "conclusion": "success"
+      },
+      "publisher": {
+        "runId": 43666062415,
+        "attempt": 1,
+        "verify": {
+          "jobId": 132665584760,
+          "conclusion": "skipped"
+        },
+        "gate": {
+          "jobId": 132665583844,
+          "conclusion": "failure",
+          "preparation": "success",
+          "evaluation": "failure",
+          "cliExitCodes": [
+            1,
+            1
+          ],
+          "failureFallbackUsed": false
+        }
+      },
+      "dedicatedCheck": {
+        "id": 132665701114,
+        "appId": 5653976,
+        "conclusion": "failure",
+        "protection": "pass"
+      },
+      "github": {
+        "mergeable": true,
+        "mergeState": "blocked"
+      },
+      "result": "blocked",
+      "observationState": "open at capture; disposable PR subsequently closed unmerged"
+    },
+    {
+      "type": "case",
+      "id": "unchanged-contract-refactor",
+      "pr": 17,
+      "headSha": "470f7ef368d9eb1bcfa1d22e94b8d90afc8206f5",
+      "baseSha": "cbafb22fb314c6abf90e624cb5f20d71a4c98175",
+      "producer": {
+        "runId": 43665829672,
+        "attempt": 1,
+        "jobId": 132664847411,
+        "conclusion": "success"
+      },
+      "publisher": {
+        "runId": 43666066341,
+        "attempt": 1,
+        "verify": {
+          "jobId": 132665596241,
+          "conclusion": "success"
+        },
+        "gate": {
+          "jobId": 132665675101,
+          "conclusion": "success",
+          "preparation": "success",
+          "evaluation": "success",
+          "cliExitCodes": [],
+          "failureFallbackUsed": false
+        }
+      },
+      "dedicatedCheck": {
+        "id": 132665814489,
+        "appId": 5653976,
+        "conclusion": "success",
+        "protection": "pass"
+      },
+      "github": {
+        "mergeable": true,
+        "mergeState": "unstable",
+        "eligible": true
+      },
+      "result": "protected main gate succeeded",
+      "observationState": "open at capture; disposable PR subsequently closed unmerged"
+    },
+    {
+      "type": "case",
+      "id": "fake-callback",
+      "pr": 18,
+      "headSha": "533b69d7a7b10ff66ad3cbcceecc686c5a25768a",
+      "baseSha": "cbafb22fb314c6abf90e624cb5f20d71a4c98175",
+      "producer": {
+        "runId": 43665834883,
+        "attempt": 1,
+        "jobId": 132664864421,
+        "conclusion": "success"
+      },
+      "publisher": {
+        "runId": 43666070395,
+        "attempt": 1,
+        "verify": {
+          "jobId": 132665607813,
+          "conclusion": "success"
+        },
+        "gate": {
+          "jobId": 132665673249,
+          "conclusion": "failure",
+          "preparation": "success",
+          "evaluation": "failure",
+          "cliExitCodes": [
+            1,
+            1
+          ],
+          "failureFallbackUsed": false
+        }
+      },
+      "dedicatedCheck": {
+        "id": 132665804978,
+        "appId": 5653976,
+        "conclusion": "failure",
+        "protection": "pass"
+      },
+      "github": {
+        "mergeable": true,
+        "mergeState": "blocked"
+      },
+      "result": "blocked",
+      "observationState": "open at capture; disposable PR subsequently closed unmerged"
+    },
+    {
+      "type": "case",
+      "id": "upstream-failure",
+      "pr": 15,
+      "headSha": "cc87a5596d8dd42866125ed175025300d1901645",
+      "baseSha": "cbafb22fb314c6abf90e624cb5f20d71a4c98175",
+      "producer": {
+        "requestedRunId": 1,
+        "registeredProducerUnavailable": true
+      },
+      "publisher": {
+        "runId": 43666456733,
+        "attempt": 1,
+        "conclusion": "failure",
+        "jobs": [
+          {
+            "id": 132666812081,
+            "name": "verify",
+            "conclusion": "failure"
+          },
+          {
+            "id": 132666851928,
+            "name": "gate",
+            "conclusion": "failure"
+          }
+        ],
+        "gateSteps": [
+          {
+            "name": "Prepare current authenticated data",
+            "conclusion": "failure"
+          },
+          {
+            "name": "Evaluate protected gate",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Publish success or explicit failure",
+            "conclusion": "failure"
+          }
+        ],
+        "failureFallbackUsed": true,
+        "controlPlaneErrors": [
+          "2026-11-15T02:10:13.2697875Z Error: Control-plane HTTP 404"
+        ]
+      },
+      "dedicatedChecks": [
+        {
+          "id": 132666908736,
+          "appId": 5653976,
+          "conclusion": "failure"
+        }
+      ],
+      "published": {
+        "id": 132666908736,
+        "headSha": "cc87a5596d8dd42866125ed175025300d1901645",
+        "conclusion": "failure",
+        "protection": "pass"
+      },
+      "github": {
+        "mergeable": true,
+        "mergeState": "blocked"
+      },
+      "result": "blocked",
+      "observationState": "open at capture; disposable PR subsequently closed unmerged"
+    },
+    {
+      "type": "case",
+      "id": "workflow-cancelled",
+      "pr": 15,
+      "headSha": "232ae897442c2ee161511417b02e6196f6cb260e",
+      "baseSha": "cbafb22fb314c6abf90e624cb5f20d71a4c98175",
+      "producer": {
+        "runId": 43666685950,
+        "attempt": 1,
+        "jobId": 132667514455,
+        "conclusion": "success",
+        "cancellationRequestedWhileVerify": "in_progress"
+      },
+      "publisher": {
+        "runId": 43666797379,
+        "attempt": 1,
+        "conclusion": "cancelled",
+        "jobs": [
+          {
+            "id": 132667862353,
+            "name": "verify",
+            "conclusion": "cancelled"
+          },
+          {
+            "id": 132667912878,
+            "name": "gate",
+            "conclusion": "failure"
+          }
+        ],
+        "gateSteps": [
+          {
+            "name": "Prepare current authenticated data",
+            "conclusion": "success"
+          },
+          {
+            "name": "Evaluate protected gate",
+            "conclusion": "failure"
+          },
+          {
+            "name": "Publish success or explicit failure",
+            "conclusion": "failure"
+          }
+        ],
+        "failureFallbackUsed": false,
+        "controlPlaneErrors": []
+      },
+      "dedicatedChecks": [
+        {
+          "id": 132668034735,
+          "appId": 5653976,
+          "conclusion": "failure"
+        }
+      ],
+      "published": {
+        "id": 132668034735,
+        "headSha": "232ae897442c2ee161511417b02e6196f6cb260e",
+        "conclusion": "failure",
+        "protection": "pass"
+      },
+      "github": {
+        "mergeable": true,
+        "mergeState": "blocked"
+      },
+      "result": "blocked",
+      "observationState": "open at capture; disposable PR subsequently closed unmerged"
+    },
+    {
+      "type": "case",
+      "id": "required-artifact-missing",
+      "pr": 15,
+      "headSha": "7417d4bfa283a48c4a52d1b296f91a6fd2f18756",
+      "baseSha": "cbafb22fb314c6abf90e624cb5f20d71a4c98175",
+      "producer": {
+        "runId": 43666998342,
+        "attempt": 1,
+        "jobId": 132668486224,
+        "conclusion": "success",
+        "deletedArtifactId": 14142955682,
+        "archivePreserved": true,
+        "archiveSha256": "3fa4669a1a8721aad9c36279d0d21a726ab67900a585d2165c7eedef0d6d5801"
+      },
+      "publisher": {
+        "runId": 43667296542,
+        "attempt": 1,
+        "conclusion": "failure",
+        "jobs": [
+          {
+            "id": 132669413638,
+            "name": "verify",
+            "conclusion": "failure"
+          },
+          {
+            "id": 132669484945,
+            "name": "gate",
+            "conclusion": "failure"
+          }
+        ],
+        "gateSteps": [
+          {
+            "name": "Prepare current authenticated data",
+            "conclusion": "failure"
+          },
+          {
+            "name": "Evaluate protected gate",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Publish success or explicit failure",
+            "conclusion": "failure"
+          }
+        ],
+        "failureFallbackUsed": true,
+        "controlPlaneErrors": [
+          "2026-11-15T02:20:55.4110838Z Error: Required producer archive missing or ambiguous"
+        ]
+      },
+      "dedicatedChecks": [
+        {
+          "id": 132669590040,
+          "appId": 5653976,
+          "conclusion": "failure"
+        }
+      ],
+      "published": {
+        "id": 132669590040,
+        "headSha": "7417d4bfa283a48c4a52d1b296f91a6fd2f18756",
+        "conclusion": "failure",
+        "protection": "pass"
+      },
+      "github": {
+        "mergeable": true,
+        "mergeState": "blocked"
+      },
+      "result": "blocked",
+      "observationState": "open at capture; disposable PR subsequently closed unmerged"
+    },
+    {
+      "type": "case",
+      "id": "stale-attempt",
+      "pr": 15,
+      "headSha": "7298308d1833f5461d4ad67b6ec681ab4cd102c6",
+      "baseSha": "cbafb22fb314c6abf90e624cb5f20d71a4c98175",
+      "producer": {
+        "runId": 43667510972,
+        "successfulAttempt": 3,
+        "latestAttempt": 4,
+        "latestConclusion": "cancelled",
+        "oldArtifact": {
+          "id": 14143206945,
+          "name": "behavproof-43667510972-3-132672925199",
+          "digest": "sha256:834fc1a39f2d78abfa1076ba65ada33695762673a1a2de8a8a45c4b6921db90d",
+          "stillListed": true,
+          "directlyAvailable": true,
+          "preservedAndDigestVerified": true
+        }
+      },
+      "publisher": {
+        "runId": 43668741102,
+        "attempt": 1,
+        "conclusion": "failure",
+        "jobs": [
+          {
+            "id": 132673839655,
+            "name": "verify",
+            "conclusion": "failure"
+          },
+          {
+            "id": 132673879056,
+            "name": "gate",
+            "conclusion": "failure"
+          }
+        ],
+        "gateSteps": [
+          {
+            "name": "Prepare current authenticated data",
+            "conclusion": "failure"
+          },
+          {
+            "name": "Evaluate protected gate",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Publish success or explicit failure",
+            "conclusion": "failure"
+          }
+        ],
+        "failureFallbackUsed": true,
+        "controlPlaneErrors": [
+          "2026-11-15T02:39:07.5628732Z Error: Required producer archive missing or ambiguous"
+        ]
+      },
+      "dedicatedChecks": [
+        {
+          "id": 132673958210,
+          "appId": 5653976,
+          "conclusion": "failure"
+        }
+      ],
+      "published": {
+        "id": 132673958210,
+        "headSha": "7298308d1833f5461d4ad67b6ec681ab4cd102c6",
+        "conclusion": "failure",
+        "protection": "pass"
+      },
+      "github": {
+        "mergeable": true,
+        "mergeState": "blocked"
+      },
+      "result": "blocked",
+      "observationState": "open at capture; disposable PR subsequently closed unmerged"
+    },
+    {
+      "type": "case",
+      "id": "matched-cost-positive",
+      "pr": 19,
+      "headSha": "c4a00bfc6468b0c5e23a2bf0f37af1d2cd3420da",
+      "baseSha": "cbafb22fb314c6abf90e624cb5f20d71a4c98175",
+      "producer": {
+        "runId": 43667860767,
+        "attempt": 1,
+        "jobId": 132671160197,
+        "conclusion": "success"
+      },
+      "publisher": {
+        "runId": 43668079826,
+        "attempt": 1,
+        "verify": {
+          "jobId": 132671836958,
+          "conclusion": "success"
+        },
+        "gate": {
+          "jobId": 132671902682,
+          "conclusion": "success"
+        }
+      },
+      "dedicatedCheck": {
+        "id": 132672021210,
+        "appId": 5653976,
+        "conclusion": "success",
+        "protection": "pass"
+      },
+      "nativeCi": {
+        "runId": 43667852448,
+        "jobId": 132671132461,
+        "conclusion": "success"
+      },
+      "github": {
+        "state": "open",
+        "mergeable": true,
+        "mergeState": "clean"
+      },
+      "result": "merge eligible, not merged",
+      "observationState": "open at capture; disposable PR subsequently closed unmerged"
+    },
+    {
+      "type": "case",
+      "id": "unapproved-expected-weakening",
+      "pr": 15,
+      "headSha": "7e3be1a29c9001b07ceccab009aeab915a560237",
+      "baseSha": "cbafb22fb314c6abf90e624cb5f20d71a4c98175",
+      "producer": {
+        "runId": 43668889527,
+        "attempt": 1,
+        "jobId": 132674291621,
+        "conclusion": "success",
+        "ordinaryCases": 64
+      },
+      "publisher": {
+        "runId": 43669115818,
+        "attempt": 1,
+        "conclusion": "failure",
+        "jobs": [
+          {
+            "id": 132674988236,
+            "name": "verify",
+            "conclusion": "success"
+          },
+          {
+            "id": 132675056598,
+            "name": "gate",
+            "conclusion": "failure"
+          }
+        ],
+        "gateSteps": [
+          {
+            "name": "Prepare current authenticated data",
+            "conclusion": "success"
+          },
+          {
+            "name": "Evaluate protected gate",
+            "conclusion": "failure"
+          },
+          {
+            "name": "Publish success or explicit failure",
+            "conclusion": "failure"
+          }
+        ],
+        "failureFallbackUsed": false,
+        "controlPlaneErrors": []
+      },
+      "dedicatedChecks": [
+        {
+          "id": 132675167737,
+          "appId": 5653976,
+          "conclusion": "failure"
+        }
+      ],
+      "published": {
+        "id": 132675167737,
+        "headSha": "7e3be1a29c9001b07ceccab009aeab915a560237",
+        "conclusion": "failure",
+        "protection": "pass"
+      },
+      "github": {
+        "state": "open",
+        "mergeable": true,
+        "mergeState": "blocked"
+      },
+      "result": "blocked",
+      "observationState": "open at capture; disposable PR subsequently closed unmerged"
+    },
+    {
+      "type": "case",
+      "id": "unapproved-config-weakening",
+      "pr": 15,
+      "headSha": "2e4f46fd5faaaea4087b7021c729fc356aac10fd",
+      "baseSha": "cbafb22fb314c6abf90e624cb5f20d71a4c98175",
+      "producer": {
+        "runId": 43669326087,
+        "attempt": 1,
+        "jobId": 132675625302,
+        "conclusion": "success",
+        "ordinaryCases": 64
+      },
+      "publisher": {
+        "runId": 43669833911,
+        "attempt": 1,
+        "conclusion": "failure",
+        "jobs": [
+          {
+            "id": 132677209188,
+            "name": "verify",
+            "conclusion": "success"
+          },
+          {
+            "id": 132677267286,
+            "name": "gate",
+            "conclusion": "failure"
+          }
+        ],
+        "gateSteps": [
+          {
+            "name": "Prepare current authenticated data",
+            "conclusion": "success"
+          },
+          {
+            "name": "Evaluate protected gate",
+            "conclusion": "failure"
+          },
+          {
+            "name": "Publish success or explicit failure",
+            "conclusion": "failure"
+          }
+        ],
+        "failureFallbackUsed": false,
+        "controlPlaneErrors": []
+      },
+      "dedicatedChecks": [
+        {
+          "id": 132677395216,
+          "appId": 5653976,
+          "conclusion": "failure"
+        }
+      ],
+      "published": {
+        "id": 132677395216,
+        "headSha": "2e4f46fd5faaaea4087b7021c729fc356aac10fd",
+        "conclusion": "failure",
+        "protection": "pass"
+      },
+      "github": {
+        "state": "open",
+        "mergeable": true,
+        "mergeState": "blocked"
+      },
+      "result": "blocked",
+      "observationState": "open at capture; disposable PR subsequently closed unmerged"
+    },
+    {
+      "type": "case",
+      "id": "unapproved-policy-file-weakening",
+      "pr": 15,
+      "headSha": "a898ec837c627ff2238c0d4e66430eb26e0c422e",
+      "baseSha": "cbafb22fb314c6abf90e624cb5f20d71a4c98175",
+      "producer": {
+        "runId": 43669933496,
+        "attempt": 1,
+        "jobId": 132677522391,
+        "conclusion": "failure",
+        "reason": "Proposed policy changed; new approved enrollment required",
+        "sealedArtifacts": 0
+      },
+      "publisher": {
+        "runId": 43670116931,
+        "attempt": 1,
+        "conclusion": "failure",
+        "jobs": [
+          {
+            "id": 132678085589,
+            "name": "verify",
+            "conclusion": "failure"
+          },
+          {
+            "id": 132678126899,
+            "name": "gate",
+            "conclusion": "failure"
+          }
+        ],
+        "gateSteps": [
+          {
+            "name": "Prepare current authenticated data",
+            "conclusion": "failure"
+          },
+          {
+            "name": "Evaluate protected gate",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Publish success or explicit failure",
+            "conclusion": "failure"
+          }
+        ],
+        "failureFallbackUsed": true,
+        "controlPlaneErrors": [
+          "2026-11-15T02:57:39.7811026Z Error: Required producer archive missing or ambiguous"
+        ]
+      },
+      "dedicatedChecks": [
+        {
+          "id": 132678191546,
+          "appId": 5653976,
+          "conclusion": "failure"
+        }
+      ],
+      "published": {
+        "id": 132678191546,
+        "headSha": "a898ec837c627ff2238c0d4e66430eb26e0c422e",
+        "conclusion": "failure",
+        "protection": "pass"
+      },
+      "github": {
+        "state": "open",
+        "mergeable": true,
+        "mergeState": "blocked"
+      },
+      "result": "blocked",
+      "observationState": "open at capture; disposable PR subsequently closed unmerged"
+    }
+  ],
+  "artifactVerifications": [
+    {
+      "type": "producer-artifact",
+      "id": "normal",
+      "pr": 11,
+      "runId": 43665812270,
+      "headSha": "f3e4bc74e10e9238b9c35ce2a82d0c22b14e6559",
+      "artifactId": 14142236596,
+      "artifactName": "behavproof-43665812270-1-132664790519",
+      "archiveSha256": "7941b95272dab427a11f0e52d238d816698279d8abdb6ed4b67d461d65b7d467",
+      "archiveBytes": 19145,
+      "digestVerified": true,
+      "contextMatched": true,
+      "manifestExit": 0,
+      "tests": {
+        "numTotalTests": 64,
+        "numPassedTests": 64,
+        "numFailedTests": 0,
+        "success": true
+      },
+      "ordinaryComparisons": {
+        "pass": 64
+      },
+      "contractRevisionHashes": [
+        "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580"
+      ],
+      "claims": {
+        "target_observation:pass": 64,
+        "canary:pass": 64
+      },
+      "targetSourceSha256": "e6b2a26b77d004d89f33ec7ae9b50f8126357127ba584ad1c60db6e5cc783134",
+      "faultSourceSha256": "fbcc436ab506da48aa6f4c3e0c979c23e5b929deffe72309ec940b11304c02d4",
+      "canaryFailedComparisons": 64
+    },
+    {
+      "type": "producer-artifact",
+      "id": "unapproved-intent",
+      "pr": 14,
+      "runId": 43665821450,
+      "headSha": "f55a11c3effa63fd12ae8f3195a7b6c53cb6f584",
+      "artifactId": 14141694189,
+      "artifactName": "behavproof-43665821450-1-132664820701",
+      "archiveSha256": "1e939948e05bd39a861bf662c56fd8dfad75e3c93afd73675305d68c254fd517",
+      "archiveBytes": 19140,
+      "digestVerified": true,
+      "contextMatched": true,
+      "manifestExit": 0,
+      "tests": {
+        "numTotalTests": 64,
+        "numPassedTests": 64,
+        "numFailedTests": 0,
+        "success": true
+      },
+      "ordinaryComparisons": {
+        "pass": 64
+      },
+      "contractRevisionHashes": [
+        "34e941b1cb5ac3c1d206a3248b28a7c14437c76dd259bca6298e2319cb9f7755"
+      ],
+      "claims": {
+        "target_observation:unknown": 64,
+        "canary:unknown": 64
+      },
+      "targetSourceSha256": "e6b2a26b77d004d89f33ec7ae9b50f8126357127ba584ad1c60db6e5cc783134",
+      "faultSourceSha256": "270d5ad6b8a49306b63c0bc7a2a66e83d6022b90d3dc489c266eb8952eedbad4",
+      "canaryFailedComparisons": 64
+    },
+    {
+      "type": "producer-artifact",
+      "id": "unchanged-contract-refactor",
+      "pr": 17,
+      "runId": 43665829672,
+      "headSha": "470f7ef368d9eb1bcfa1d22e94b8d90afc8206f5",
+      "artifactId": 14141558045,
+      "artifactName": "behavproof-43665829672-1-132664847411",
+      "archiveSha256": "d42d7f2640a5d2b0e3578bd39933ebbf0c6fc8c759582c2434321184d2ba6b43",
+      "archiveBytes": 19175,
+      "digestVerified": true,
+      "contextMatched": true,
+      "manifestExit": 0,
+      "tests": {
+        "numTotalTests": 64,
+        "numPassedTests": 64,
+        "numFailedTests": 0,
+        "success": true
+      },
+      "ordinaryComparisons": {
+        "pass": 64
+      },
+      "contractRevisionHashes": [
+        "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580"
+      ],
+      "claims": {
+        "target_observation:pass": 64,
+        "canary:pass": 64
+      },
+      "targetSourceSha256": "f12dbf3119715168ab5682f06aa96e8e4fa3eb01e3878a079c9fb624f9bd3a3b",
+      "faultSourceSha256": "41362287b10396d572cd5ac0b546bb90d7871d8a9e9db708ff59d4e7f4386c92",
+      "canaryFailedComparisons": 64
+    },
+    {
+      "type": "producer-artifact",
+      "id": "fake-callback",
+      "pr": 18,
+      "runId": 43665834883,
+      "headSha": "533b69d7a7b10ff66ad3cbcceecc686c5a25768a",
+      "artifactId": 14141174185,
+      "artifactName": "behavproof-43665834883-1-132664864421",
+      "archiveSha256": "52cf41591faa453f01b8efb2668e41ed223b5f7367ee3516b7e174bb4c3c1935",
+      "archiveBytes": 18620,
+      "digestVerified": true,
+      "contextMatched": true,
+      "manifestExit": 0,
+      "tests": {
+        "numTotalTests": 64,
+        "numPassedTests": 64,
+        "numFailedTests": 0,
+        "success": true
+      },
+      "ordinaryComparisons": {
+        "pass": 64
+      },
+      "contractRevisionHashes": [
+        "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580"
+      ],
+      "claims": {
+        "target_observation:unknown": 64,
+        "canary:unknown": 64
+      },
+      "targetSourceSha256": "e6b2a26b77d004d89f33ec7ae9b50f8126357127ba584ad1c60db6e5cc783134",
+      "faultSourceSha256": "f070e36979df3e9fde45a15499e1c15b1a7439c1e04c19a6bed0481ea8947bb8",
+      "canaryFailedComparisons": 0
+    },
+    {
+      "type": "producer-artifact",
+      "id": "unapproved-expected-weakening",
+      "pr": 15,
+      "runId": 43668889527,
+      "headSha": "7e3be1a29c9001b07ceccab009aeab915a560237",
+      "artifactId": 14142999185,
+      "artifactName": "behavproof-43668889527-1-132674291621",
+      "archiveSha256": "69613910886cc160743c0483187b52b0d128a54c7d6092576bc3f97951cdf795",
+      "archiveBytes": 19155,
+      "digestVerified": true,
+      "contextMatched": true,
+      "manifestExit": 0,
+      "tests": {
+        "numTotalTests": 64,
+        "numPassedTests": 64,
+        "numFailedTests": 0,
+        "success": true
+      },
+      "ordinaryComparisons": {
+        "pass": 64
+      },
+      "contractRevisionHashes": [
+        "303684995650edbca64958a6d09897c2773326cd1e3c0d74dfdebed5faf30029"
+      ],
+      "claims": {
+        "target_observation:unknown": 64,
+        "canary:unknown": 64
+      },
+      "targetSourceSha256": "7fb0ff39ba39465f676755ae79501c5095f4e2d5a8303468fa1b35d8d6981445",
+      "faultSourceSha256": "e15ecdabd26681d4000eb08e492173e60236fe2cc82e4e338f8dd741fc7a0a76",
+      "canaryFailedComparisons": 64
+    },
+    {
+      "type": "producer-artifact",
+      "id": "unapproved-config-weakening",
+      "pr": 15,
+      "runId": 43669326087,
+      "headSha": "2e4f46fd5faaaea4087b7021c729fc356aac10fd",
+      "artifactId": 14143531928,
+      "artifactName": "behavproof-43669326087-1-132675625302",
+      "archiveSha256": "c88aed57d76479221776f5687b6c52493999f54f6c0238ef3098a6707b664b78",
+      "archiveBytes": 19174,
+      "digestVerified": true,
+      "contextMatched": true,
+      "manifestExit": 0,
+      "tests": {
+        "numTotalTests": 64,
+        "numPassedTests": 64,
+        "numFailedTests": 0,
+        "success": true
+      },
+      "ordinaryComparisons": {
+        "pass": 64
+      },
+      "contractRevisionHashes": [
+        "6b04658610ae1d6426eb897a29253419764b13dbdd2d32aa703fea067ae42580"
+      ],
+      "claims": {
+        "target_observation:pass": 64,
+        "canary:pass": 64
+      },
+      "targetSourceSha256": "e6b2a26b77d004d89f33ec7ae9b50f8126357127ba584ad1c60db6e5cc783134",
+      "faultSourceSha256": "d029f9f8324473dd0d75cfacb53640df7940e6c88a77e388dd6b7824fc39fcec",
+      "canaryFailedComparisons": 64
+    }
+  ],
+  "mergeEligibilityDefinition": [
+    {
+      "type": "merge-eligibility-verification",
+      "id": "normal",
+      "pr": 11,
+      "headSha": "f3e4bc74e10e9238b9c35ce2a82d0c22b14e6559",
+      "graphql": {
+        "mergeable": "MERGEABLE",
+        "mergeStateStatus": "UNSTABLE",
+        "isDraft": false
+      },
+      "officialDefinition": "Mergeable with non-passing commit status.",
+      "source": "https://docs.github.com/en/graphql/reference/pulls#mergestatestatus",
+      "eligible": true,
+      "scope": "Only the isolated test base; one dedicated App check is required. Unrelated native PDD failure remains visible."
+    }
+  ],
+  "costEvidence": "pdd-live-adoption-cost.json",
+  "disposablePullRequests": {
+    "beforeClosing": [
+      {
+        "pr": 11,
+        "state": "open",
+        "headSha": "f3e4bc74e10e9238b9c35ce2a82d0c22b14e6559",
+        "baseSha": "cbafb22fb314c6abf90e624cb5f20d71a4c98175",
+        "merged": false,
+        "mergeable": true,
+        "mergeState": "unstable"
+      },
+      {
+        "pr": 13,
+        "state": "open",
+        "headSha": "70524dbedf5bc06c38e43d65db73a83bbe35f0b7",
+        "baseSha": "cbafb22fb314c6abf90e624cb5f20d71a4c98175",
+        "merged": false,
+        "mergeable": true,
+        "mergeState": "unstable"
+      },
+      {
+        "pr": 14,
+        "state": "open",
+        "headSha": "f55a11c3effa63fd12ae8f3195a7b6c53cb6f584",
+        "baseSha": "cbafb22fb314c6abf90e624cb5f20d71a4c98175",
+        "merged": false,
+        "mergeable": true,
+        "mergeState": "blocked"
+      },
+      {
+        "pr": 15,
+        "state": "open",
+        "headSha": "a898ec837c627ff2238c0d4e66430eb26e0c422e",
+        "baseSha": "cbafb22fb314c6abf90e624cb5f20d71a4c98175",
+        "merged": false,
+        "mergeable": true,
+        "mergeState": "blocked"
+      },
+      {
+        "pr": 17,
+        "state": "open",
+        "headSha": "470f7ef368d9eb1bcfa1d22e94b8d90afc8206f5",
+        "baseSha": "cbafb22fb314c6abf90e624cb5f20d71a4c98175",
+        "merged": false,
+        "mergeable": true,
+        "mergeState": "unstable"
+      },
+      {
+        "pr": 18,
+        "state": "open",
+        "headSha": "533b69d7a7b10ff66ad3cbcceecc686c5a25768a",
+        "baseSha": "cbafb22fb314c6abf90e624cb5f20d71a4c98175",
+        "merged": false,
+        "mergeable": true,
+        "mergeState": "blocked"
+      },
+      {
+        "pr": 19,
+        "state": "open",
+        "headSha": "c4a00bfc6468b0c5e23a2bf0f37af1d2cd3420da",
+        "baseSha": "cbafb22fb314c6abf90e624cb5f20d71a4c98175",
+        "merged": false,
+        "mergeable": true,
+        "mergeState": "clean"
+      }
+    ],
+    "cleanup": [
+      {
+        "pr": 11,
+        "headSha": "f3e4bc74e10e9238b9c35ce2a82d0c22b14e6559",
+        "state": "closed",
+        "merged": false
+      },
+      {
+        "pr": 13,
+        "headSha": "70524dbedf5bc06c38e43d65db73a83bbe35f0b7",
+        "state": "closed",
+        "merged": false
+      },
+      {
+        "pr": 14,
+        "headSha": "f55a11c3effa63fd12ae8f3195a7b6c53cb6f584",
+        "state": "closed",
+        "merged": false
+      },
+      {
+        "pr": 15,
+        "headSha": "a898ec837c627ff2238c0d4e66430eb26e0c422e",
+        "state": "closed",
+        "merged": false
+      },
+      {
+        "pr": 17,
+        "headSha": "470f7ef368d9eb1bcfa1d22e94b8d90afc8206f5",
+        "state": "closed",
+        "merged": false
+      },
+      {
+        "pr": 18,
+        "headSha": "533b69d7a7b10ff66ad3cbcceecc686c5a25768a",
+        "state": "closed",
+        "merged": false
+      },
+      {
+        "pr": 19,
+        "headSha": "c4a00bfc6468b0c5e23a2bf0f37af1d2cd3420da",
+        "state": "closed",
+        "merged": false
+      }
+    ],
+    "pr12": "previously closed without merging",
+    "branchesAndIsolatedProtection": "retained for reproducibility"
+  },
+  "productValidation": {
+    "sha": "b049d3770c5ee7a298b7c829119e52f069f1b9db",
+    "runId": 43662903592,
+    "allOs": "success",
+    "linux": {
+      "passed": 306
+    },
+    "macos": {
+      "passed": 306
+    },
+    "windows": {
+      "passed": 302,
+      "posixSkipped": 4
+    },
+    "offlineSixPackageConsumer": "pass",
+    "independentReview": "no Critical/Important/Minor findings"
+  },
+  "historicalDiagnostics": {
+    "initialProducer": {
+      "runId": 43658241548,
+      "attempt": 1,
+      "jobId": 132641529472,
+      "conclusion": "success",
+      "artifactId": 14138033843,
+      "archiveSha256": "525e7cf37173b0e83ed22f5b0fd6aaf6820d48d02a377a5c60fea1651583c343",
+      "archiveBytes": 19139,
+      "independentDownloadVerified": true,
+      "evidenceSummary": {
+        "ordinaryTests": {
+          "numTotalTests": 64,
+          "numPassedTests": 64,
+          "numFailedTests": 0,
+          "success": true
+        },
+        "claims": {
+          "target_observation:pass": 64,
+          "canary:pass": 64
+        },
+        "fault": {
+          "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+          "originalSha256": "e6b2a26b77d004d89f33ec7ae9b50f8126357127ba584ad1c60db6e5cc783134",
+          "mutatedSha256": "98f7df9a43d99aea2f872ce8eaf10d8411bda33f3077f19c5d299e186b435cc5",
+          "description": "Replace the selected function body with the host-selected distinct JSON fault value"
+        }
+      }
+    },
+    "initialPublisher": {
+      "runId": 43658317804,
+      "attempt": 1,
+      "verify": {
+        "jobId": 132641768363,
+        "conclusion": "success"
+      },
+      "gate": {
+        "jobId": 132641875912,
+        "conclusion": "failure",
+        "tokenCreation": "HTTP422: requested permissions not granted to this installation",
+        "evaluation": "skipped",
+        "publication": "skipped"
+      }
+    },
+    "publisherAfterAppGrant": {
+      "runId": 43661718710,
+      "attempt": 1,
+      "verify": {
+        "jobId": 132652296641,
+        "conclusion": "success"
+      },
+      "gate": {
+        "jobId": 132652366816,
+        "conclusion": "failure",
+        "reason": "behavproof: command not found; exit127"
+      },
+      "dedicatedCheck": {
+        "id": 132652472794,
+        "appId": 5653976,
+        "conclusion": "failure"
+      }
+    },
+    "notCountedAsSemanticNegativeAcceptance": true,
+    "consumerBudgetFix": {
+      "runId": 43662376701,
+      "conclusion": "failure",
+      "testsPassed": 280,
+      "demoRootMs": 187113,
+      "packagedVerifyLoopStatus": null,
+      "outerBudgetMs": 180000,
+      "causeQualification": "Old statusnull does not identify spawn error; root exceeded the same outer budget in the preceding successful demo. Added diagnostics and a larger root-only orchestration budget; a live rerun was required at that point and subsequently succeeded (consumerFixedCi)."
+    },
+    "consumerFixedCi": {
+      "runId": 43663733427,
+      "jobId": 132658452481,
+      "headSha": "c4efdfa035b560ef2b3b9e18a404b6ca9dbdc7c0",
+      "conclusion": "success",
+      "testsPassed": 280,
+      "proofAndP0": "pass",
+      "normalAndNegativeDemos": "pass",
+      "offlinePackedCliModelsAndThreeSamples": "pass",
+      "packedSelfVerification": {
+        "elapsedMs": 138380,
+        "outerBudgetMs": 600000,
+        "gate": "trial",
+        "approval": "pending",
+        "allEvidence": "passed"
+      }
+    },
+    "fullWorkflowRerunBeforeSingleJobExperiment": "Attempts1→2 removed the old artifact; not counted as the retained-old case. Actual retained-old case uses attempts3→4."
+  },
+  "limits": [
+    "Only the declared public GitHub repository and isolated protected base were verified. BehavProof is not a required main check.",
+    "Initial reviewed registration is not a demonstrated approved Policy-update transition.",
+    "Intent text change also changes the Contract revision; do not attribute its entire rejection only to the Intent approval rule.",
+    "Gate execution on cancellation was observed for this run; it is not guaranteed for every GitHub cancellation.",
+    "Preparation failures use explicit failure-only publication; no internal CLI verdict is invented when evaluation is skipped.",
+    "Human active time, CPU, billing, long-term maintenance and production L3 remain unmeasured or outside scope.",
+    "Optional M2-F AC31–36 remains unimplemented and outside mandatory M2."
+  ],
+  "status": "mandatory-M1-M2-verified-with-declared-scope",
+  "remainingRequiredAcceptance": []
+}

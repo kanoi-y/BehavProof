@@ -11,16 +11,17 @@
     "sha256": "603bf5fe10867f3a73bb3c2aa0e2e753f970fd913aa4c7c724fa8806c9be1d9d"
   },
   "samplesMs": [
-    439,
-    851,
-    854
+    437,
+    714,
+    718
   ],
-  "medianMs": 851,
+  "medianMs": 714,
   "targetMs": 10000,
   "withinInitialTarget": true,
   "limits": [
     "Synthetic single-file Vitest-shaped JSON; not a real executed test report.",
     "No external authority; testResult remains unknown and audit exit0.",
     "No human effort, semantic quality, peak memory or large-repository scalability measurement."
-  ]
+  ],
+  "sdkSourceCommit": "a94329e61bd0a56141b5f6c9f9156b9aa3b29b56"
 }

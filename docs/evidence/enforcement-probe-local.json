@@ -15,6 +15,21 @@
       "exitCode": 1,
       "evaluations": [
         {
+          "ruleId": "changeImpact",
+          "severity": "off",
+          "scope": [
+            "ENFORCEMENT-PROBE",
+            "contract"
+          ],
+          "status": "pass"
+        },
+        {
+          "ruleId": "changeImpact",
+          "severity": "off",
+          "scope": [],
+          "status": "pass"
+        },
+        {
           "ruleId": "changedLineCoverage",
           "severity": "warn",
           "scope": [
@@ -172,6 +187,21 @@
       "status": "fail",
       "exitCode": 1,
       "evaluations": [
+        {
+          "ruleId": "changeImpact",
+          "severity": "off",
+          "scope": [
+            "ENFORCEMENT-PROBE",
+            "contract"
+          ],
+          "status": "pass"
+        },
+        {
+          "ruleId": "changeImpact",
+          "severity": "off",
+          "scope": [],
+          "status": "pass"
+        },
         {
           "ruleId": "changedLineCoverage",
           "severity": "warn",

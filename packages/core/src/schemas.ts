@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { getProfilePolicy } from './profiles.js';
+import { FormalConfigSchema, FormalModelReportSchema, ModelConformanceReportSchema, FormalContractBindingSchema, FormalTraceReceiptSchema } from './formal.js';
 export const EvidenceStatusSchema=z.enum(['pass','fail','unknown','not_applicable']);
 export const SeveritySchema=z.enum(['off','warn','error']);
 export const RiskSchema=z.enum(['basic','standard','critical']);
@@ -23,7 +24,7 @@ export const PolicySchema=z.strictObject({schemaVersion:z.literal(1),profileVers
 const source=z.strictObject({type:z.enum(['vitest-inline','manifest','external','gherkin','openapi']),include:z.array(RelativePathSchema)});
 const contractConfig=z.strictObject({enabled:z.boolean().default(false),sources:z.array(source).default([]),requireExecutionEvidence:z.boolean().default(true),approval:z.strictObject({provider:z.literal('github-protected-review'),requiredForRisk:z.array(RiskSchema).default(['critical']),onUnverifiable:z.literal('unknown').default('unknown')}).default({provider:'github-protected-review',requiredForRisk:['critical'],onUnverifiable:'unknown'}),documents:z.strictObject({output:RelativePathSchema.default('.behavproof/generated'),commit:z.boolean().default(false)}).default({output:'.behavproof/generated',commit:false})});
 export const RiskOverrideSchema=z.strictObject({selector:z.discriminatedUnion('kind',[z.strictObject({kind:z.literal('path'),value:RelativePathSchema}),z.strictObject({kind:z.literal('module'),value:text}),z.strictObject({kind:z.literal('contract-kind'),value:z.enum(['examples','invariant','state_machine','api_contract','external'])})]),profile:RiskSchema});
-export const ConfigSchema=z.strictObject({schemaVersion:z.literal(1),mode:ModeSchema.default('audit'),profile:RiskSchema.default('standard'),profileVersion:z.literal('1').default('1'),riskOverrides:z.array(RiskOverrideSchema).default([]),git:z.strictObject({base:text.default('origin/main')}).default({base:'origin/main'}),reports:z.strictObject({vitest:RelativePathSchema.optional(),coverage:RelativePathSchema.optional(),mutation:RelativePathSchema.optional()}).default({}),executionManifests:z.array(RelativePathSchema).default([]),rules:RulesSchema.default({}),contracts:contractConfig.default({enabled:false,sources:[],requireExecutionEvidence:true,approval:{provider:'github-protected-review',requiredForRisk:['critical'],onUnverifiable:'unknown'},documents:{output:'.behavproof/generated',commit:false}})}).transform(config=>{
+export const ConfigSchema=z.strictObject({schemaVersion:z.literal(1),formal:FormalConfigSchema.optional(),mode:ModeSchema.default('audit'),profile:RiskSchema.default('standard'),profileVersion:z.literal('1').default('1'),riskOverrides:z.array(RiskOverrideSchema).default([]),git:z.strictObject({base:text.default('origin/main')}).default({base:'origin/main'}),reports:z.strictObject({vitest:RelativePathSchema.optional(),coverage:RelativePathSchema.optional(),mutation:RelativePathSchema.optional()}).default({}),executionManifests:z.array(RelativePathSchema).default([]),rules:RulesSchema.default({}),contracts:contractConfig.default({enabled:false,sources:[],requireExecutionEvidence:true,approval:{provider:'github-protected-review',requiredForRisk:['critical'],onUnverifiable:'unknown'},documents:{output:'.behavproof/generated',commit:false}})}).transform(config=>{
   const preset=getProfilePolicy(config.profile,config.profileVersion);
   const rules:Record<string,RulePolicy>={...preset.rules};
   for(const [id,rule] of Object.entries(config.rules))rules[id]={...preset.rules[id],...rule};
@@ -40,7 +41,7 @@ export const ExecutionManifestSchema=z.strictObject({schemaVersion:z.literal(1),
 });
 export const IntentSchema=z.strictObject({id:text,statement:text,risk:RiskSchema,contentHash:HashSchema,origin:z.strictObject({kind:z.enum(['inline','manifest','external']),ref:text})});
 export const ContractCaseSchema=z.strictObject({id:text,input:z.json(),expected:z.json(),negative:z.boolean().optional()});
-export const ContractSchema=z.strictObject({id:text,kind:z.enum(['examples','invariant','state_machine','api_contract','external']),intentIds:strings,revisionHash:HashSchema,sourceRef:text,caseIds:strings.optional(),risk:RiskSchema.optional(),cases:z.array(ContractCaseSchema).optional()}).superRefine((c,ctx)=>{
+export const ContractSchema=z.strictObject({id:text,formal:FormalContractBindingSchema.optional(),kind:z.enum(['examples','invariant','state_machine','api_contract','external']),intentIds:strings,revisionHash:HashSchema,sourceRef:text,caseIds:strings.optional(),risk:RiskSchema.optional(),cases:z.array(ContractCaseSchema).optional()}).superRefine((c,ctx)=>{
   if(c.caseIds&&new Set(c.caseIds).size!==c.caseIds.length)ctx.addIssue({code:'custom',message:'Duplicate case IDs'});
   if(c.cases&&new Set(c.cases.map(x=>x.id)).size!==c.cases.length)ctx.addIssue({code:'custom',message:'Duplicate cases'});
   if(c.caseIds&&c.cases&&(c.caseIds.length!==c.cases.length||c.caseIds.some(id=>!c.cases!.some(x=>x.id===id))))ctx.addIssue({code:'custom',message:'Case inventory mismatch'});
@@ -68,9 +69,9 @@ export const EvidenceSchema=z.discriminatedUnion('kind',[
   z.strictObject({...evidenceBase,kind:z.literal('execution_manifest'),payload:ExecutionManifestSchema}),
   z.strictObject({...evidenceBase,kind:z.literal('target_observation'),payload:observationPayload}),
   z.strictObject({...evidenceBase,kind:z.literal('canary'),payload:z.strictObject({contractId:text,caseIds:strings,targetRef:text,method:text,detected:CountSchema,total:CountSchema,status:EvidenceStatusSchema}).refine(p=>p.detected<=p.total,'Detected exceeds total').refine(p=>p.status!=='pass'||p.total>0&&p.detected>0&&p.caseIds.length>0,'Passing canary requires scoped detections')}),
-  z.strictObject({...evidenceBase,kind:z.literal('formal_model'),payload:unsupportedPayload}),
-  z.strictObject({...evidenceBase,kind:z.literal('model_conformance'),payload:unsupportedPayload}),
-  z.strictObject({...evidenceBase,kind:z.literal('trace'),payload:unsupportedPayload})
+  z.strictObject({...evidenceBase,kind:z.literal('formal_model'),payload:z.union([FormalModelReportSchema,unsupportedPayload])}),
+  z.strictObject({...evidenceBase,kind:z.literal('model_conformance'),payload:z.union([ModelConformanceReportSchema,unsupportedPayload])}),
+  z.strictObject({...evidenceBase,kind:z.literal('trace'),payload:z.union([FormalTraceReceiptSchema,unsupportedPayload])})
 ]);
 export const CheckReportSchema=z.strictObject({schemaVersion:z.literal(1),mode:ModeSchema,status:z.enum(['pass','fail','incomplete']),exitCode:z.union([z.literal(0),z.literal(1),z.literal(2)]),mandatoryCount:CountSchema,evaluations:z.array(EvaluationSchema),reasons:strings});
 export type EvidenceStatus=z.infer<typeof EvidenceStatusSchema>;

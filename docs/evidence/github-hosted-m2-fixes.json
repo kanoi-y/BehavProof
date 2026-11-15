@@ -1,0 +1,371 @@
+{
+  "schemaVersion": 1,
+  "repository": "kanoi-y/BehavProof",
+  "sdkCommit": "a94329e61bd0a56141b5f6c9f9156b9aa3b29b56",
+  "runId": 43607098197,
+  "runUrl": "https://github.com/kanoi-y/BehavProof/actions/runs/43607098197",
+  "jobs": [
+    {
+      "id": 132483982376,
+      "name": "verify (ubuntu-latest)",
+      "conclusion": "success",
+      "passed": 305,
+      "skipped": 0,
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm ci --ignore-scripts --cache .npm-cache",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm test",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run node scripts/package-smoke.mjs --online",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run node scripts/acceptance-flow.mjs",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run node scripts/protected-probe-flow.mjs",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run node scripts/enforcement-probe-flow.mjs",
+          "conclusion": "success"
+        },
+        {
+          "name": "Exercise credential-free Linux container",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 132483982561,
+      "name": "verify (windows-latest)",
+      "conclusion": "success",
+      "passed": 302,
+      "skipped": 3,
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm ci --ignore-scripts --cache .npm-cache",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm test",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run node scripts/package-smoke.mjs --online",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run node scripts/acceptance-flow.mjs",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run node scripts/protected-probe-flow.mjs",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run node scripts/enforcement-probe-flow.mjs",
+          "conclusion": "success"
+        },
+        {
+          "name": "Exercise credential-free Linux container",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 132483982626,
+      "name": "verify (macos-latest)",
+      "conclusion": "success",
+      "passed": 305,
+      "skipped": 0,
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm ci --ignore-scripts --cache .npm-cache",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm test",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run node scripts/package-smoke.mjs --online",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run node scripts/acceptance-flow.mjs",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run node scripts/protected-probe-flow.mjs",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run node scripts/enforcement-probe-flow.mjs",
+          "conclusion": "success"
+        },
+        {
+          "name": "Exercise credential-free Linux container",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 14119245900,
+      "name": "local-acceptance-windows-latest-43607098197-1",
+      "size": 46442,
+      "digest": "sha256:1b8e07d38de016b7ae96a82fc97cc24605470598b0f6ea454c3e92aa6f5438ce"
+    },
+    {
+      "id": 14119195788,
+      "name": "local-acceptance-ubuntu-latest-43607098197-1",
+      "size": 46204,
+      "digest": "sha256:e8fc2bd70f2eddd847c352e781c5e5e2700003dff5de7565036a11132bf907d3"
+    },
+    {
+      "id": 14118193702,
+      "name": "local-acceptance-macos-latest-43607098197-1",
+      "size": 46174,
+      "digest": "sha256:7c7fb5eacdae7295c85e03d602129dbd0d9ba0d03afa7c3b54d35a3eeed488c2"
+    }
+  ],
+  "linuxArchive": {
+    "id": 14119195788,
+    "archiveSha256": "e8fc2bd70f2eddd847c352e781c5e5e2700003dff5de7565036a11132bf907d3",
+    "decodedEntries": 26,
+    "upstream": {
+      "repository": "kanoi-y/pdd-ts",
+      "commitSha": "dd06da788bef5cfbe7f9131fe5609a61cefbd458",
+      "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+      "sourceSha256": "e6b2a26b77d004d89f33ec7ae9b50f8126357127ba584ad1c60db6e5cc783134",
+      "materializedFiles": 185
+    },
+    "isolation": "Network-disabled, non-root, read-only source/SDK container with checked cleanup",
+    "authority": "Explicit local host; proposed baseline and ephemeral local integration commits, no human/CI/App authority",
+    "rows": [
+      {
+        "id": "normal",
+        "durationMs": 3713,
+        "maintenance": {
+          "operator": "automated experiment",
+          "changedTrackedFiles": [],
+          "contractSourceEdited": false
+        },
+        "producerExit": 0,
+        "gateStatus": "incomplete",
+        "gateExit": 1,
+        "comparisons": {
+          "pass": 64,
+          "fail": 0
+        },
+        "canaryFailures": 64,
+        "claimStatuses": [
+          "pass"
+        ]
+      },
+      {
+        "id": "refactor",
+        "durationMs": 3719,
+        "maintenance": {
+          "operator": "automated experiment",
+          "changedTrackedFiles": [
+            "src/verification/acceptance.ts"
+          ],
+          "contractSourceEdited": false
+        },
+        "producerExit": 0,
+        "gateStatus": "incomplete",
+        "gateExit": 1,
+        "comparisons": {
+          "pass": 64,
+          "fail": 0
+        },
+        "canaryFailures": 64,
+        "claimStatuses": [
+          "pass"
+        ]
+      },
+      {
+        "id": "fake",
+        "durationMs": 3666,
+        "maintenance": {
+          "operator": "automated experiment",
+          "changedTrackedFiles": [
+            "validation/behavproof-probe/tests/acceptance.contract.ts"
+          ],
+          "contractSourceEdited": true
+        },
+        "producerExit": 0,
+        "gateStatus": "incomplete",
+        "gateExit": 1,
+        "comparisons": {
+          "pass": 64,
+          "fail": 0
+        },
+        "canaryFailures": 0,
+        "claimStatuses": [
+          "unknown"
+        ]
+      },
+      {
+        "id": "faulty",
+        "durationMs": 2836,
+        "maintenance": {
+          "operator": "automated experiment",
+          "changedTrackedFiles": [
+            "src/verification/acceptance.ts"
+          ],
+          "contractSourceEdited": false
+        },
+        "producerExit": 1,
+        "gateStatus": "fail",
+        "gateExit": 1,
+        "comparisons": {
+          "pass": 1,
+          "fail": 63
+        },
+        "canaryFailures": null,
+        "claimStatuses": []
+      },
+      {
+        "id": "unapproved-weakening",
+        "durationMs": 3875,
+        "maintenance": {
+          "operator": "automated experiment",
+          "changedTrackedFiles": [
+            "src/verification/acceptance.ts",
+            "validation/behavproof-probe/tests/acceptance.contract.ts"
+          ],
+          "contractSourceEdited": true
+        },
+        "producerExit": 0,
+        "gateStatus": "fail",
+        "gateExit": 1,
+        "comparisons": {
+          "pass": 64,
+          "fail": 0
+        },
+        "canaryFailures": 64,
+        "claimStatuses": [
+          "unknown"
+        ]
+      }
+    ]
+  },
+  "consumer": {
+    "repository": "kanoi-y/pdd-ts",
+    "pr": 10,
+    "head": "0046da6be489e4c4d0992bb6cfa128bddebf063d",
+    "runId": 43607678403,
+    "changesFromPreviousHead": "Only literal SDK pins in two thin workflows",
+    "status": "completed",
+    "conclusion": "success",
+    "jobId": 132485760829,
+    "validation": [
+      "Build/proof and280 tests",
+      "P0 proof scenarios",
+      "Normal and negative demos",
+      "Offline tarball install and installed CLI/model/sample/self verification"
+    ]
+  },
+  "scope": "Product regression and explicit local-host experiment in a Linux sandbox; no human enrollment, registered consumer producer, dedicated App issuance or protected merge acceptance is supplied.",
+  "pending": [
+    "Actual current-head Policy/Intent/Contract review and enrollment",
+    "Consumer protected producer/publisher deployment and minimal App read grants",
+    "All isolated live failure/cancellation/missing/stale/skip/deletion/wrong-issuer scenarios",
+    "Incremental dedicated consumer CI measurement and final M0 adoption decision"
+  ],
+  "capturedAt": "2026-11-14T15:16:42Z"
+}

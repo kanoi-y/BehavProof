@@ -1,0 +1,559 @@
+{
+  "schemaVersion": 1,
+  "measurement": "Actual separate-product CI and consumer adoption footprint",
+  "product": {
+    "repository": "kanoi-y/BehavProof",
+    "commitSha": "6b594be5e54cd7caea282ff9ecf215f52577e550",
+    "runId": 43601803918,
+    "url": "https://github.com/kanoi-y/BehavProof/actions/runs/43601803918",
+    "workflowPath": ".github/workflows/ci.yml",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "jobId": 132467942611,
+        "name": "verify (ubuntu-latest)",
+        "conclusion": "success",
+        "startedAt": "2026-11-14T13:50:52Z",
+        "completedAt": "2026-11-14T13:52:39Z",
+        "wallSeconds": 107,
+        "steps": [
+          {
+            "name": "Set up job",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:50:52Z",
+            "completedAt": "2026-11-14T13:50:53Z",
+            "wallSeconds": 1
+          },
+          {
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:50:53Z",
+            "completedAt": "2026-11-14T13:50:54Z",
+            "wallSeconds": 1
+          },
+          {
+            "name": "Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:50:54Z",
+            "completedAt": "2026-11-14T13:50:56Z",
+            "wallSeconds": 2
+          },
+          {
+            "name": "Run npm ci --ignore-scripts --cache .npm-cache",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:50:56Z",
+            "completedAt": "2026-11-14T13:50:59Z",
+            "wallSeconds": 3
+          },
+          {
+            "name": "Run npm test",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:50:59Z",
+            "completedAt": "2026-11-14T13:51:21Z",
+            "wallSeconds": 22
+          },
+          {
+            "name": "Run node scripts/package-smoke.mjs --online",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:51:21Z",
+            "completedAt": "2026-11-14T13:51:29Z",
+            "wallSeconds": 8
+          },
+          {
+            "name": "Run node scripts/acceptance-flow.mjs",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:51:29Z",
+            "completedAt": "2026-11-14T13:51:35Z",
+            "wallSeconds": 6
+          },
+          {
+            "name": "Run node scripts/protected-probe-flow.mjs",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:51:35Z",
+            "completedAt": "2026-11-14T13:51:44Z",
+            "wallSeconds": 9
+          },
+          {
+            "name": "Run node scripts/enforcement-probe-flow.mjs",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:51:44Z",
+            "completedAt": "2026-11-14T13:51:49Z",
+            "wallSeconds": 5
+          },
+          {
+            "name": "Exercise credential-free Linux container",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:51:49Z",
+            "completedAt": "2026-11-14T13:52:35Z",
+            "wallSeconds": 46
+          },
+          {
+            "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:52:35Z",
+            "completedAt": "2026-11-14T13:52:36Z",
+            "wallSeconds": 1
+          },
+          {
+            "name": "Post Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:52:36Z",
+            "completedAt": "2026-11-14T13:52:37Z",
+            "wallSeconds": 1
+          },
+          {
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:52:37Z",
+            "completedAt": "2026-11-14T13:52:37Z",
+            "wallSeconds": 0
+          },
+          {
+            "name": "Complete job",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:52:37Z",
+            "completedAt": "2026-11-14T13:52:37Z",
+            "wallSeconds": 0
+          }
+        ]
+      },
+      {
+        "jobId": 132467942716,
+        "name": "verify (windows-latest)",
+        "conclusion": "success",
+        "startedAt": "2026-11-14T13:50:53Z",
+        "completedAt": "2026-11-14T13:53:55Z",
+        "wallSeconds": 182,
+        "steps": [
+          {
+            "name": "Set up job",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:50:54Z",
+            "completedAt": "2026-11-14T13:50:56Z",
+            "wallSeconds": 2
+          },
+          {
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:50:56Z",
+            "completedAt": "2026-11-14T13:51:05Z",
+            "wallSeconds": 9
+          },
+          {
+            "name": "Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:51:05Z",
+            "completedAt": "2026-11-14T13:51:09Z",
+            "wallSeconds": 4
+          },
+          {
+            "name": "Run npm ci --ignore-scripts --cache .npm-cache",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:51:09Z",
+            "completedAt": "2026-11-14T13:51:16Z",
+            "wallSeconds": 7
+          },
+          {
+            "name": "Run npm test",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:51:16Z",
+            "completedAt": "2026-11-14T13:52:22Z",
+            "wallSeconds": 66
+          },
+          {
+            "name": "Run node scripts/package-smoke.mjs --online",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:52:22Z",
+            "completedAt": "2026-11-14T13:52:51Z",
+            "wallSeconds": 29
+          },
+          {
+            "name": "Run node scripts/acceptance-flow.mjs",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:52:51Z",
+            "completedAt": "2026-11-14T13:53:11Z",
+            "wallSeconds": 20
+          },
+          {
+            "name": "Run node scripts/protected-probe-flow.mjs",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:53:11Z",
+            "completedAt": "2026-11-14T13:53:37Z",
+            "wallSeconds": 26
+          },
+          {
+            "name": "Run node scripts/enforcement-probe-flow.mjs",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:53:37Z",
+            "completedAt": "2026-11-14T13:53:50Z",
+            "wallSeconds": 13
+          },
+          {
+            "name": "Exercise credential-free Linux container",
+            "conclusion": "skipped",
+            "startedAt": "2026-11-14T13:53:50Z",
+            "completedAt": "2026-11-14T13:53:50Z",
+            "wallSeconds": 0
+          },
+          {
+            "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:53:50Z",
+            "completedAt": "2026-11-14T13:53:51Z",
+            "wallSeconds": 1
+          },
+          {
+            "name": "Post Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:53:51Z",
+            "completedAt": "2026-11-14T13:53:51Z",
+            "wallSeconds": 0
+          },
+          {
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:53:51Z",
+            "completedAt": "2026-11-14T13:53:53Z",
+            "wallSeconds": 2
+          },
+          {
+            "name": "Complete job",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:53:53Z",
+            "completedAt": "2026-11-14T13:53:53Z",
+            "wallSeconds": 0
+          }
+        ]
+      },
+      {
+        "jobId": 132467942746,
+        "name": "verify (macos-latest)",
+        "conclusion": "success",
+        "startedAt": "2026-11-14T13:50:53Z",
+        "completedAt": "2026-11-14T13:52:30Z",
+        "wallSeconds": 97,
+        "steps": [
+          {
+            "name": "Set up job",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:50:54Z",
+            "completedAt": "2026-11-14T13:50:56Z",
+            "wallSeconds": 2
+          },
+          {
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:50:56Z",
+            "completedAt": "2026-11-14T13:50:59Z",
+            "wallSeconds": 3
+          },
+          {
+            "name": "Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:50:59Z",
+            "completedAt": "2026-11-14T13:51:01Z",
+            "wallSeconds": 2
+          },
+          {
+            "name": "Run npm ci --ignore-scripts --cache .npm-cache",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:51:01Z",
+            "completedAt": "2026-11-14T13:51:05Z",
+            "wallSeconds": 4
+          },
+          {
+            "name": "Run npm test",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:51:05Z",
+            "completedAt": "2026-11-14T13:51:45Z",
+            "wallSeconds": 40
+          },
+          {
+            "name": "Run node scripts/package-smoke.mjs --online",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:51:45Z",
+            "completedAt": "2026-11-14T13:51:56Z",
+            "wallSeconds": 11
+          },
+          {
+            "name": "Run node scripts/acceptance-flow.mjs",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:51:56Z",
+            "completedAt": "2026-11-14T13:52:06Z",
+            "wallSeconds": 10
+          },
+          {
+            "name": "Run node scripts/protected-probe-flow.mjs",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:52:06Z",
+            "completedAt": "2026-11-14T13:52:20Z",
+            "wallSeconds": 14
+          },
+          {
+            "name": "Run node scripts/enforcement-probe-flow.mjs",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:52:20Z",
+            "completedAt": "2026-11-14T13:52:26Z",
+            "wallSeconds": 6
+          },
+          {
+            "name": "Exercise credential-free Linux container",
+            "conclusion": "skipped",
+            "startedAt": "2026-11-14T13:52:26Z",
+            "completedAt": "2026-11-14T13:52:26Z",
+            "wallSeconds": 0
+          },
+          {
+            "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:52:26Z",
+            "completedAt": "2026-11-14T13:52:27Z",
+            "wallSeconds": 1
+          },
+          {
+            "name": "Post Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:52:27Z",
+            "completedAt": "2026-11-14T13:52:27Z",
+            "wallSeconds": 0
+          },
+          {
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:52:27Z",
+            "completedAt": "2026-11-14T13:52:28Z",
+            "wallSeconds": 1
+          },
+          {
+            "name": "Complete job",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:52:28Z",
+            "completedAt": "2026-11-14T13:52:28Z",
+            "wallSeconds": 0
+          }
+        ]
+      }
+    ],
+    "summedJobWallSeconds": 386
+  },
+  "consumer": {
+    "repository": "kanoi-y/pdd-ts",
+    "commitSha": "13c182d97a359b97a8c61a7e026d9e58ef380f4b",
+    "pr": 10,
+    "runId": 43601908169,
+    "url": "https://github.com/kanoi-y/pdd-ts/actions/runs/43601908169",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "jobId": 132468262247,
+        "name": "Build, proof and tests",
+        "conclusion": "success",
+        "startedAt": "2026-11-14T13:52:09Z",
+        "completedAt": "2026-11-14T14:00:09Z",
+        "wallSeconds": 480,
+        "steps": [
+          {
+            "name": "Set up job",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:52:10Z",
+            "completedAt": "2026-11-14T13:52:11Z",
+            "wallSeconds": 1
+          },
+          {
+            "name": "Run actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:52:11Z",
+            "completedAt": "2026-11-14T13:52:12Z",
+            "wallSeconds": 1
+          },
+          {
+            "name": "Run actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:52:12Z",
+            "completedAt": "2026-11-14T13:52:17Z",
+            "wallSeconds": 5
+          },
+          {
+            "name": "Run pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:52:17Z",
+            "completedAt": "2026-11-14T13:52:18Z",
+            "wallSeconds": 1
+          },
+          {
+            "name": "Run pnpm install --frozen-lockfile --ignore-scripts --store-dir .tools/pnpm-store",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:52:18Z",
+            "completedAt": "2026-11-14T13:52:20Z",
+            "wallSeconds": 2
+          },
+          {
+            "name": "Run node scripts/install-dafny.mjs",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:52:20Z",
+            "completedAt": "2026-11-14T13:52:21Z",
+            "wallSeconds": 1
+          },
+          {
+            "name": "Run pnpm check",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:52:21Z",
+            "completedAt": "2026-11-14T13:53:36Z",
+            "wallSeconds": 75
+          },
+          {
+            "name": "Run pnpm test:poc",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:53:36Z",
+            "completedAt": "2026-11-14T13:54:46Z",
+            "wallSeconds": 70
+          },
+          {
+            "name": "Run node scripts/demo.mjs",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:54:46Z",
+            "completedAt": "2026-11-14T13:57:00Z",
+            "wallSeconds": 134
+          },
+          {
+            "name": "Run node scripts/demo-negative.mjs",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:57:00Z",
+            "completedAt": "2026-11-14T13:57:34Z",
+            "wallSeconds": 34
+          },
+          {
+            "name": "Run node scripts/package-smoke.mjs",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T13:57:34Z",
+            "completedAt": "2026-11-14T14:00:05Z",
+            "wallSeconds": 151
+          },
+          {
+            "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T14:00:05Z",
+            "completedAt": "2026-11-14T14:00:06Z",
+            "wallSeconds": 1
+          },
+          {
+            "name": "Post Run pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T14:00:06Z",
+            "completedAt": "2026-11-14T14:00:06Z",
+            "wallSeconds": 0
+          },
+          {
+            "name": "Post Run actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T14:00:06Z",
+            "completedAt": "2026-11-14T14:00:06Z",
+            "wallSeconds": 0
+          },
+          {
+            "name": "Post Run actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T14:00:06Z",
+            "completedAt": "2026-11-14T14:00:06Z",
+            "wallSeconds": 0
+          },
+          {
+            "name": "Complete job",
+            "conclusion": "success",
+            "startedAt": "2026-11-14T14:00:06Z",
+            "completedAt": "2026-11-14T14:00:06Z",
+            "wallSeconds": 0
+          }
+        ]
+      }
+    ],
+    "footprint": {
+      "integrationFiles": 6,
+      "newWorkflowFiles": 2,
+      "newContractAndConfigFiles": 4,
+      "existingProductionFilesModified": 0,
+      "existingCiSupportFilesModified": 1,
+      "ciSupportPath": "scripts/demo.mjs",
+      "proposedHumanReviewRequests": 1,
+      "observedCurrentHeadHumanReviews": 0,
+      "liveEnrollmentCompleted": false,
+      "liveProtectedProducerCompleted": false
+    }
+  },
+  "pddSandboxExperiment": {
+    "upstream": {
+      "repository": "kanoi-y/pdd-ts",
+      "commitSha": "dd06da788bef5cfbe7f9131fe5609a61cefbd458",
+      "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+      "sourceSha256": "e6b2a26b77d004d89f33ec7ae9b50f8126357127ba584ad1c60db6e5cc783134",
+      "materializedFiles": 185
+    },
+    "isolation": "Network-disabled, non-root, read-only source/SDK container with checked cleanup",
+    "archive": {
+      "artifactId": 14116437921,
+      "zipSha256": "873289f450a65113aefbb8a6526e33b4ce3cbe99073777215cdfecb5e1137c2c",
+      "digestMatchedIndependentDownload": true,
+      "decodedEntries": 24
+    },
+    "runs": [
+      {
+        "id": "normal",
+        "durationMs": 3205,
+        "producerExit": 0,
+        "sealedArtifacts": 4,
+        "gateExit": 1,
+        "gateStatus": "incomplete",
+        "pass": 64,
+        "fail": 0
+      },
+      {
+        "id": "fake",
+        "durationMs": 3075,
+        "producerExit": 0,
+        "sealedArtifacts": 4,
+        "gateExit": 1,
+        "gateStatus": "incomplete",
+        "pass": 64,
+        "fail": 0
+      },
+      {
+        "id": "faulty",
+        "durationMs": 2252,
+        "producerExit": 1,
+        "sealedArtifacts": 0,
+        "gateExit": 1,
+        "gateStatus": "fail",
+        "pass": 1,
+        "fail": 63
+      },
+      {
+        "id": "unapproved-weakening",
+        "durationMs": 3015,
+        "producerExit": 0,
+        "sealedArtifacts": 4,
+        "gateExit": 1,
+        "gateStatus": "fail",
+        "pass": 64,
+        "fail": 0
+      }
+    ]
+  },
+  "unmeasured": [
+    "Human review/editing/administration elapsed time",
+    "Actual dedicated protected consumer producer/publisher runtime and incremental cost",
+    "Invoice charges, billable runner minutes/multipliers and CPU consumption",
+    "Controlled before/after incremental performance comparison"
+  ],
+  "decision": {
+    "status": "provisional",
+    "selected": "Continue the scoped single-function integration; keep L3 production adoption and M2 completion pending actual human review and issuer-bound enforcement.",
+    "reason": "The real64-case predicate, false-acceptance fault and unapproved expectation weakening have measured outcomes; normal local/scoped evidence still cannot supply missing external pipeline authority."
+  },
+  "limits": [
+    "GitHub API job/step timestamps are wall-clock observations with second precision, not CPU or billed minutes.",
+    "Product regression CI and the existing PDD CI are distinct workloads, not an incremental-cost comparison.",
+    "The Linux46s container step includes staging/pull, other probe scenarios and protocol verification; individual real-PDD scenario durations are separate collector/CLI measurements.",
+    "Sandbox source is immutable PDD main plus four proposed data files on ephemeral local commits, not the remote PR commit.",
+    "Public product CI and local host evidence do not authenticate a registered consumer producer, human approval or GitHub merge protection."
+  ]
+}

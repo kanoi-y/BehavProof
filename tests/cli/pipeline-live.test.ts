@@ -1,6 +1,6 @@
 import {test,expect} from 'vitest';
 import {mkdtemp,writeFile,rm} from 'node:fs/promises';import {join} from 'node:path';import {tmpdir} from 'node:os';
-import {GitHubAuthority} from '../../packages/adapter-github/src/index.js';import {hashBytes} from '../../packages/core/src/index.js';
+import {GitHubAuthority} from '../../packages/adapter-github/src/index.js';import {hash,hashBytes} from '../../packages/core/src/index.js';
 import {TrustRootSchema} from '../../packages/cli/src/trust.js';import {pipelineEvaluation} from '../../packages/cli/src/pipeline.js';
 const sha='a'.repeat(40),ci={repositoryId:'42',workflowRef:`acme/shop/.github/workflows/publisher.yml@${sha}`,runId:'8',runAttempt:2,jobId:'10',eventName:'workflow_run'};
 const workflow=`on: [workflow_run]\npermissions: {contents: read}\njobs:\n  verify:\n    runs-on: ubuntu-latest\n  gate:\n    runs-on: ubuntu-latest\n    if: always()\n    needs: [verify]\n    steps:\n      - run: behavproof check --mode gate --trust-root /opt/behavproof/root.json\n`;
@@ -19,7 +19,7 @@ async function fixture(run:(root:string,trust:any,auth:any,provider:GitHubAuthor
  }finally{await rm(root,{recursive:true,force:true});}
 }
 test('current upstream API outcomes join authenticated producer artifacts and protected workflow bytes',()=>fixture(async(root,trust,auth,provider)=>{
- expect((await pipelineEvaluation(root,trust,auth,provider)).status).toBe('pass');
+ const result=await pipelineEvaluation(root,trust,auth,provider);expect(result.status).toBe('pass');expect(result.observations.upstream.snapshotHash).toBe(hash(result.observations.upstream.value));expect(result.observations.protection.value.required_status_checks.checks).toEqual([{context:'BehavProof protected gate',app_id:77}]);
 }));
 test('a skipped upstream blocks even when all required artifacts exist',()=>fixture(async(root,trust,auth,provider)=>{
  expect((await pipelineEvaluation(root,trust,auth,provider)).status).toBe('unknown');

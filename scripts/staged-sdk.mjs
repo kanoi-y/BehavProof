@@ -3,7 +3,7 @@ import {execFileSync} from 'node:child_process';
 import {realpath,readdir,lstat} from 'node:fs/promises';
 import {resolve,relative,join,isAbsolute,sep} from 'node:path';
 import {safeRead,RelativePathSchema,HashSchema,hashBytes} from '@behavproof/core';
-const packages=['core','adapter-reports','contract-registry','contract-vitest','adapter-github','cli'];
+const packages=['core','adapter-reports','contract-registry','contract-vitest','adapter-github','adapter-quint','adapter-model-test','cli'];
 const within=(base,path)=>{const r=relative(base,path);return r===''||!isAbsolute(r)&&r!=='..'&&!r.startsWith(`..${sep}`);};
 const sourcePath=path=>['package.json','package-lock.json','tsconfig.json','tsconfig.base.json','scripts/build-artifacts.mjs','scripts/protected-probe-worker.mjs'].includes(path)||path.startsWith('templates/')||packages.some(name=>path===`packages/${name}/package.json`||path===`packages/${name}/tsconfig.json`||path.startsWith(`packages/${name}/src/`)&&path.endsWith('.ts'));
 /** Structural/private-surface check; installed dependencies must already be trusted.

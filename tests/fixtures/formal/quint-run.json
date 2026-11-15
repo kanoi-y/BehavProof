@@ -1,0 +1,76 @@
+{
+  "stage": "running",
+  "status": "ok",
+  "seed": 42,
+  "trace": [
+    {
+      "id": 0,
+      "kind": "app",
+      "opcode": "Rec",
+      "args": [
+        {
+          "id": 0,
+          "kind": "str",
+          "value": "cancelled"
+        },
+        {
+          "id": 0,
+          "kind": "bool",
+          "value": false
+        },
+        {
+          "id": 0,
+          "kind": "str",
+          "value": "mbt::actionTaken"
+        },
+        {
+          "id": 0,
+          "kind": "str",
+          "value": "init"
+        },
+        {
+          "id": 0,
+          "kind": "str",
+          "value": "mbt::nondetPicks"
+        },
+        {
+          "id": 0,
+          "kind": "app",
+          "opcode": "Rec",
+          "args": []
+        },
+        {
+          "id": 0,
+          "kind": "str",
+          "value": "paid"
+        },
+        {
+          "id": 0,
+          "kind": "bool",
+          "value": false
+        },
+        {
+          "id": 0,
+          "kind": "str",
+          "value": "refunds"
+        },
+        {
+          "id": 0,
+          "kind": "int",
+          "value": 0
+        },
+        {
+          "id": 0,
+          "kind": "str",
+          "value": "shipped"
+        },
+        {
+          "id": 0,
+          "kind": "bool",
+          "value": false
+        }
+      ]
+    }
+  ],
+  "errors": []
+}
