@@ -20,7 +20,7 @@
       "seed": "42",
       "comparisons": 180,
       "calls": 180,
-      "elapsedMs": 1416
+      "elapsedMs": 471
     },
     {
       "name": "implementation-fault",
@@ -28,7 +28,7 @@
       "errorTag": "StateMismatchError",
       "comparisons": 14,
       "calls": 14,
-      "elapsedMs": 387
+      "elapsedMs": 376
     }
   ]
 }

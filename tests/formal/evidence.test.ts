@@ -4,11 +4,12 @@ import * as core from '../../packages/core/src/index.js';
 // Each test mutates a different trust/coverage boundary; expected results are
 // literal and never calculated by the evaluator being tested.
 const digest='a'.repeat(64), changed='b'.repeat(64);
-const identity={modelHash:digest,configHash:digest,commandHash:digest,driverHash:digest,implementationHash:digest,traceHash:digest};
+const fixtureTraceHash=core.hash([{id:'trace-1',steps:['init','Pay','Refund'].map((action,index)=>({index,action,parameters:{},expected:{state:index}}))}]);
+const identity={modelHash:digest,configHash:digest,commandHash:digest,driverHash:digest,implementationHash:digest,traceHash:fixtureTraceHash};
 const model={id:'ORDER',contractId:'ORDER-MODEL',model:'specs/order.qnt',quint:{entry:'.tools/quint.js',version:'0.33.1'},properties:['refundAtMostOnce'],checks:['parse','typecheck','test','run','verify'],maxSteps:8,maxSamples:20,seed:'42',report:'.behavproof/model.json',driver:'driver.mjs',implementation:'src/order.mjs',conformanceReport:'.behavproof/conformance.json',requiredActions:['init','Pay','Refund'],minTraces:1,minComparisons:3,requireCanary:true};
 const stages=['parse','typecheck','test','run','verify'].map(stage=>({stage,status:'pass',complete:true,exitCode:0,toolVersion:'0.33.1',backend:stage==='verify'?'apalache':stage==='run'?'typescript':'quint',method:({parse:'parse',typecheck:'typecheck',test:'spec_test',run:'simulation',verify:'bounded_model_check'} as any)[stage],properties:['refundAtMostOnce'],maxSteps:8,maxSamples:20,seed:'42',diagnostics:[]}));
 const modelReport=()=>({schemaVersion:1,modelId:'ORDER',identity:{modelHash:digest,configHash:digest,commandHash:digest},stages:structuredClone(stages)});
-const replay=()=>({schemaVersion:1,modelId:'ORDER',identity:{...identity},runner:'behavproof-external-driver/1',observation:'module-functions',complete:true,diagnostics:[],traces:[{id:'trace-1',complete:true,steps:['init','Pay','Refund'].map((action,index)=>({index,action,status:'pass',expected:{state:index},actual:{state:index},comparisonCount:1,implementationCalls:1}))}],canary:{faultId:'double-refund',implementationHash:changed,originalImplementationHash:digest,driverHash:digest,traceHash:digest,observedCalls:3,comparedSteps:3,detectedMismatches:1,failure:{traceId:'trace-1',index:2,action:'Refund',implementationCalls:1,expected:{state:2},actual:{state:99}}}});
+const replay=()=>({schemaVersion:1,modelId:'ORDER',identity:{...identity},runner:'behavproof-external-driver/1',observation:'module-functions',complete:true,diagnostics:[],traces:[{id:'trace-1',complete:true,steps:['init','Pay','Refund'].map((action,index)=>({index,action,parameters:{},status:'pass',expected:{state:index},actual:{state:index},comparisonCount:1,implementationCalls:1}))}],canary:{faultId:'double-refund',implementationHash:changed,originalImplementationHash:digest,driverHash:digest,traceHash:fixtureTraceHash,observedCalls:3,comparedSteps:3,detectedMismatches:1,failure:{traceId:'trace-1',index:2,action:'Refund',implementationCalls:1,expected:{state:2},actual:{state:99}}}});
 const expected=()=>({model,identity:{...identity},authenticated:true,canaryImplementationHash:changed});
 const evaluateModel=(value:unknown,ex:unknown=expected())=>(core as any).evaluateFormalModel(value,ex);
 const evaluateReplay=(value:unknown,ex:unknown=expected())=>(core as any).evaluateModelConformance(value,ex);
@@ -94,11 +95,22 @@ describe('independent scoped formal evidence',()=>{
  });
  it('accounts for action names without inheriting object prototype counts',()=>{
   const report=replay();report.traces[0]!.steps[0]!.action='constructor';
-  const ex={...expected(),model:{...model,requiredActions:['constructor','Pay','Refund']}};
+  const traceHash=core.hash(report.traces.map(t=>({id:t.id,steps:t.steps.map(s=>({index:s.index,action:s.action,parameters:s.parameters,expected:s.expected}))})));report.identity.traceHash=traceHash;report.canary.traceHash=traceHash;
+  const ex={...expected(),identity:{...identity,traceHash},model:{...model,requiredActions:['constructor','Pay','Refund']}};
   expect(evaluateReplay(report,ex).counts.actions.constructor).toBe(1);
  });
  it('refuses source escapes, duplicate models and unreasonable bounds in opt-in configuration',()=>{
   for(const change of [{model:'../order.qnt'},{maxSteps:0},{driver:'/tmp/driver.mjs'},{report:'a/../out.json'}])expect(()=>core.parseConfig({schemaVersion:1,formal:{models:[{...model,...change}]}})).toThrow();
   expect(()=>core.parseConfig({schemaVersion:1,formal:{models:[model,model]}})).toThrow();
  });
+});
+it.each(['trace','suffix'])('rejects omitted %s inventory even above action and count floors',kind=>{
+ const report=replay();report.traces[0]!.steps.push({index:3,action:'Wait',status:'pass',expected:{state:2},actual:{state:2},comparisonCount:1,implementationCalls:1});report.traces.push({...structuredClone(report.traces[0]!),id:'trace-2'});
+ const projection=report.traces.map(t=>({id:t.id,steps:t.steps.map(s=>({index:s.index,action:s.action,parameters:{},expected:s.expected}))}));
+ const traceHash=core.hash(projection),ex={...expected(),identity:{...identity,traceHash}};report.identity.traceHash=traceHash;report.canary.traceHash=traceHash;
+ // Explicit parameters match the real ITF projection; the omitted inventory
+ // leaves all original init/Pay/Refund actions and minimum counts satisfied.
+ for(const t of report.traces)for(const s of t.steps)(s as any).parameters={};
+ if(kind==='trace')report.traces.pop();else report.traces[0]!.steps.pop();
+ expect(evaluateReplay(report,ex).status).toBe('unknown');
 });

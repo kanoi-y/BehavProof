@@ -88,3 +88,17 @@ it('does not give stale syntax/typechecking evidence a pass after model inputs c
  await prepareReports();await writeFile(join(root,'specs/order.qnt'),(await readFile(join(root,'specs/order.qnt'),'utf8'))+'\n// changed\n');commit();await seal();
  const report=JSON.parse(gate().stdout);for(const id of ['formalSyntax','formalTypecheck'])expect(report.evaluations.filter((e:any)=>e.ruleId===id).every((e:any)=>e.status!=='pass')).toBe(true);
 });
+it('runs a model-only configuration with root-level report and default trace locations',async()=>{
+ const changed=structuredClone(cfg),m=changed.formal.models[0];for(const key of ['driver','implementation','canary','conformanceReport','traceReceipt','traceDirectory'])delete m[key];m.requireCanary=false;m.report='model.json';m.checks=['parse','typecheck','test','run'];
+ await writeFile(join(root,'behavproof.config.json'),JSON.stringify(changed));const r=run(['formal','check','--model','ORDER']);expect(r.status,r.stderr+r.stdout).toBe(0);expect(JSON.parse(r.stdout).models[0].stages.every((s:any)=>s.status==='pass')).toBe(true);
+ const receipt=JSON.parse(await readFile(join(root,'model.json.traces.json'),'utf8'));expect(receipt.traces).toHaveLength(1);expect(receipt.traces[0].ref).not.toMatch(/^\.\//);expect(await readFile(join(root,receipt.traces[0].ref),'utf8')).toContain('mbt::actionTaken');
+});
+it('supports explicit replay with a canary-disabled configuration',async()=>{
+ const changed=structuredClone(cfg),m=changed.formal.models[0];delete m.canary;m.requireCanary=false;m.checks=['parse','typecheck','test','run'];await writeFile(join(root,'behavproof.config.json'),JSON.stringify(changed));await prepareReports();
+ const report=JSON.parse(await readFile(join(root,'.behavproof/conformance.json'),'utf8'));expect(report.complete).toBe(true);expect(report.canary).toBeUndefined();
+});
+it('rejects a resealed replay suffix omission even when every action and minimum count remains',async()=>{
+ const extended=structuredClone(rawTrace);extended.states.push({...structuredClone(extended.states.at(-1)!),'#meta':{index:4},'mbt::actionTaken':'Wait'});
+ const tool=join(root,'tools/quint.mjs');await writeFile(tool,(await readFile(tool,'utf8')).replace(JSON.stringify(JSON.stringify(rawTrace)),JSON.stringify(JSON.stringify(extended))));commit();
+ await prepareReports();const ref=join(root,'.behavproof/conformance.json'),report=JSON.parse(await readFile(ref,'utf8'));expect(report.traces[0].steps).toHaveLength(5);report.traces[0].steps.pop();await writeFile(ref,JSON.stringify(report));await seal();const r=gate();expect(r.status,r.stderr+r.stdout).toBe(1);expect(JSON.parse(r.stdout).formal.models[0].conformance.reasons).toContain('Replay trace/step inventory does not match authenticated trace identity');
+});

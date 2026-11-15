@@ -18,7 +18,7 @@ it.each(['parse','typecheck','test','run','verify'])('normalizes %s into its dis
  if(stage==='run')expect(result).toMatchObject({backend:'typescript',method:'simulation',maxSteps:8,maxSamples:20,seed:'42'});
 });
 it('decodes pinned real Quint CLI output fixtures',async()=>{
- for(const stage of ['parse','typecheck','test','run']){
+ for(const stage of ['parse','typecheck','test','run','verify']){
   const data=JSON.parse(await readFile(`tests/fixtures/formal/quint-${stage}.json`,'utf8'));
   expect(normalize(stage,data).status).toBe('pass');
  }
@@ -74,4 +74,7 @@ it('fails closed on timeout, missing tool, excess output and source symlinks',as
  const oversized=await adapter.runQuint({root,model,stage:'parse',outputDirectory:'out/large',maxOutputBytes:1024});expect(oversized.result.status).toBe('unknown');
  await expect(adapter.runQuint({root,model:{...model,model:'../escape.qnt'},stage:'parse',outputDirectory:'out/escape'})).rejects.toThrow();
  if(process.platform!=='win32'){await symlink(join(root,'order.qnt'),join(root,'linked.qnt'));await expect(adapter.runQuint({root,model:{...model,model:'linked.qnt'},stage:'parse',outputDirectory:'out/link'})).rejects.toThrow();}
+});
+it.each(['parse','typecheck','test','run','verify'])('never accepts malformed errors on %s output',stage=>{
+ for(const errors of [{message:'backend failed'},'backend failed',false,null])expect(normalize(stage,{...raw[stage as keyof typeof raw],errors}).status).toBe('unknown');
 });

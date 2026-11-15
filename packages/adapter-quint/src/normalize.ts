@@ -18,6 +18,7 @@ export function normalizeQuint(value:unknown,options:Options):FormalStageResult{
  if(options.toolVersion!==QUINT_VERSION||m.quint.version!==QUINT_VERSION)return done('unknown','Unsupported or mismatched Quint version; verified compatibility is 0.33.1');
  if(!object(value)||value.stage!==stages[s])return done('unknown','Missing or incompatible Quint stage output');
  const errors=value.errors;
+ if(errors!==undefined&&!Array.isArray(errors))return done('unknown','Malformed Quint error inventory');
  if(Array.isArray(errors))for(const error of errors.slice(0,20))if(object(error)){const message=typeof error.message==='string'?error.message:error.explanation;if(typeof message==='string')diagnostics.push(message.slice(0,2000));}
  if(s==='parse'||s==='typecheck'){
   if(options.exitCode===1&&Array.isArray(errors)&&errors.length)return done('fail');

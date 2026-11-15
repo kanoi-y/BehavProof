@@ -8,7 +8,7 @@
   ],
   "correct": {
     "execution": "correct",
-    "durationMs": 1989,
+    "durationMs": 1616,
     "producerExit": 0,
     "gateExit": 1,
     "status": "incomplete",
@@ -21,6 +21,14 @@
       "production_target_observed": "unknown"
     },
     "evaluations": [
+      {
+        "ruleId": "changeImpact",
+        "status": "pass"
+      },
+      {
+        "ruleId": "changeImpact",
+        "status": "pass"
+      },
       {
         "ruleId": "changedLineCoverage",
         "status": "unknown"
@@ -97,7 +105,7 @@
   },
   "refactor": {
     "execution": "refactor",
-    "durationMs": 2640,
+    "durationMs": 1815,
     "producerExit": 0,
     "gateExit": 1,
     "status": "incomplete",
@@ -110,6 +118,14 @@
       "production_target_observed": "unknown"
     },
     "evaluations": [
+      {
+        "ruleId": "changeImpact",
+        "status": "pass"
+      },
+      {
+        "ruleId": "changeImpact",
+        "status": "pass"
+      },
       {
         "ruleId": "changedLineCoverage",
         "status": "unknown"
@@ -186,7 +202,7 @@
   },
   "fake": {
     "execution": "fake",
-    "durationMs": 3818,
+    "durationMs": 1793,
     "producerExit": 0,
     "gateExit": 1,
     "status": "fail",
@@ -199,6 +215,14 @@
       "production_target_observed": "unknown"
     },
     "evaluations": [
+      {
+        "ruleId": "changeImpact",
+        "status": "pass"
+      },
+      {
+        "ruleId": "changeImpact",
+        "status": "pass"
+      },
       {
         "ruleId": "changedLineCoverage",
         "status": "unknown"
@@ -283,7 +307,7 @@
   },
   "canary": {
     "execution": "faulty",
-    "durationMs": 2926,
+    "durationMs": 1809,
     "producerExit": 1,
     "gateExit": 1,
     "status": "fail",
@@ -296,6 +320,14 @@
       "production_target_observed": "unknown"
     },
     "evaluations": [
+      {
+        "ruleId": "changeImpact",
+        "status": "pass"
+      },
+      {
+        "ruleId": "changeImpact",
+        "status": "pass"
+      },
       {
         "ruleId": "changedLineCoverage",
         "status": "unknown"
@@ -392,20 +424,20 @@
       "testState": "failed"
     },
     "subject": {
-      "prHeadSha": "ed8653e6c00103ed80b4ec0d672e2c3ef43f258b",
-      "testedCommitSha": "ed8653e6c00103ed80b4ec0d672e2c3ef43f258b",
+      "prHeadSha": "1bf692beec562549033978c5f1c3a2b2cb8441e6",
+      "testedCommitSha": "1bf692beec562549033978c5f1c3a2b2cb8441e6",
       "sourceTreeHash": "27a77f35b37e5e70372d59a56b08f86c993fd28c3455914fc4361a8beabeb17e",
       "dirty": false,
-      "baseSha": "ed8653e6c00103ed80b4ec0d672e2c3ef43f258b",
-      "diffBaseSha": "ed8653e6c00103ed80b4ec0d672e2c3ef43f258b"
+      "baseSha": "1bf692beec562549033978c5f1c3a2b2cb8441e6",
+      "diffBaseSha": "1bf692beec562549033978c5f1c3a2b2cb8441e6"
     },
-    "diagnosticArtifactSha256": "b35dd50b906f00e935791440e053c60773fb935f9fe25feb76e7f6a689a9143a",
+    "diagnosticArtifactSha256": "9d7fa59373a361f67f7a4f1548dc90eaa64b3fd357656ca2c40dc74149608759",
     "observed": "Required non-owner comparison failed once in the fresh expected-failure run; failed producer sealed no success artifacts",
     "diagnosticTrust": "Fresh diagnostic bytes observed by the controlled local host; not promoted to successful test evidence or external CI authority"
   },
   "skipped": {
     "execution": "skipped",
-    "durationMs": 2231,
+    "durationMs": 1485,
     "producerExit": 1,
     "gateExit": 1,
     "status": "fail",
@@ -418,6 +450,14 @@
       "production_target_observed": "unknown"
     },
     "evaluations": [
+      {
+        "ruleId": "changeImpact",
+        "status": "pass"
+      },
+      {
+        "ruleId": "changeImpact",
+        "status": "pass"
+      },
       {
         "ruleId": "changedLineCoverage",
         "status": "unknown"
@@ -498,7 +538,7 @@
   },
   "removed": {
     "execution": "removed",
-    "durationMs": 2604,
+    "durationMs": 1743,
     "producerExit": 0,
     "gateExit": 1,
     "status": "fail",
@@ -511,6 +551,14 @@
       "production_target_observed": "unknown"
     },
     "evaluations": [
+      {
+        "ruleId": "changeImpact",
+        "status": "pass"
+      },
+      {
+        "ruleId": "changeImpact",
+        "status": "pass"
+      },
       {
         "ruleId": "changedLineCoverage",
         "status": "unknown"

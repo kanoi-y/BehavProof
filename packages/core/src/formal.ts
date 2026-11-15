@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { canonicalJson } from './serialization.js';
+import { canonicalJson, hash } from './serialization.js';
 
 // Tool-independent contracts only. No model parser, execution engine or Driver
 // is loaded by Core. Absence of formal config preserves all v1 preset digests.
@@ -93,6 +93,8 @@ export function evaluateModelConformance(value:unknown,expected:FormalExpectatio
   const report=ModelConformanceReportSchema.parse(value);
   if(!expected.authenticated)reasons.push('Conformance report producer/subject/integrity unverified');
   if(report.modelId!==model.id||!identityMatches(report.identity,expected.identity,conformanceKeys))reasons.push('Model/Driver/implementation/config/command/trace identity mismatch');
+  const replayInputs=report.traces.map(trace=>({id:trace.id,steps:trace.steps.map(step=>({index:step.index,action:step.action,...(step.parameters===undefined?{}:{parameters:step.parameters}),expected:step.expected}))}));
+  if(hash(replayInputs)!==expected.identity.traceHash)reasons.push('Replay trace/step inventory does not match authenticated trace identity');
   if(reasons.length===0){
    if(!report.complete||report.observation!=='module-functions')reasons.push('Replay incomplete or implementation calls unobserved');
    for(const trace of report.traces){

@@ -31,6 +31,14 @@
       "originalSha256": "8d9ba270fdf70a715c536f7d719fedf215f1bc07fad96b6741f6a3a375f4cbb4",
       "fixtureSha256": "4fb0d0194f7acf59246d3a4ae20a049a63df6b9a927145d6df19b313dc2f7362",
       "transform": "Select adapter-consumed fields; omit unused IR entries, retain module names/one trace state and original result metadata."
+    },
+    {
+      "stage": "verify",
+      "backend": "apalache",
+      "backendVersion": "0.62.4",
+      "originalSha256": "eca37ccdd04b8142d2e2196efafefbfb83f3904a93a89f7143c31306976a5c6d",
+      "fixtureSha256": "7ae38211e2b4f27b77b06f42c9ec88a73e5813b6778d34dc9990b6bd6b9c976e",
+      "transform": "Select adapter-consumed stage/status/errors; omit unused IR. Actual bounded backend, maxSteps=8 and two invariants; full tool/Collector/gate execution recorded in docs/evidence/formal-flow.json."
     }
   ]
 }

@@ -9,6 +9,7 @@ const vars=['paid','shipped','cancelled','refunds','mbt::actionTaken','mbt::nond
 const state=(index:number,action:string,paid:boolean,refunds:string,cancelled=false)=>({'#meta':{index},paid,shipped:false,cancelled,refunds:{'#bigint':refunds},'mbt::actionTaken':action,'mbt::nondetPicks':{}});
 const raw=()=>({'#meta':{format:'ITF',status:'ok'},vars,states:[state(0,'init',false,'0'),state(1,'Pay',true,'0'),state(2,'Refund',true,'1'),state(3,'Cancel',true,'1',true)]});
 const driver=(impl:any)=>{let value:any;return {dispatch(action:string){if(action==='init')value=impl.initialize();else value=impl[action.toLowerCase()](value);},observe(){return {...value,refunds:BigInt(value.refunds)};}};};
+identity.traceHash=hash([adapter.readITF(raw(),{id:'trace-1'})]);
 const replay=(change={})=>adapter.replayTraces({modelId:'ORDER',identity,traces:[adapter.readITF(raw(),{id:'trace-1'})],implementation:production,createDriver:driver,...change});
 it('replays the real order module and compares every state independently',async()=>{
  const report=await replay();expect(report.complete,JSON.stringify(report)).toBe(true);expect(report.traces[0].steps.map((s:any)=>s.implementationCalls)).toEqual([1,1,1,1]);
@@ -58,7 +59,7 @@ it('preserves arbitrary integer precision and deterministic set/map state encodi
 });
 it('generates a real same-Driver/trace fault canary rather than accepting a boolean',async()=>{
  const report=await replay({canary:{faultId:'double-refund',implementationHash:faultHash,implementation:{...production,cancel:(s:any)=>({...s,cancelled:true,refunds:s.paid?s.refunds+1:0})}}});
- expect(report.canary).toMatchObject({faultId:'double-refund',originalImplementationHash:digest,implementationHash:faultHash,driverHash:digest,traceHash:digest,observedCalls:4,comparedSteps:4,detectedMismatches:1});
+ expect(report.canary).toMatchObject({faultId:'double-refund',originalImplementationHash:digest,implementationHash:faultHash,driverHash:digest,traceHash:identity.traceHash,observedCalls:4,comparedSteps:4,detectedMismatches:1});
  expect(report.canary.failure).toMatchObject({traceId:'trace-1',index:3,action:'Cancel',expected:{refunds:{'#bigint':'1'}},actual:{refunds:{'#bigint':'2'}}});
  expect(evaluateModelConformance(report,{model:{...model,requireCanary:true},identity,authenticated:true,canaryImplementationHash:faultHash}).status).toBe('pass');
 });

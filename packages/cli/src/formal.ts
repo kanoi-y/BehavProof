@@ -2,7 +2,7 @@ import {randomUUID}from'node:crypto';import{dirname,join}from'node:path';import{
 import{safeRead,safeReadJson,hash,hashBytes,canonicalJson,FormalModelConfigSchema,FormalModelReportSchema,FormalTraceReceiptSchema,ModelConformanceReportSchema,type FormalModelConfig,type FormalInputIdentity}from'@behavproof/core';
 import{config,fileList,writeScoped,exists}from'./project.js';
 export const traceReceiptRef=(m:FormalModelConfig)=>m.traceReceipt??`${m.report}.traces.json`;
-export const traceDirectory=(m:FormalModelConfig)=>m.traceDirectory??`${dirname(m.report)}/${hash({id:m.id}).slice(0,16)}.traces`;
+export const traceDirectory=(m:FormalModelConfig)=>m.traceDirectory??join(dirname(m.report),`${hash({id:m.id}).slice(0,16)}.traces`).replaceAll('\\','/');
 export const replayCommandHash=(m:FormalModelConfig)=>hash({adapter:'@behavproof/adapter-model-test/1',nodeMajor:24,model:m});
 export async function formalAdapters(){
  try{return {quint:await import('@behavproof/adapter-quint'),replay:await import('@behavproof/adapter-model-test')};}
@@ -14,7 +14,7 @@ export async function formalInputIdentity(root:string,m:FormalModelConfig){
  const driver=m.driver?hash(await sourceMap([m.driver,...(m.driverSources??[])])):undefined;
  const implementation=m.implementation?hash(await sourceMap([m.implementation,...m.implementationSources])):undefined;
  const canary=m.canary?hash(await sourceMap([m.canary.implementation,...m.implementationSources,...(m.implementation?[m.implementation]:[])])):undefined;
- return {model:{modelHash:sources.modelHash,configHash:hash(m),commandHash:quint.quintCommandHash(m)},driverHash:driver,implementationHash:implementation,canaryImplementationHash:canary};
+ return {model:{modelHash:sources.modelHash,configHash:hash(m),commandHash:quint.quintCommandHash(m)},...(driver?{driverHash:driver}:{}),...(implementation?{implementationHash:implementation}:{}),...(canary?{canaryImplementationHash:canary}:{})};
 }
 export async function formalTraceInputs(root:string,m:FormalModelConfig,readJson:(ref:string)=>Promise<unknown>=ref=>safeReadJson(root,ref),readBytes:(ref:string)=>Promise<Uint8Array>=ref=>safeRead(root,ref)){
  const {replay,quint}=await formalAdapters(),receipt=FormalTraceReceiptSchema.parse(await readJson(traceReceiptRef(m))),current=await quint.readModelInputs(root,m);
