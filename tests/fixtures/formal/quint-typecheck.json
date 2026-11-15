@@ -1,0 +1,13 @@
+{
+  "stage": "typechecking",
+  "modules": [
+    {
+      "name": "order",
+      "declarations": []
+    }
+  ],
+  "table": {},
+  "types": {},
+  "effects": {},
+  "errors": []
+}

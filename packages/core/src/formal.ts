@@ -24,7 +24,7 @@ export const FormalStageResultSchema=z.strictObject({
  stage:FormalStageSchema,status:z.enum(['pass','fail','unknown']),complete:z.boolean(),exitCode:z.number().int().nullable(),
  toolVersion:text,backend:z.enum(['quint','typescript','rust','apalache','tlc']),
  method:z.enum(['parse','typecheck','spec_test','simulation','bounded_model_check','finite_state_check']),
- properties:unique(text),maxSteps:count.optional(),maxSamples:count.optional(),seed:text.optional(),
+ properties:unique(text),maxSteps:count.optional(),maxSamples:count.optional(),seed:text.optional(),traceSeed:text.optional(),
  backendVersion:text.optional(),diagnostics:z.array(text).max(1000),stdoutHash:digest.optional(),stderrHash:digest.optional(),
  artifacts:z.array(z.strictObject({ref:path,sha256:digest})).max(1000).optional(),
 });

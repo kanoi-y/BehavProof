@@ -2579,6 +2579,10 @@
                         "type": "string",
                         "minLength": 1
                       },
+                      "traceSeed": {
+                        "type": "string",
+                        "minLength": 1
+                      },
                       "backendVersion": {
                         "type": "string",
                         "minLength": 1

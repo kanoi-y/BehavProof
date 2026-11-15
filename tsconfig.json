@@ -17,6 +17,9 @@
       "path": "./packages/adapter-github"
     },
     {
+      "path": "./packages/adapter-quint"
+    },
+    {
       "path": "./packages/cli"
     }
   ]

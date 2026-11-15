@@ -1,0 +1,10 @@
+{
+  "name": "behavproof-formal-order-example",
+  "private": true,
+  "type": "module",
+  "engines": {"node": "24.x"},
+  "devDependencies": {
+    "@informalsystems/quint": "0.33.1",
+    "@firfi/quint-connect": "2.1.0"
+  }
+}
