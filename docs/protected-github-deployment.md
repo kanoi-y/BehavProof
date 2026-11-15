@@ -1,5 +1,9 @@
 # Protected GitHub consumer integration
 
+[日本語の具体的な導入・実地検証手順](protected-github-deployment.ja.md)
+
+Rollout checkpoint (2026-11-15): consumer PR10 was squash-merged at `cbafb22fb314c6abf90e624cb5f20d71a4c98175`; the three repository variables and isolated issuer-bound branch protection are configured. PR11's registered producer and publisher verify succeeded, but final gate token creation returned HTTP422 because the installation lacks the requested App read permissions. PR12's same-name success from GitHub Actions App15368 still left GitHub merge state blocked; the disposable PR was closed without merging. See [recorded observations](evidence/github-protected-rollout.json). The complete positive control and remaining live matrix are still pending.
+
 Status: reviewed integration components; live dedicated-check acceptance remains incomplete. The product lives in [kanoi-y/BehavProof](https://github.com/kanoi-y/BehavProof); [pdd-ts](https://github.com/kanoi-y/pdd-ts) is the application under evaluation. See [repository boundaries](repository-boundaries.md). Earlier copied-source PRs7/8 were closed without merging; their approval/deployment request is superseded.
 
 ## Separate product and consumer

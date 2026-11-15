@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "repository": "kanoi-y/pdd-ts",
+  "sdkSha": "a94329e61bd0a56141b5f6c9f9156b9aa3b29b56",
+  "sourceApproval": {
+    "pr": 10,
+    "headSha": "0046da6be489e4c4d0992bb6cfa128bddebf063d",
+    "reviewer": "kanoi-y",
+    "state": "APPROVED"
+  },
+  "registrationDigest": "e236a6c6af98ad779a90e5892b35bcfbf427f41224a8c864f42ec2cff3323152",
+  "workflowSha": "cbafb22fb314c6abf90e624cb5f20d71a4c98175",
+  "protectedBranch": "behavproof-enforcement-test",
+  "requiredCheck": {
+    "context": "BehavProof protected gate",
+    "appId": 5653976
+  },
+  "variables": {
+    "count": 3,
+    "exactReadback": true
+  },
+  "cases": [
+    {
+      "name": "required-check-absent",
+      "pr": 11,
+      "headSha": "f3e4bc74e10e9238b9c35ce2a82d0c22b14e6559",
+      "baseSha": "cbafb22fb314c6abf90e624cb5f20d71a4c98175",
+      "mergeable": true,
+      "mergeState": "blocked",
+      "checks": [
+        {
+          "name": "Build, proof and tests",
+          "appId": 15368,
+          "conclusion": null
+        }
+      ],
+      "observation": "Required dedicated check absent; GitHub reports blocked before producer/publisher dispatch."
+    },
+    {
+      "name": "wrong-issuer-same-context-success",
+      "pr": 12,
+      "headSha": "644b6cac8782f2faf88a5eb1cfec7e97d0acaf04",
+      "baseSha": "cbafb22fb314c6abf90e624cb5f20d71a4c98175",
+      "mergeState": "blocked",
+      "checks": [
+        {
+          "id": 132641991092,
+          "name": "BehavProof protected gate",
+          "appId": 15368,
+          "conclusion": "success"
+        },
+        {
+          "id": 132641968225,
+          "name": "BehavProof protected gate",
+          "appId": 15368,
+          "conclusion": "success"
+        }
+      ],
+      "result": "blocked",
+      "observation": "Both GitHub Actions App15368 checks succeeded with the required context name; no App5653976 check exists and GitHub reports blocked."
+    }
+  ],
+  "positive": {
+    "pr": 11,
+    "headSha": "f3e4bc74e10e9238b9c35ce2a82d0c22b14e6559",
+    "producer": {
+      "runId": 43658241548,
+      "attempt": 1,
+      "jobId": 132641529472,
+      "conclusion": "success",
+      "artifactId": 14138033843,
+      "archiveSha256": "525e7cf37173b0e83ed22f5b0fd6aaf6820d48d02a377a5c60fea1651583c343",
+      "archiveBytes": 19139,
+      "independentDownloadVerified": true,
+      "evidenceSummary": {
+        "ordinaryTests": {
+          "numTotalTests": 64,
+          "numPassedTests": 64,
+          "numFailedTests": 0,
+          "success": true
+        },
+        "claims": {
+          "target_observation:pass": 64,
+          "canary:pass": 64
+        },
+        "fault": {
+          "targetRef": "src/verification/acceptance.ts#canAcceptEvidence",
+          "originalSha256": "e6b2a26b77d004d89f33ec7ae9b50f8126357127ba584ad1c60db6e5cc783134",
+          "mutatedSha256": "98f7df9a43d99aea2f872ce8eaf10d8411bda33f3077f19c5d299e186b435cc5",
+          "description": "Replace the selected function body with the host-selected distinct JSON fault value"
+        }
+      }
+    },
+    "publisher": {
+      "runId": 43658317804,
+      "attempt": 1,
+      "verify": {
+        "jobId": 132641768363,
+        "conclusion": "success"
+      },
+      "gate": {
+        "jobId": 132641875912,
+        "conclusion": "failure",
+        "tokenCreation": "HTTP422: requested permissions not granted to this installation",
+        "evaluation": "skipped",
+        "publication": "skipped"
+      }
+    },
+    "status": "incomplete",
+    "reason": "Existing App installation has not yet accepted Actions/Administration read permissions."
+  },
+  "status": "incomplete",
+  "remaining": [
+    "App Actions/Administration read grants and installation acceptance",
+    "positive dedicated App success and merge eligibility",
+    "skip/failure/cancel/missing-artifact/stale-attempt/candidate-workflow-change/unapproved-weakening live cases",
+    "incremental CI cost and adoption decision"
+  ]
+}
