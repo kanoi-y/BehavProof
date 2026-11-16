@@ -1,0 +1,18 @@
+{
+  "unsafe-official-link": {
+    "uri": "file:///tmp/suteco-study-only",
+    "schemaAccepted": true,
+    "importAccepted": true,
+    "importError": null,
+    "storedOfficialUrl": "file:///tmp/suteco-study-only",
+    "renderedOfficialUrl": true,
+    "openedUris": [
+      "file:///tmp/suteco-study-only"
+    ],
+    "sqliteVersion": [
+      {
+        "version": "3.49.2"
+      }
+    ]
+  }
+}

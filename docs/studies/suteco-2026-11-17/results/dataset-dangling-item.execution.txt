@@ -1,0 +1,12 @@
+PASS validation/repros/dataset.spec.ts
+  BehavProof original-code municipality dataset probes
+    ✓ dataset-dangling-item: unknown item references are rejected before any writes (17 ms)
+    ○ skipped dataset-valid: valid municipality data imports through the actual database stack
+    ○ skipped dataset-cross-municipality: an A dataset must reject a B rule and preserve B data
+
+Test Suites: 1 passed, 1 total
+Tests:       2 skipped, 1 passed, 3 total
+Snapshots:   0 total
+Time:        0.632 s, estimated 1 s
+Ran all test suites within paths "validation/repros/dataset.spec.ts".
+Test results written to: .behavproof/study-calls/dataset-dangling-item-Lw5SC1/jest.json

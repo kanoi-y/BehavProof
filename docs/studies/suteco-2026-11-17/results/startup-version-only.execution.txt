@@ -1,0 +1,31 @@
+FAIL validation/repros/startup-state.spec.ts
+  ✕ startup-version-only: updated bundled version reaches DB, store, persistence and settings (384 ms)
+  ○ skipped startup-content-change-control: changed content and version refresh through the real provider
+  ○ skipped municipality-late-load: same-turn subsequent selection and clearing survive an earlier load
+  ○ skipped municipality-event-turn-control: a later event-turn selection survives the real synchronous SQLite load
+
+  ● startup-version-only: updated bundled version reaches DB, store, persistence and settings
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: "2025-09-01"
+    Received: "2000-01-01"
+
+       96 |   const actual = await startupObservation('startup-version-only', false);
+       97 |   expect(actual.previousDigest).toBe(actual.bundledDigest);
+    >  98 |   expect(actual.storedMunicipality?.version).toBe(actual.bundledMunicipality.version);
+          |                                              ^
+       99 |   expect(actual.store.datasetVersion).toBe(actual.bundledMunicipality.version);
+      100 |   expect(actual.persistedState.datasetVersion).toBe(actual.bundledMunicipality.version);
+      101 |   expect(actual.displayedVersion).toBe(actual.bundledMunicipality.version);
+
+      at Object.toBe (validation/repros/startup-state.spec.ts:98:46)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 3 skipped, 4 total
+Snapshots:   0 total
+Time:        1.04 s, estimated 2 s
+Ran all test suites within paths "validation/repros/startup-state.spec.ts".
+Test results written to: .behavproof/study-calls/startup-version-only-CFCY9R/jest.json

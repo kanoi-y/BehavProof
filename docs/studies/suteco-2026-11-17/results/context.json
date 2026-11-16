@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-17",
+  "baseline": {
+    "command": "Node20.19.4 jest --runInBand --json",
+    "testFiles": 32,
+    "passed": 181,
+    "failed": 0,
+    "jestReportedSeconds": 14.761,
+    "artifact": "baseline-jest.json",
+    "typecheckExit": 0,
+    "provenance": "Recorded before additional observation scenarios; one baseline run, not part of the three timing repetitions."
+  },
+  "sameAssertionsWithoutBehavProof": {
+    "node": "v20.19.4",
+    "command": [
+      "node",
+      "node_modules/jest/bin/jest.js",
+      "--runInBand",
+      "--testMatch",
+      "**/validation/repros/*.spec.ts",
+      "--runTestsByPath",
+      "validation/repros/dataset.spec.ts",
+      "validation/repros/startup-state.spec.ts",
+      "validation/repros/links.spec.ts",
+      "--testNamePattern",
+      "^(?!.*municipality-late-load:).*",
+      "--json",
+      "--outputFile",
+      "/Users/kanoi/Documents/ChatGPT/BehavProof/docs/studies/suteco-2026-11-17/results/added-jest.json"
+    ],
+    "exitCode": 1,
+    "seconds": 3.339011458,
+    "selectedTests": 8,
+    "passed": 5,
+    "failed": 3,
+    "excludedExploratoryTests": 1
+  },
+  "adoptionFootprint": {
+    "authoredFiles": 6,
+    "authoredLines": 626,
+    "reproductionTestLines": 447,
+    "assets": [
+      {
+        "path": "measure.mjs",
+        "lines": 111,
+        "sha256": "a26ecd7a0ba4cbec0327365c8d96b053df9c945e1a883e1d808caed7d30155ad"
+      },
+      {
+        "path": "overlay/validation/target.mjs",
+        "lines": 66,
+        "sha256": "347a810ed5bbabd518615d933a1f27cf00e0178b3448fae28b9820bb7036f3c9"
+      },
+      {
+        "path": "overlay/validation/driver.mjs",
+        "lines": 2,
+        "sha256": "f794290afdbddd2823b847ccb8531730c403cf4a3c7b191ed1aa27d142d76b7a"
+      },
+      {
+        "path": "overlay/validation/repros/dataset.spec.ts.fixture",
+        "lines": 161,
+        "sha256": "9b8f713b403adb4c13a81df098603fa2bcabf5de03dd5e05e01793220402f9bd"
+      },
+      {
+        "path": "overlay/validation/repros/links.spec.ts.fixture",
+        "lines": 114,
+        "sha256": "51e20e4fd312b166de9580bb8a38c1e98ca47d43601ac73a2b87dbd3043e96a3"
+      },
+      {
+        "path": "overlay/validation/repros/startup-state.spec.ts.fixture",
+        "lines": 172,
+        "sha256": "cc93f0713f57b31ecd59af02438ee32e9cca692b58291d0da60d0a0dacc6a849"
+      }
+    ],
+    "generatedConsumerFiles": 9,
+    "originalProductOrExistingTestFilesChanged": 0,
+    "note": "Includes the human-authored repro scenarios and study glue; generated config/contracts/toolchain not counted as authored lines. Does not measure human time."
+  },
+  "measuredSDK": {
+    "commit": "d15d08d961712877bd318245fb5d068581d890f4",
+    "cacheCorrectionIncluded": true
+  },
+  "recordedSubject": {
+    "sourceTreeHash": "c42a5de276a949267f43aafe9cebd2a849b5dc2c5e0e8364b1d7edb1a90e537c",
+    "testedCommitSha": "f5f8c9a52e2b339f4ea6e1ac5376c026ddc828b0"
+  },
+  "selectedInputFiles": 103,
+  "interpretation": "Additional conditions expose three original-code issues also caught by the same Jest assertions alone. No causal discovery advantage or whole-project recall/false-positive estimate is established."
+}

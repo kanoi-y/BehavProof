@@ -1,0 +1,257 @@
+{
+  "id": "SUTECO-STUDY",
+  "intent": "Measure selected original-code municipality, startup and reference-link conditions.",
+  "risk": "basic",
+  "cases": [
+    {
+      "id": "study-inventory",
+      "input": null,
+      "expected": null
+    }
+  ],
+  "assurance": {
+    "feature": {
+      "id": "suteco-municipality-study",
+      "entrypoints": [
+        "dataset import",
+        "application startup and settings",
+        "item detail reference link"
+      ]
+    },
+    "checks": [
+      {
+        "id": "dataset-cross-municipality",
+        "method": "example",
+        "targetRef": "validation/target.mjs#observe",
+        "cases": [
+          {
+            "id": "dataset-cross-municipality",
+            "input": {
+              "id": "dataset-cross-municipality"
+            },
+            "expected": {
+              "schemaAccepted": false,
+              "importRejected": true,
+              "foreignRule": {
+                "municipalityId": "city-b",
+                "itemId": "city-b-item",
+                "categoryName": "city-b category",
+                "instructions": "city-b instructions"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "dataset-valid",
+        "method": "example",
+        "targetRef": "validation/target.mjs#observe",
+        "cases": [
+          {
+            "id": "dataset-valid",
+            "input": {
+              "id": "dataset-valid"
+            },
+            "expected": {
+              "schemaAccepted": true,
+              "importRejected": false,
+              "counts": {
+                "municipalities": 1,
+                "items": 1,
+                "rules": 1
+              },
+              "storedItemId": "valid-city-item"
+            }
+          }
+        ]
+      },
+      {
+        "id": "dataset-dangling-item",
+        "method": "example",
+        "targetRef": "validation/target.mjs#observe",
+        "cases": [
+          {
+            "id": "dataset-dangling-item",
+            "input": {
+              "id": "dataset-dangling-item"
+            },
+            "expected": {
+              "schemaAccepted": false,
+              "importRejected": true,
+              "unchanged": true
+            }
+          }
+        ]
+      },
+      {
+        "id": "startup-version-only",
+        "method": "example",
+        "targetRef": "validation/target.mjs#observe",
+        "cases": [
+          {
+            "id": "startup-version-only",
+            "input": {
+              "id": "startup-version-only"
+            },
+            "expected": {
+              "database": "2025-09-01",
+              "store": "2025-09-01",
+              "persistence": "2025-09-01",
+              "display": "2025-09-01"
+            }
+          }
+        ]
+      },
+      {
+        "id": "startup-content-change-control",
+        "method": "example",
+        "targetRef": "validation/target.mjs#observe",
+        "cases": [
+          {
+            "id": "startup-content-change-control",
+            "input": {
+              "id": "startup-content-change-control"
+            },
+            "expected": {
+              "database": "2025-09-01",
+              "store": "2025-09-01",
+              "persistence": "2025-09-01",
+              "display": "2025-09-01"
+            }
+          }
+        ]
+      },
+      {
+        "id": "unsafe-official-link",
+        "method": "example",
+        "targetRef": "validation/target.mjs#observe",
+        "cases": [
+          {
+            "id": "unsafe-official-link",
+            "input": {
+              "id": "unsafe-official-link"
+            },
+            "expected": {
+              "openedUris": []
+            }
+          }
+        ]
+      },
+      {
+        "id": "safe-official-link",
+        "method": "example",
+        "targetRef": "validation/target.mjs#observe",
+        "cases": [
+          {
+            "id": "safe-official-link",
+            "input": {
+              "id": "safe-official-link"
+            },
+            "expected": {
+              "schemaAccepted": true,
+              "importAccepted": true,
+              "renderedOfficialUrl": true,
+              "openedUris": [
+                "https://example.invalid/suteco-study-only"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "municipality-event-turn-control",
+        "method": "example",
+        "targetRef": "validation/target.mjs#observe",
+        "cases": [
+          {
+            "id": "municipality-event-turn-control",
+            "input": {
+              "id": "municipality-event-turn-control"
+            },
+            "expected": {
+              "events": [
+                "load-A-resolved",
+                "select-B-in-later-event-turn"
+              ],
+              "selectedMunicipalityId": "probe-city-b"
+            }
+          }
+        ]
+      }
+    ],
+    "conditions": [
+      {
+        "id": "dataset-cross-municipality",
+        "kind": "postcondition",
+        "statement": "A municipality dataset rejects foreign rules and preserves the foreign municipality rule.",
+        "checks": [
+          "dataset-cross-municipality"
+        ],
+        "requiredFaults": []
+      },
+      {
+        "id": "dataset-valid",
+        "kind": "postcondition",
+        "statement": "A valid dataset imports the declared municipality, item and rule.",
+        "checks": [
+          "dataset-valid"
+        ],
+        "requiredFaults": []
+      },
+      {
+        "id": "dataset-dangling-item",
+        "kind": "postcondition",
+        "statement": "An unknown item reference is rejected without changing existing state.",
+        "checks": [
+          "dataset-dangling-item"
+        ],
+        "requiredFaults": []
+      },
+      {
+        "id": "startup-version-only",
+        "kind": "postcondition",
+        "statement": "A version-only bundled update reaches the database, selected state, persistence and settings display.",
+        "checks": [
+          "startup-version-only"
+        ],
+        "requiredFaults": []
+      },
+      {
+        "id": "startup-content-change-control",
+        "kind": "postcondition",
+        "statement": "Changed content and version refresh correctly through the original startup flow.",
+        "checks": [
+          "startup-content-change-control"
+        ],
+        "requiredFaults": []
+      },
+      {
+        "id": "unsafe-official-link",
+        "kind": "postcondition",
+        "statement": "A local-file reference URI is not handed to the native link opener.",
+        "checks": [
+          "unsafe-official-link"
+        ],
+        "requiredFaults": []
+      },
+      {
+        "id": "safe-official-link",
+        "kind": "postcondition",
+        "statement": "An HTTPS reference survives validation/storage and is handed to the recorded opener.",
+        "checks": [
+          "safe-official-link"
+        ],
+        "requiredFaults": []
+      },
+      {
+        "id": "municipality-event-turn-control",
+        "kind": "postcondition",
+        "statement": "A later event-turn municipality selection remains selected after a synchronous SQLite load.",
+        "checks": [
+          "municipality-event-turn-control"
+        ],
+        "requiredFaults": []
+      }
+    ]
+  }
+}

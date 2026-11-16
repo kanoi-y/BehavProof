@@ -1,0 +1,231 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-17",
+  "repository": "https://github.com/kanoi-y/suteco",
+  "sutecoCommit": "79bbcaab65539a1f5d080a98710e52bf06764283",
+  "localStudyCommit": "f5f8c9a52e2b339f4ea6e1ac5376c026ddc828b0",
+  "sdkCommit": "d15d08d961712877bd318245fb5d068581d890f4",
+  "productionSourceUnchanged": true,
+  "nodeForSuteco": "v20.19.4",
+  "nodeForBehavProof": "v24.14.1",
+  "scenarios": [
+    {
+      "id": "dataset-cross-municipality",
+      "statement": "A municipality dataset rejects foreign rules and preserves the foreign municipality rule.",
+      "confirmedDefect": "S1"
+    },
+    {
+      "id": "dataset-valid",
+      "statement": "A valid dataset imports the declared municipality, item and rule.",
+      "positiveControl": true
+    },
+    {
+      "id": "dataset-dangling-item",
+      "statement": "An unknown item reference is rejected without changing existing state.",
+      "positiveControl": true
+    },
+    {
+      "id": "startup-version-only",
+      "statement": "A version-only bundled update reaches the database, selected state, persistence and settings display.",
+      "confirmedDefect": "S2"
+    },
+    {
+      "id": "startup-content-change-control",
+      "statement": "Changed content and version refresh correctly through the original startup flow.",
+      "positiveControl": true
+    },
+    {
+      "id": "unsafe-official-link",
+      "statement": "A local-file reference URI is not handed to the native link opener.",
+      "confirmedDefect": "S3"
+    },
+    {
+      "id": "safe-official-link",
+      "statement": "An HTTPS reference survives validation/storage and is handed to the recorded opener.",
+      "positiveControl": true
+    },
+    {
+      "id": "municipality-event-turn-control",
+      "statement": "A later event-turn municipality selection remains selected after a synchronous SQLite load.",
+      "positiveControl": true
+    }
+  ],
+  "conditionCounts": {
+    "total": 8,
+    "pass": 5,
+    "fail": 3,
+    "unknown": 0
+  },
+  "confirmedIndependentDefects": 3,
+  "excludedObservation": "Same-event-turn municipality API race reproduced, but application reachability not established; excluded from defect count.",
+  "timing": {
+    "repetitions": 3,
+    "seconds": [
+      13.370930334,
+      13.292939084,
+      13.250578749999997
+    ],
+    "medianSeconds": 13.292939084
+  },
+  "trials": [
+    {
+      "durationSeconds": 13.370930334,
+      "conditions": [
+        {
+          "id": "dataset-cross-municipality",
+          "status": "fail"
+        },
+        {
+          "id": "dataset-valid",
+          "status": "pass"
+        },
+        {
+          "id": "dataset-dangling-item",
+          "status": "pass"
+        },
+        {
+          "id": "startup-version-only",
+          "status": "fail"
+        },
+        {
+          "id": "startup-content-change-control",
+          "status": "pass"
+        },
+        {
+          "id": "unsafe-official-link",
+          "status": "fail"
+        },
+        {
+          "id": "safe-official-link",
+          "status": "pass"
+        },
+        {
+          "id": "municipality-event-turn-control",
+          "status": "pass"
+        }
+      ],
+      "manifestValidation": {
+        "artifactIntegrity": "pass",
+        "producerTrust": "pass",
+        "subjectMatch": "pass",
+        "executionStatus": "pass",
+        "reasons": []
+      },
+      "manifestHash": "a5a48ad14562a2e461f6b4d60bdd613d6ea25eefb37e939681f49b6ed8354e43",
+      "reportHash": "f6dd27f142b088bf82bfe072eded67c22029061817ba5e0a6ff40286943fd3eb"
+    },
+    {
+      "durationSeconds": 13.292939084,
+      "conditions": [
+        {
+          "id": "dataset-cross-municipality",
+          "status": "fail"
+        },
+        {
+          "id": "dataset-valid",
+          "status": "pass"
+        },
+        {
+          "id": "dataset-dangling-item",
+          "status": "pass"
+        },
+        {
+          "id": "startup-version-only",
+          "status": "fail"
+        },
+        {
+          "id": "startup-content-change-control",
+          "status": "pass"
+        },
+        {
+          "id": "unsafe-official-link",
+          "status": "fail"
+        },
+        {
+          "id": "safe-official-link",
+          "status": "pass"
+        },
+        {
+          "id": "municipality-event-turn-control",
+          "status": "pass"
+        }
+      ],
+      "manifestValidation": {
+        "artifactIntegrity": "pass",
+        "producerTrust": "pass",
+        "subjectMatch": "pass",
+        "executionStatus": "pass",
+        "reasons": []
+      },
+      "manifestHash": "328aa5cb5ac4ae0b57d349df5d06ccd6907ece0a4f20de841755a7024de3d2ed",
+      "reportHash": "21c97b1b85b6158b34e453a92932e237b21714661ff128d536dad41d4d032862"
+    },
+    {
+      "durationSeconds": 13.250578749999997,
+      "conditions": [
+        {
+          "id": "dataset-cross-municipality",
+          "status": "fail"
+        },
+        {
+          "id": "dataset-valid",
+          "status": "pass"
+        },
+        {
+          "id": "dataset-dangling-item",
+          "status": "pass"
+        },
+        {
+          "id": "startup-version-only",
+          "status": "fail"
+        },
+        {
+          "id": "startup-content-change-control",
+          "status": "pass"
+        },
+        {
+          "id": "unsafe-official-link",
+          "status": "fail"
+        },
+        {
+          "id": "safe-official-link",
+          "status": "pass"
+        },
+        {
+          "id": "municipality-event-turn-control",
+          "status": "pass"
+        }
+      ],
+      "manifestValidation": {
+        "artifactIntegrity": "pass",
+        "producerTrust": "pass",
+        "subjectMatch": "pass",
+        "executionStatus": "pass",
+        "reasons": []
+      },
+      "manifestHash": "3be4e48c9127e49ff2469235830950081b4674924a61c65cab861bfcd89729f4",
+      "reportHash": "371ff5b46bedf8a857daefbd06332d035891c6f620346a36738234cffd5ca9b7"
+    }
+  ],
+  "cliProjectDetection": {
+    "support": "unsupported",
+    "evidence": [
+      "package.json",
+      "pnpm-lock.yaml",
+      ".github/workflows",
+      "git",
+      "Node.js project"
+    ],
+    "reasons": [
+      "Vitest dependency not established; other runners are unsupported",
+      "Selected test script uses an unsupported or unverified runner"
+    ]
+  },
+  "authority": "Explicitly selected local host validates Collector bytes, current input hashes and reviewed condition expectations through public APIs. Not live external approval or production gate certification.",
+  "limits": [
+    "Hand-authored requirements and code-reading hypotheses; not autonomous discovery or whole-repository recall.",
+    "Actual original modules/SQL/React through suteco Jest native-test adapters; no physical device/camera/Gemini or actual URI opening.",
+    "Jest remains unsupported by the standard CLI project gate. This study uses explicit assurance execution and the public evaluator/map APIs, without relabeling Jest as Vitest.",
+    "No injected fault is counted as an existing bug. No fix or configuration was pushed to suteco."
+  ]
+}

@@ -1,0 +1,43 @@
+## Feature assurance map
+
+Assurance declarations and independently verified evaluations\. Missing or unverified evidence is unknown\.
+
+Assurance limits: Undeclared requirements and unlisted dependencies are outside assurance scope\. Result authentication, current source identity and observation integrity must be established by the caller\. A declaration or raw report is not proof\.
+
+### suteco\-municipality\-study / SUTECO\-STUDY / revision 93c382d4e83ee5f0b9bc75f86a4b631f5ba0d2e91f040d6e839519262b374099: fail
+
+Source: validation/contracts\.json; key: \[&quot;SUTECO\-STUDY&quot;,&quot;93c382d4e83ee5f0b9bc75f86a4b631f5ba0d2e91f040d6e839519262b374099&quot;\]; entrypoints: \[&quot;dataset import&quot;,&quot;application startup and settings&quot;,&quot;item detail reference link&quot;\]
+
+Reasons: \[\]; Evidence: \[&quot;\.behavproof/collected/suteco\-study\-1794869385670\-0/assurance\.json&quot;\]
+
+Condition dataset\-cross\-municipality \(postcondition\): fail; A municipality dataset rejects foreign rules and preserves the foreign municipality rule\.; checks: \[&quot;dataset\-cross\-municipality&quot;\]; reasons: \[\]
+
+Condition dataset\-valid \(postcondition\): pass; A valid dataset imports the declared municipality, item and rule\.; checks: \[&quot;dataset\-valid&quot;\]; reasons: \[\]
+
+Condition dataset\-dangling\-item \(postcondition\): pass; An unknown item reference is rejected without changing existing state\.; checks: \[&quot;dataset\-dangling\-item&quot;\]; reasons: \[\]
+
+Condition startup\-version\-only \(postcondition\): fail; A version\-only bundled update reaches the database, selected state, persistence and settings display\.; checks: \[&quot;startup\-version\-only&quot;\]; reasons: \[\]
+
+Condition startup\-content\-change\-control \(postcondition\): pass; Changed content and version refresh correctly through the original startup flow\.; checks: \[&quot;startup\-content\-change\-control&quot;\]; reasons: \[\]
+
+Condition unsafe\-official\-link \(postcondition\): fail; A local\-file reference URI is not handed to the native link opener\.; checks: \[&quot;unsafe\-official\-link&quot;\]; reasons: \[\]
+
+Condition safe\-official\-link \(postcondition\): pass; An HTTPS reference survives validation/storage and is handed to the recorded opener\.; checks: \[&quot;safe\-official\-link&quot;\]; reasons: \[\]
+
+Condition municipality\-event\-turn\-control \(postcondition\): pass; A later event\-turn municipality selection remains selected after a synchronous SQLite load\.; checks: \[&quot;municipality\-event\-turn\-control&quot;\]; reasons: \[\]
+
+Check dataset\-cross\-municipality \(example\): fail; comparisons: 1; implementation calls: 1; scope: \{&quot;cases&quot;:\[\{&quot;expected&quot;:\{&quot;foreignRule&quot;:\{&quot;categoryName&quot;:&quot;city\-b category&quot;,&quot;instructions&quot;:&quot;city\-b instructions&quot;,&quot;itemId&quot;:&quot;city\-b\-item&quot;,&quot;municipalityId&quot;:&quot;city\-b&quot;\},&quot;importRejected&quot;:true,&quot;schemaAccepted&quot;:false\},&quot;id&quot;:&quot;dataset\-cross\-municipality&quot;,&quot;input&quot;:\{&quot;id&quot;:&quot;dataset\-cross\-municipality&quot;\}\}\],&quot;id&quot;:&quot;dataset\-cross\-municipality&quot;,&quot;method&quot;:&quot;example&quot;,&quot;targetRef&quot;:&quot;validation/target\.mjs\#observe&quot;\}; reasons: \[\]; limits: Only declared inputs and observed target comparisons are covered\.
+
+Check dataset\-valid \(example\): pass; comparisons: 1; implementation calls: 1; scope: \{&quot;cases&quot;:\[\{&quot;expected&quot;:\{&quot;counts&quot;:\{&quot;items&quot;:1,&quot;municipalities&quot;:1,&quot;rules&quot;:1\},&quot;importRejected&quot;:false,&quot;schemaAccepted&quot;:true,&quot;storedItemId&quot;:&quot;valid\-city\-item&quot;\},&quot;id&quot;:&quot;dataset\-valid&quot;,&quot;input&quot;:\{&quot;id&quot;:&quot;dataset\-valid&quot;\}\}\],&quot;id&quot;:&quot;dataset\-valid&quot;,&quot;method&quot;:&quot;example&quot;,&quot;targetRef&quot;:&quot;validation/target\.mjs\#observe&quot;\}; reasons: \[\]; limits: Only declared inputs and observed target comparisons are covered\.
+
+Check dataset\-dangling\-item \(example\): pass; comparisons: 1; implementation calls: 1; scope: \{&quot;cases&quot;:\[\{&quot;expected&quot;:\{&quot;importRejected&quot;:true,&quot;schemaAccepted&quot;:false,&quot;unchanged&quot;:true\},&quot;id&quot;:&quot;dataset\-dangling\-item&quot;,&quot;input&quot;:\{&quot;id&quot;:&quot;dataset\-dangling\-item&quot;\}\}\],&quot;id&quot;:&quot;dataset\-dangling\-item&quot;,&quot;method&quot;:&quot;example&quot;,&quot;targetRef&quot;:&quot;validation/target\.mjs\#observe&quot;\}; reasons: \[\]; limits: Only declared inputs and observed target comparisons are covered\.
+
+Check startup\-version\-only \(example\): fail; comparisons: 1; implementation calls: 1; scope: \{&quot;cases&quot;:\[\{&quot;expected&quot;:\{&quot;database&quot;:&quot;2025\-09\-01&quot;,&quot;display&quot;:&quot;2025\-09\-01&quot;,&quot;persistence&quot;:&quot;2025\-09\-01&quot;,&quot;store&quot;:&quot;2025\-09\-01&quot;\},&quot;id&quot;:&quot;startup\-version\-only&quot;,&quot;input&quot;:\{&quot;id&quot;:&quot;startup\-version\-only&quot;\}\}\],&quot;id&quot;:&quot;startup\-version\-only&quot;,&quot;method&quot;:&quot;example&quot;,&quot;targetRef&quot;:&quot;validation/target\.mjs\#observe&quot;\}; reasons: \[\]; limits: Only declared inputs and observed target comparisons are covered\.
+
+Check startup\-content\-change\-control \(example\): pass; comparisons: 1; implementation calls: 1; scope: \{&quot;cases&quot;:\[\{&quot;expected&quot;:\{&quot;database&quot;:&quot;2025\-09\-01&quot;,&quot;display&quot;:&quot;2025\-09\-01&quot;,&quot;persistence&quot;:&quot;2025\-09\-01&quot;,&quot;store&quot;:&quot;2025\-09\-01&quot;\},&quot;id&quot;:&quot;startup\-content\-change\-control&quot;,&quot;input&quot;:\{&quot;id&quot;:&quot;startup\-content\-change\-control&quot;\}\}\],&quot;id&quot;:&quot;startup\-content\-change\-control&quot;,&quot;method&quot;:&quot;example&quot;,&quot;targetRef&quot;:&quot;validation/target\.mjs\#observe&quot;\}; reasons: \[\]; limits: Only declared inputs and observed target comparisons are covered\.
+
+Check unsafe\-official\-link \(example\): fail; comparisons: 1; implementation calls: 1; scope: \{&quot;cases&quot;:\[\{&quot;expected&quot;:\{&quot;openedUris&quot;:\[\]\},&quot;id&quot;:&quot;unsafe\-official\-link&quot;,&quot;input&quot;:\{&quot;id&quot;:&quot;unsafe\-official\-link&quot;\}\}\],&quot;id&quot;:&quot;unsafe\-official\-link&quot;,&quot;method&quot;:&quot;example&quot;,&quot;targetRef&quot;:&quot;validation/target\.mjs\#observe&quot;\}; reasons: \[\]; limits: Only declared inputs and observed target comparisons are covered\.
+
+Check safe\-official\-link \(example\): pass; comparisons: 1; implementation calls: 1; scope: \{&quot;cases&quot;:\[\{&quot;expected&quot;:\{&quot;importAccepted&quot;:true,&quot;openedUris&quot;:\[&quot;https://example\.invalid/suteco\-study\-only&quot;\],&quot;renderedOfficialUrl&quot;:true,&quot;schemaAccepted&quot;:true\},&quot;id&quot;:&quot;safe\-official\-link&quot;,&quot;input&quot;:\{&quot;id&quot;:&quot;safe\-official\-link&quot;\}\}\],&quot;id&quot;:&quot;safe\-official\-link&quot;,&quot;method&quot;:&quot;example&quot;,&quot;targetRef&quot;:&quot;validation/target\.mjs\#observe&quot;\}; reasons: \[\]; limits: Only declared inputs and observed target comparisons are covered\.
+
+Check municipality\-event\-turn\-control \(example\): pass; comparisons: 1; implementation calls: 1; scope: \{&quot;cases&quot;:\[\{&quot;expected&quot;:\{&quot;events&quot;:\[&quot;load\-A\-resolved&quot;,&quot;select\-B\-in\-later\-event\-turn&quot;\],&quot;selectedMunicipalityId&quot;:&quot;probe\-city\-b&quot;\},&quot;id&quot;:&quot;municipality\-event\-turn\-control&quot;,&quot;input&quot;:\{&quot;id&quot;:&quot;municipality\-event\-turn\-control&quot;\}\}\],&quot;id&quot;:&quot;municipality\-event\-turn\-control&quot;,&quot;method&quot;:&quot;example&quot;,&quot;targetRef&quot;:&quot;validation/target\.mjs\#observe&quot;\}; reasons: \[\]; limits: Only declared inputs and observed target comparisons are covered\.

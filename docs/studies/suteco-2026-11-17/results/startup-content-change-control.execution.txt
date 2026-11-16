@@ -1,0 +1,12 @@
+PASS validation/repros/startup-state.spec.ts
+  ✓ startup-content-change-control: changed content and version refresh through the real provider (393 ms)
+  ○ skipped startup-version-only: updated bundled version reaches DB, store, persistence and settings
+  ○ skipped municipality-late-load: same-turn subsequent selection and clearing survive an earlier load
+  ○ skipped municipality-event-turn-control: a later event-turn selection survives the real synchronous SQLite load
+
+Test Suites: 1 passed, 1 total
+Tests:       3 skipped, 1 passed, 4 total
+Snapshots:   0 total
+Time:        1.03 s, estimated 2 s
+Ran all test suites within paths "validation/repros/startup-state.spec.ts".
+Test results written to: .behavproof/study-calls/startup-content-change-control-1Njl7N/jest.json

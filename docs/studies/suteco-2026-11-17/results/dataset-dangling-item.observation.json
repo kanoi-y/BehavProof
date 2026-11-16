@@ -1,0 +1,92 @@
+{
+  "caseId": "dataset-dangling-item",
+  "actual": {
+    "input": {
+      "municipality": {
+        "id": "dangling-control-city",
+        "displayName": "dangling-control-city",
+        "version": "2026-11-18"
+      },
+      "items": [
+        {
+          "id": "dangling-control-city-item",
+          "displayName": "dangling-control-city item",
+          "aliases": [],
+          "keywords": []
+        }
+      ],
+      "rules": [
+        {
+          "municipalityId": "dangling-control-city",
+          "itemId": "missing-item",
+          "categoryName": "dangling-control-city category",
+          "instructions": "dangling-control-city instructions"
+        }
+      ]
+    },
+    "schemaAccepted": false,
+    "import": {
+      "rejected": true,
+      "error": {
+        "name": "ZodError",
+        "message": "[\n  {\n    \"code\": \"custom\",\n    \"message\": \"rules.itemId が items.id に存在しません: missing-item\",\n    \"path\": [\n      \"rules\",\n      0,\n      \"itemId\"\n    ]\n  }\n]"
+      }
+    },
+    "before": {
+      "municipalities": [
+        {
+          "id": "dangling-control-city",
+          "display_name": "dangling-control-city",
+          "version": "2026-11-17",
+          "content_digest": "9b81f466"
+        }
+      ],
+      "items": [
+        {
+          "id": "dangling-control-city-item",
+          "display_name": "dangling-control-city item",
+          "aliases_json": "[]",
+          "keywords_json": "[]"
+        }
+      ],
+      "rules": [
+        {
+          "municipality_id": "dangling-control-city",
+          "item_id": "dangling-control-city-item",
+          "category_name": "dangling-control-city category",
+          "instructions": "dangling-control-city instructions",
+          "notes": null,
+          "official_url": null
+        }
+      ]
+    },
+    "after": {
+      "municipalities": [
+        {
+          "id": "dangling-control-city",
+          "display_name": "dangling-control-city",
+          "version": "2026-11-17",
+          "content_digest": "9b81f466"
+        }
+      ],
+      "items": [
+        {
+          "id": "dangling-control-city-item",
+          "display_name": "dangling-control-city item",
+          "aliases_json": "[]",
+          "keywords_json": "[]"
+        }
+      ],
+      "rules": [
+        {
+          "municipality_id": "dangling-control-city",
+          "item_id": "dangling-control-city-item",
+          "category_name": "dangling-control-city category",
+          "instructions": "dangling-control-city instructions",
+          "notes": null,
+          "official_url": null
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,153 @@
+{
+  "caseId": "dataset-cross-municipality",
+  "actual": {
+    "input": {
+      "municipality": {
+        "id": "city-a",
+        "displayName": "city-a",
+        "version": "2026-11-18"
+      },
+      "items": [
+        {
+          "id": "city-a-item",
+          "displayName": "city-a item",
+          "aliases": [],
+          "keywords": []
+        },
+        {
+          "id": "city-b-item",
+          "displayName": "city-b item",
+          "aliases": [],
+          "keywords": []
+        }
+      ],
+      "rules": [
+        {
+          "municipalityId": "city-a",
+          "itemId": "city-a-item",
+          "categoryName": "city-a category",
+          "instructions": "city-a instructions"
+        },
+        {
+          "municipalityId": "city-b",
+          "itemId": "city-b-item",
+          "categoryName": "category supplied by city-a file",
+          "instructions": "instructions supplied by city-a file"
+        }
+      ]
+    },
+    "schemaAccepted": true,
+    "import": {
+      "rejected": false,
+      "error": null
+    },
+    "before": {
+      "municipalities": [
+        {
+          "id": "city-a",
+          "display_name": "city-a",
+          "version": "2026-11-17",
+          "content_digest": "1fb6ff4e"
+        },
+        {
+          "id": "city-b",
+          "display_name": "city-b",
+          "version": "2026-11-17",
+          "content_digest": "7c4d2b38"
+        }
+      ],
+      "items": [
+        {
+          "id": "city-a-item",
+          "display_name": "city-a item",
+          "aliases_json": "[]",
+          "keywords_json": "[]"
+        },
+        {
+          "id": "city-b-item",
+          "display_name": "city-b item",
+          "aliases_json": "[]",
+          "keywords_json": "[]"
+        }
+      ],
+      "rules": [
+        {
+          "municipality_id": "city-a",
+          "item_id": "city-a-item",
+          "category_name": "city-a category",
+          "instructions": "city-a instructions",
+          "notes": null,
+          "official_url": null
+        },
+        {
+          "municipality_id": "city-b",
+          "item_id": "city-b-item",
+          "category_name": "city-b category",
+          "instructions": "city-b instructions",
+          "notes": null,
+          "official_url": null
+        }
+      ]
+    },
+    "after": {
+      "municipalities": [
+        {
+          "id": "city-a",
+          "display_name": "city-a",
+          "version": "2026-11-18",
+          "content_digest": "311c697e"
+        },
+        {
+          "id": "city-b",
+          "display_name": "city-b",
+          "version": "2026-11-17",
+          "content_digest": "7c4d2b38"
+        }
+      ],
+      "items": [
+        {
+          "id": "city-a-item",
+          "display_name": "city-a item",
+          "aliases_json": "[]",
+          "keywords_json": "[]"
+        },
+        {
+          "id": "city-b-item",
+          "display_name": "city-b item",
+          "aliases_json": "[]",
+          "keywords_json": "[]"
+        }
+      ],
+      "rules": [
+        {
+          "municipality_id": "city-a",
+          "item_id": "city-a-item",
+          "category_name": "city-a category",
+          "instructions": "city-a instructions",
+          "notes": null,
+          "official_url": null
+        },
+        {
+          "municipality_id": "city-b",
+          "item_id": "city-b-item",
+          "category_name": "category supplied by city-a file",
+          "instructions": "instructions supplied by city-a file",
+          "notes": null,
+          "official_url": null
+        }
+      ]
+    },
+    "ruleBefore": {
+      "municipalityId": "city-b",
+      "itemId": "city-b-item",
+      "categoryName": "city-b category",
+      "instructions": "city-b instructions"
+    },
+    "ruleAfter": {
+      "municipalityId": "city-b",
+      "itemId": "city-b-item",
+      "categoryName": "category supplied by city-a file",
+      "instructions": "instructions supplied by city-a file"
+    }
+  }
+}

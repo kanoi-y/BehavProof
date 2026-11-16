@@ -1,0 +1,25 @@
+{
+  "node": "v20.19.4",
+  "command": [
+    "node",
+    "node_modules/jest/bin/jest.js",
+    "--runInBand",
+    "--testMatch",
+    "**/validation/repros/*.spec.ts",
+    "--runTestsByPath",
+    "validation/repros/dataset.spec.ts",
+    "validation/repros/startup-state.spec.ts",
+    "validation/repros/links.spec.ts",
+    "--testNamePattern",
+    "^(?!.*municipality-late-load:).*",
+    "--json",
+    "--outputFile",
+    "/Users/kanoi/Documents/ChatGPT/BehavProof/docs/studies/suteco-2026-11-17/results/added-jest.json"
+  ],
+  "exitCode": 1,
+  "seconds": 3.339011458,
+  "selectedTests": 8,
+  "passed": 5,
+  "failed": 3,
+  "excludedExploratoryTests": 1
+}
