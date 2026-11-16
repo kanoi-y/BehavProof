@@ -56,3 +56,12 @@ test('ignoring one probe must not leave JSON artifacts exposed by later negation
 test('unrelated later negations do not cause duplicate directory rules',async()=>{
  const before='.behavproof/\n!README.md\n';await writeFile(join(root,'.gitignore'),before);const result=init();expect(result.status,result.stderr).toBe(0);expect(JSON.parse(result.stdout).gitignore.action).toBe('preserve');expect(await readFile(join(root,'.gitignore'),'utf8')).toBe(before);expect(ignored()).toBe(true);
 });
+test.each(['.behavproof/\n','.behavproof/\n!README.md\n'])('init remains idempotent inside a directory ignored by its parent repo: %s',async content=>{
+ const {mkdir}=await import('node:fs/promises');const nested=join(root,'nested');await mkdir(nested);await writeFile(join(root,'.gitignore'),'nested/\n');await writeFile(join(nested,'package.json'),JSON.stringify({name:'nested',scripts:{test:'vitest run'},devDependencies:{vitest:'5.1.0'}}));await writeFile(join(nested,'.gitignore'),content);
+ for(let attempt=0;attempt<2;attempt++){const result=init('--root',nested);expect(result.status,result.stderr).toBe(0);expect(await readFile(join(nested,'.gitignore'),'utf8')).toBe(content);}
+});
+test.each(['.behavproof/\n*\n!*/\n!*.json\n','.behavproof/\n*\n!/.behavproof/\n!*.json\n','.behavproof/\n*\n!/.behavproof*/\n!*.json\n','.behavproof/\n*\n!/.behavproo?/\n!*.json\n'])('a nested package local wildcard must not be mistaken for an ignored parent directory: %s',async before=>{
+ const {mkdir}=await import('node:fs/promises');const nested=join(root,'nested');await mkdir(nested);await writeFile(join(nested,'package.json'),JSON.stringify({name:'nested',scripts:{test:'vitest run'},devDependencies:{vitest:'5.1.0'}}));await writeFile(join(nested,'.gitignore'),before);
+ const probe=()=>spawnSync('git',['check-ignore','--no-index','--','.behavproof/report.json'],{cwd:nested}).status;
+ expect(probe()).toBe(1);const result=init('--root',nested);expect(result.status,result.stderr).toBe(0);expect(probe()).toBe(0);expect(await readFile(join(nested,'.gitignore'),'utf8')).toBe(before+'.behavproof/\n');
+});
