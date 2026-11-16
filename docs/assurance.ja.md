@@ -88,6 +88,10 @@ behavproof docs generate --trust-root /保護された場所/trust.json
 
 `@behavproof/contract-registry`は`runAssurance`、`RuntimeDriver`、`RuntimeEnvironment`を公開します。CLIは選択したdriverを別workerで読み込み、`createContext({check,input,harness})`を呼びます。戻り値は`{dependencies, close?}`です。通常の対象は`相対ファイル#export名`で指定し、runnerがそのexportを実際に呼びます。driverが返す`execute`、`calls`、`pass`の値は観測に採用しません。
 
+公開APIの`runAssurance`を同じNodeプロセスから繰り返す場合、実行モジュールを読み込んだ後は、選択した`inputHashes`のファイル一覧とbytesを同じままにしてください。Nodeは対象がimportしたhelper等をキャッシュするため、実行対象URLのnonceだけでは依存先を再読込みできません。runnerは正規化した実パスで入力一覧とhashを固定し、同じroot、その別名、親子関係にあるrootで一覧の追加・削除やbytesの変更を検出した実行を、新しいreportを返す前に拒否します。同じ物理ファイル群とhashであればrootの表記を変えても再実行できます。モジュール読込みの予約後に`runAssurance`が例外で終了した場合は、途中で依存先がキャッシュされた可能性があるため、bytesを元へ戻してもその範囲のAPI実行を拒否します。変更後や失敗後の再実行には、新しいNodeプロセス、または毎回別workerを使う`behavproof assurance run`を使ってください。静的なarchitecture検査だけの実行はモジュールを読み込まず、このキャッシュ固定を行いません。
+
+この制限は、選択した入力の変更を古い依存コードの観測へ結び付けないための保守的な拒否です。未列挙の依存、別root間で共有する外部モジュール、APIを呼ぶ前に読み込まれたコード、モジュール内の可変状態を完全に隔離・初期化するものではありません。関連する依存を入力一覧へ含め、キャッシュの独立性が必要な場合は最初の実行から新しいプロセスを用意してください。APIのdriverは元のプロセスで実行するため、closureもそのまま利用できます。
+
 対象exportは`fn(input, environment)`です。`environment.dependencies`はそのケース/系列/経路の依存物です。入力・期待値・出力を複製して記録し、対象による入力の変更が期待値を書き換えないようにします。故障は同名exportを持つ別ファイルとして選び、生成器・oracle・モデル・比較を差し替えず、正常時と同じ具体的な入力・系列へ再生します。
 
 | method | driver / source側の規約 | 記録するもの |
@@ -130,3 +134,5 @@ consumer driverと観測アダプターは、レビュー対象の実行可能�
 ## 導入時の確認記録
 
 2026-11-17のローカル確認では、ビルドを含む543テスト、6パッケージ・8パッケージの別プロジェクトへのインストール、返金の新規フローと既存の3フローが成功しました。独立レビューの4指摘は回帰テストを伴って修正し、再レビューで確認済みです。[検証記録](evidence/assurance-validation.json)、[返金フローの結果](evidence/assurance-flow.json)、[修正の再レビュー](evidence/assurance-review.md)を参照してください。この記録はローカル検証の結果であり、外部の承認や本番の保護設定を認定するものではありません。
+
+公開APIを同一プロセスで再利用した際のモジュールキャッシュ対策も追加し、追加後の55ファイル・552テストが成功しました。[追加検証記録](evidence/assurance-cache-validation.json)と[独立レビュー](evidence/assurance-cache-review.md)を参照してください。

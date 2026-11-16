@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-17",
+  "scope": "PR9 selected-source ESM cache correction",
+  "reviewedBaseCommit": "6063bcd512c965789f1d29180f35faa412190c6b",
+  "finding": "Repeated public runAssurance could execute stale transitive helper bytes under changed source hashes.",
+  "behavior": "Canonical overlapping selected inventories are pinned before executable imports; changed or tainted snapshots require a fresh Node process. CLI remains fresh-worker per execution.",
+  "focusedTests": {
+    "files": 2,
+    "passed": 49
+  },
+  "fullSuite": {
+    "command": "npm test",
+    "exitCode": 0,
+    "files": 55,
+    "passed": 552,
+    "durationSeconds": 204.54
+  },
+  "earlierRun": {
+    "passed": 551,
+    "failed": 1,
+    "reason": "Existing explicit external local authority CLI test exceeded 15-second limit (15.868s) during concurrent study processes. No assertion/threshold was changed; isolated full rerun passed."
+  },
+  "nativeProbe": {
+    "sameSnapshot": [
+      1,
+      1
+    ],
+    "changedHelperInSameProcess": "refused, no report",
+    "freshProcessOutput": 2
+  },
+  "review": "No important new regression found; conservative selected-snapshot refusal verified.",
+  "limits": [
+    "Not arbitrary dependency graph isolation",
+    "Relevant helpers must be selected; preloaded modules, undeclared dependencies, mutable module state and separate runtime instances are outside scope"
+  ],
+  "sourceHashes": {
+    "packages/contract-registry/src/assurance-runtime.ts": "9377c375fa1b9a8bc4e0c8f3d3ea8e63830678eb505256e324ed10bc0069be46",
+    "tests/assurance/runtime-cache.test.ts": "86ecf161d941a2ce8d8578f898cd6144ac3fdc2df62b0002f95a50727c0a8f0f",
+    "tests/assurance/runtime.test.ts": "47bf7dc45d450d37cc02b6cabda625a545df0f525947402808518a38cc6f8e81"
+  }
+}

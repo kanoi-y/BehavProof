@@ -1,6 +1,7 @@
 import {AsyncLocalStorage} from 'node:async_hooks';
 import {randomUUID} from 'node:crypto';
-import {join} from 'node:path';
+import {realpath} from 'node:fs/promises';
+import {isAbsolute,join,relative,sep} from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {setTimeout as delay} from 'node:timers/promises';
 import {AssuranceBundleSchema,AssuranceDefinitionSchema,canonicalJson,hash,hashBytes,safeRead,RelativePathSchema,type Contract,type AssuranceCheck,type AssuranceObservation,type AssuranceComparison,type AssuranceReport,type AssuranceSubject,type AssuranceInputHashes,type AssuranceFaultDefinition,type AssuranceEffectEvent,type AssuranceLayerReceipt,type AssuranceCounterexample,type AssuranceMedia} from '@behavproof/core';
@@ -16,12 +17,34 @@ const err=(e:unknown)=>e instanceof Error?e.message:String(e);
 const fn=(m:Module,key:string)=>{const value=m[key];if(typeof value!=='function')throw Error(`Required export ${key} unavailable`);return value as (...args:any[])=>any;};
 export function seededRandom(seed:string){let state=Number.parseInt(hash(seed).slice(0,8),16)>>>0;return ()=>{state=(Math.imul(state,1664525)+1013904223)>>>0;return state/0x100000000;};}
 
-/** Explicit execution only. Receipts establish selected export/adaptor calls, not arbitrary inner-code honesty. */
+type LoadedSnapshot={root:string;identity:string;state:{tainted:boolean}};
+// A nonce reloads the selected module, but Node retains its unqualified transitive imports.
+// Keep reservations even after a failed import/run: a partial graph may already be cached.
+const loadedSnapshots:LoadedSnapshot[]=[];
+const freshProcess=()=>Error('Assurance source snapshot changed or a previous run failed after module loading; use a fresh Node process or the behavproof assurance run CLI');
+const containsRoot=(parent:string,child:string)=>{const path=relative(parent,child);return path===''||(!isAbsolute(path)&&path!=='..'&&!path.startsWith(`..${sep}`));};
+function reserveSnapshot(root:string,inputHashes:AssuranceInputHashes):LoadedSnapshot{
+ const identity=hash(Object.fromEntries(Object.entries(inputHashes).map(([path,digest])=>[join(root,path),digest])));
+ let shared:LoadedSnapshot|undefined,sameRoot:LoadedSnapshot|undefined;
+ // No await between checking and reserving: concurrent runs must see this before import.
+ for(const prior of loadedSnapshots)if(containsRoot(root,prior.root)||containsRoot(prior.root,root)){
+  if(prior.identity!==identity||prior.state.tainted)throw freshProcess();
+  shared=prior;if(prior.root===root)sameRoot=prior;
+ }
+ if(sameRoot)return sameRoot;
+ const snapshot={root,identity,state:shared?.state??{tainted:false}};loadedSnapshots.push(snapshot);return snapshot;
+}
+
+/** Explicit execution only. Reused processes require unchanged selected source inventories/bytes.
+ * Receipts establish selected export/adaptor calls, not arbitrary dependency isolation or inner-code honesty. */
 export async function runAssurance(options:AssuranceRunOptions){
- const o=options,cache=new Map<string,Module>(),sources:Record<string,Uint8Array>={},nonce=randomUUID();
+ const o={...options,root:await realpath(options.root),inputHashes:{...options.inputHashes},implementationSources:[...options.implementationSources]},cache=new Map<string,Module>(),sources:Record<string,Uint8Array>={},nonce=randomUUID();
  for(const [path,digest] of Object.entries(o.inputHashes)){const bytes=await safeRead(o.root,path);if(hashBytes(bytes)!==digest)throw Error(`Source input identity changed: ${path}`);sources[path]=bytes;}
+ let snapshot:LoadedSnapshot|undefined;
+ try{
  const load=async(path:string)=>{
   RelativePathSchema.parse(path);if(!Object.hasOwn(sources,path))throw Error(`Source outside selected input identity: ${path}`);
+  snapshot??=reserveSnapshot(o.root,o.inputHashes);if(snapshot.state.tainted)throw freshProcess();
   if(!cache.has(path)){if(hashBytes(await safeRead(o.root,path))!==o.inputHashes[path])throw Error(`Source input identity changed: ${path}`);cache.set(path,await import(`${pathToFileURL(join(o.root,path)).href}?assurance=${nonce}`));}
   return cache.get(path)!;
  };
@@ -165,5 +188,7 @@ export async function runAssurance(options:AssuranceRunOptions){
   reports.push({schemaVersion:1,contractId:contract.id,revisionHash:contract.revisionHash,subject:clone(o.subject),inputHashes:clone(o.inputHashes),checks,faults});
  }
  for(const [path,digest] of Object.entries(o.inputHashes))if(hashBytes(await safeRead(o.root,path))!==digest)throw Error(`Source input identity changed during observation: ${path}`);
+ if(snapshot?.state.tainted)throw freshProcess();
  return AssuranceBundleSchema.parse({schemaVersion:1,reports});
+ }catch(error){if(snapshot)snapshot.state.tainted=true;throw error;}
 }

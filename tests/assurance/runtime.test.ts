@@ -49,7 +49,7 @@ it('collects valid/discarded property trials and materialized failing inputs',as
  expect(evaluation.status).toBe('pass');expect(report.checks[0]).toMatchObject({valid:4,discarded:0,runs:4});
  expect((report.faults[0]?.observation as any).counterexamples[0]).toMatchObject({originalInput:1,seed:'42'});
  await put('generator.mjs',`export function generate({index}){return index;}export function accept(){return false;}`);
- expect((await run(contract(check))).evaluation.status).toBe('unknown');
+ await expect(run(contract(check))).rejects.toThrow(/fresh Node process/);
 });
 it('replays independent model state and exact generated action sequences',async()=>{
  const check={id:'s',method:'sequence',targetRef:'src/target.mjs#run',seed:'42',generator:'generator.mjs',model:'model.mjs',projection:'projection.mjs',maxSteps:2,minTraces:2,requiredActions:['add']};
