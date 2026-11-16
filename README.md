@@ -31,6 +31,16 @@ behavproof docs --check
 
 `init` preserves existing configuration, installs no dependencies and edits no workflows. In the unreleased source after v0.1.0, it also creates or updates `.gitignore` to exclude `.behavproof/`, preserving existing rules and line endings. Re-running init repairs a missing ignore rule even when configuration already exists; `--dry-run` previews both files without writing. Initial mode is audit. Output supports console, JSON and Markdown, with `--output relative/path`. Documents default to `.behavproof/generated/behavior.{md,html,json}`; `--output behavior.md` generates/checks one format. Generated declarations alone do not prove test execution. A baseline created in the candidate checkout is proposed data until a trusted host registers it.
 
+The unreleased source after v0.1.0 also provides `behavproof test` for local execution:
+
+```sh
+npx --no-install behavproof test
+```
+
+It prepares `.behavproof/input/`, removes the previous two managed report files, runs the project-installed Vitest 5.1.0 with both JSON and BehavProof reporters, and returns Vitest's exit code. The default outputs are `.behavproof/input/vitest.json` and `.behavproof/input/contracts.json`. A configured `reports.vitest` path is supported inside `.behavproof/`; unsafe links, overlapping outputs and unmanaged destinations are rejected. No packages are downloaded. Existing Vitest configuration and test files execute through Vitest, as with running Vitest directly; use a credential-free isolated worker for untrusted candidate code.
+
+`test` supports `--root` and `--config`. It is an explicit execution command, separate from audit/gate verification. A successful local test run does not authenticate reports or establish approval authority. To inspect the generated evidence afterwards, run `behavproof check --mode audit` with the intended Git base.
+
 Exit codes: audit normally 0 even when evidence fails; gate 0 only for a complete pass, 1 for mandatory fail/unknown, 2 for invalid configuration, malformed evidence or infrastructure errors. `doctor` returns 1 for unsupported detection and 2 for invalid configuration. Gate requires an explicit external root:
 
 ```sh
