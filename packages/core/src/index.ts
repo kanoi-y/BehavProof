@@ -7,3 +7,4 @@ export * from './sdk.js';
 export * from './evidence.js';
 export * from './profiles.js';
 export * from './formal.js';
+export * from './assurance.js';

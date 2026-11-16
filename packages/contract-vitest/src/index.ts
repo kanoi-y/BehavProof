@@ -1,8 +1,11 @@
 import { test, expect } from "vitest";
-import { hash } from "@behavproof/core";
+import { hash, ContractSchema, type Contract } from "@behavproof/core";
 import {withTargetCalls, type TargetCall} from "./probe.js";
 export type ContractDefinition<I = unknown, E = unknown> = {
   id: string;
+  kind?: Contract["kind"];
+  formal?: Contract["formal"];
+  assurance?: Contract["assurance"];
   intent: string;
   risk: "basic" | "standard" | "critical";
   cases: readonly { id: string; input: I; expected: E; negative?: boolean }[];
@@ -17,8 +20,32 @@ export function defineContract<const T extends ContractDefinition>(
     new Set(value.cases.map((c) => c.id)).size !== value.cases.length
   )
     throw Error("Invalid contract or duplicate case IDs");
+  // Reject non-JSON values before nested schema validation; never load referenced code.
   hash(value);
+  ContractSchema.parse({
+    id: value.id,
+    kind: value.kind ?? "examples",
+    intentIds: [`${value.id}:intent`],
+    revisionHash: revisionHash(value),
+    sourceRef: "runtime",
+    risk: value.risk,
+    cases: value.cases,
+    caseIds: value.cases.map(c => c.id),
+    ...(value.formal !== undefined ? {formal:value.formal} : {}),
+    ...(value.assurance !== undefined ? {assurance:value.assurance} : {}),
+  });
   return value;
+}
+function revisionHash(value: ContractDefinition): string {
+  return hash({
+    id: value.id,
+    intent: value.intent,
+    risk: value.risk,
+    cases: value.cases,
+    ...(value.kind !== undefined ? {kind:value.kind} : {}),
+    ...(value.formal !== undefined ? {formal:value.formal} : {}),
+    ...(value.assurance !== undefined ? {assurance:value.assurance} : {}),
+  });
 }
 type CaseOf<T extends ContractDefinition> = T["cases"][number];
 export const contractTest = {
@@ -27,12 +54,8 @@ export const contractTest = {
     callback: (entry: CaseOf<T>) => unknown,
   ): void {
     const captured = structuredClone(contract);
-    const revisionHash = hash({
-      id: captured.id,
-      intent: captured.intent,
-      risk: captured.risk,
-      cases: captured.cases,
-    });
+    defineContract(captured);
+    const capturedRevisionHash = revisionHash(captured);
     const bindingHash = hash({
       scope: "runtime-function-string-v1",
       function: callback.toString(),
@@ -41,7 +64,7 @@ export const contractTest = {
       const identity = {
         contractId: contract.id,
         caseId: entry.id,
-        revisionHash,
+        revisionHash: capturedRevisionHash,
         bindingHash,
         bindingScope: "runtime-function-string-v1",
         comparisonCount: 0,

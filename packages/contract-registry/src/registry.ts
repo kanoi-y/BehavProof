@@ -12,10 +12,41 @@ export type Change = {
   contractId?: string;
   intentId?: string;
   caseId?: string;
+  conditionId?: string;
+  checkId?: string;
+  faultId?: string;
   before?: unknown;
   after?: unknown;
   transitionHash: string;
 };
+/** Structural changes expose complete scopes; arbitrary predicate implication is undecidable here. */
+function assuranceChanges(before: Contract | undefined, after: Contract | undefined, th: string): Change[] {
+  const changes: Change[] = [];
+  const add = (kind: string, old: unknown, next: unknown, identity: Partial<Pick<Change, "conditionId" | "checkId" | "faultId">> = {}) => {
+    if (canonicalJson(old ?? null) === canonicalJson(next ?? null)) return;
+    changes.push({
+      type: `ASSURANCE_${kind}_${old === undefined ? "ADDED" : next === undefined ? "REMOVED" : "CHANGED"}`,
+      contractId: (before ?? after)!.id,
+      ...identity,
+      before: old ?? null,
+      after: next ?? null,
+      transitionHash: th,
+    });
+  };
+  const a=before?.assurance, b=after?.assurance;
+  add("FEATURE", a?.feature, b?.feature);
+  const compare = <T extends {id:string}>(kind:string, old:readonly T[], next:readonly T[], identity:(item:T)=>Partial<Pick<Change,"conditionId"|"checkId"|"faultId">>) => {
+    for (const id of [...new Set([...old,...next].map(x=>x.id))].sort()) {
+      const prev=old.find(x=>x.id===id), current=next.find(x=>x.id===id);
+      add(kind,prev,current,identity((prev ?? current)!));
+    }
+  };
+  compare("CONDITION",a?.conditions ?? [],b?.conditions ?? [],c=>({conditionId:c.id}));
+  compare("CHECK",a?.checks ?? [],b?.checks ?? [],c=>({checkId:c.id}));
+  const faults=(d:Contract['assurance'])=>d?.conditions.flatMap(c=>c.requiredFaults.map(f=>({...f,conditionId:c.id}))) ?? [];
+  compare("FAULT",faults(a),faults(b),f=>({faultId:f.id,checkId:f.checkId,conditionId:f.conditionId}));
+  return changes;
+}
 export function transitionHash(
   before: Contract,
   after: Contract | undefined,
@@ -66,6 +97,7 @@ export function reconcile(
           verifyApproval(a) === true,
       );
     if (changed) {
+      changes.push(...assuranceChanges(old, current, th));
       if (old.kind !== "examples" || (current && current.kind !== "examples"))
         changes.push({
           type: "UNSUPPORTED_SEMANTIC_DIFF",
@@ -128,7 +160,10 @@ export function reconcile(
     else if (current) obligations.push(current);
   }
   for (const c of head.contracts)
-    if (!base.contracts.some((b) => b.id === c.id)) obligations.push(c);
+    if (!base.contracts.some((b) => b.id === c.id)) {
+      obligations.push(c);
+      changes.push(...assuranceChanges(undefined,c,hash({contractId:c.id,before:null,after:c.revisionHash})));
+    }
   const intentObligations: Intent[] = [];
   const retainedContracts = new Set<string>();
   const refs = (contracts: readonly Contract[], id: string) =>

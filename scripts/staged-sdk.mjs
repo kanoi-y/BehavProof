@@ -23,7 +23,7 @@ export async function validateStagedSdk(input,{referenceRoot,uid=process.getuid?
  }
  for(const name of packages)allowed.add(`packages/${name}/tsconfig.tsbuildinfo`);
  allowed.add('tsconfig.tsbuildinfo');
- for(const schema of ['config','policy','evidence','manifest','registry','trust-root','registration'])allowed.add(`packages/cli/schemas/${schema}.schema.json`);
+ for(const schema of ['config','policy','evidence','manifest','registry','trust-root','registration','assurance'])allowed.add(`packages/cli/schemas/${schema}.schema.json`);
  for(const profile of ['basic','standard','critical'])allowed.add(`packages/cli/presets/${profile}-v1.json`);
  for(const path of sources.filter(path=>path.startsWith('templates/')))allowed.add('packages/cli/'+path);
  const recorded=new Set();

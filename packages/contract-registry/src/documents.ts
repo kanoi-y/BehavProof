@@ -5,6 +5,7 @@ import {
   type Approval,
 } from "@behavproof/core";
 import { bindingKey, validExecution, type ExecutionRow } from "./assurance.js";
+import { buildAssuranceMap, renderAssuranceMap, type AssuranceMapResult } from "./assurance-map.js";
 const escapeHtml = (s: string) =>
   s
     .replaceAll("&", "&amp;")
@@ -16,6 +17,8 @@ const escapeMd = (s: string) =>
   escapeHtml(s).replace(/([\\`*_{}\[\]()#+.!|~])/g, "\\$1");
 export type DocumentOptions = {
   approvals?: readonly Approval[];
+  assuranceResults?: readonly AssuranceMapResult[];
+  verifyAssurance?: (row: AssuranceMapResult) => boolean;
   expectedBindings?: Readonly<Record<string, string>>;
   verifyEvidence?: (row: ExecutionRow) => boolean;
   verifyApproval?: (approval: Approval) => boolean;
@@ -31,7 +34,7 @@ export function renderDocuments(
   };
   const rows = execution
     .map((r) => {
-      const c = ordered.contracts.find((x) => x.id === r.contractId);
+      const c = ordered.contracts.find((x) => x.id === r.contractId && x.revisionHash === r.revisionHash);
       const valid =
         !!c &&
         c.revisionHash === r.revisionHash &&
@@ -56,7 +59,7 @@ export function renderDocuments(
         a.target.kind === "intent"
           ? ordered.intents.find((i) => i.id === a.target.id)
           : a.target.kind === "contract"
-            ? ordered.contracts.find((c) => c.id === a.target.id)
+            ? ordered.contracts.find((c) => c.id === a.target.id && c.revisionHash === a.target.contentHash)
             : undefined;
       const content =
         entity &&
@@ -68,6 +71,10 @@ export function renderDocuments(
       return { ...a, effectiveStatus: valid ? a.status : "unknown" };
     })
     .sort((a, b) => canonicalJson(a).localeCompare(canonicalJson(b)));
+  const assurance = ordered.contracts.some(c=>c.assurance!==undefined)
+    ? buildAssuranceMap(ordered.contracts, options.assuranceResults, options.verifyAssurance)
+    : undefined;
+  const assuranceDocuments = assurance ? renderAssuranceMap(assurance) : undefined;
   const markdown =
     "# Generated contract declarations\n\nDo not edit; regenerate from source. Declarations do not prove execution or production reach.\n\n" +
     ordered.contracts
@@ -115,8 +122,8 @@ export function renderDocuments(
       .join("") +
     "</body></html>\n";
   return {
-    markdown,
-    html,
+    markdown: markdown + (assuranceDocuments ? "\n" + assuranceDocuments.markdown : ""),
+    html: assuranceDocuments ? html.replace("</body></html>", () => assuranceDocuments.html + "</body></html>") : html,
     json:
       canonicalJson({
         notice:
@@ -124,6 +131,7 @@ export function renderDocuments(
         ...ordered,
         execution: rows,
         approvals,
+        ...(assurance ? {assurance} : {}),
       }) + "\n",
   };
 }

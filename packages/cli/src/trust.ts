@@ -7,6 +7,7 @@ import { git } from './project.js';
 export const ClaimScopesSchema=z.array(z.strictObject({contractId:z.string().min(1),caseIds:z.array(z.string().min(1)).min(1),targetRef:z.string().min(1),method:z.string().min(1)})).superRefine((scopes,ctx)=>{if(new Set(scopes.map(scope=>scope.contractId)).size!==scopes.length)ctx.addIssue({code:'custom',message:'Only one claim scope per contract is supported'});for(const scope of scopes)if(new Set(scope.caseIds).size!==scope.caseIds.length)ctx.addIssue({code:'custom',message:'Duplicate case IDs in claim scope'});});
 export const TrustRootSchema=z.strictObject({
  schemaVersion:z.literal(1),policy:PolicySchema,config:ConfigSchema,baseline:RegistrySnapshotSchema,
+ assuranceSources:z.record(RelativePathSchema,HashSchema).optional(),
  policySource:z.strictObject({repository:z.string().regex(/^[\w-]+\/[\w.-]+$/),commitSha:z.string().regex(/^[a-f0-9]{40}$/),ref:RelativePathSchema,fileHash:HashSchema,policyHash:HashSchema}).optional(),
  runner:z.strictObject({kind:z.literal('vitest'),version:z.string().regex(/^\d+\.\d+\.\d+(?:[-+][\w.-]+)?$/),manifestRef:RelativePathSchema}).optional(),
  inputs:z.array(RelativePathSchema).min(1),qualitySources:z.array(RelativePathSchema).min(1).optional(),configPaths:z.array(RelativePathSchema),dependencyLockPath:RelativePathSchema.optional(),

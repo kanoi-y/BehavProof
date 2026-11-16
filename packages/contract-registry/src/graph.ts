@@ -71,7 +71,7 @@ export function buildEvidenceGraph(
     counts.set(row.id, (counts.get(row.id) ?? 0) + 1);
   for (const row of input.executions) {
     const contract = input.registry.contracts.find(
-      (c) => c.id === row.contractId,
+      (c) => c.id === row.contractId && c.revisionHash === row.revisionHash,
     );
     const matches =
       counts.get(row.id) === 1 &&
@@ -112,7 +112,7 @@ export function buildEvidenceGraph(
       a.target.kind === "intent"
         ? input.registry.intents.find((i) => i.id === a.target.id)
         : a.target.kind === "contract"
-          ? input.registry.contracts.find((c) => c.id === a.target.id)
+          ? input.registry.contracts.find((c) => c.id === a.target.id && c.revisionHash === a.target.contentHash)
           : undefined;
     const content =
       entity &&

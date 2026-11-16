@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "profile": "basic",
+  "git": {
+    "base": "HEAD"
+  },
+  "reports": {},
+  "contracts": {
+    "enabled": true,
+    "sources": [
+      {
+        "type": "manifest",
+        "include": [
+          "contract.json"
+        ]
+      }
+    ]
+  },
+  "assurance": {
+    "driver": "driver.mjs",
+    "driverSources": [
+      "boundaries/auth.mjs",
+      "boundaries/http.mjs",
+      "boundaries/store.mjs",
+      "driver.mjs",
+      "generator.mjs",
+      "model.mjs",
+      "predicate.mjs",
+      "projection.mjs",
+      "vitest.config.mjs"
+    ],
+    "implementationSources": [
+      "src/refund.mjs",
+      "src/state.mjs",
+      "src/request.mjs"
+    ],
+    "report": ".behavproof/assurance.json",
+    "timeoutMs": 10000
+  }
+}

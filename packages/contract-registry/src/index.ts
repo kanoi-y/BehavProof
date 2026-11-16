@@ -12,3 +12,9 @@ export * from "./impact.js";
 export * from "./graph.js";
 export {instrumentFunction,evaluateProbeRuns,PROBE_METHOD} from './probe.js';
 export type {ProbeProtocol,ProbeRun,ProbeRow,TargetFault} from './probe.js';
+
+export * from "./assurance-map.js";
+
+export {runAssurance,seededRandom} from './assurance-runtime.js';
+export type {AssuranceRunOptions,RuntimeDriver,RuntimeContext,RuntimeEnvironment} from './assurance-runtime.js';
+export {inspectArchitecture} from './architecture.js';

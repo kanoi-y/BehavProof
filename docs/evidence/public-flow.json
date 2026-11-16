@@ -8,7 +8,7 @@
   ],
   "correct": {
     "execution": "correct",
-    "durationMs": 1616,
+    "durationMs": 1679,
     "producerExit": 0,
     "gateExit": 1,
     "status": "incomplete",
@@ -105,7 +105,7 @@
   },
   "refactor": {
     "execution": "refactor",
-    "durationMs": 1815,
+    "durationMs": 1940,
     "producerExit": 0,
     "gateExit": 1,
     "status": "incomplete",
@@ -202,7 +202,7 @@
   },
   "fake": {
     "execution": "fake",
-    "durationMs": 1793,
+    "durationMs": 4536,
     "producerExit": 0,
     "gateExit": 1,
     "status": "fail",
@@ -307,7 +307,7 @@
   },
   "canary": {
     "execution": "faulty",
-    "durationMs": 1809,
+    "durationMs": 3510,
     "producerExit": 1,
     "gateExit": 1,
     "status": "fail",
@@ -424,20 +424,20 @@
       "testState": "failed"
     },
     "subject": {
-      "prHeadSha": "1bf692beec562549033978c5f1c3a2b2cb8441e6",
-      "testedCommitSha": "1bf692beec562549033978c5f1c3a2b2cb8441e6",
+      "prHeadSha": "54fb08e6c6848b6b417538ee692bd1ec5bc18346",
+      "testedCommitSha": "54fb08e6c6848b6b417538ee692bd1ec5bc18346",
       "sourceTreeHash": "27a77f35b37e5e70372d59a56b08f86c993fd28c3455914fc4361a8beabeb17e",
       "dirty": false,
-      "baseSha": "1bf692beec562549033978c5f1c3a2b2cb8441e6",
-      "diffBaseSha": "1bf692beec562549033978c5f1c3a2b2cb8441e6"
+      "baseSha": "54fb08e6c6848b6b417538ee692bd1ec5bc18346",
+      "diffBaseSha": "54fb08e6c6848b6b417538ee692bd1ec5bc18346"
     },
-    "diagnosticArtifactSha256": "9d7fa59373a361f67f7a4f1548dc90eaa64b3fd357656ca2c40dc74149608759",
+    "diagnosticArtifactSha256": "a07852d7a0d61326c23e5b92283a10380c283fb4abe1310b7c8d1f8e5bce5384",
     "observed": "Required non-owner comparison failed once in the fresh expected-failure run; failed producer sealed no success artifacts",
     "diagnosticTrust": "Fresh diagnostic bytes observed by the controlled local host; not promoted to successful test evidence or external CI authority"
   },
   "skipped": {
     "execution": "skipped",
-    "durationMs": 1485,
+    "durationMs": 2815,
     "producerExit": 1,
     "gateExit": 1,
     "status": "fail",
@@ -538,7 +538,7 @@
   },
   "removed": {
     "execution": "removed",
-    "durationMs": 1743,
+    "durationMs": 2884,
     "producerExit": 0,
     "gateExit": 1,
     "status": "fail",

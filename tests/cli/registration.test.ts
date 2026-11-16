@@ -86,3 +86,17 @@ test('formal registration projects source hashes from the selected project subtr
  data.baseline.contracts.forEach((c:any)=>c.sourceRef='example/'+c.sourceRef);data.baseline.intents.forEach((i:any)=>i.origin.ref='example/'+i.origin.ref);
  expect(createRegistration(data,authority).registration.config.formal?.models[0]?.model).toBe('specs/order.qnt');
 });
+
+test('assurance registration binds criterion sources and projects them without freezing production-only changes',async()=>{
+ const data:any=value();data.source.projectPath='.';data.source.configRef='behavproof.config.json';data.configPaths=['behavproof.config.json'];data.inputs.push('driver.mjs','behavproof.config.json','src/run.mjs');
+ data.config=parseConfig({...data.config,assurance:{driver:'driver.mjs',driverSources:['driver.mjs'],implementationSources:['src/run.mjs'],report:'.behavproof/assurance.json'}});
+ data.source.fileHashes={...data.source.fileHashes,'behavproof.config.json':'1'.repeat(64),'package.json':'2'.repeat(64),'driver.mjs':'3'.repeat(64),'src/run.mjs':'4'.repeat(64)};
+ data.baseline=structuredClone(data.baseline);data.baseline.contracts[0].assurance={feature:{id:'run',entrypoints:['run']},checks:[{id:'result',method:'example',targetRef:'src/run.mjs#run',cases:[{id:'one',input:1,expected:2}]}],conditions:[{id:'correct',kind:'postcondition',statement:'correct',checks:['result'],requiredFaults:[]}]};
+ const {registrationProjectData}=await import('../../packages/cli/src/registration.js');
+ const approved=createRegistration(data,authority);const projected=registrationProjectData(approved.registration);
+ expect(projected.assuranceSources?.['driver.mjs']).toBe('3'.repeat(64));expect(projected.assuranceSources?.['src/run.mjs']).toBeUndefined();
+ const missingScope=structuredClone(data);missingScope.inputs=missingScope.inputs.filter((p:string)=>p!=='driver.mjs');expect(()=>createRegistration(missingScope,authority)).toThrow(/assurance.*input/i);
+ const missing=structuredClone(data);delete missing.source.fileHashes['driver.mjs'];expect(()=>createRegistration(missing,authority)).toThrow(/assurance source/);
+ const nested=structuredClone(data);nested.source.projectPath='example';nested.source.configRef='example/behavproof.config.json';nested.source.policyRef='example/'+nested.source.policyRef;nested.configPaths=['example/behavproof.config.json'];nested.source.fileHashes=Object.fromEntries(Object.entries(nested.source.fileHashes).map(([p,h])=>['example/'+p,h]));nested.baseline.contracts.forEach((c:any)=>c.sourceRef='example/'+c.sourceRef);nested.baseline.intents.forEach((i:any)=>i.origin.ref='example/'+i.origin.ref);nested.inputs=nested.inputs.map((p:string)=>'example/'+p);nested.baseline.scope=nested.baseline.scope.map((p:string)=>'example/'+p);nested.claimScopes=nested.claimScopes.map((s:any)=>({...s,targetRef:'example/'+s.targetRef}));
+ expect(registrationProjectData(createRegistration(nested,authority).registration).assuranceSources?.['driver.mjs']).toBe('3'.repeat(64));
+});

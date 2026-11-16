@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased — condition-scoped assurance
+
+- Add optional revision-bound contract conditions, required checks and relevant fault types, preserving non-adopter hashes and documents.
+- Add explicit bounded assurance execution and read-only discovery/map, real state/effect, seeded property/sequence, AST import-boundary and correlated journey observations.
+- Authenticate condition reports with the existing Collector/root and independently pin verifier semantics; retain baseline/head obligations and critical fault requirements.
+- Add verified review maps/documents, a refund HTTP/file-store example and normal/refactor/negative acceptance flow.
+
 ## Unreleased
 
 - Add `behavproof test` to prepare report directories, clear stale managed reports and run installed Vitest with both reporters in one command, preserving test exit codes.

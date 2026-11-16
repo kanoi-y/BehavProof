@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-17",
+  "branch": "codex/assurance-obligations",
+  "purpose": "Local validation of all seven consumer-facing assurance candidates; not external CI, human approval or production protection evidence.",
+  "fullSuite": {
+    "command": "npm test",
+    "exitCode": 0,
+    "testFiles": 54,
+    "tests": 543,
+    "durationSeconds": 197.33,
+    "buildIncluded": true,
+    "localhostEnabled": true
+  },
+  "focusedFixTests": {
+    "command": "node node_modules/vitest/vitest.mjs run tests/cli/assurance.test.ts tests/assurance/runtime.test.ts",
+    "exitCode": 0,
+    "testFiles": 2,
+    "tests": 54
+  },
+  "packageSmokes": [
+    {
+      "command": "node scripts/package-smoke.mjs --offline",
+      "exitCode": 0,
+      "installedPackages": 6
+    },
+    {
+      "command": "node scripts/package-smoke.mjs --offline --formal",
+      "exitCode": 0,
+      "installedPackages": 8
+    }
+  ],
+  "flows": [
+    {
+      "command": "node scripts/assurance-flow.mjs",
+      "exitCode": 0,
+      "record": "docs/evidence/assurance-flow.json"
+    },
+    {
+      "command": "node scripts/acceptance-flow.mjs",
+      "exitCode": 0,
+      "record": "docs/evidence/public-flow.json"
+    },
+    {
+      "command": "node scripts/protected-probe-flow.mjs",
+      "exitCode": 0,
+      "record": "docs/evidence/protected-probe-flow.json"
+    },
+    {
+      "command": "node scripts/enforcement-probe-flow.mjs",
+      "exitCode": 0,
+      "record": "docs/evidence/enforcement-probe-local.json",
+      "fixture": "Unchanged script and tracked-only example copied to temporary SDK control directory; same built packages/installed dependencies. Original ignored local dependency directory preserved. Direct initial run stopped at fixture symlink EEXIST, before product execution."
+    }
+  ],
+  "review": {
+    "wholeChange": "Four Important findings; no Critical findings.",
+    "fixRereview": "All four addressed; no new Important/Critical breakage.",
+    "fixed": [
+      "Critical path/module/protected selector risk floors",
+      "Known indirect Node loaders remain unknown",
+      "Critical missing faults propagate into condition/check/map status",
+      "Node built-in spelling aliases share dependency identity"
+    ]
+  },
+  "scope": [
+    "Explicit source and condition inventory",
+    "Bounded selected resource/window effects",
+    "Seeded bounded sampling and sequential independent-model replay",
+    "Selected AST dependency rules; unsupported loaders remain unknown",
+    "Declared local HTTP/auth/file-store fixture and active-step media",
+    "Same-input condition/check-specific fault detection",
+    "Version-qualified map with independent Collector and criterion binding"
+  ],
+  "limits": [
+    "No universal or concurrent correctness proof",
+    "No complete discovery of hidden dependencies, uninstrumented effects or missing requirements",
+    "No claim of live GitHub protection or new human approval",
+    "Unreleased source; not published"
+  ],
+  "implementationSourceHashes": {
+    "packages/core/src/assurance.ts": "0baa1898dbb38130c2616c75f55232661f15973ca00a965e93be0baa3fab9705",
+    "packages/contract-registry/src/assurance-runtime.ts": "8deef4aafa4d7660f6eb2e5a9efc16fd9d2f7ba9150a61e322b2ef220212fff7",
+    "packages/contract-registry/src/architecture.ts": "e9e8de3d8358cf4a43ea65ffcf8a6912b5aa0c1daf5247404a46c4d48f55decf",
+    "packages/contract-registry/src/assurance-map.ts": "901b45285e331fe62d93c76170c18007246b3e48df0be051903893d5fc28f682",
+    "packages/cli/src/assurance-command.ts": "52c4560178a0413181255d9b688eebd912e307b4ec6f53875b072419f2a5e04f",
+    "packages/cli/src/assurance-inputs.ts": "b4c5eff6470e94882d8b3f798a3b16ebfda55366b090aabd6f79218e13b47e12",
+    "packages/cli/src/assurance-worker.ts": "a7ba7eecdfaf22185561589091ed7decbd491b402643aed314a189c0df05ad99",
+    "packages/cli/src/assurance-evaluation.ts": "ee48bc2f09dfbf2a5411ce8a056c5603afb4b9e24bd377da8ab90024cdea1611"
+  }
+}
