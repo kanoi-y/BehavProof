@@ -2443,6 +2443,2758 @@
         },
         "kind": {
           "type": "string",
+          "const": "assurance"
+        },
+        "payload": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "schemaVersion": {
+                  "type": "number",
+                  "const": 1
+                },
+                "contractId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "revisionHash": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "subject": {
+                  "type": "object",
+                  "properties": {
+                    "testedCommitSha": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "sourceTreeHash": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    }
+                  },
+                  "required": [
+                    "testedCommitSha",
+                    "sourceTreeHash"
+                  ],
+                  "additionalProperties": false
+                },
+                "inputHashes": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "additionalProperties": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  }
+                },
+                "checks": {
+                  "maxItems": 10000,
+                  "type": "array",
+                  "items": {
+                    "oneOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "checkId": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "checkHash": {
+                            "type": "string",
+                            "pattern": "^[a-f0-9]{64}$"
+                          },
+                          "complete": {
+                            "type": "boolean"
+                          },
+                          "comparisonCount": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "method": {
+                            "type": "string",
+                            "const": "example"
+                          },
+                          "samples": {
+                            "maxItems": 10000,
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "input": {
+                                  "$ref": "#/$defs/__schema0"
+                                },
+                                "inputHash": {
+                                  "type": "string",
+                                  "pattern": "^[a-f0-9]{64}$"
+                                },
+                                "expected": {
+                                  "$ref": "#/$defs/__schema0"
+                                },
+                                "actual": {
+                                  "$ref": "#/$defs/__schema0"
+                                },
+                                "calls": {
+                                  "type": "integer",
+                                  "minimum": 0,
+                                  "maximum": 9007199254740991
+                                },
+                                "receipts": {
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "callId": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "targetRef": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "implementation": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "implementationHash": {
+                                        "type": "string",
+                                        "pattern": "^[a-f0-9]{64}$"
+                                      },
+                                      "variant": {
+                                        "type": "string",
+                                        "enum": [
+                                          "baseline",
+                                          "fault"
+                                        ]
+                                      },
+                                      "faultId": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "input": {
+                                        "$ref": "#/$defs/__schema0"
+                                      },
+                                      "output": {
+                                        "$ref": "#/$defs/__schema0"
+                                      },
+                                      "error": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      }
+                                    },
+                                    "required": [
+                                      "callId",
+                                      "targetRef",
+                                      "implementation",
+                                      "implementationHash",
+                                      "variant",
+                                      "input"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "error": {
+                                  "type": "string",
+                                  "minLength": 1
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "input",
+                                "inputHash",
+                                "expected",
+                                "calls",
+                                "receipts"
+                              ],
+                              "additionalProperties": false
+                            }
+                          }
+                        },
+                        "required": [
+                          "checkId",
+                          "checkHash",
+                          "complete",
+                          "comparisonCount",
+                          "method",
+                          "samples"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "checkId": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "checkHash": {
+                            "type": "string",
+                            "pattern": "^[a-f0-9]{64}$"
+                          },
+                          "complete": {
+                            "type": "boolean"
+                          },
+                          "comparisonCount": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "method": {
+                            "type": "string",
+                            "const": "effects"
+                          },
+                          "scope": {
+                            "maxItems": 10000,
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1
+                            }
+                          },
+                          "window": {
+                            "type": "object",
+                            "properties": {
+                              "settledBy": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "durationMs": {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 3600000
+                              }
+                            },
+                            "required": [
+                              "settledBy",
+                              "durationMs"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "samples": {
+                            "maxItems": 10000,
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "input": {
+                                  "$ref": "#/$defs/__schema0"
+                                },
+                                "inputHash": {
+                                  "type": "string",
+                                  "pattern": "^[a-f0-9]{64}$"
+                                },
+                                "expected": {
+                                  "$ref": "#/$defs/__schema0"
+                                },
+                                "actual": {
+                                  "$ref": "#/$defs/__schema0"
+                                },
+                                "calls": {
+                                  "type": "integer",
+                                  "minimum": 0,
+                                  "maximum": 9007199254740991
+                                },
+                                "receipts": {
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "callId": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "targetRef": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "implementation": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "implementationHash": {
+                                        "type": "string",
+                                        "pattern": "^[a-f0-9]{64}$"
+                                      },
+                                      "variant": {
+                                        "type": "string",
+                                        "enum": [
+                                          "baseline",
+                                          "fault"
+                                        ]
+                                      },
+                                      "faultId": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "input": {
+                                        "$ref": "#/$defs/__schema0"
+                                      },
+                                      "output": {
+                                        "$ref": "#/$defs/__schema0"
+                                      },
+                                      "error": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      }
+                                    },
+                                    "required": [
+                                      "callId",
+                                      "targetRef",
+                                      "implementation",
+                                      "implementationHash",
+                                      "variant",
+                                      "input"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "error": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "before": {
+                                  "type": "object",
+                                  "propertyNames": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "additionalProperties": {
+                                    "$ref": "#/$defs/__schema0"
+                                  }
+                                },
+                                "after": {
+                                  "type": "object",
+                                  "propertyNames": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "additionalProperties": {
+                                    "$ref": "#/$defs/__schema0"
+                                  }
+                                },
+                                "effects": {
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "eventId": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "id": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "scope": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "operation": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "targetRef": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "callId": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      }
+                                    },
+                                    "required": [
+                                      "eventId",
+                                      "id",
+                                      "scope",
+                                      "operation",
+                                      "targetRef",
+                                      "callId"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "resourceObservations": {
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "scope": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "adapter": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "adapterHash": {
+                                        "type": "string",
+                                        "pattern": "^[a-f0-9]{64}$"
+                                      },
+                                      "targets": {
+                                        "minItems": 1,
+                                        "maxItems": 10000,
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string",
+                                          "minLength": 1
+                                        }
+                                      },
+                                      "callIds": {
+                                        "minItems": 1,
+                                        "maxItems": 10000,
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string",
+                                          "minLength": 1
+                                        }
+                                      },
+                                      "elapsedMs": {
+                                        "type": "integer",
+                                        "minimum": 0,
+                                        "maximum": 9007199254740991
+                                      },
+                                      "settledBy": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "settled": {
+                                        "type": "boolean"
+                                      }
+                                    },
+                                    "required": [
+                                      "scope",
+                                      "adapter",
+                                      "adapterHash",
+                                      "targets",
+                                      "callIds",
+                                      "elapsedMs",
+                                      "settledBy",
+                                      "settled"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "input",
+                                "inputHash",
+                                "expected",
+                                "calls",
+                                "receipts",
+                                "before",
+                                "after",
+                                "effects",
+                                "resourceObservations"
+                              ],
+                              "additionalProperties": false
+                            }
+                          }
+                        },
+                        "required": [
+                          "checkId",
+                          "checkHash",
+                          "complete",
+                          "comparisonCount",
+                          "method",
+                          "scope",
+                          "window",
+                          "samples"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "checkId": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "checkHash": {
+                            "type": "string",
+                            "pattern": "^[a-f0-9]{64}$"
+                          },
+                          "complete": {
+                            "type": "boolean"
+                          },
+                          "comparisonCount": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "method": {
+                            "type": "string",
+                            "const": "property"
+                          },
+                          "domain": {
+                            "$ref": "#/$defs/__schema0"
+                          },
+                          "seed": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "runs": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "valid": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "discarded": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "samples": {
+                            "maxItems": 10000,
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "input": {
+                                  "$ref": "#/$defs/__schema0"
+                                },
+                                "inputHash": {
+                                  "type": "string",
+                                  "pattern": "^[a-f0-9]{64}$"
+                                },
+                                "expected": {
+                                  "$ref": "#/$defs/__schema0"
+                                },
+                                "actual": {
+                                  "$ref": "#/$defs/__schema0"
+                                },
+                                "calls": {
+                                  "type": "integer",
+                                  "minimum": 0,
+                                  "maximum": 9007199254740991
+                                },
+                                "receipts": {
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "callId": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "targetRef": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "implementation": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "implementationHash": {
+                                        "type": "string",
+                                        "pattern": "^[a-f0-9]{64}$"
+                                      },
+                                      "variant": {
+                                        "type": "string",
+                                        "enum": [
+                                          "baseline",
+                                          "fault"
+                                        ]
+                                      },
+                                      "faultId": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "input": {
+                                        "$ref": "#/$defs/__schema0"
+                                      },
+                                      "output": {
+                                        "$ref": "#/$defs/__schema0"
+                                      },
+                                      "error": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      }
+                                    },
+                                    "required": [
+                                      "callId",
+                                      "targetRef",
+                                      "implementation",
+                                      "implementationHash",
+                                      "variant",
+                                      "input"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "error": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "index": {
+                                  "type": "integer",
+                                  "minimum": 0,
+                                  "maximum": 9007199254740991
+                                },
+                                "discarded": {
+                                  "type": "boolean"
+                                },
+                                "classes": {
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "input",
+                                "inputHash",
+                                "expected",
+                                "calls",
+                                "receipts",
+                                "index",
+                                "discarded",
+                                "classes"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "counterexamples": {
+                            "maxItems": 10000,
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "sampleId": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "seed": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "originalInput": {
+                                  "$ref": "#/$defs/__schema0"
+                                },
+                                "shrunkInput": {
+                                  "$ref": "#/$defs/__schema0"
+                                },
+                                "shrunkSampleId": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "replay": {
+                                  "type": "string",
+                                  "minLength": 1
+                                }
+                              },
+                              "required": [
+                                "sampleId",
+                                "seed",
+                                "originalInput"
+                              ],
+                              "additionalProperties": false
+                            }
+                          }
+                        },
+                        "required": [
+                          "checkId",
+                          "checkHash",
+                          "complete",
+                          "comparisonCount",
+                          "method",
+                          "domain",
+                          "seed",
+                          "runs",
+                          "valid",
+                          "discarded",
+                          "samples"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "checkId": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "checkHash": {
+                            "type": "string",
+                            "pattern": "^[a-f0-9]{64}$"
+                          },
+                          "complete": {
+                            "type": "boolean"
+                          },
+                          "comparisonCount": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "method": {
+                            "type": "string",
+                            "const": "sequence"
+                          },
+                          "seed": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "maxSteps": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "traces": {
+                            "maxItems": 10000,
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "initialModel": {
+                                  "$ref": "#/$defs/__schema0"
+                                },
+                                "initialExpected": {
+                                  "$ref": "#/$defs/__schema0"
+                                },
+                                "initialActual": {
+                                  "$ref": "#/$defs/__schema0"
+                                },
+                                "steps": {
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "input": {
+                                        "$ref": "#/$defs/__schema0"
+                                      },
+                                      "inputHash": {
+                                        "type": "string",
+                                        "pattern": "^[a-f0-9]{64}$"
+                                      },
+                                      "expected": {
+                                        "$ref": "#/$defs/__schema0"
+                                      },
+                                      "actual": {
+                                        "$ref": "#/$defs/__schema0"
+                                      },
+                                      "calls": {
+                                        "type": "integer",
+                                        "minimum": 0,
+                                        "maximum": 9007199254740991
+                                      },
+                                      "receipts": {
+                                        "maxItems": 10000,
+                                        "type": "array",
+                                        "items": {
+                                          "type": "object",
+                                          "properties": {
+                                            "callId": {
+                                              "type": "string",
+                                              "minLength": 1
+                                            },
+                                            "targetRef": {
+                                              "type": "string",
+                                              "minLength": 1
+                                            },
+                                            "implementation": {
+                                              "type": "string",
+                                              "minLength": 1
+                                            },
+                                            "implementationHash": {
+                                              "type": "string",
+                                              "pattern": "^[a-f0-9]{64}$"
+                                            },
+                                            "variant": {
+                                              "type": "string",
+                                              "enum": [
+                                                "baseline",
+                                                "fault"
+                                              ]
+                                            },
+                                            "faultId": {
+                                              "type": "string",
+                                              "minLength": 1
+                                            },
+                                            "input": {
+                                              "$ref": "#/$defs/__schema0"
+                                            },
+                                            "output": {
+                                              "$ref": "#/$defs/__schema0"
+                                            },
+                                            "error": {
+                                              "type": "string",
+                                              "minLength": 1
+                                            }
+                                          },
+                                          "required": [
+                                            "callId",
+                                            "targetRef",
+                                            "implementation",
+                                            "implementationHash",
+                                            "variant",
+                                            "input"
+                                          ],
+                                          "additionalProperties": false
+                                        }
+                                      },
+                                      "error": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "index": {
+                                        "type": "integer",
+                                        "minimum": 0,
+                                        "maximum": 9007199254740991
+                                      },
+                                      "action": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "modelBefore": {
+                                        "$ref": "#/$defs/__schema0"
+                                      },
+                                      "modelAfter": {
+                                        "$ref": "#/$defs/__schema0"
+                                      }
+                                    },
+                                    "required": [
+                                      "id",
+                                      "input",
+                                      "inputHash",
+                                      "expected",
+                                      "calls",
+                                      "receipts",
+                                      "index",
+                                      "action",
+                                      "modelBefore",
+                                      "modelAfter"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "initialModel",
+                                "initialExpected",
+                                "initialActual",
+                                "steps"
+                              ],
+                              "additionalProperties": false
+                            }
+                          }
+                        },
+                        "required": [
+                          "checkId",
+                          "checkHash",
+                          "complete",
+                          "comparisonCount",
+                          "method",
+                          "seed",
+                          "maxSteps",
+                          "traces"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "checkId": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "checkHash": {
+                            "type": "string",
+                            "pattern": "^[a-f0-9]{64}$"
+                          },
+                          "complete": {
+                            "type": "boolean"
+                          },
+                          "comparisonCount": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "method": {
+                            "type": "string",
+                            "const": "architecture"
+                          },
+                          "files": {
+                            "maxItems": 10000,
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "path": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "sha256": {
+                                  "type": "string",
+                                  "pattern": "^[a-f0-9]{64}$"
+                                },
+                                "imports": {
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "specifier": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "resolved": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "dynamic": {
+                                        "type": "boolean"
+                                      },
+                                      "supported": {
+                                        "type": "boolean"
+                                      }
+                                    },
+                                    "required": [
+                                      "specifier",
+                                      "dynamic",
+                                      "supported"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                }
+                              },
+                              "required": [
+                                "path",
+                                "sha256",
+                                "imports"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "rules": {
+                            "maxItems": 10000,
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1
+                            }
+                          },
+                          "violations": {
+                            "maxItems": 10000,
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "ruleId": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "file": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "specifier": {
+                                  "type": "string",
+                                  "minLength": 1
+                                }
+                              },
+                              "required": [
+                                "ruleId",
+                                "file",
+                                "specifier"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "unsupported": {
+                            "maxItems": 10000,
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "file": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "reason": {
+                                  "type": "string",
+                                  "minLength": 1
+                                }
+                              },
+                              "required": [
+                                "file",
+                                "reason"
+                              ],
+                              "additionalProperties": false
+                            }
+                          }
+                        },
+                        "required": [
+                          "checkId",
+                          "checkHash",
+                          "complete",
+                          "comparisonCount",
+                          "method",
+                          "files",
+                          "rules",
+                          "violations",
+                          "unsupported"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "checkId": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "checkHash": {
+                            "type": "string",
+                            "pattern": "^[a-f0-9]{64}$"
+                          },
+                          "complete": {
+                            "type": "boolean"
+                          },
+                          "comparisonCount": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "method": {
+                            "type": "string",
+                            "const": "journey"
+                          },
+                          "entrypoint": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "environment": {
+                            "$ref": "#/$defs/__schema0"
+                          },
+                          "mockBoundaries": {
+                            "maxItems": 10000,
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1
+                            }
+                          },
+                          "steps": {
+                            "maxItems": 10000,
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "input": {
+                                  "$ref": "#/$defs/__schema0"
+                                },
+                                "inputHash": {
+                                  "type": "string",
+                                  "pattern": "^[a-f0-9]{64}$"
+                                },
+                                "expected": {
+                                  "$ref": "#/$defs/__schema0"
+                                },
+                                "actual": {
+                                  "$ref": "#/$defs/__schema0"
+                                },
+                                "calls": {
+                                  "type": "integer",
+                                  "minimum": 0,
+                                  "maximum": 9007199254740991
+                                },
+                                "receipts": {
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "callId": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "targetRef": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "implementation": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "implementationHash": {
+                                        "type": "string",
+                                        "pattern": "^[a-f0-9]{64}$"
+                                      },
+                                      "variant": {
+                                        "type": "string",
+                                        "enum": [
+                                          "baseline",
+                                          "fault"
+                                        ]
+                                      },
+                                      "faultId": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "input": {
+                                        "$ref": "#/$defs/__schema0"
+                                      },
+                                      "output": {
+                                        "$ref": "#/$defs/__schema0"
+                                      },
+                                      "error": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      }
+                                    },
+                                    "required": [
+                                      "callId",
+                                      "targetRef",
+                                      "implementation",
+                                      "implementationHash",
+                                      "variant",
+                                      "input"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "error": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "action": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "layers": {
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "sourceRef": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "observations": {
+                                        "maxItems": 10000,
+                                        "type": "array",
+                                        "items": {
+                                          "type": "object",
+                                          "properties": {
+                                            "invocationId": {
+                                              "type": "string",
+                                              "minLength": 1
+                                            },
+                                            "observationId": {
+                                              "type": "string",
+                                              "minLength": 1
+                                            },
+                                            "targetRef": {
+                                              "type": "string",
+                                              "minLength": 1
+                                            },
+                                            "mocked": {
+                                              "type": "boolean"
+                                            },
+                                            "input": {
+                                              "$ref": "#/$defs/__schema0"
+                                            },
+                                            "actual": {
+                                              "$ref": "#/$defs/__schema0"
+                                            }
+                                          },
+                                          "required": [
+                                            "invocationId",
+                                            "observationId",
+                                            "targetRef",
+                                            "mocked",
+                                            "input",
+                                            "actual"
+                                          ],
+                                          "additionalProperties": false
+                                        }
+                                      }
+                                    },
+                                    "required": [
+                                      "id",
+                                      "sourceRef",
+                                      "observations"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "input",
+                                "inputHash",
+                                "expected",
+                                "calls",
+                                "receipts",
+                                "action",
+                                "layers"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "media": {
+                            "maxItems": 10000,
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "ref": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "sha256": {
+                                  "type": "string",
+                                  "pattern": "^[a-f0-9]{64}$"
+                                },
+                                "stepId": {
+                                  "type": "string",
+                                  "minLength": 1
+                                }
+                              },
+                              "required": [
+                                "ref",
+                                "sha256",
+                                "stepId"
+                              ],
+                              "additionalProperties": false
+                            }
+                          }
+                        },
+                        "required": [
+                          "checkId",
+                          "checkHash",
+                          "complete",
+                          "comparisonCount",
+                          "method",
+                          "entrypoint",
+                          "environment",
+                          "mockBoundaries",
+                          "steps",
+                          "media"
+                        ],
+                        "additionalProperties": false
+                      }
+                    ]
+                  }
+                },
+                "faults": {
+                  "maxItems": 10000,
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "faultId": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "checkId": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "implementationHash": {
+                        "type": "string",
+                        "pattern": "^[a-f0-9]{64}$"
+                      },
+                      "observation": {
+                        "oneOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "checkId": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "checkHash": {
+                                "type": "string",
+                                "pattern": "^[a-f0-9]{64}$"
+                              },
+                              "complete": {
+                                "type": "boolean"
+                              },
+                              "comparisonCount": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 9007199254740991
+                              },
+                              "method": {
+                                "type": "string",
+                                "const": "example"
+                              },
+                              "samples": {
+                                "maxItems": 10000,
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "string",
+                                      "minLength": 1
+                                    },
+                                    "input": {
+                                      "$ref": "#/$defs/__schema0"
+                                    },
+                                    "inputHash": {
+                                      "type": "string",
+                                      "pattern": "^[a-f0-9]{64}$"
+                                    },
+                                    "expected": {
+                                      "$ref": "#/$defs/__schema0"
+                                    },
+                                    "actual": {
+                                      "$ref": "#/$defs/__schema0"
+                                    },
+                                    "calls": {
+                                      "type": "integer",
+                                      "minimum": 0,
+                                      "maximum": 9007199254740991
+                                    },
+                                    "receipts": {
+                                      "maxItems": 10000,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object",
+                                        "properties": {
+                                          "callId": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          },
+                                          "targetRef": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          },
+                                          "implementation": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          },
+                                          "implementationHash": {
+                                            "type": "string",
+                                            "pattern": "^[a-f0-9]{64}$"
+                                          },
+                                          "variant": {
+                                            "type": "string",
+                                            "enum": [
+                                              "baseline",
+                                              "fault"
+                                            ]
+                                          },
+                                          "faultId": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          },
+                                          "input": {
+                                            "$ref": "#/$defs/__schema0"
+                                          },
+                                          "output": {
+                                            "$ref": "#/$defs/__schema0"
+                                          },
+                                          "error": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          }
+                                        },
+                                        "required": [
+                                          "callId",
+                                          "targetRef",
+                                          "implementation",
+                                          "implementationHash",
+                                          "variant",
+                                          "input"
+                                        ],
+                                        "additionalProperties": false
+                                      }
+                                    },
+                                    "error": {
+                                      "type": "string",
+                                      "minLength": 1
+                                    }
+                                  },
+                                  "required": [
+                                    "id",
+                                    "input",
+                                    "inputHash",
+                                    "expected",
+                                    "calls",
+                                    "receipts"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              }
+                            },
+                            "required": [
+                              "checkId",
+                              "checkHash",
+                              "complete",
+                              "comparisonCount",
+                              "method",
+                              "samples"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "checkId": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "checkHash": {
+                                "type": "string",
+                                "pattern": "^[a-f0-9]{64}$"
+                              },
+                              "complete": {
+                                "type": "boolean"
+                              },
+                              "comparisonCount": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 9007199254740991
+                              },
+                              "method": {
+                                "type": "string",
+                                "const": "effects"
+                              },
+                              "scope": {
+                                "maxItems": 10000,
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "minLength": 1
+                                }
+                              },
+                              "window": {
+                                "type": "object",
+                                "properties": {
+                                  "settledBy": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "durationMs": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 3600000
+                                  }
+                                },
+                                "required": [
+                                  "settledBy",
+                                  "durationMs"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "samples": {
+                                "maxItems": 10000,
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "string",
+                                      "minLength": 1
+                                    },
+                                    "input": {
+                                      "$ref": "#/$defs/__schema0"
+                                    },
+                                    "inputHash": {
+                                      "type": "string",
+                                      "pattern": "^[a-f0-9]{64}$"
+                                    },
+                                    "expected": {
+                                      "$ref": "#/$defs/__schema0"
+                                    },
+                                    "actual": {
+                                      "$ref": "#/$defs/__schema0"
+                                    },
+                                    "calls": {
+                                      "type": "integer",
+                                      "minimum": 0,
+                                      "maximum": 9007199254740991
+                                    },
+                                    "receipts": {
+                                      "maxItems": 10000,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object",
+                                        "properties": {
+                                          "callId": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          },
+                                          "targetRef": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          },
+                                          "implementation": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          },
+                                          "implementationHash": {
+                                            "type": "string",
+                                            "pattern": "^[a-f0-9]{64}$"
+                                          },
+                                          "variant": {
+                                            "type": "string",
+                                            "enum": [
+                                              "baseline",
+                                              "fault"
+                                            ]
+                                          },
+                                          "faultId": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          },
+                                          "input": {
+                                            "$ref": "#/$defs/__schema0"
+                                          },
+                                          "output": {
+                                            "$ref": "#/$defs/__schema0"
+                                          },
+                                          "error": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          }
+                                        },
+                                        "required": [
+                                          "callId",
+                                          "targetRef",
+                                          "implementation",
+                                          "implementationHash",
+                                          "variant",
+                                          "input"
+                                        ],
+                                        "additionalProperties": false
+                                      }
+                                    },
+                                    "error": {
+                                      "type": "string",
+                                      "minLength": 1
+                                    },
+                                    "before": {
+                                      "type": "object",
+                                      "propertyNames": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "additionalProperties": {
+                                        "$ref": "#/$defs/__schema0"
+                                      }
+                                    },
+                                    "after": {
+                                      "type": "object",
+                                      "propertyNames": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "additionalProperties": {
+                                        "$ref": "#/$defs/__schema0"
+                                      }
+                                    },
+                                    "effects": {
+                                      "maxItems": 10000,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object",
+                                        "properties": {
+                                          "eventId": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          },
+                                          "id": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          },
+                                          "scope": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          },
+                                          "operation": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          },
+                                          "targetRef": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          },
+                                          "callId": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          }
+                                        },
+                                        "required": [
+                                          "eventId",
+                                          "id",
+                                          "scope",
+                                          "operation",
+                                          "targetRef",
+                                          "callId"
+                                        ],
+                                        "additionalProperties": false
+                                      }
+                                    },
+                                    "resourceObservations": {
+                                      "maxItems": 10000,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object",
+                                        "properties": {
+                                          "scope": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          },
+                                          "adapter": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          },
+                                          "adapterHash": {
+                                            "type": "string",
+                                            "pattern": "^[a-f0-9]{64}$"
+                                          },
+                                          "targets": {
+                                            "minItems": 1,
+                                            "maxItems": 10000,
+                                            "type": "array",
+                                            "items": {
+                                              "type": "string",
+                                              "minLength": 1
+                                            }
+                                          },
+                                          "callIds": {
+                                            "minItems": 1,
+                                            "maxItems": 10000,
+                                            "type": "array",
+                                            "items": {
+                                              "type": "string",
+                                              "minLength": 1
+                                            }
+                                          },
+                                          "elapsedMs": {
+                                            "type": "integer",
+                                            "minimum": 0,
+                                            "maximum": 9007199254740991
+                                          },
+                                          "settledBy": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          },
+                                          "settled": {
+                                            "type": "boolean"
+                                          }
+                                        },
+                                        "required": [
+                                          "scope",
+                                          "adapter",
+                                          "adapterHash",
+                                          "targets",
+                                          "callIds",
+                                          "elapsedMs",
+                                          "settledBy",
+                                          "settled"
+                                        ],
+                                        "additionalProperties": false
+                                      }
+                                    }
+                                  },
+                                  "required": [
+                                    "id",
+                                    "input",
+                                    "inputHash",
+                                    "expected",
+                                    "calls",
+                                    "receipts",
+                                    "before",
+                                    "after",
+                                    "effects",
+                                    "resourceObservations"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              }
+                            },
+                            "required": [
+                              "checkId",
+                              "checkHash",
+                              "complete",
+                              "comparisonCount",
+                              "method",
+                              "scope",
+                              "window",
+                              "samples"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "checkId": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "checkHash": {
+                                "type": "string",
+                                "pattern": "^[a-f0-9]{64}$"
+                              },
+                              "complete": {
+                                "type": "boolean"
+                              },
+                              "comparisonCount": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 9007199254740991
+                              },
+                              "method": {
+                                "type": "string",
+                                "const": "property"
+                              },
+                              "domain": {
+                                "$ref": "#/$defs/__schema0"
+                              },
+                              "seed": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "runs": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 9007199254740991
+                              },
+                              "valid": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 9007199254740991
+                              },
+                              "discarded": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 9007199254740991
+                              },
+                              "samples": {
+                                "maxItems": 10000,
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "string",
+                                      "minLength": 1
+                                    },
+                                    "input": {
+                                      "$ref": "#/$defs/__schema0"
+                                    },
+                                    "inputHash": {
+                                      "type": "string",
+                                      "pattern": "^[a-f0-9]{64}$"
+                                    },
+                                    "expected": {
+                                      "$ref": "#/$defs/__schema0"
+                                    },
+                                    "actual": {
+                                      "$ref": "#/$defs/__schema0"
+                                    },
+                                    "calls": {
+                                      "type": "integer",
+                                      "minimum": 0,
+                                      "maximum": 9007199254740991
+                                    },
+                                    "receipts": {
+                                      "maxItems": 10000,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object",
+                                        "properties": {
+                                          "callId": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          },
+                                          "targetRef": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          },
+                                          "implementation": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          },
+                                          "implementationHash": {
+                                            "type": "string",
+                                            "pattern": "^[a-f0-9]{64}$"
+                                          },
+                                          "variant": {
+                                            "type": "string",
+                                            "enum": [
+                                              "baseline",
+                                              "fault"
+                                            ]
+                                          },
+                                          "faultId": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          },
+                                          "input": {
+                                            "$ref": "#/$defs/__schema0"
+                                          },
+                                          "output": {
+                                            "$ref": "#/$defs/__schema0"
+                                          },
+                                          "error": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          }
+                                        },
+                                        "required": [
+                                          "callId",
+                                          "targetRef",
+                                          "implementation",
+                                          "implementationHash",
+                                          "variant",
+                                          "input"
+                                        ],
+                                        "additionalProperties": false
+                                      }
+                                    },
+                                    "error": {
+                                      "type": "string",
+                                      "minLength": 1
+                                    },
+                                    "index": {
+                                      "type": "integer",
+                                      "minimum": 0,
+                                      "maximum": 9007199254740991
+                                    },
+                                    "discarded": {
+                                      "type": "boolean"
+                                    },
+                                    "classes": {
+                                      "maxItems": 10000,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      }
+                                    }
+                                  },
+                                  "required": [
+                                    "id",
+                                    "input",
+                                    "inputHash",
+                                    "expected",
+                                    "calls",
+                                    "receipts",
+                                    "index",
+                                    "discarded",
+                                    "classes"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "counterexamples": {
+                                "maxItems": 10000,
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "sampleId": {
+                                      "type": "string",
+                                      "minLength": 1
+                                    },
+                                    "seed": {
+                                      "type": "string",
+                                      "minLength": 1
+                                    },
+                                    "originalInput": {
+                                      "$ref": "#/$defs/__schema0"
+                                    },
+                                    "shrunkInput": {
+                                      "$ref": "#/$defs/__schema0"
+                                    },
+                                    "shrunkSampleId": {
+                                      "type": "string",
+                                      "minLength": 1
+                                    },
+                                    "replay": {
+                                      "type": "string",
+                                      "minLength": 1
+                                    }
+                                  },
+                                  "required": [
+                                    "sampleId",
+                                    "seed",
+                                    "originalInput"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              }
+                            },
+                            "required": [
+                              "checkId",
+                              "checkHash",
+                              "complete",
+                              "comparisonCount",
+                              "method",
+                              "domain",
+                              "seed",
+                              "runs",
+                              "valid",
+                              "discarded",
+                              "samples"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "checkId": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "checkHash": {
+                                "type": "string",
+                                "pattern": "^[a-f0-9]{64}$"
+                              },
+                              "complete": {
+                                "type": "boolean"
+                              },
+                              "comparisonCount": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 9007199254740991
+                              },
+                              "method": {
+                                "type": "string",
+                                "const": "sequence"
+                              },
+                              "seed": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "maxSteps": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 9007199254740991
+                              },
+                              "traces": {
+                                "maxItems": 10000,
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "string",
+                                      "minLength": 1
+                                    },
+                                    "initialModel": {
+                                      "$ref": "#/$defs/__schema0"
+                                    },
+                                    "initialExpected": {
+                                      "$ref": "#/$defs/__schema0"
+                                    },
+                                    "initialActual": {
+                                      "$ref": "#/$defs/__schema0"
+                                    },
+                                    "steps": {
+                                      "maxItems": 10000,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object",
+                                        "properties": {
+                                          "id": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          },
+                                          "input": {
+                                            "$ref": "#/$defs/__schema0"
+                                          },
+                                          "inputHash": {
+                                            "type": "string",
+                                            "pattern": "^[a-f0-9]{64}$"
+                                          },
+                                          "expected": {
+                                            "$ref": "#/$defs/__schema0"
+                                          },
+                                          "actual": {
+                                            "$ref": "#/$defs/__schema0"
+                                          },
+                                          "calls": {
+                                            "type": "integer",
+                                            "minimum": 0,
+                                            "maximum": 9007199254740991
+                                          },
+                                          "receipts": {
+                                            "maxItems": 10000,
+                                            "type": "array",
+                                            "items": {
+                                              "type": "object",
+                                              "properties": {
+                                                "callId": {
+                                                  "type": "string",
+                                                  "minLength": 1
+                                                },
+                                                "targetRef": {
+                                                  "type": "string",
+                                                  "minLength": 1
+                                                },
+                                                "implementation": {
+                                                  "type": "string",
+                                                  "minLength": 1
+                                                },
+                                                "implementationHash": {
+                                                  "type": "string",
+                                                  "pattern": "^[a-f0-9]{64}$"
+                                                },
+                                                "variant": {
+                                                  "type": "string",
+                                                  "enum": [
+                                                    "baseline",
+                                                    "fault"
+                                                  ]
+                                                },
+                                                "faultId": {
+                                                  "type": "string",
+                                                  "minLength": 1
+                                                },
+                                                "input": {
+                                                  "$ref": "#/$defs/__schema0"
+                                                },
+                                                "output": {
+                                                  "$ref": "#/$defs/__schema0"
+                                                },
+                                                "error": {
+                                                  "type": "string",
+                                                  "minLength": 1
+                                                }
+                                              },
+                                              "required": [
+                                                "callId",
+                                                "targetRef",
+                                                "implementation",
+                                                "implementationHash",
+                                                "variant",
+                                                "input"
+                                              ],
+                                              "additionalProperties": false
+                                            }
+                                          },
+                                          "error": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          },
+                                          "index": {
+                                            "type": "integer",
+                                            "minimum": 0,
+                                            "maximum": 9007199254740991
+                                          },
+                                          "action": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          },
+                                          "modelBefore": {
+                                            "$ref": "#/$defs/__schema0"
+                                          },
+                                          "modelAfter": {
+                                            "$ref": "#/$defs/__schema0"
+                                          }
+                                        },
+                                        "required": [
+                                          "id",
+                                          "input",
+                                          "inputHash",
+                                          "expected",
+                                          "calls",
+                                          "receipts",
+                                          "index",
+                                          "action",
+                                          "modelBefore",
+                                          "modelAfter"
+                                        ],
+                                        "additionalProperties": false
+                                      }
+                                    }
+                                  },
+                                  "required": [
+                                    "id",
+                                    "initialModel",
+                                    "initialExpected",
+                                    "initialActual",
+                                    "steps"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              }
+                            },
+                            "required": [
+                              "checkId",
+                              "checkHash",
+                              "complete",
+                              "comparisonCount",
+                              "method",
+                              "seed",
+                              "maxSteps",
+                              "traces"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "checkId": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "checkHash": {
+                                "type": "string",
+                                "pattern": "^[a-f0-9]{64}$"
+                              },
+                              "complete": {
+                                "type": "boolean"
+                              },
+                              "comparisonCount": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 9007199254740991
+                              },
+                              "method": {
+                                "type": "string",
+                                "const": "architecture"
+                              },
+                              "files": {
+                                "maxItems": 10000,
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "path": {
+                                      "type": "string",
+                                      "minLength": 1
+                                    },
+                                    "sha256": {
+                                      "type": "string",
+                                      "pattern": "^[a-f0-9]{64}$"
+                                    },
+                                    "imports": {
+                                      "maxItems": 10000,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object",
+                                        "properties": {
+                                          "specifier": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          },
+                                          "resolved": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          },
+                                          "dynamic": {
+                                            "type": "boolean"
+                                          },
+                                          "supported": {
+                                            "type": "boolean"
+                                          }
+                                        },
+                                        "required": [
+                                          "specifier",
+                                          "dynamic",
+                                          "supported"
+                                        ],
+                                        "additionalProperties": false
+                                      }
+                                    }
+                                  },
+                                  "required": [
+                                    "path",
+                                    "sha256",
+                                    "imports"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "rules": {
+                                "maxItems": 10000,
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "minLength": 1
+                                }
+                              },
+                              "violations": {
+                                "maxItems": 10000,
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "ruleId": {
+                                      "type": "string",
+                                      "minLength": 1
+                                    },
+                                    "file": {
+                                      "type": "string",
+                                      "minLength": 1
+                                    },
+                                    "specifier": {
+                                      "type": "string",
+                                      "minLength": 1
+                                    }
+                                  },
+                                  "required": [
+                                    "ruleId",
+                                    "file",
+                                    "specifier"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "unsupported": {
+                                "maxItems": 10000,
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "file": {
+                                      "type": "string",
+                                      "minLength": 1
+                                    },
+                                    "reason": {
+                                      "type": "string",
+                                      "minLength": 1
+                                    }
+                                  },
+                                  "required": [
+                                    "file",
+                                    "reason"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              }
+                            },
+                            "required": [
+                              "checkId",
+                              "checkHash",
+                              "complete",
+                              "comparisonCount",
+                              "method",
+                              "files",
+                              "rules",
+                              "violations",
+                              "unsupported"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "checkId": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "checkHash": {
+                                "type": "string",
+                                "pattern": "^[a-f0-9]{64}$"
+                              },
+                              "complete": {
+                                "type": "boolean"
+                              },
+                              "comparisonCount": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 9007199254740991
+                              },
+                              "method": {
+                                "type": "string",
+                                "const": "journey"
+                              },
+                              "entrypoint": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "environment": {
+                                "$ref": "#/$defs/__schema0"
+                              },
+                              "mockBoundaries": {
+                                "maxItems": 10000,
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "minLength": 1
+                                }
+                              },
+                              "steps": {
+                                "maxItems": 10000,
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "string",
+                                      "minLength": 1
+                                    },
+                                    "input": {
+                                      "$ref": "#/$defs/__schema0"
+                                    },
+                                    "inputHash": {
+                                      "type": "string",
+                                      "pattern": "^[a-f0-9]{64}$"
+                                    },
+                                    "expected": {
+                                      "$ref": "#/$defs/__schema0"
+                                    },
+                                    "actual": {
+                                      "$ref": "#/$defs/__schema0"
+                                    },
+                                    "calls": {
+                                      "type": "integer",
+                                      "minimum": 0,
+                                      "maximum": 9007199254740991
+                                    },
+                                    "receipts": {
+                                      "maxItems": 10000,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object",
+                                        "properties": {
+                                          "callId": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          },
+                                          "targetRef": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          },
+                                          "implementation": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          },
+                                          "implementationHash": {
+                                            "type": "string",
+                                            "pattern": "^[a-f0-9]{64}$"
+                                          },
+                                          "variant": {
+                                            "type": "string",
+                                            "enum": [
+                                              "baseline",
+                                              "fault"
+                                            ]
+                                          },
+                                          "faultId": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          },
+                                          "input": {
+                                            "$ref": "#/$defs/__schema0"
+                                          },
+                                          "output": {
+                                            "$ref": "#/$defs/__schema0"
+                                          },
+                                          "error": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          }
+                                        },
+                                        "required": [
+                                          "callId",
+                                          "targetRef",
+                                          "implementation",
+                                          "implementationHash",
+                                          "variant",
+                                          "input"
+                                        ],
+                                        "additionalProperties": false
+                                      }
+                                    },
+                                    "error": {
+                                      "type": "string",
+                                      "minLength": 1
+                                    },
+                                    "action": {
+                                      "type": "string",
+                                      "minLength": 1
+                                    },
+                                    "layers": {
+                                      "maxItems": 10000,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object",
+                                        "properties": {
+                                          "id": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          },
+                                          "sourceRef": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          },
+                                          "observations": {
+                                            "maxItems": 10000,
+                                            "type": "array",
+                                            "items": {
+                                              "type": "object",
+                                              "properties": {
+                                                "invocationId": {
+                                                  "type": "string",
+                                                  "minLength": 1
+                                                },
+                                                "observationId": {
+                                                  "type": "string",
+                                                  "minLength": 1
+                                                },
+                                                "targetRef": {
+                                                  "type": "string",
+                                                  "minLength": 1
+                                                },
+                                                "mocked": {
+                                                  "type": "boolean"
+                                                },
+                                                "input": {
+                                                  "$ref": "#/$defs/__schema0"
+                                                },
+                                                "actual": {
+                                                  "$ref": "#/$defs/__schema0"
+                                                }
+                                              },
+                                              "required": [
+                                                "invocationId",
+                                                "observationId",
+                                                "targetRef",
+                                                "mocked",
+                                                "input",
+                                                "actual"
+                                              ],
+                                              "additionalProperties": false
+                                            }
+                                          }
+                                        },
+                                        "required": [
+                                          "id",
+                                          "sourceRef",
+                                          "observations"
+                                        ],
+                                        "additionalProperties": false
+                                      }
+                                    }
+                                  },
+                                  "required": [
+                                    "id",
+                                    "input",
+                                    "inputHash",
+                                    "expected",
+                                    "calls",
+                                    "receipts",
+                                    "action",
+                                    "layers"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "media": {
+                                "maxItems": 10000,
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "ref": {
+                                      "type": "string",
+                                      "minLength": 1
+                                    },
+                                    "sha256": {
+                                      "type": "string",
+                                      "pattern": "^[a-f0-9]{64}$"
+                                    },
+                                    "stepId": {
+                                      "type": "string",
+                                      "minLength": 1
+                                    }
+                                  },
+                                  "required": [
+                                    "ref",
+                                    "sha256",
+                                    "stepId"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              }
+                            },
+                            "required": [
+                              "checkId",
+                              "checkHash",
+                              "complete",
+                              "comparisonCount",
+                              "method",
+                              "entrypoint",
+                              "environment",
+                              "mockBoundaries",
+                              "steps",
+                              "media"
+                            ],
+                            "additionalProperties": false
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "faultId",
+                      "checkId",
+                      "implementationHash",
+                      "observation"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "schemaVersion",
+                "contractId",
+                "revisionHash",
+                "subject",
+                "inputHashes",
+                "checks",
+                "faults"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "const": "unknown"
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "status",
+                "reason"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "id",
+        "source",
+        "context",
+        "provenance",
+        "subjectRefs",
+        "kind",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "type": "number",
+          "const": 1
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": "object",
+          "properties": {
+            "tool": {
+              "type": "string",
+              "minLength": 1
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1
+            },
+            "artifactRef": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "tool",
+            "artifactRef"
+          ],
+          "additionalProperties": false
+        },
+        "context": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "object",
+              "properties": {
+                "repositoryId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "prHeadSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "testedCommitSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "testedCommitParents": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "sourceTreeHash": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "dirty": {
+                  "type": "boolean"
+                },
+                "baseSha": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "diffBaseSha": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "testedCommitSha",
+                "sourceTreeHash",
+                "dirty"
+              ],
+              "additionalProperties": false
+            },
+            "manifestRef": {
+              "type": "string",
+              "minLength": 1
+            },
+            "protectedPolicySha": {
+              "type": "string",
+              "minLength": 1
+            },
+            "effectivePolicyHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "contractHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "generatedAt": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+            },
+            "collectedAt": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+            }
+          },
+          "required": [
+            "effectivePolicyHash",
+            "collectedAt"
+          ],
+          "additionalProperties": false
+        },
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "artifactIntegrity": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "producerTrust": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "subjectMatch": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "reasons": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "required": [
+            "artifactIntegrity",
+            "producerTrust",
+            "subjectMatch",
+            "reasons"
+          ],
+          "additionalProperties": false
+        },
+        "subjectRefs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "kind": {
+          "type": "string",
           "const": "formal_model"
         },
         "payload": {
@@ -2960,13 +5712,13 @@
                               ]
                             },
                             "parameters": {
-                              "$ref": "#/$defs/__schema0"
-                            },
-                            "expected": {
                               "$ref": "#/$defs/__schema1"
                             },
-                            "actual": {
+                            "expected": {
                               "$ref": "#/$defs/__schema2"
+                            },
+                            "actual": {
+                              "$ref": "#/$defs/__schema3"
                             },
                             "comparisonCount": {
                               "type": "integer",
@@ -3063,10 +5815,10 @@
                           "maximum": 9007199254740991
                         },
                         "expected": {
-                          "$ref": "#/$defs/__schema3"
+                          "$ref": "#/$defs/__schema4"
                         },
                         "actual": {
-                          "$ref": "#/$defs/__schema4"
+                          "$ref": "#/$defs/__schema5"
                         }
                       },
                       "required": [
@@ -3604,6 +6356,37 @@
           },
           "additionalProperties": {
             "$ref": "#/$defs/__schema4"
+          }
+        }
+      ]
+    },
+    "__schema5": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/__schema5"
+          }
+        },
+        {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema5"
           }
         }
       ]
