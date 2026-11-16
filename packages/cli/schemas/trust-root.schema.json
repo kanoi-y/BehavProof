@@ -1640,6 +1640,17 @@
       ],
       "additionalProperties": false
     },
+    "assuranceSources": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1
+      },
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[a-f0-9]{64}$"
+      }
+    },
     "policySource": {
       "type": "object",
       "properties": {

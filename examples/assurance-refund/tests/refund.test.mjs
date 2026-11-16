@@ -1,0 +1,1 @@
+import{it,expect}from'vitest';import{canRefund}from'../src/refund.mjs';it('rejects unauthorized refund and accepts a bounded authorized refund',()=>{expect(canRefund({owner:false,amount:1,balance:100})).toBe(false);expect(canRefund({owner:true,amount:1,balance:100})).toBe(true);});

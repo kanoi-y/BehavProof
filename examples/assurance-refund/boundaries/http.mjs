@@ -1,0 +1,1 @@
+export async function request(input,deps){const r=await fetch(deps.url,{method:'POST',headers:{'content-type':'application/json','x-assurance-call':deps.callId()},body:JSON.stringify(input)});if(!r.ok)throw Error('HTTP '+r.status);return r.json();}

@@ -1,7 +1,8 @@
 import {z} from 'zod';
 import {realpath,stat} from 'node:fs/promises';
-import {resolve,relative,isAbsolute,sep,join,dirname,basename} from 'node:path';
+import {resolve,relative,isAbsolute,sep,join,dirname,basename,matchesGlob} from 'node:path';
 import {ApprovalSchema,PolicySchema,ConfigSchema,RegistrySnapshotSchema,RelativePathSchema,HashSchema,canonicalJson,hash,safeRead,type Approval} from '@behavproof/core';
+import {assuranceInputPaths,assuranceCriterionPaths} from './assurance-inputs.js';
 import {git,writeScoped} from './project.js';
 import {ClaimScopesSchema} from './trust.js';
 const text=z.string().min(1),sha=z.string().regex(/^[a-f0-9]{40}$/);
@@ -32,6 +33,11 @@ export function createRegistration(value:unknown,authority:RegistrationAuthority
   const digest=(refs:string[])=>hash(Object.fromEntries([...new Set(refs)].sort().map(ref=>[ref,registration.source.fileHashes[prefix+ref]])));
   const binding=registration.baseline.contracts.find(c=>c.id===model.contractId)?.formal;
   if(!binding||binding.modelId!==model.id||binding.modelHash!==digest([model.model,...model.modelSources])||model.driver&&binding.driverHash!==digest([model.driver,...(model.driverSources??[])])||hash([...binding.propertyIds].sort())!==hash([...model.properties].sort()))throw Error(`Formal source/Contract binding mismatch: ${model.id}`);
+ }
+ if(registration.config.assurance){
+  if(!registration.source.configRef)throw Error('Assurance registration requires independently verified config source');
+  const prefix=registration.source.projectPath==='.'?'':registration.source.projectPath+'/',files=Object.keys(registration.source.fileHashes).filter(p=>!prefix||p.startsWith(prefix)).map(p=>prefix?p.slice(prefix.length):p),configRef=prefix?registration.source.configRef.slice(prefix.length):registration.source.configRef;
+  for(const ref of assuranceInputPaths(registration.config.assurance,registration.baseline.contracts.map(c=>({...c,sourceRef:prefix&&c.sourceRef.startsWith(prefix)?c.sourceRef.slice(prefix.length):c.sourceRef})),files,configRef)){if(!Object.hasOwn(registration.source.fileHashes,prefix+ref))throw Error(`Missing independently verified assurance source hash: ${ref}`);if(!registration.inputs.some(pattern=>matchesGlob(prefix+ref,pattern)))throw Error(`Assurance source outside protected input scope: ${ref}`);}
  }
  if(new Set(registration.inputs).size!==registration.inputs.length||new Set(registration.configPaths).size!==registration.configPaths.length)throw Error('Duplicate input scope');
  if(!Object.values(registration.policy.rules).some(rule=>rule.severity==='error'))throw Error('No mandatory policy obligations');
@@ -68,5 +74,6 @@ export async function loadRegistration(projectRoot:string,path:string,expectedDi
 export function registrationProjectData(value:Registration){
  const r=RegistrationSchema.parse(structuredClone(value)),prefix=r.source.projectPath==='.'?'':r.source.projectPath+'/';
  const local=(path:string)=>{if(prefix&&!path.startsWith(prefix))throw Error('Registration path lies outside the selected project subtree');const result=prefix?path.slice(prefix.length):path;RelativePathSchema.parse(result);return result;};
- return freeze({policy:r.policy,config:r.config,...(r.source.configRef?{configRef:local(r.source.configRef)}:{}),baseline:{...r.baseline,contracts:r.baseline.contracts.map(c=>({...c,sourceRef:local(c.sourceRef)})),intents:r.baseline.intents.map(i=>({...i,origin:{...i.origin,ref:local(i.origin.ref)}})),...(r.baseline.scope?{scope:r.baseline.scope.map(local)}:{})},inputs:r.inputs.map(local),configPaths:r.configPaths.map(local),claimScopes:r.claimScopes.map(s=>({...s,targetRef:local(s.targetRef)}))});
+ const assuranceSources=r.config.assurance?Object.fromEntries(assuranceCriterionPaths(r.config.assurance,r.baseline.contracts,Object.keys(r.source.fileHashes).filter(p=>!prefix||p.startsWith(prefix)).map(p=>prefix?p.slice(prefix.length):p),r.source.configRef?local(r.source.configRef):'behavproof.config.json').map(p=>[p,r.source.fileHashes[prefix+p]!])):undefined;
+ return freeze({...(assuranceSources?{assuranceSources}:{}),policy:r.policy,config:r.config,...(r.source.configRef?{configRef:local(r.source.configRef)}:{}),baseline:{...r.baseline,contracts:r.baseline.contracts.map(c=>({...c,sourceRef:local(c.sourceRef)})),intents:r.baseline.intents.map(i=>({...i,origin:{...i.origin,ref:local(i.origin.ref)}})),...(r.baseline.scope?{scope:r.baseline.scope.map(local)}:{})},inputs:r.inputs.map(local),configPaths:r.configPaths.map(local),claimScopes:r.claimScopes.map(s=>({...s,targetRef:local(s.targetRef)}))});
 }

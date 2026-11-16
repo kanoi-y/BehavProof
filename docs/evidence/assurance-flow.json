@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "producer": "real Vitest + explicit assurance worker + Collector",
+  "authority": "Pinned independent local host; not live GitHub or new human approval evidence",
+  "correct": {
+    "gateExit": 0,
+    "status": "pass",
+    "conditions": 6,
+    "faults": 6
+  },
+  "refactor": {
+    "gateExit": 0,
+    "status": "pass",
+    "conditions": 6,
+    "faults": 6
+  },
+  "missing": {
+    "gateExit": 1,
+    "status": "fail",
+    "conditions": 6,
+    "faults": 6
+  },
+  "stale": {
+    "gateExit": 1,
+    "status": "incomplete",
+    "conditions": 6,
+    "faults": 6
+  },
+  "driverChanged": {
+    "gateExit": 1,
+    "status": "fail",
+    "conditions": 6,
+    "faults": 6
+  },
+  "conditionRemoved": {
+    "gateExit": 1,
+    "status": "fail",
+    "conditions": 11,
+    "faults": 11
+  },
+  "scopeWeakened": {
+    "gateExit": 1,
+    "status": "fail",
+    "conditions": 12,
+    "faults": 12
+  },
+  "duplicate": {
+    "gateExit": 1,
+    "status": "incomplete",
+    "conditions": 6,
+    "faults": 6
+  },
+  "criteriaUnbound": {
+    "gateExit": 1,
+    "status": "incomplete",
+    "conditions": 6,
+    "faults": 6
+  },
+  "map": {
+    "verifiedConditions": 6,
+    "containsScopes": true,
+    "documentsVerified": true
+  },
+  "limits": [
+    "Declared six condition methods, six fault variants and the local HTTP/file-store fixture only.",
+    "No universal/concurrent proof or external production protection is asserted."
+  ]
+}
