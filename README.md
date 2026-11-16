@@ -29,7 +29,7 @@ behavproof docs check
 behavproof docs --check
 ```
 
-`init` preserves existing files, installs no dependencies and edits no workflows. Initial mode is audit. Output supports console, JSON and Markdown, with `--output relative/path`. Documents default to `.behavproof/generated/behavior.{md,html,json}`; `--output behavior.md` generates/checks one format. Generated declarations alone do not prove test execution. A baseline created in the candidate checkout is proposed data until a trusted host registers it.
+`init` preserves existing configuration, installs no dependencies and edits no workflows. In the unreleased source after v0.1.0, it also creates or updates `.gitignore` to exclude `.behavproof/`, preserving existing rules and line endings. Re-running init repairs a missing ignore rule even when configuration already exists; `--dry-run` previews both files without writing. Initial mode is audit. Output supports console, JSON and Markdown, with `--output relative/path`. Documents default to `.behavproof/generated/behavior.{md,html,json}`; `--output behavior.md` generates/checks one format. Generated declarations alone do not prove test execution. A baseline created in the candidate checkout is proposed data until a trusted host registers it.
 
 Exit codes: audit normally 0 even when evidence fails; gate 0 only for a complete pass, 1 for mandatory fail/unknown, 2 for invalid configuration, malformed evidence or infrastructure errors. `doctor` returns 1 for unsupported detection and 2 for invalid configuration. Gate requires an explicit external root:
 

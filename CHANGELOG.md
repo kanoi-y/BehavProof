@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- `init` now prepares `.gitignore` alongside configuration, adding `.behavproof/` automatically without duplicate effective rules. Existing content and line endings are retained; dry-run previews both files.
+
 ## 0.1.0 — public preview
 
 Initial release scope. Publication status and the exact tagged source commit are recorded in GitHub Releases; the preview uses npm’s next channel.

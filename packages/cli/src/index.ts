@@ -7,6 +7,7 @@ import { renderDocuments, checkDocuments, analyzeImpact, reconcile } from '@beha
 import { check } from './check.js';
 import {formatReport} from './report.js';
 import {executeFormal} from './formal.js';
+import {planGitignore} from './gitignore.js';
 import { config, exists, fileList, registry, git, writeScoped, select, ref } from './project.js';
 const help=`BehavProof 0.1.0\nCommands: init, doctor, check, explain <rule>, baseline create, contracts discover|list|validate, intent diff, impact, docs generate|check, formal discover|check|replay\ncheck reads artifacts; it never runs tests. Gate requires --trust-root outside project.\nOptions: --config --base --head --profile --mode audit|gate --format console|json|markdown --output --trust-root --dry-run --check --help --version\n`;
 async function main(){
@@ -17,10 +18,14 @@ async function main(){
  const emit=async(text:string)=>{if(values.output)await writeScoped(root,values.output,text);else process.stdout.write(text);};
  if(command==='init'){
   if(sub)throw Error('Unexpected init argument');
-  const path=values.config??'behavproof.config.json',found=await exists(root,path),detection=await detectProject(root);
+  const path=values.config??'behavproof.config.json';
+  if(path.toLowerCase()==='.gitignore'||path.toLowerCase().startsWith('.gitignore/'))throw Error('Config path conflicts with managed .gitignore');
+  const found=await exists(root,path),detection=await detectProject(root),ignore=await planGitignore(root);
   const proposal={schemaVersion:1,mode:'audit',profile:'standard',git:{base:'origin/main'},reports:{vitest:'.behavproof/input/vitest.json',coverage:'coverage/lcov.info',mutation:'reports/mutation/mutation.json'},executionManifests:[],contracts:{enabled:false,sources:[]}};
   if(!values['dry-run']&&!found)await writeScoped(root,path,JSON.stringify(proposal,null,2)+'\n',true);
-  process.stdout.write(JSON.stringify({path,action:found?'preserve':values['dry-run']?'would-create':'created',detection,notice:'No package installation, workflow edits or separate specification documents are required.'},null,2)+'\n');return 0;
+  if(!values['dry-run']&&ignore.action!=='preserve')await writeScoped(root,'.gitignore',ignore.content,ignore.action==='create');
+  const ignoreAction=ignore.action==='preserve'?'preserve':values['dry-run']?ignore.action==='create'?'would-create':'would-update':ignore.action==='create'?'created':'updated';
+  process.stdout.write(JSON.stringify({path,action:found?'preserve':values['dry-run']?'would-create':'created',gitignore:{path:'.gitignore',action:ignoreAction},detection,notice:'init manages config and .gitignore; it does not install packages or edit workflows.'},null,2)+'\n');return 0;
  }
  if(command==='doctor'){
   if(sub)throw Error('Unexpected doctor argument');const detection=await detectProject(root);await config(root,values.config,values.profile);await emit(JSON.stringify({node:process.version,...detection,trust:'External producer and protection authority must be configured separately.'},null,2)+'\n');return detection.support==='single-package'?0:1;
