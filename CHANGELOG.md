@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add `behavproof test` to prepare report directories, clear stale managed reports and run installed Vitest with both reporters in one command, preserving test exit codes.
+
 - `init` now prepares `.gitignore` alongside configuration, adding `.behavproof/` automatically without duplicate effective rules. Existing content and line endings are retained; dry-run previews both files.
 
 ## 0.1.0 — public preview
