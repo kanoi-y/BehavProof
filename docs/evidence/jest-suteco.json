@@ -3,7 +3,9 @@
   "date": "2026-11-18",
   "repository": "https://github.com/kanoi-y/suteco",
   "sourceCommit": "79bbcaab65539a1f5d080a98710e52bf06764283",
-  "sdkSourceCommit": "759aa24b8a57996b8e7e0a1a22f0c2642f4e4fe0",
+  "sdkSourceCommit": "ff322eb293c12f226ceaf4c8facf0ef6a8fc1956",
+  "sdkSourceDirty": false,
+  "sdkVersion": "0.2.0",
   "nodeForSDK": "v24.14.1",
   "nodeForProducer": "v20.19.4",
   "runner": "Jest29.7.0",
@@ -40,6 +42,7 @@
       },
       "suiteCount": 32,
       "tests": {
+        "total": 181,
         "passed": 181,
         "failed": 0,
         "pending": 0,
@@ -50,9 +53,9 @@
         "version": "29.7.0"
       },
       "inventoryComplete": true,
-      "elapsedSeconds": 17.054427666,
-      "manifestHash": "a04f3ca8c7df7a12f63554bd856b6104a1c274b45088a43bead161aa338f7af8",
-      "nativeHash": "d82f3ad69b8084e1ce6ae9c01b9ea1ad5ec7c45a46c28886033a6fce623bd2a1",
+      "elapsedSeconds": 15.478507875000002,
+      "manifestHash": "5d7839eb2dd2ac2b657d9da43d8ede3b6e8f362d41c87d0dc11274af0978d5d6",
+      "nativeHash": "62b1c6adc83943bede6000be93fda21b82c5c8b78d2296961be1900a105519d7",
       "provenance": {
         "manifests": [
           {
@@ -71,6 +74,59 @@
     },
     {
       "id": "regressions",
+      "cases": [
+        {
+          "name": "startup-version-only: updated bundled version reaches DB, store, persistence and settings",
+          "status": "failed",
+          "failureMessages": [
+            "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"2025-09-01\"\nReceived: \"2000-01-01\"\n    at Object.toBe (/private/var/folders/75/13zljh113nb7gk1_vwwf7frr0000gn/T/behavproof-jest-suteco-1rGfa1/candidate/validation/repros/startup-state.spec.ts:98:46)\n    at Generator.next (<anonymous>)\n    at asyncGeneratorStep (/Users/kanoi/Documents/ChatGPT/BehavProof/.behavproof/studies/suteco/node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)\n    at _next (/Users/kanoi/Documents/ChatGPT/BehavProof/.behavproof/studies/suteco/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)"
+          ]
+        },
+        {
+          "name": "startup-content-change-control: changed content and version refresh through the real provider",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "name": "municipality-late-load: same-turn subsequent selection and clearing survive an earlier load",
+          "status": "pending",
+          "failureMessages": []
+        },
+        {
+          "name": "municipality-event-turn-control: a later event-turn selection survives the real synchronous SQLite load",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "name": "dataset-valid: valid municipality data imports through the actual database stack",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "name": "dataset-cross-municipality: an A dataset must reject a B rule and preserve B data",
+          "status": "failed",
+          "failureMessages": [
+            "Error: expect(received).toEqual(expected) // deep equality\n\n- Expected  - 4\n+ Received  + 4\n\n  Object {\n-   \"importRejected\": true,\n+   \"importRejected\": false,\n    \"ruleAfter\": Object {\n-     \"categoryName\": \"city-b category\",\n-     \"instructions\": \"city-b instructions\",\n+     \"categoryName\": \"category supplied by city-a file\",\n+     \"instructions\": \"instructions supplied by city-a file\",\n      \"itemId\": \"city-b-item\",\n      \"municipalityId\": \"city-b\",\n      \"notes\": undefined,\n      \"officialUrl\": undefined,\n    },\n-   \"schemaAccepted\": false,\n+   \"schemaAccepted\": true,\n  }\n    at Object.toEqual (/private/var/folders/75/13zljh113nb7gk1_vwwf7frr0000gn/T/behavproof-jest-suteco-1rGfa1/candidate/validation/repros/dataset.spec.ts:123:94)\n    at Generator.next (<anonymous>)\n    at asyncGeneratorStep (/Users/kanoi/Documents/ChatGPT/BehavProof/.behavproof/studies/suteco/node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)\n    at _next (/Users/kanoi/Documents/ChatGPT/BehavProof/.behavproof/studies/suteco/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)"
+          ]
+        },
+        {
+          "name": "dataset-dangling-item: unknown item references are rejected before any writes",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "name": "unsafe-official-link: only safe web links reach the native opener",
+          "status": "failed",
+          "failureMessages": [
+            "Error: expect(received).toEqual(expected) // deep equality\n\n- Expected  - 1\n+ Received  + 3\n\n- Array []\n+ Array [\n+   \"file:///tmp/suteco-study-only\",\n+ ]\n    at toEqual (/private/var/folders/75/13zljh113nb7gk1_vwwf7frr0000gn/T/behavproof-jest-suteco-1rGfa1/candidate/validation/repros/links.spec.ts:111:26)\n    at Generator.next (<anonymous>)\n    at asyncGeneratorStep (/Users/kanoi/Documents/ChatGPT/BehavProof/.behavproof/studies/suteco/node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)\n    at _next (/Users/kanoi/Documents/ChatGPT/BehavProof/.behavproof/studies/suteco/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)"
+          ]
+        },
+        {
+          "name": "safe-official-link: only safe web links reach the native opener",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ],
       "producerExit": 0,
       "gateExit": 1,
       "status": "fail",
@@ -100,6 +156,7 @@
       },
       "suiteCount": 3,
       "tests": {
+        "total": 9,
         "passed": 5,
         "failed": 3,
         "pending": 1,
@@ -110,9 +167,9 @@
         "version": "29.7.0"
       },
       "inventoryComplete": true,
-      "elapsedSeconds": 10.170217374999996,
-      "manifestHash": "d16391b403afaf25a320f2859f9e74ce9fd849f60522948f186c5994f2e8a369",
-      "nativeHash": "c8afa277b7d20a9b556278cfc869d49434d300f55276f19762a1b40edfccdef6",
+      "elapsedSeconds": 8.872773083999997,
+      "manifestHash": "836eeb6f54131687464dae2cfa222a0183380455c0a730533be458980cf464e2",
+      "nativeHash": "eeb26e922e701e58e46e66a23c0fadd1333371fd4ec557e437ac72160a4e04c8",
       "provenance": {
         "manifests": [
           {
