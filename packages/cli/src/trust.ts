@@ -61,6 +61,7 @@ export function isCurrentClaim(evidence:Evidence,artifactRef:string,subject:Evid
  * test artifact. It never grants artifact/producer authority by itself. */
 export function selectedRunner(trust:TrustRoot|undefined,auth:{failures:readonly string[];verified:ReadonlySet<string>;manifests:readonly {ref:string;validation:ManifestValidation}[]},testRef:string|undefined,inputs:readonly string[]){
  const runner=trust?.runner;if(!runner||!testRef||!inputs.includes('package.json')||auth.failures.length||!auth.verified.has(testRef))return undefined;
+ if(runner.kind==='jest'&&!['29.7.0','30.5.2'].includes(runner.version))return undefined;
  if(trust.config.testRunner&&trust.config.testRunner!==runner.kind||trust.config.reports[runner.kind]&&trust.config.reports[runner.kind]!==testRef)return undefined;
  const spec=trust.manifests.find(row=>row.ref===runner.manifestRef),validation=auth.manifests.find(row=>row.ref===runner.manifestRef)?.validation;
  if(!spec?.expected.artifacts.some(row=>row.kind==='test'&&row.ref===testRef)||!validation||![validation.artifactIntegrity,validation.producerTrust,validation.subjectMatch,validation.executionStatus].every(status=>status==='pass'))return undefined;

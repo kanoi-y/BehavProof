@@ -53,7 +53,7 @@ if(result.error||![0,1].includes(result.status))throw Error(result.error??result
   const checked=spawnSync(process.execPath,[binary,'check','--mode','gate','--trust-root',trustPath,'--format','json'],{cwd:root,encoding:'utf8',timeout:30000,maxBuffer:12*1024*1024});
   if(!checked.stdout)throw Error(checked.stderr);const report=JSON.parse(checked.stdout),native=JSON.parse(await readFile(join(root,`.behavproof/collected/${id}/jest.json`),'utf8')),contracts=JSON.parse(await readFile(join(root,`.behavproof/collected/${id}/contracts.json`),'utf8'));
   const assertions=native.testResults.flatMap(file=>file.assertionResults);
-  const row={id,...(id==='regressions'?{cases:assertions.map(a=>({name:a.title,status:a.status,failureMessages:a.failureMessages}))}:{}),producerExit:manifest.exitCode,gateExit:checked.status,status:report.status,testResult:report.evaluations.find(e=>e.ruleId==='testResult'),detection:report.detection,suiteCount:native.numTotalTestSuites,tests:{passed:native.numPassedTests,failed:native.numFailedTests,pending:native.numPendingTests,todo:native.numTodoTests},sdkRunner:contracts.runner,inventoryComplete:contracts.inventory.complete,elapsedSeconds,manifestHash:hash(manifest),nativeHash:hashBytes(await readFile(join(root,`.behavproof/collected/${id}/jest.json`))),provenance:report.provenance};
+  const row={id,...(id==='regressions'?{cases:assertions.map(a=>({name:a.title,status:a.status,failureMessages:a.failureMessages}))}:{}),producerExit:manifest.exitCode,gateExit:checked.status,status:report.status,testResult:report.evaluations.find(e=>e.ruleId==='testResult'),detection:report.detection,suiteCount:native.numTotalTestSuites,tests:{total:native.numTotalTests,passed:native.numPassedTests,failed:native.numFailedTests,pending:native.numPendingTests,todo:native.numTodoTests},sdkRunner:contracts.runner,inventoryComplete:contracts.inventory.complete,elapsedSeconds,manifestHash:hash(manifest),nativeHash:hashBytes(await readFile(join(root,`.behavproof/collected/${id}/jest.json`))),provenance:report.provenance};
   executions.push(row);return row;
  }
  const original=await execute('baseline');
@@ -62,7 +62,12 @@ if(result.error||![0,1].includes(result.status))throw Error(result.error??result
  for(const name of ['dataset','startup-state','links'])await copyFile(join(sdk,`docs/studies/suteco-2026-11-17/overlay/validation/repros/${name}.spec.ts.fixture`),join(root,`validation/repros/${name}.spec.ts`));
  git('add','validation/repros');git('commit','-qm','Add previously measured original-code regression scenarios');
  const regressions=await execute('regressions',['--testMatch','**/validation/repros/*.spec.ts','--runTestsByPath','validation/repros/dataset.spec.ts','validation/repros/startup-state.spec.ts','validation/repros/links.spec.ts','--testNamePattern','^(?!.*municipality-late-load:).*']);
- if(regressions.gateExit!==1||regressions.testResult?.status!=='fail'||regressions.tests.passed!==5||regressions.tests.failed!==3||!regressions.inventoryComplete)throw Error('Standard Jest did not retain measured regressions: '+JSON.stringify(regressions));
+ if(regressions.gateExit!==1||regressions.testResult?.status!=='fail'||regressions.tests.total!==9||regressions.tests.passed!==5||regressions.tests.failed!==3||regressions.tests.pending!==1||regressions.tests.todo!==0||!regressions.inventoryComplete)throw Error('Standard Jest did not retain measured regressions: '+JSON.stringify(regressions));
+ const expectedCases=['dataset-valid','dataset-cross-municipality','dataset-dangling-item','startup-version-only','startup-content-change-control','municipality-late-load','municipality-event-turn-control','unsafe-official-link','safe-official-link'];
+ const caseNames=regressions.cases.map(a=>a.name.split(':')[0]).sort();
+ if(JSON.stringify(caseNames)!==JSON.stringify(expectedCases.sort()))throw Error('Unexpected regression case inventory: '+JSON.stringify(caseNames));
+ const pendingNames=regressions.cases.filter(a=>a.status==='pending').map(a=>a.name.split(':')[0]);
+ if(JSON.stringify(pendingNames)!==JSON.stringify(['municipality-late-load']))throw Error('Unexpected pending regression cases: '+JSON.stringify(pendingNames));
  const expectedFailures=['dataset-cross-municipality','startup-version-only','unsafe-official-link'];
  const failedNames=regressions.cases.filter(a=>a.status==='failed').map(a=>a.name.split(':')[0]).sort();
  if(JSON.stringify(failedNames)!==JSON.stringify(expectedFailures.sort()))throw Error('Unexpected regression failures: '+JSON.stringify(failedNames));

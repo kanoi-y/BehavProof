@@ -31,6 +31,8 @@ export async function check(root:string,options:CheckOptions){
  for(const path of select(files,cfg.executionManifests)) (await import('@behavproof/core')).ExecutionManifestSchema.parse(await safeReadJson(root,path));
  const auth=await authenticate(root,trust,subject);
  const runner=selectedRunner(trust,auth,nativeSelection.reportRef,inputPaths);if(runner)detection=await detectProject(root,runner);
+ const requiresProtectedRunner=nativeSelection.kind==='jest'||!!trust?.runner||!!trust?.config.testRunner;
+ const runnerAuthenticated=!requiresProtectedRunner||!!runner;
  const readArtifact=async(path:string)=>auth.artifactBytes.get(path)??await safeRead(root,path);
  const readArtifactJson=async(path:string)=>JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(await readArtifact(path)));
  const head=await registry(root,cfg,files,subject.testedCommitSha,trust?.config.contracts.sources??[]);
@@ -54,16 +56,16 @@ export async function check(root:string,options:CheckOptions){
  states.set('changeImpact',{status:impact.status,message:impact.message,evidenceIds:[],remediation:impactRemediation});
  const trusted=(path:string|undefined)=>!!path&&auth.verified.has(path)&&auth.failures.length===0&&detection.support==='single-package';
  // Parse configured artifacts even when unauthenticated so malformed input is exit2, not unknown.
- let contractData:any,contractPath:string|undefined,contractReportCompatible=true;
- for(const spec of trust?.manifests??[])for(const a of spec.expected.artifacts)if(a.kind==='contract_report'&&auth.verified.has(a.ref)&&(!trust?.runner||spec.ref===trust.runner.manifestRef)&&spec.expected.artifacts.some(row=>row.kind==='test'&&row.ref===nativeSelection.reportRef)){
+ let contractData:any,contractPath:string|undefined,contractReportCompatible=nativeSelection.kind!=='jest';
+ for(const spec of trust?.manifests??[])for(const a of spec.expected.artifacts)if(a.kind==='contract_report'&&auth.verified.has(a.ref)&&(!requiresProtectedRunner||runner&&spec.ref===trust?.runner?.manifestRef&&spec.expected.artifacts.some(row=>row.kind==='test'&&row.ref===nativeSelection.reportRef))){
   if(contractData)throw Error('Multiple contract reports are ambiguous');contractData=await readArtifactJson(a.ref);contractPath=a.ref;
   if(!contractData||contractData.schemaVersion!==1||!Array.isArray(contractData.contracts)||!Array.isArray(contractData.registrations)||!contractData.inventory)throw Error('Malformed contract report');
-  contractReportCompatible=nativeSelection.kind==='jest'?contractData.runner?.kind==='jest'&&(!runner||contractData.runner.version===runner.version):contractData.runner?.kind!=='jest';
+  contractReportCompatible=nativeSelection.kind==='jest'?!!runner&&contractData.runner?.kind==='jest'&&contractData.runner.version===runner.version:contractData.runner?.kind!=='jest';
  }
  const nativePath=nativeSelection.reportRef;
  if(nativePath&&await exists(root,nativePath)){
   const result=(nativeSelection.kind==='jest'?normalizeJest:normalizeVitest)(await readArtifactJson(nativePath),contractData?.inventory);
-  const verified=trusted(nativePath)&&contractReportCompatible;
+  const verified=trusted(nativePath)&&runnerAuthenticated&&contractReportCompatible;
   set('testResult',result.status==='fail'?'fail':verified?result.status:'unknown',`${nativeSelection.kind==='jest'?'Jest':'Vitest'} ${JSON.stringify(result.payload)}; ${verified?'verified current producer':'producer/subject/runner unverified'}`,[nativePath]);
  }
  const qualityPaths=trust?.qualitySources?select(files,trust.qualitySources):undefined;
@@ -87,7 +89,7 @@ export async function check(root:string,options:CheckOptions){
   const rule=policy.rules.mutationScore,result=evaluateMutation(report,scope,rule?.min??70,rule?.minMutants??10,sources,mapping);
   set('mutationScore',trusted(mutationPath)?result.status:'unknown',`Mutant counts ${JSON.stringify(result.payload)}; score ${result.score??'unknown'}`,[mutationPath]);
  }
- const rows=(contractReportCompatible?contractData?.contracts??[]:[]) as (ExecutionRow&ReportBinding)[],registrations=(contractReportCompatible?contractData?.registrations??[]:[]) as ReportBinding[];
+ const rows=(runnerAuthenticated&&contractReportCompatible?contractData?.contracts??[]:[]) as (ExecutionRow&ReportBinding)[],registrations=(runnerAuthenticated&&contractReportCompatible?contractData?.registrations??[]:[]) as ReportBinding[];
  const bindings=bindRegistrations(registrations,rows,()=>!!contractPath&&trusted(contractPath)).bindings;
  const assurance=evaluateAssurance(obligations,rows,bindings,()=>!!contractPath&&trusted(contractPath));
  set('contractExecution',assurance.cases_executed,`Declared: ${assurance.contract_declared}; binding: ${assurance.binding_verified}; cases: ${assurance.cases_executed}`,contractPath?[contractPath]:[]);
@@ -133,7 +135,7 @@ export async function check(root:string,options:CheckOptions){
  evaluations.push(...scopedEvaluations({config:cfg,...(trust?{protectedConfig:trust.config}:{}),policy,registry:obligations,files:inputPaths,states,rows,bindings,verifyRow:()=>!!contractPath&&trusted(contractPath),claims:scopedClaims,claimScopes:trust?.claimScopes??[],intentStatus,...(normalizedCoverage?{coverage:normalizedCoverage}:{}),...(normalizedMutation?{mutation:normalizedMutation}:{}),coverageTrusted:trusted(coveragePath),mutationTrusted:trusted(mutationPath),mapping,changed:scope,sources:mutationSources}));
  for(const evaluation of evaluations){const allowed=policy.rules[evaluation.ruleId]?.allowNotApplicable;const exemption=trust?.notApplicable.find(n=>n.ruleId===evaluation.ruleId&&allowed?.includes(n.reason)&&trusted(n.evidenceRef));if(exemption&&evaluation.status==='unknown'){evaluation.status='not_applicable';evaluation.evidenceIds=[exemption.evidenceRef];evaluation.message=exemption.reason;evaluation.notApplicable={reason:exemption.reason,allowedReasons:allowed!,evidenceIds:[exemption.evidenceRef]};}}
  evaluations.push(...formal.evaluations,...conditionAssurance.evaluations);
- if(nativeSelection.kind==='jest'||cfg.testRunner||trust?.config.testRunner||nativeSelection.ambiguous)evaluations.push({ruleId:'testRunnerProtection',severity:'error',status:nativeSelection.policyChanged?'fail':nativeSelection.ambiguous?'unknown':'pass',scope:['runner',nativeSelection.kind],evidenceIds:nativePath?[nativePath]:[],message:nativeSelection.policyChanged?'Candidate runner selection differs from retained protected semantics':nativeSelection.ambiguous?'Both native report formats are present; select one runner explicitly':'Native report kind and protected invocation selection retained'});
+ if(requiresProtectedRunner||cfg.testRunner||nativeSelection.ambiguous)evaluations.push({ruleId:'testRunnerProtection',severity:'error',status:nativeSelection.policyChanged?'fail':nativeSelection.ambiguous||!runnerAuthenticated||!contractReportCompatible?'unknown':'pass',scope:['runner',nativeSelection.kind],evidenceIds:nativePath?[nativePath]:[],message:nativeSelection.policyChanged?'Candidate runner selection differs from retained protected semantics':nativeSelection.ambiguous?'Both native report formats are present; select one runner explicitly':!runnerAuthenticated?'Protected runner kind, supported version and selected authenticated invocation are required':!contractReportCompatible?'Selected invocation requires a compatible contract runner marker':'Native report kind and protected invocation selection retained'});
  if(auth.failures.length)evaluations.push({ruleId:'evidenceIntegrity',severity:'error',status:'fail',scope:[],evidenceIds:[],message:auth.failures.join('; ')});
  if(testedRelationship!=='known')evaluations.push({ruleId:'testedCommitRelationship',severity:'error',status:'unknown',scope:[],evidenceIds:[],message:'Tested commit is neither PR head nor a verified base/head synthetic merge'});
  if(detection.support!=='single-package'||subject.dirty)evaluations.push({ruleId:'evaluationEnvironment',severity:'error',status:'unknown',scope:[],evidenceIds:[],message:subject.dirty?'Source inputs contain uncommitted or untracked changes':detection.reasons.join('; ')});
