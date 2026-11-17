@@ -1,6 +1,6 @@
 {
   "name": "@behavproof/vitest",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "exports": {
     ".": {
@@ -17,7 +17,7 @@
     }
   },
   "dependencies": {
-    "@behavproof/core": "0.1.0"
+    "@behavproof/core": "0.2.0"
   },
   "peerDependencies": {
     "vitest": "5.1.0"

@@ -11,11 +11,11 @@ import {executeFormal} from './formal.js';
 import {planGitignore} from './gitignore.js';
 import {runTests} from './test-command.js';
 import { config, exists, fileList, registry, git, writeScoped, select, ref } from './project.js';
-const help=`BehavProof 0.1.0\nCommands: init, test, doctor, check, explain <rule>, baseline create, contracts discover|list|validate, intent diff, impact, docs generate|check, formal discover|check|replay, assurance discover|run|map\ncheck reads artifacts; it never runs tests. Gate requires --trust-root outside project.\nOptions: --config --base --head --profile --mode audit|gate --format console|json|markdown --output --trust-root --dry-run --check --help --version\n`;
+const help=`BehavProof 0.2.0\nCommands: init, test, doctor, check, explain <rule>, baseline create, contracts discover|list|validate, intent diff, impact, docs generate|check, formal discover|check|replay, assurance discover|run|map\ncheck reads artifacts; it never runs tests. Gate requires --trust-root outside project.\nOptions: --config --base --head --profile --mode audit|gate --format console|json|markdown --output --trust-root --dry-run --check --help --version\n`;
 async function main(){
  const {values,positionals}=parseArgs({allowPositionals:true,strict:true,options:{config:{type:'string'},base:{type:'string'},head:{type:'string'},profile:{type:'string'},mode:{type:'string'},format:{type:'string'},output:{type:'string'},'trust-root':{type:'string'},'dry-run':{type:'boolean'},check:{type:'boolean'},help:{type:'boolean'},version:{type:'boolean'},root:{type:'string'},model:{type:'string'}}});
  const root=resolve(values.root??process.cwd()),[command,sub,...rest]=positionals;
- if(values.version){process.stdout.write('0.1.0\n');return 0;}if(values.help||!command){process.stdout.write(help);return 0;}
+ if(values.version){process.stdout.write('0.2.0\n');return 0;}if(values.help||!command){process.stdout.write(help);return 0;}
  if(rest.length)throw Error('Unexpected command arguments');
  const emit=async(text:string)=>{if(values.output)await writeScoped(root,values.output,text);else process.stdout.write(text);};
  if(command==='test'){

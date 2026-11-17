@@ -1,16 +1,14 @@
 # Changelog
 
-## Unreleased — condition-scoped assurance
+## 0.2.0 — public preview (2026-11-17)
 
 - Add optional revision-bound contract conditions, required checks and relevant fault types, preserving non-adopter hashes and documents.
 - Add explicit bounded assurance execution and read-only discovery/map, real state/effect, seeded property/sequence, AST import-boundary and correlated journey observations.
 - Authenticate condition reports with the existing Collector/root and independently pin verifier semantics; retain baseline/head obligations and critical fault requirements.
 - Add verified review maps/documents, a refund HTTP/file-store example and normal/refactor/negative acceptance flow.
-
-## Unreleased
-
+- Update all eight packages and their exact internal dependencies to 0.2.0.
+- Refuse reused assurance processes when the transitive module snapshot changes.
 - Add `behavproof test` to prepare report directories, clear stale managed reports and run installed Vitest with both reporters in one command, preserving test exit codes.
-
 - `init` now prepares `.gitignore` alongside configuration, adding `.behavproof/` automatically without duplicate effective rules. Existing content and line endings are retained; dry-run previews both files.
 
 ## 0.1.0 — public preview
