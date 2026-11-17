@@ -54,7 +54,7 @@ test('release validation accepts actual dual-module and native Jest archives wit
   const cli=npmCliPath();
   for(const name of ['core','contract-jest']){
    const metadata=JSON.parse(await readFile(`packages/${name}/package.json`,'utf8'));
-   expect(()=>validatePackage(metadata,'0.1.0')).not.toThrow();
+   expect(()=>validatePackage(metadata,metadata.version)).not.toThrow();
    const [pack]=JSON.parse(execFileSync(process.execPath,[cli,'pack','--ignore-scripts','--json','--cache',resolve('.npm-cache'),'--pack-destination',scratch],{cwd:resolve('packages',name),encoding:'utf8'}));
    const files=inspectArchive(await readFile(join(scratch,pack.filename)),metadata);
    for(const file of name==='core'?['cjs/package.json','cjs/dist/index.js']:['dist/index.cjs','dist/index.d.cts','dist/reporter.cjs','dist/runner.cjs','dist/probe.cjs'])expect(files).toContain('package/'+file);

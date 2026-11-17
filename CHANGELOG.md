@@ -1,20 +1,20 @@
 # Changelog
 
-## Unreleased — condition-scoped assurance
+## Unreleased — Jest support
+
+- Add optional native Jest29.7.0 / 30.5.2 contracts, Circus adapter, reporter, CLI execution/detection/init and protected source/canary observations.
+- Bind native/contract evidence to the protected runner and invocation; preserve existing Vitest defaults and package publication scope.
+- Verify installed package consumers and original suteco: existing181 tests pass; three measured regressions fail through the standard authenticated Jest gate.
+
+## 0.2.0 — public preview (2026-11-17)
 
 - Add optional revision-bound contract conditions, required checks and relevant fault types, preserving non-adopter hashes and documents.
 - Add explicit bounded assurance execution and read-only discovery/map, real state/effect, seeded property/sequence, AST import-boundary and correlated journey observations.
 - Authenticate condition reports with the existing Collector/root and independently pin verifier semantics; retain baseline/head obligations and critical fault requirements.
 - Add verified review maps/documents, a refund HTTP/file-store example and normal/refactor/negative acceptance flow.
-
-## Unreleased
-
-- Add optional native Jest 29.7.0 / 30.5.2 integration: contract callbacks, Circus adapter, reporter, CLI execution/detection/init, CJS/ESM exports and protected source/canary observations.
-- Normalize Jest separately and bind native/contract evidence to the protected runner and invocation; preserve existing Vitest defaults and package publication scope.
-- Verify installed package consumers and original suteco: existing181 tests pass; three previously measured regressions fail through the standard authenticated Jest gate.
-
+- Update all eight packages and their exact internal dependencies to 0.2.0.
+- Refuse reused assurance processes when the transitive module snapshot changes.
 - Add `behavproof test` to prepare report directories, clear stale managed reports and run installed Vitest with both reporters in one command, preserving test exit codes.
-
 - `init` now prepares `.gitignore` alongside configuration, adding `.behavproof/` automatically without duplicate effective rules. Existing content and line endings are retained; dry-run previews both files.
 
 ## 0.1.0 — public preview

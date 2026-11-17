@@ -1,19 +1,50 @@
 {
   "name": "@behavproof/jest",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "commonjs",
   "exports": {
-    ".": {"types": "./dist/index.d.cts", "import": "./dist/index.cjs", "require": "./dist/index.cjs"},
-    "./reporter": {"types": "./dist/reporter.d.cts", "import": "./dist/reporter.cjs", "require": "./dist/reporter.cjs"},
-    "./runner": {"types": "./dist/runner.d.cts", "import": "./dist/runner.cjs", "require": "./dist/runner.cjs"},
-    "./probe": {"types": "./dist/probe.d.cts", "import": "./dist/probe.cjs", "require": "./dist/probe.cjs"}
+    ".": {
+      "types": "./dist/index.d.cts",
+      "import": "./dist/index.cjs",
+      "require": "./dist/index.cjs"
+    },
+    "./reporter": {
+      "types": "./dist/reporter.d.cts",
+      "import": "./dist/reporter.cjs",
+      "require": "./dist/reporter.cjs"
+    },
+    "./runner": {
+      "types": "./dist/runner.d.cts",
+      "import": "./dist/runner.cjs",
+      "require": "./dist/runner.cjs"
+    },
+    "./probe": {
+      "types": "./dist/probe.d.cts",
+      "import": "./dist/probe.cjs",
+      "require": "./dist/probe.cjs"
+    }
   },
-  "dependencies": {"@behavproof/core": "0.1.0"},
-  "peerDependencies": {"jest": "29.7.0 || 30.5.2"},
-  "files": ["dist"],
-  "engines": {"node": "24.x"},
-  "repository": {"type": "git", "url": "git+https://github.com/kanoi-y/BehavProof.git", "directory": "packages/contract-jest"},
+  "dependencies": {
+    "@behavproof/core": "0.2.0"
+  },
+  "peerDependencies": {
+    "jest": "29.7.0 || 30.5.2"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": "24.x"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kanoi-y/BehavProof.git",
+    "directory": "packages/contract-jest"
+  },
   "license": "UNLICENSED",
-  "publishConfig": {"access": "public", "registry": "https://registry.npmjs.org/"},
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "description": "BehavProof native Jest contract comparison and producer observations"
 }
