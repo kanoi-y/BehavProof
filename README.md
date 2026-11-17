@@ -2,7 +2,7 @@
 
 Canonical public repository: [kanoi-y/BehavProof](https://github.com/kanoi-y/BehavProof). This repository owns the implementation, tests, examples and product CI. [pdd-ts](https://github.com/kanoi-y/pdd-ts) is an application used to evaluate BehavProof; it consumes a pinned BehavProof commit and does not host this product's source tree. See [repository boundaries](docs/repository-boundaries.md).
 
-TypeScript / Node.js 24 / Vitest evidence auditing and executable contract registry. This checkout implements the mandatory M1/M2 libraries and CLI, with live issuer-bound protection verified on an isolated pdd-ts branch. The initial npm release is a public preview on the `next` channel; publication status and the exact source commit are recorded in [GitHub Releases](https://github.com/kanoi-y/BehavProof/releases). Use an explicit published version when installing.
+TypeScript / Node.js 24 / Vitest and Jest evidence auditing and executable contract registry. This checkout implements the mandatory M1/M2 libraries and CLI, with live issuer-bound protection verified on an isolated pdd-ts branch. The initial npm release is a public preview on the `next` channel; publication status and the exact source commit are recorded in [GitHub Releases](https://github.com/kanoi-y/BehavProof/releases). Use an explicit published version when installing.
 
 ```sh
 npm ci --ignore-scripts --cache .npm-cache
@@ -12,7 +12,7 @@ node packages/cli/dist/index.js --help
 node packages/cli/dist/index.js init --dry-run
 ```
 
-The root is a development workspace. Run project commands in a single-package target repository, or pass `--root /absolute/project`. Monorepos and non-Vitest runners are detected and reported as unsupported. `check` does not execute tests or configuration code.
+The root is a development workspace. Run project commands in a single-package target repository, or pass `--root /absolute/project`. Supported native runners are Vitest 5.1.0 and Jest 29.7.0 / 30.5.2; monorepos and other runners remain unsupported. `check` does not execute tests or configuration code.
 
 ```sh
 behavproof check --mode audit --base origin/main --head HEAD --format json
@@ -39,7 +39,7 @@ npx --no-install behavproof test
 
 It prepares `.behavproof/input/`, removes the previous two managed report files, runs the project-installed Vitest 5.1.0 with both JSON and BehavProof reporters, and returns Vitest's exit code. The default outputs are `.behavproof/input/vitest.json` and `.behavproof/input/contracts.json`. A configured `reports.vitest` path is supported inside `.behavproof/`; unsafe links, overlapping outputs and unmanaged destinations are rejected. No packages are downloaded. Existing Vitest configuration and test files execute through Vitest, as with running Vitest directly; use a credential-free isolated worker for untrusted candidate code.
 
-`test` supports `--root` and `--config`. It is an explicit execution command, separate from audit/gate verification. A successful local test run does not authenticate reports or establish approval authority. To inspect the generated evidence afterwards, run `behavproof check --mode audit` with the intended Git base.
+`test` supports `--root`, `--config` and `--runner jest|vitest`. With both runners declared, select one explicitly or set `testRunner` in configuration. It is an explicit execution command, separate from audit/gate verification. A successful local test run does not authenticate reports or establish approval authority. To inspect the generated evidence afterwards, run `behavproof check --mode audit` with the intended Git base.
 
 Exit codes: audit normally 0 even when evidence fails; gate 0 only for a complete pass, 1 for mandatory fail/unknown, 2 for invalid configuration, malformed evidence or infrastructure errors. `doctor` returns 1 for unsupported detection and 2 for invalid configuration. Gate requires an explicit external root:
 
@@ -55,7 +55,9 @@ Claims remain separate: declared contracts, binding verification, executed cases
 
 The CLI package includes versioned JSON schemas, basic/standard/critical presets and an internal audit workflow template. The template requires a pinned verifier/root deployment; it does not establish externally protected checks itself. See [acceptance status](docs/acceptance.md) and [M0 experiments](docs/m0-results.md).
 
-Development packaging checks: `node scripts/package-smoke.mjs --online` tests a fresh consumer using registry metadata; `--offline` requires a fully seeded npm cache. Both disable lifecycle scripts and install the six local tarballs without publishing. Add `--formal` to explicitly test the eight-package consumer; Quint and external runtimes remain separately installed in the opt-in project.
+Jest support is available in this unreleased source through the optional `@behavproof/jest` package. See [日本語のJest導入・検証手順](docs/jest.ja.md) for native CJS/ESM/TypeScript usage, protected selection and the suteco measurement. Existing Vitest defaults remain unchanged.
+
+Development packaging checks: `node scripts/package-smoke.mjs --online` tests a fresh consumer using registry metadata; `--offline` requires a fully seeded npm cache. Both disable lifecycle scripts and install the six local tarballs without publishing. Add `--formal` to explicitly test the eight-package consumer; Quint and external runtimes remain separately installed in the opt-in project. Add `--jest` to explicitly pack/install the seventh, optional Jest package and test actual Jest 29/30 consumers; ordinary CLI consumers do not install Jest. The existing publication allowlist is unchanged; the new package has not been published.
 
 The explicit [protected producer components](docs/protected-producer.md) add case-scoped production-call observations, same-callback fault probes, live upstream-job verification and a dedicated App check publisher. `node scripts/protected-probe-flow.mjs` exercises the real Collector/worker/CLI path. The approved PR7 source has also been verified against its actual registered baseline (`docs/evidence/approved-probe-live.json`); its complete critical gate remains incomplete while quality/external evidence is absent.
 

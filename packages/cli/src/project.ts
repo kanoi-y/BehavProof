@@ -13,7 +13,7 @@ export async function fileList(root:string){const files:string[]=[];let count=0;
  const walk=async(dir:string,depth:number)=>{if(depth>64)throw Error('Directory depth limit exceeded');for(const ent of await readdir(join(root,dir),{withFileTypes:true})){if(++count>50000)throw Error('Project file inventory exceeds limit');const path=dir?`${dir}/${ent.name}`:ent.name;if(['.git','node_modules','.npm-cache','.superpowers'].includes(ent.name)||path==='.behavproof/generated')continue;if(ent.isDirectory())await walk(path,depth+1);else files.push(path);}};
  await walk('',0);return files.sort();
 }
-export function select(files:readonly string[],patterns:readonly string[]){for(const pattern of patterns)RelativePathSchema.parse(pattern);return files.filter(file=>patterns.some(pattern=>matchesGlob(file,pattern))).sort();}
+export function select(files:readonly string[],patterns:readonly string[]){for(const pattern of patterns)RelativePathSchema.parse(pattern);return files.filter(file=>patterns.some(pattern=>file===pattern||matchesGlob(file,pattern))).sort();}
 export async function registry(root:string,cfg:Config,files:readonly string[],commitSha:string,extraSources:Config['contracts']['sources']=[],readSource?:(path:string)=>Promise<string>){
  const sources=[...cfg.contracts.sources,...extraSources],seen=new Set<string>(),rows:{kind:string;ref:string;content:string}[]=[];
  for(const source of sources)for(const ref of select(files,source.include)){const key=`${source.type}:${ref}`;if(seen.has(key))continue;seen.add(key);rows.push({kind:source.type,ref,content:readSource?await readSource(ref):(await safeRead(root,ref)).toString('utf8')});}

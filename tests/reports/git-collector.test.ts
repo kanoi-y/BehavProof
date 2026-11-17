@@ -50,9 +50,9 @@ it('bounds a hanging runner and seals no artifacts',async()=>{
 it('identifies deleted and binary changes without claiming binary line mapping',async()=>{
  const root=await mkdtemp(join(tmpdir(),'behavproof-'));git(root,'init','-q');git(root,'config','user.email','test@example.com');git(root,'config','user.name','Test');await writeFile(join(root,'delete.ts'),'text\n');await writeFile(join(root,'data.bin'),Buffer.from([0,1,2]));git(root,'add','.');git(root,'commit','-qm','base');const base=git(root,'rev-parse','HEAD');git(root,'rm','delete.ts');await writeFile(join(root,'data.bin'),Buffer.from([0,3,4]));git(root,'add','.');git(root,'commit','-qm','change');const diff=await gitDiff(root,base,'HEAD');expect(diff.files.find(f=>f.path==='delete.ts')?.kind).toBe('D');expect(diff.files.find(f=>f.path==='delete.ts')?.lines).toEqual([]);expect(diff.files.find(f=>f.path==='data.bin')?.ambiguous).toBe(true);
 });
-it('requires Node, Vitest, Git and a supported single-package layout',async()=>{
+it('requires Node, a supported test runner, Git and a single-package layout',async()=>{
  const root=await mkdtemp(join(tmpdir(),'behavproof-'));expect((await detectProject(root)).support).toBe('unsupported');
- await writeFile(join(root,'package.json'),JSON.stringify({name:'other',scripts:{test:'jest'},devDependencies:{jest:'1'}}));git(root,'init','-q');
+ await writeFile(join(root,'package.json'),JSON.stringify({name:'other',scripts:{test:'mocha'},devDependencies:{mocha:'1'}}));git(root,'init','-q');
  const unsupported=await detectProject(root);expect(unsupported.support).toBe('unsupported');expect(unsupported.reasons.join(' ')).toMatch(/Vitest/);
  await writeFile(join(root,'package.json'),JSON.stringify({name:'node-project',scripts:{test:'vitest run'},devDependencies:{vitest:'5.1.0'}}));expect((await detectProject(root)).support).toBe('single-package');
  await writeFile(join(root,'rush.json'),'{}');expect((await detectProject(root)).support).toBe('monorepo');

@@ -9,6 +9,10 @@
 
 ## Unreleased
 
+- Add optional native Jest 29.7.0 / 30.5.2 integration: contract callbacks, Circus adapter, reporter, CLI execution/detection/init, CJS/ESM exports and protected source/canary observations.
+- Normalize Jest separately and bind native/contract evidence to the protected runner and invocation; preserve existing Vitest defaults and package publication scope.
+- Verify installed package consumers and original suteco: existing181 tests pass; three previously measured regressions fail through the standard authenticated Jest gate.
+
 - Add `behavproof test` to prepare report directories, clear stale managed reports and run installed Vitest with both reporters in one command, preserving test exit codes.
 
 - `init` now prepares `.gitignore` alongside configuration, adding `.behavproof/` automatically without duplicate effective rules. Existing content and line endings are retained; dry-run previews both files.

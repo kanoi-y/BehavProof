@@ -1,11 +1,12 @@
 import {assuranceEvaluations} from './assurance-evaluation.js';
+import {testReportSelection} from './test-selection.js';
 import {formalEvaluations} from './formal-evaluation.js';
 import { scopedEvaluations } from './scopes.js';
 import {currentImpact,impactSeverity,impactRemediation} from './impact.js';
 import {remediationFor,type PolicyDiff} from './report.js';
 import { pipelineEvaluation } from './pipeline.js';
 import { safeRead, safeReadJson, parseConfig, hashBytes, mergeProtectedPolicy, evaluateGate, hash, resolveRisk, type Evaluation, type EvidenceStatus, type Approval, type Config, EvidenceSchema } from '@behavproof/core';
-import { detectProject, gitDiff, gitSubject, normalizeVitest, normalizeLcov, normalizeStryker, evaluateCoverage, evaluateMutation, lineMapping, verifyMergeSubject } from '@behavproof/adapter-reports';
+import { detectProject, gitDiff, gitSubject, normalizeVitest, normalizeJest, normalizeLcov, normalizeStryker, evaluateCoverage, evaluateMutation, lineMapping, verifyMergeSubject } from '@behavproof/adapter-reports';
 import { reconcile, evaluateAssurance, bindRegistrations, evaluateScopedClaims, buildAssuranceMap, type ExecutionRow, type ReportBinding } from '@behavproof/contract-registry';
 import { GitHubAuthority } from '@behavproof/adapter-github';
 import { config, fileList, select, registry, registryAtGit, ref, exists } from './project.js';
@@ -20,7 +21,8 @@ export async function check(root:string,options:CheckOptions){
  if(mode==='gate'&&!options['trust-root'])throw Error('Gate mode requires --trust-root outside project authority');
  const trust=options['trust-root']?await loadTrust(root,options['trust-root']):undefined;
  const policy=trust?mergeProtectedPolicy({schemaVersion:1,profileVersion:'1',rules:cfg.rules},trust.policy):{schemaVersion:1 as const,profileVersion:'1' as const,rules:cfg.rules};
- const files=await fileList(root);let detection=await detectProject(root);
+ const nativeSelection=testReportSelection(cfg,trust?.config,trust?.runner);
+ const files=await fileList(root);let detection=await detectProject(root,cfg.testRunner?{runner:cfg.testRunner}:undefined);
  const diff=await gitDiff(root,ref(options.base??cfg.git.base),ref(options.head??'HEAD'));
  const inputPaths=trust?select(files,trust.inputs):files.filter(p=>!p.startsWith('.behavproof/')&&!Object.values(cfg.reports).includes(p));
  if(!inputPaths.length)throw Error('No source inputs in evaluation scope');
@@ -28,7 +30,7 @@ export async function check(root:string,options:CheckOptions){
  const testedRelationship=await verifyMergeSubject(root,subject);
  for(const path of select(files,cfg.executionManifests)) (await import('@behavproof/core')).ExecutionManifestSchema.parse(await safeReadJson(root,path));
  const auth=await authenticate(root,trust,subject);
- const runner=selectedRunner(trust,auth,cfg.reports.vitest??trust?.config.reports.vitest,inputPaths);if(runner)detection=await detectProject(root,runner);
+ const runner=selectedRunner(trust,auth,nativeSelection.reportRef,inputPaths);if(runner)detection=await detectProject(root,runner);
  const readArtifact=async(path:string)=>auth.artifactBytes.get(path)??await safeRead(root,path);
  const readArtifactJson=async(path:string)=>JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(await readArtifact(path)));
  const head=await registry(root,cfg,files,subject.testedCommitSha,trust?.config.contracts.sources??[]);
@@ -52,15 +54,17 @@ export async function check(root:string,options:CheckOptions){
  states.set('changeImpact',{status:impact.status,message:impact.message,evidenceIds:[],remediation:impactRemediation});
  const trusted=(path:string|undefined)=>!!path&&auth.verified.has(path)&&auth.failures.length===0&&detection.support==='single-package';
  // Parse configured artifacts even when unauthenticated so malformed input is exit2, not unknown.
- let contractData:any,contractPath:string|undefined;
- for(const spec of trust?.manifests??[])for(const a of spec.expected.artifacts)if(a.kind==='contract_report'&&auth.verified.has(a.ref)){
+ let contractData:any,contractPath:string|undefined,contractReportCompatible=true;
+ for(const spec of trust?.manifests??[])for(const a of spec.expected.artifacts)if(a.kind==='contract_report'&&auth.verified.has(a.ref)&&(!trust?.runner||spec.ref===trust.runner.manifestRef)&&spec.expected.artifacts.some(row=>row.kind==='test'&&row.ref===nativeSelection.reportRef)){
   if(contractData)throw Error('Multiple contract reports are ambiguous');contractData=await readArtifactJson(a.ref);contractPath=a.ref;
   if(!contractData||contractData.schemaVersion!==1||!Array.isArray(contractData.contracts)||!Array.isArray(contractData.registrations)||!contractData.inventory)throw Error('Malformed contract report');
+  contractReportCompatible=nativeSelection.kind==='jest'?contractData.runner?.kind==='jest'&&(!runner||contractData.runner.version===runner.version):contractData.runner?.kind!=='jest';
  }
- const vitestPath=cfg.reports.vitest??trust?.config.reports.vitest;
- if(vitestPath&&await exists(root,vitestPath)){
-  const result=normalizeVitest(await readArtifactJson(vitestPath),contractData?.inventory);
-  set('testResult',result.status==='fail'?'fail':trusted(vitestPath)?result.status:'unknown',`Vitest ${JSON.stringify(result.payload)}; ${trusted(vitestPath)?'verified current producer':'producer/subject unverified'}`,[vitestPath]);
+ const nativePath=nativeSelection.reportRef;
+ if(nativePath&&await exists(root,nativePath)){
+  const result=(nativeSelection.kind==='jest'?normalizeJest:normalizeVitest)(await readArtifactJson(nativePath),contractData?.inventory);
+  const verified=trusted(nativePath)&&contractReportCompatible;
+  set('testResult',result.status==='fail'?'fail':verified?result.status:'unknown',`${nativeSelection.kind==='jest'?'Jest':'Vitest'} ${JSON.stringify(result.payload)}; ${verified?'verified current producer':'producer/subject/runner unverified'}`,[nativePath]);
  }
  const qualityPaths=trust?.qualitySources?select(files,trust.qualitySources):undefined;
  if(qualityPaths&&(!qualityPaths.length||qualityPaths.some(path=>!inputPaths.includes(path))))throw Error('Protected quality sources must be present within the hashed input scope');
@@ -83,7 +87,7 @@ export async function check(root:string,options:CheckOptions){
   const rule=policy.rules.mutationScore,result=evaluateMutation(report,scope,rule?.min??70,rule?.minMutants??10,sources,mapping);
   set('mutationScore',trusted(mutationPath)?result.status:'unknown',`Mutant counts ${JSON.stringify(result.payload)}; score ${result.score??'unknown'}`,[mutationPath]);
  }
- const rows=(contractData?.contracts??[]) as (ExecutionRow&ReportBinding)[],registrations=(contractData?.registrations??[]) as ReportBinding[];
+ const rows=(contractReportCompatible?contractData?.contracts??[]:[]) as (ExecutionRow&ReportBinding)[],registrations=(contractReportCompatible?contractData?.registrations??[]:[]) as ReportBinding[];
  const bindings=bindRegistrations(registrations,rows,()=>!!contractPath&&trusted(contractPath)).bindings;
  const assurance=evaluateAssurance(obligations,rows,bindings,()=>!!contractPath&&trusted(contractPath));
  set('contractExecution',assurance.cases_executed,`Declared: ${assurance.contract_declared}; binding: ${assurance.binding_verified}; cases: ${assurance.cases_executed}`,contractPath?[contractPath]:[]);
@@ -109,10 +113,11 @@ export async function check(root:string,options:CheckOptions){
  let policyDiff:PolicyDiff|null=null;
  if(trust){
   const sourceWeakened=trust.config.contracts.enabled&&!cfg.contracts.enabled||trust.config.contracts.sources.some(s=>s.include.some(p=>!cfg.contracts.sources.some(c=>c.type===s.type&&c.include.includes(p))));
-  const weakened=sourceWeakened||formal.policyChanged||conditionAssurance.policyChanged||Object.entries(trust.policy.rules).some(([id,r])=>{const local=cfg.rules[id],levels={off:0,warn:1,error:2};return !local||levels[local.severity]<levels[r.severity]||(r.min!==undefined&&(local.min??-1)<r.min)||(r.minMutants!==undefined&&(local.minMutants??-1)<r.minMutants);});
+  const weakened=sourceWeakened||nativeSelection.policyChanged||formal.policyChanged||conditionAssurance.policyChanged||Object.entries(trust.policy.rules).some(([id,r])=>{const local=cfg.rules[id],levels={off:0,warn:1,error:2};return !local||levels[local.severity]<levels[r.severity]||(r.min!==undefined&&(local.min??-1)<r.min)||(r.minMutants!==undefined&&(local.minMutants??-1)<r.minMutants);});
   set('policyProtection',weakened?'fail':'pass',weakened?'Project policy weakens protected obligations; effective evaluation retains protected thresholds':'Policy supplied outside project authority');
   const configuration:PolicyDiff['configuration']=[{field:'contracts.enabled',protected:trust.config.contracts.enabled,project:cfg.contracts.enabled,effective:trust.config.contracts.enabled||cfg.contracts.enabled},{field:'contracts.sources',protected:trust.config.contracts.sources,project:cfg.contracts.sources,effective:[...new Map([...trust.config.contracts.sources,...cfg.contracts.sources].map(s=>[hash(s),s])).values()]},{field:'riskOverrides',protected:trust.config.riskOverrides,project:cfg.riskOverrides,effective:{protectedFloors:trust.config.riskOverrides,projectRequests:cfg.riskOverrides,selection:'Maximum project/protected/declaration risk'}}].filter(row=>hash(row.protected)!==hash(row.project));
   if(formal.policyChanged)configuration.push({field:'formal',protected:trust.config.formal??null,project:cfg.formal??null,effective:formal.models.map(m=>m.modelId)});
+  if(nativeSelection.policyChanged)configuration.push({field:'testRunner',protected:trust.runner?.kind??trust.config.testRunner??null,project:cfg.testRunner??null,effective:nativeSelection.kind});
   policyDiff={weakened,configuration,rules:[...new Set([...Object.keys(trust.policy.rules),...Object.keys(cfg.rules)])].sort().filter(id=>hash(trust.policy.rules[id]??null)!==hash(cfg.rules[id]??null)).map(ruleId=>({ruleId,protected:trust.policy.rules[ruleId]??null,project:cfg.rules[ruleId]??null,effective:policy.rules[ruleId]??null}))};
  }
  const pipelineObservation=trust?.pipeline?await pipelineEvaluation(root,trust,auth):undefined;
@@ -128,6 +133,7 @@ export async function check(root:string,options:CheckOptions){
  evaluations.push(...scopedEvaluations({config:cfg,...(trust?{protectedConfig:trust.config}:{}),policy,registry:obligations,files:inputPaths,states,rows,bindings,verifyRow:()=>!!contractPath&&trusted(contractPath),claims:scopedClaims,claimScopes:trust?.claimScopes??[],intentStatus,...(normalizedCoverage?{coverage:normalizedCoverage}:{}),...(normalizedMutation?{mutation:normalizedMutation}:{}),coverageTrusted:trusted(coveragePath),mutationTrusted:trusted(mutationPath),mapping,changed:scope,sources:mutationSources}));
  for(const evaluation of evaluations){const allowed=policy.rules[evaluation.ruleId]?.allowNotApplicable;const exemption=trust?.notApplicable.find(n=>n.ruleId===evaluation.ruleId&&allowed?.includes(n.reason)&&trusted(n.evidenceRef));if(exemption&&evaluation.status==='unknown'){evaluation.status='not_applicable';evaluation.evidenceIds=[exemption.evidenceRef];evaluation.message=exemption.reason;evaluation.notApplicable={reason:exemption.reason,allowedReasons:allowed!,evidenceIds:[exemption.evidenceRef]};}}
  evaluations.push(...formal.evaluations,...conditionAssurance.evaluations);
+ if(nativeSelection.kind==='jest'||cfg.testRunner||trust?.config.testRunner||nativeSelection.ambiguous)evaluations.push({ruleId:'testRunnerProtection',severity:'error',status:nativeSelection.policyChanged?'fail':nativeSelection.ambiguous?'unknown':'pass',scope:['runner',nativeSelection.kind],evidenceIds:nativePath?[nativePath]:[],message:nativeSelection.policyChanged?'Candidate runner selection differs from retained protected semantics':nativeSelection.ambiguous?'Both native report formats are present; select one runner explicitly':'Native report kind and protected invocation selection retained'});
  if(auth.failures.length)evaluations.push({ruleId:'evidenceIntegrity',severity:'error',status:'fail',scope:[],evidenceIds:[],message:auth.failures.join('; ')});
  if(testedRelationship!=='known')evaluations.push({ruleId:'testedCommitRelationship',severity:'error',status:'unknown',scope:[],evidenceIds:[],message:'Tested commit is neither PR head nor a verified base/head synthetic merge'});
  if(detection.support!=='single-package'||subject.dirty)evaluations.push({ruleId:'evaluationEnvironment',severity:'error',status:'unknown',scope:[],evidenceIds:[],message:subject.dirty?'Source inputs contain uncommitted or untracked changes':detection.reasons.join('; ')});

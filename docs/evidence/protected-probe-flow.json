@@ -15,12 +15,12 @@
       "producerExit": 0,
       "gateExit": 1,
       "subject": {
-        "prHeadSha": "4ad2d63bdd3e5317d4aeab0a4be1057b76be8834",
-        "testedCommitSha": "4ad2d63bdd3e5317d4aeab0a4be1057b76be8834",
+        "prHeadSha": "4d7591e745f1ef3c6d773f5a25cd8aa94601b866",
+        "testedCommitSha": "4d7591e745f1ef3c6d773f5a25cd8aa94601b866",
         "sourceTreeHash": "e69a0eb0c56a9fd48a7826cdcce2162170eaba275b1e9a685e6c391c68284884",
         "dirty": false,
-        "baseSha": "4ad2d63bdd3e5317d4aeab0a4be1057b76be8834",
-        "diffBaseSha": "4ad2d63bdd3e5317d4aeab0a4be1057b76be8834"
+        "baseSha": "4d7591e745f1ef3c6d773f5a25cd8aa94601b866",
+        "diffBaseSha": "4d7591e745f1ef3c6d773f5a25cd8aa94601b866"
       },
       "evaluations": [
         {
@@ -226,7 +226,7 @@
       "artifactHashes": [
         {
           "ref": ".behavproof/collected/correct/vitest.json",
-          "sha256": "a8b44af4ecb7a963dfcda8ca98be537dc962dfec16319076666a124d1064f1d5",
+          "sha256": "6b9be94cbcbb33d1e4b88670c803935b4258c67da5327eb257aaf57cb5687d21",
           "kind": "test",
           "scope": [
             "ORDER-OWNERSHIP"
@@ -234,7 +234,7 @@
         },
         {
           "ref": ".behavproof/collected/correct/contracts.json",
-          "sha256": "1cc49a1721bcdb251c1a4c5417012bc7c3e416fc74b81d73318de09d759a19d5",
+          "sha256": "27b89cd9619b442b49a776ee5b349047448e543b98f906334b0a42d2ef45b02b",
           "kind": "contract_report",
           "scope": [
             "ORDER-OWNERSHIP"
@@ -242,7 +242,7 @@
         },
         {
           "ref": ".behavproof/collected/correct/claims.json",
-          "sha256": "9678945ce8c3c1b4d048ebfd348f8020b1541c2499a2a48fc8ef78c184b42db7",
+          "sha256": "e2fa4ac4ef0645383c1611abfd8066a9f9022d872931aacd011f5db2d1b4f004",
           "kind": "claims",
           "scope": [
             "ORDER-OWNERSHIP"
@@ -250,7 +250,7 @@
         },
         {
           "ref": ".behavproof/collected/correct/probe-diagnostics.json",
-          "sha256": "5eac5b72dbfb466c04a09e5c1091439ca220c4ca0a1c2ff47a44fd5483edd20d",
+          "sha256": "d26b09e955896a986f8495bb61229c7649656562b8aa7dac02d67795753483cd",
           "kind": "diagnostic",
           "scope": [
             "ORDER-OWNERSHIP"
@@ -263,12 +263,12 @@
       "producerExit": 0,
       "gateExit": 1,
       "subject": {
-        "prHeadSha": "56bedb2d91bb79173ac8ef0555acfe2b8e522f02",
-        "testedCommitSha": "56bedb2d91bb79173ac8ef0555acfe2b8e522f02",
+        "prHeadSha": "00abe57bdf03b5b726b052920afa9a8c41491c96",
+        "testedCommitSha": "00abe57bdf03b5b726b052920afa9a8c41491c96",
         "sourceTreeHash": "f751115917b8ffca6fec2897c14c1fbae307397366799675aea5efdc8b07a8d5",
         "dirty": false,
-        "baseSha": "56bedb2d91bb79173ac8ef0555acfe2b8e522f02",
-        "diffBaseSha": "56bedb2d91bb79173ac8ef0555acfe2b8e522f02"
+        "baseSha": "00abe57bdf03b5b726b052920afa9a8c41491c96",
+        "diffBaseSha": "00abe57bdf03b5b726b052920afa9a8c41491c96"
       },
       "evaluations": [
         {
@@ -474,7 +474,7 @@
       "artifactHashes": [
         {
           "ref": ".behavproof/collected/fake/vitest.json",
-          "sha256": "8e51b9088588eac68d760138af1b3d3822e5d87dbb77a287f707e273c993d17d",
+          "sha256": "055826fda4e8e353e4ea9f8d1b8185ebc2f85f9702b10fade73c6e763ceafcef",
           "kind": "test",
           "scope": [
             "ORDER-OWNERSHIP"
@@ -482,7 +482,7 @@
         },
         {
           "ref": ".behavproof/collected/fake/contracts.json",
-          "sha256": "71532f87299c6b6b40e914e1b8e465b6b4e1b8ff4a97feb533dffa9ccf4a4702",
+          "sha256": "4911c51d2229f47b288ab2a12d329ed995d6b85901186a2858829c4bd3f689ec",
           "kind": "contract_report",
           "scope": [
             "ORDER-OWNERSHIP"
@@ -490,7 +490,7 @@
         },
         {
           "ref": ".behavproof/collected/fake/claims.json",
-          "sha256": "eba0e9221c216b56f9b92f0b54a34a1258f385c87f563ec27cc5677fae20ec0c",
+          "sha256": "329b350799f6098cd15e6b977c8b3753bdb7133e11ae47b8a63b4f658407776a",
           "kind": "claims",
           "scope": [
             "ORDER-OWNERSHIP"
@@ -498,7 +498,7 @@
         },
         {
           "ref": ".behavproof/collected/fake/probe-diagnostics.json",
-          "sha256": "611fa59f21871e15b206fa439a5cca5b3f92e67c1e156f4539b12055c06fe56a",
+          "sha256": "1841c4746be7b24059315d3a54b401bace4b046789adcbf52665f0f3fbfc46cc",
           "kind": "diagnostic",
           "scope": [
             "ORDER-OWNERSHIP"
@@ -511,12 +511,12 @@
       "producerExit": 1,
       "gateExit": 1,
       "subject": {
-        "prHeadSha": "23d48cacf3d3ea67e5cafb24c7921926a22f9f80",
-        "testedCommitSha": "23d48cacf3d3ea67e5cafb24c7921926a22f9f80",
+        "prHeadSha": "296c15c80fac2317fdff8393a287185e38390703",
+        "testedCommitSha": "296c15c80fac2317fdff8393a287185e38390703",
         "sourceTreeHash": "b96a9e1b3d09d027adde88678423cad1bf17364c73c0af80f1908c07538d5b48",
         "dirty": false,
-        "baseSha": "23d48cacf3d3ea67e5cafb24c7921926a22f9f80",
-        "diffBaseSha": "23d48cacf3d3ea67e5cafb24c7921926a22f9f80"
+        "baseSha": "296c15c80fac2317fdff8393a287185e38390703",
+        "diffBaseSha": "296c15c80fac2317fdff8393a287185e38390703"
       },
       "evaluations": [
         {
@@ -676,12 +676,12 @@
       "producerExit": 1,
       "gateExit": 1,
       "subject": {
-        "prHeadSha": "6a6cbbc0e532aed837e8cdc601834e502eb9e3c6",
-        "testedCommitSha": "6a6cbbc0e532aed837e8cdc601834e502eb9e3c6",
+        "prHeadSha": "239e7f1af611fddfec163575b5ddaed6aaf3154b",
+        "testedCommitSha": "239e7f1af611fddfec163575b5ddaed6aaf3154b",
         "sourceTreeHash": "eaa745213b7b820737a926d3c6645484415aa54189c110deff10738d5e41399e",
         "dirty": false,
-        "baseSha": "6a6cbbc0e532aed837e8cdc601834e502eb9e3c6",
-        "diffBaseSha": "6a6cbbc0e532aed837e8cdc601834e502eb9e3c6"
+        "baseSha": "239e7f1af611fddfec163575b5ddaed6aaf3154b",
+        "diffBaseSha": "239e7f1af611fddfec163575b5ddaed6aaf3154b"
       },
       "evaluations": [
         {
@@ -841,12 +841,12 @@
       "producerExit": 0,
       "gateExit": 1,
       "subject": {
-        "prHeadSha": "7a822d0ea1257c5075776f8ac20f6f21db7566ad",
-        "testedCommitSha": "7a822d0ea1257c5075776f8ac20f6f21db7566ad",
+        "prHeadSha": "40026e16860361eb2ea4c4c792037d35ac4e6d1d",
+        "testedCommitSha": "40026e16860361eb2ea4c4c792037d35ac4e6d1d",
         "sourceTreeHash": "b4b22dc552ad811a3751ab956b39176308b4c3682940e7316e6a5ccf932c2a1b",
         "dirty": false,
-        "baseSha": "7a822d0ea1257c5075776f8ac20f6f21db7566ad",
-        "diffBaseSha": "7a822d0ea1257c5075776f8ac20f6f21db7566ad"
+        "baseSha": "40026e16860361eb2ea4c4c792037d35ac4e6d1d",
+        "diffBaseSha": "40026e16860361eb2ea4c4c792037d35ac4e6d1d"
       },
       "evaluations": [
         {
@@ -1052,7 +1052,7 @@
       "artifactHashes": [
         {
           "ref": ".behavproof/collected/removed/vitest.json",
-          "sha256": "a1d38b7013a0a1ede17d8cf3253aabc55b331b1f549b3965e992aa4d7f8be366",
+          "sha256": "eb02aa503cdccaf1712075d4768edb0fd3257669a32b44c29cfddd6c37c3d625",
           "kind": "test",
           "scope": [
             "ORDER-OWNERSHIP"
@@ -1060,7 +1060,7 @@
         },
         {
           "ref": ".behavproof/collected/removed/contracts.json",
-          "sha256": "7556172f3b863baa8327a47494c0eb8ac4d97cd8275fb1c910f1a031f81502ba",
+          "sha256": "8c88de76f37c3eba585c98b808556cb86e06ab49035d5a9d1f11de5393a83182",
           "kind": "contract_report",
           "scope": [
             "ORDER-OWNERSHIP"
@@ -1068,7 +1068,7 @@
         },
         {
           "ref": ".behavproof/collected/removed/claims.json",
-          "sha256": "0174fe732da49cb5a5ea05a03acf234a36c687c07e82b0f358f7b13070800e54",
+          "sha256": "7d7780c5da3bfc78d9a6a61841b42fe7b755517e64b855316cdd5e2d4542be72",
           "kind": "claims",
           "scope": [
             "ORDER-OWNERSHIP"
@@ -1076,7 +1076,7 @@
         },
         {
           "ref": ".behavproof/collected/removed/probe-diagnostics.json",
-          "sha256": "8a2f837a172b0f58a0b257afe070c7a49c60f7c11a082fed8e76e91201b74a3d",
+          "sha256": "b04f216523909c0a16f1638143dc0cb77cea6437ce0fc00986c3b13400f1a65c",
           "kind": "diagnostic",
           "scope": [
             "ORDER-OWNERSHIP"

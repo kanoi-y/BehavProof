@@ -9,6 +9,7 @@ const actions:Record<string,string>={
  assuranceDeclarationProtection:'Review and approve the exact assurance declaration transition; deleting a candidate condition does not retire its baseline obligation.',
  assuranceSensitivityRequirements:'Declare a relevant fault for every adopted critical condition check and observe its actual comparison failure.',
  testResult:'Inspect failed, skipped or missing tests; rerun the trusted Collector and authenticate its current reports.',
+ testRunnerProtection:'Restore the protected test runner selection, or independently review and register the proposed runner change.',
  changedLineCoverage:'Collect complete LCOV for the changed source scope and meet the protected coverage threshold.',
  mutationScore:'Collect current scoped mutants, inspect survivors and uncovered/error cases, and meet the protected score and minimum count.',
  pipelineIntegrity:'Inspect required upstream jobs, current run/attempt artifacts, protected workflow and issuer-bound required checks.',

@@ -17,7 +17,7 @@ export async function gitDiff(root:string,base:string,head:string):Promise<GitDi
  files.push({path:name,...(rename?{previousPath:first}:{}),kind:status,lines,ambiguous});}
  return {status:'known',baseSha,headSha,diffBaseSha,files};
 }
-export async function detectProject(root:string,selection?:{runner:'vitest';version:string}):Promise<{support:'single-package'|'monorepo'|'unsupported';evidence:string[];reasons:string[]}>{
+export async function detectProject(root:string,selection?:{runner:'vitest'|'jest';version?:string}):Promise<{support:'single-package'|'monorepo'|'unsupported';evidence:string[];reasons:string[]}>{
  const evidence:string[]=[],reasons:string[]=[];let pkg:Record<string,unknown>;try{const value=await safeReadJson(root,'package.json');if(!value||typeof value!=='object'||Array.isArray(value))throw new Error('Invalid package');pkg=value as Record<string,unknown>;evidence.push('package.json');}catch{return {support:'unsupported',evidence,reasons:['Missing, invalid or unsafe package.json']};}
  const names=await readdir(root);for(const name of ['package-lock.json','pnpm-lock.yaml','yarn.lock','bun.lock','vitest.config.ts','vitest.config.js','vitest.config.mts','vitest.config.mjs'])if(names.includes(name))evidence.push(name);
  try{await access(join(root,'.github','workflows'));evidence.push('.github/workflows');}catch{}
@@ -26,10 +26,15 @@ export async function detectProject(root:string,selection?:{runner:'vitest';vers
  if(names.includes('packages')){try{const children=await readdir(join(root,'packages'));for(const child of children){try{await safeRead(root,`packages/${child}/package.json`);layout=true;break;}catch{}}}catch{}}
  if(layout){reasons.push('Workspace or monorepo layout is detected but unsupported');return {support:'monorepo',evidence,reasons};}
  const deps=[pkg.dependencies,pkg.devDependencies,pkg.optionalDependencies].filter(v=>v&&typeof v==='object'&&!Array.isArray(v)) as Record<string,unknown>[];
- const vitest=deps.some(d=>typeof d.vitest==='string'&&d.vitest.length>0);if(vitest)evidence.push('vitest dependency');else reasons.push('Vitest dependency not established; other runners are unsupported');
- const scripts=pkg.scripts&&typeof pkg.scripts==='object'&&!Array.isArray(pkg.scripts)?pkg.scripts as Record<string,unknown>:{};if(selection?.runner==='vitest')evidence.push(`Protected host selected Vitest ${selection.version}; package script is not executed`);else if(typeof scripts.test!=='string'||!/^\s*vitest(?:\s+run)?\s*$/.test(scripts.test))reasons.push('Selected test script uses an unsupported or unverified runner');
+ const declared=(kind:string)=>deps.some(d=>typeof d[kind]==='string'&&(d[kind] as string).length>0);
+ const choices=(['vitest','jest'] as const).filter(declared),selected=selection?.runner??(choices.length===1?choices[0]:undefined);
+ if(!selected)reasons.push(choices.length>1?'Multiple test runners declared; select Jest or Vitest explicitly':'Supported Vitest/Jest dependency not established');
+ else if(!declared(selected))reasons.push(`Selected ${selected} dependency not established`);else evidence.push(selected+' dependency');
+ const scripts=pkg.scripts&&typeof pkg.scripts==='object'&&!Array.isArray(pkg.scripts)?pkg.scripts as Record<string,unknown>:{};
+ if(selection&&selected&&declared(selected))evidence.push(selection.version?`Protected host selected ${selected==='jest'?'Jest':'Vitest'} ${selection.version}; package script is not executed`:`Configured ${selected} runner; package script is not executed`);
+ else if(!selected||typeof scripts.test!=='string'||!(selected==='jest'?/^\s*jest(?:\s+--runInBand)?\s*$/:/^\s*vitest(?:\s+run)?\s*$/).test(scripts.test))reasons.push('Selected test script uses an unsupported or unverified runner');
  const engines=pkg.engines&&typeof pkg.engines==='object'&&!Array.isArray(pkg.engines)?pkg.engines as Record<string,unknown>:{};
- if(vitest||typeof engines.node==='string'||names.some(n=>['package-lock.json','pnpm-lock.yaml','yarn.lock','bun.lock'].includes(n)))evidence.push('Node.js project');else reasons.push('Node.js project not established');
+ if(choices.length||typeof engines.node==='string'||names.some(n=>['package-lock.json','pnpm-lock.yaml','yarn.lock','bun.lock'].includes(n)))evidence.push('Node.js project');else reasons.push('Node.js project not established');
  return {support:reasons.length?'unsupported':'single-package',evidence,reasons};
 }
 export async function gitSubject(root:string,inputPaths:readonly string[],prHead?:string,base?:string):Promise<EvidenceSubject>{

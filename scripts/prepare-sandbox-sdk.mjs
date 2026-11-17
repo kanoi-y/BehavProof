@@ -3,6 +3,7 @@ import {execFileSync} from 'node:child_process';import {parseArgs} from 'node:ut
 import {mkdir,writeFile,readFile,readdir,realpath,cp,lstat,readlink,unlink,symlink,rm} from 'node:fs/promises';
 import {resolve,relative,dirname,basename,join,isAbsolute,sep} from 'node:path';import {fileURLToPath} from 'node:url';
 import {safeRead,RelativePathSchema,hashBytes} from '@behavproof/core';
+import {sdkPackages as packages,sdkSourcePath,sdkArtifacts} from './staged-sdk.mjs';
 const {values}=parseArgs({strict:true,allowPositionals:false,options:{output:{type:'string'},built:{type:'boolean'}}});
 if(!values.output)throw Error('--output is required');
 if(values.built&&process.platform==='win32')throw Error('Built container SDK staging requires a POSIX host');
@@ -12,10 +13,8 @@ const top=await realpath(git(['rev-parse','--show-toplevel']).trim()),within=(ba
 if(within(top,requested))throw Error('SDK staging must be outside the entire Git checkout');
 const output=join(await realpath(dirname(requested)),basename(requested));
 if(within(top,output))throw Error('SDK staging must be outside the entire Git checkout');
-const packages=['core','adapter-reports','contract-registry','contract-vitest','adapter-github','adapter-quint','adapter-model-test','cli'];
-const allowed=path=>['package.json','package-lock.json','tsconfig.json','tsconfig.base.json','scripts/build-artifacts.mjs','scripts/protected-probe-worker.mjs'].includes(path)||path.startsWith('templates/')||packages.some(name=>path===`packages/${name}/package.json`||path===`packages/${name}/tsconfig.json`||path.startsWith(`packages/${name}/src/`)&&path.endsWith('.ts'));
-const paths=git(['ls-files','-z','--','.']).split('\0').filter(Boolean).filter(allowed).sort();
-for(const required of ['package.json','package-lock.json','scripts/build-artifacts.mjs','scripts/protected-probe-worker.mjs',...packages.map(name=>`packages/${name}/package.json`)])if(!paths.includes(required))throw Error('Required tracked SDK build input is missing');
+const paths=git(['ls-files','-z','--','.']).split('\0').filter(Boolean).filter(sdkSourcePath).sort();
+for(const required of ['package.json','package-lock.json','scripts/build-artifacts.mjs','scripts/build-commonjs.mjs','scripts/protected-probe-worker.mjs','packages/core/cjs/package.json',...packages.map(name=>`packages/${name}/package.json`)])if(!paths.includes(required))throw Error('Required tracked SDK build input is missing');
 await mkdir(output,{mode:0o700});
 try{
 const files=[];let total=0;
@@ -26,8 +25,8 @@ async function copyFile(path){
 }
 for(const path of paths)await copyFile(path);
 if(values.built){
- const walkArtifacts=async(dir)=>{for(const entry of await readdir(join(source,dir),{withFileTypes:true})){const path=`${dir}/${entry.name}`;if(entry.isDirectory())await walkArtifacts(path);else if(/\.(?:js|ts|map|json|ya?ml)$/.test(entry.name))await copyFile(path);}};
- for(const name of packages){await walkArtifacts(`packages/${name}/dist`);if(name==='cli')for(const dir of ['schemas','presets','templates'])await walkArtifacts(`packages/cli/${dir}`);}
+ const {artifacts}=sdkArtifacts(paths);
+ for(const path of artifacts)await copyFile(path);
  const lock=JSON.parse((await safeRead(source,'package-lock.json')).toString('utf8'));
  const roots=new Set(Object.keys(lock.packages).filter(path=>path.startsWith('node_modules/')).map(path=>{const parts=path.slice(13).split('/');return parts[0].startsWith('@')?parts.slice(0,2).join('/'):parts[0];}));
  const sourceModules=join(source,'node_modules'),targetModules=join(output,'node_modules');

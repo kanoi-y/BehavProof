@@ -108,6 +108,13 @@
           "type": "number",
           "const": 1
         },
+        "testRunner": {
+          "type": "string",
+          "enum": [
+            "vitest",
+            "jest"
+          ]
+        },
         "assurance": {
           "type": "object",
           "properties": {
@@ -488,6 +495,10 @@
               "type": "string",
               "minLength": 1
             },
+            "jest": {
+              "type": "string",
+              "minLength": 1
+            },
             "coverage": {
               "type": "string",
               "minLength": 1
@@ -543,6 +554,7 @@
                     "type": "string",
                     "enum": [
                       "vitest-inline",
+                      "jest-inline",
                       "manifest",
                       "external",
                       "gherkin",

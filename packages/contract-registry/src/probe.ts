@@ -2,10 +2,13 @@ import ts from 'typescript-parser';
 import {canonicalJson,hash,hashBytes,HashSchema,RelativePathSchema,ContractSchema,type Contract} from '@behavproof/core';
 import {bindRegistrations,type ReportBinding} from './assurance.js';
 export const PROBE_METHOD='protected-case-observer-and-vitest-canary-v1';
+export const JEST_PROBE_METHOD='protected-case-observer-and-jest-canary-v1';
+export type ProbeRunner={kind:'vitest'|'jest';version:string};
 export type TargetFault={targetRef:string;originalSha256:string;mutatedSha256:string;description:string};
-/** Generate programs only. The caller runs them in an isolated selected producer. */
-export function instrumentFunction(input:{source:string;targetRef:string;expectedSourceHash:string;faultValue:unknown}) {
+/** Generate programs only. The caller selects the producer and execution boundary. */
+export function instrumentFunction(input:{source:string;targetRef:string;expectedSourceHash:string;faultValue:unknown;runner?:ProbeRunner['kind']}) {
   const unsupported=(reason:string)=>({status:'unknown' as const,reason});
+  if(input.runner!==undefined&&!['vitest','jest'].includes(input.runner))return unsupported('Unsupported probe runner');
   if(Buffer.byteLength(input.source)>1024*1024)return unsupported('Source exceeds probe limit');
   const originalSha256=hashBytes(Buffer.from(input.source));
   if(!HashSchema.safeParse(input.expectedSourceHash).success||originalSha256!==input.expectedSourceHash)return unsupported('Source differs from independently selected target');
@@ -21,7 +24,7 @@ export function instrumentFunction(input:{source:string;targetRef:string;expecte
   let hook='__behavproofObserveTarget';while(input.source.includes(hook))hook+='_';
   let faultJson:string;try{faultJson=canonicalJson(input.faultValue);}catch{return unsupported('Fault value must be plain JSON');}
   const observe=f.createExpressionStatement(f.createCallExpression(f.createIdentifier(hook),undefined,[f.createStringLiteral(input.targetRef)]));
-  const imported=f.createImportDeclaration(undefined,f.createImportClause(false,undefined,f.createNamedImports([f.createImportSpecifier(false,f.createIdentifier('observeTargetCall'),f.createIdentifier(hook))])),f.createStringLiteral('@behavproof/vitest/probe'));
+  const imported=f.createImportDeclaration(undefined,f.createImportClause(false,undefined,f.createNamedImports([f.createImportSpecifier(false,f.createIdentifier('observeTargetCall'),f.createIdentifier(hook))])),f.createStringLiteral(input.runner==='jest'?'@behavproof/jest/probe':'@behavproof/vitest/probe'));
   const program=(mutated:boolean)=>{
     const statements=mutated?[observe,f.createReturnStatement(f.createCallExpression(f.createPropertyAccessExpression(f.createIdentifier('JSON'),'parse'),undefined,[f.createStringLiteral(faultJson)]))]:[observe,...original.body!.statements];
     const declaration=f.updateFunctionDeclaration(original,original.modifiers,original.asteriskToken,original.name,original.typeParameters,original.parameters,original.type,f.createBlock(statements,true));
@@ -33,8 +36,8 @@ export function instrumentFunction(input:{source:string;targetRef:string;expecte
     fault:{targetRef:input.targetRef,originalSha256,mutatedSha256:hashBytes(Buffer.from(mutatedSource)),description:'Replace the selected function body with the host-selected distinct JSON fault value'} satisfies TargetFault};
 }
 export type ProbeRow=ReportBinding&{testState:string;targetCalls:{targetRef:string;count:number}[]};
-export type ProbeRun={executionId:string;exitCode:number;sourceHash:string;report:{registrations:ReportBinding[];contracts:ProbeRow[]}};
-export type ProbeProtocol={contract:Contract;targetRef:string;expectedSourceHash:string;main:ProbeRun;canary:ProbeRun;fault:TargetFault};
+export type ProbeRun={executionId:string;exitCode:number;sourceHash:string;report:{runner?:ProbeRunner;registrations:ReportBinding[];contracts:ProbeRow[]}};
+export type ProbeProtocol={runner?:ProbeRunner;contract:Contract;targetRef:string;expectedSourceHash:string;main:ProbeRun;canary:ProbeRun;fault:TargetFault};
 const freeze=<T>(value:T):T=>{if(value&&typeof value==='object'){for(const child of Object.values(value))freeze(child);Object.freeze(value);}return value;};
 const identity=(row:ProbeRow)=>hash({contractId:row.contractId,caseId:row.caseId,revisionHash:row.revisionHash,bindingHash:row.bindingHash});
 /** Raw observations are never authority: verifyRun authenticates each exact frozen
@@ -44,10 +47,15 @@ const identity=(row:ProbeRow)=>hash({contractId:row.contractId,caseId:row.caseId
 export function evaluateProbeRuns(input:ProbeProtocol,verifyRun:(run:ProbeRun,phase:'main'|'canary')=>unknown) {
   const contract=ContractSchema.parse(input.contract),caseIds=contract.caseIds??[],targetRef=input.targetRef;
   let main:ProbeRun|undefined,canary:ProbeRun|undefined,mainTrusted=false,canaryTrusted=false;
+  const method=input.runner?.kind==='jest'?JEST_PROBE_METHOD:PROBE_METHOD;
   try {
     const text=canonicalJson(input);if(Buffer.byteLength(text)>10*1024*1024)throw Error('Probe inventory exceeds limit');
     const p=freeze(JSON.parse(text) as ProbeProtocol);main=p.main;canary=p.canary;
-    const valid=(run:ProbeRun)=>!!run.executionId&&Number.isSafeInteger(run.exitCode)&&Array.isArray(run.report.registrations)&&Array.isArray(run.report.contracts)&&run.report.contracts.length<=10000&&bindRegistrations(run.report.registrations,run.report.contracts,()=>true).status==='pass';
+    const runner=p.runner,kind=runner?.kind??'vitest';
+    const marker=(run:ProbeRun)=>kind==='jest'
+      ? !!runner&&['29.7.0','30.5.2'].includes(runner.version)&&run.report.runner?.kind==='jest'&&run.report.runner.version===runner.version
+      : kind==='vitest'&&(!run.report.runner||run.report.runner.kind==='vitest'&&(!runner||run.report.runner.version===runner.version));
+    const valid=(run:ProbeRun)=>marker(run)&&!!run.executionId&&Number.isSafeInteger(run.exitCode)&&Array.isArray(run.report.registrations)&&Array.isArray(run.report.contracts)&&run.report.contracts.length<=10000&&bindRegistrations(run.report.registrations,run.report.contracts,()=>true).status==='pass';
     mainTrusted=valid(main)&&main.exitCode===0&&main.sourceHash===p.expectedSourceHash&&HashSchema.safeParse(p.expectedSourceHash).success&&verifyRun(main,'main')===true;
     canaryTrusted=valid(canary)&&canary.executionId!==main.executionId&&[0,1].includes(canary.exitCode)&&
       p.fault.targetRef===p.targetRef&&p.fault.originalSha256===p.expectedSourceHash&&
@@ -61,14 +69,14 @@ export function evaluateProbeRuns(input:ProbeProtocol,verifyRun:(run:ProbeRun,ph
   };
   const observations=caseIds.map(id=>{
     const selected=rows(main,id),total=selected.reduce((n,row)=>n+count(row),0),valid=Number.isSafeInteger(total)&&mainTrusted&&selected.length>0&&selected.every(row=>row.status==='pass'&&row.testState==='passed'&&Number.isSafeInteger(row.comparisonCount)&&row.comparisonCount>0&&count(row)>0);
-    return {contractId:contract.id,caseIds:[id],targetRef,method:PROBE_METHOD,observations:valid?total:0,status:valid?'pass' as const:'unknown' as const};
+    return {contractId:contract.id,caseIds:[id],targetRef,method,observations:valid?total:0,status:valid?'pass' as const:'unknown' as const};
   });
   const canaries=caseIds.map((id,i)=>{
     const expected=rows(main,id),actual=rows(canary,id),bound=mainTrusted&&canaryTrusted&&expected.length>0&&
       hash(expected.map(identity).sort())===hash(actual.map(identity).sort());
     const detected=bound?actual.filter(row=>row.status==='fail'&&row.testState==='failed'&&Number.isSafeInteger(row.comparisonCount)&&row.comparisonCount>0&&count(row)>0).length:0;
     const observed=observations[i]!.status==='pass',total=bound?expected.length:0;
-    return {contractId:contract.id,caseIds:[id],targetRef,method:PROBE_METHOD,detected,total,status:bound&&observed?(detected===total?'pass' as const:'fail' as const):'unknown' as const};
+    return {contractId:contract.id,caseIds:[id],targetRef,method,detected,total,status:bound&&observed?(detected===total?'pass' as const:'fail' as const):'unknown' as const};
   });
   return {observations,canaries};
 }

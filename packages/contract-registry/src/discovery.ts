@@ -119,7 +119,7 @@ function add(
   out.intents.push(intent);
   out.contracts.push(contract);
 }
-export function discover(files: Readonly<Record<string, string>>): Discovery {
+export function discover(files: Readonly<Record<string, string>>, officialModule: "@behavproof/vitest"|"@behavproof/jest" = "@behavproof/vitest"): Discovery {
   const out: Discovery = { contracts: [], intents: [], diagnostics: [] };
   for (const [ref, source] of Object.entries(files).sort(([a], [b]) =>
     a.localeCompare(b),
@@ -145,7 +145,7 @@ export function discover(files: Readonly<Record<string, string>>): Discovery {
       if (
         ts.isImportDeclaration(statement) &&
         ts.isStringLiteral(statement.moduleSpecifier) &&
-        statement.moduleSpecifier.text === "@behavproof/vitest"
+        statement.moduleSpecifier.text === officialModule
       ) {
         const bindings = statement.importClause?.namedBindings;
         if (bindings && ts.isNamespaceImport(bindings))
@@ -158,10 +158,22 @@ export function discover(files: Readonly<Record<string, string>>): Discovery {
             )
               names.add(element.name.text);
       }
+    const staticRequires=new Set<ts.Node>(),bindingNames=new Set<ts.Node>();
+    if(officialModule==='@behavproof/jest')for(const statement of file.statements){
+      if(!ts.isVariableStatement(statement)||!(statement.declarationList.flags&ts.NodeFlags.Const))continue;
+      for(const declaration of statement.declarationList.declarations){
+        const call=declaration.initializer;
+        if(!ts.isObjectBindingPattern(declaration.name)||!call||!ts.isCallExpression(call)||!ts.isIdentifier(call.expression)||call.expression.text!=='require'||call.arguments.length!==1||!ts.isStringLiteral(call.arguments[0]!)||call.arguments[0]!.text!==officialModule)continue;
+        if(declaration.name.elements.some(e=>!!e.dotDotDotToken||!!e.initializer||!ts.isIdentifier(e.name)||e.propertyName&&!ts.isIdentifier(e.propertyName)))continue;
+        staticRequires.add(call);
+        for(const element of declaration.name.elements)if((element.propertyName?.getText(file)??element.name.getText(file))==='defineContract'&&ts.isIdentifier(element.name)){names.add(element.name.text);bindingNames.add(element.name);}
+      }
+    }
     const visit = (node: ts.Node) => {
       if (
         ts.isIdentifier(node) &&
         ((names.has(node.text) &&
+          !bindingNames.has(node) &&
           !ts.isImportSpecifier(node.parent) &&
           !(
             ts.isCallExpression(node.parent) && node.parent.expression === node
@@ -175,11 +187,12 @@ export function discover(files: Readonly<Record<string, string>>): Discovery {
         });
       if (
         ts.isCallExpression(node) &&
+        !staticRequires.has(node) &&
         ((ts.isIdentifier(node.expression) &&
           node.expression.text === "require") ||
           node.expression.kind === ts.SyntaxKind.ImportKeyword) &&
         node.arguments.some(
-          (a) => ts.isStringLiteral(a) && a.text === "@behavproof/vitest",
+          (a) => ts.isStringLiteral(a) && a.text === officialModule,
         )
       )
         out.diagnostics.push({
@@ -255,8 +268,8 @@ export function discoverSources(
 ): Discovery {
   const out: Discovery = { contracts: [], intents: [], diagnostics: [] };
   for (const source of sources) {
-    if (source.kind === "vitest-inline") {
-      const result = discover({ [source.ref]: source.content });
+    if (source.kind === "vitest-inline" || source.kind === "jest-inline") {
+      const result = discover({ [source.ref]: source.content },source.kind === "jest-inline" ? "@behavproof/jest" : "@behavproof/vitest");
       for (const c of result.contracts)
         if (out.contracts.some((x) => x.id === c.id))
           throw Error("duplicate contract IDs");
