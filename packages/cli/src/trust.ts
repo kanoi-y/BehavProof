@@ -9,7 +9,7 @@ export const TrustRootSchema=z.strictObject({
  schemaVersion:z.literal(1),policy:PolicySchema,config:ConfigSchema,baseline:RegistrySnapshotSchema,
  assuranceSources:z.record(RelativePathSchema,HashSchema).optional(),
  policySource:z.strictObject({repository:z.string().regex(/^[\w-]+\/[\w.-]+$/),commitSha:z.string().regex(/^[a-f0-9]{40}$/),ref:RelativePathSchema,fileHash:HashSchema,policyHash:HashSchema}).optional(),
- runner:z.strictObject({kind:z.literal('vitest'),version:z.string().regex(/^\d+\.\d+\.\d+(?:[-+][\w.-]+)?$/),manifestRef:RelativePathSchema}).optional(),
+ runner:z.strictObject({kind:z.enum(['vitest','jest']),version:z.string().regex(/^\d+\.\d+\.\d+(?:[-+][\w.-]+)?$/),manifestRef:RelativePathSchema}).optional(),
  inputs:z.array(RelativePathSchema).min(1),qualitySources:z.array(RelativePathSchema).min(1).optional(),configPaths:z.array(RelativePathSchema),dependencyLockPath:RelativePathSchema.optional(),
  manifests:z.array(z.strictObject({ref:RelativePathSchema,manifestHash:HashSchema.optional(),expected:ManifestExpectedSchema,authority:ProducerAuthoritySchema,github:z.strictObject({repository:z.string().min(1),workflowPath:z.string(),workflowSha:z.string(),jobName:z.string(),artifactName:z.string(),archivePath:RelativePathSchema,archiveEntries:z.record(RelativePathSchema,RelativePathSchema)}).optional()}).refine(row=>row.authority.kind!=='local'||row.manifestHash!==undefined,'Local authority requires host-pinned manifestHash')),
  github:z.strictObject({repository:z.string().regex(/^[\w-]+\/[\w.-]+$/),pr:z.number().int().positive(),reviewers:z.array(z.string().min(1)).min(1),requiredChecks:z.array(z.strictObject({context:z.string().min(1),appId:z.number().int().positive()})).min(1)}).optional(),
@@ -61,6 +61,8 @@ export function isCurrentClaim(evidence:Evidence,artifactRef:string,subject:Evid
  * test artifact. It never grants artifact/producer authority by itself. */
 export function selectedRunner(trust:TrustRoot|undefined,auth:{failures:readonly string[];verified:ReadonlySet<string>;manifests:readonly {ref:string;validation:ManifestValidation}[]},testRef:string|undefined,inputs:readonly string[]){
  const runner=trust?.runner;if(!runner||!testRef||!inputs.includes('package.json')||auth.failures.length||!auth.verified.has(testRef))return undefined;
+ if(runner.kind==='jest'&&!['29.7.0','30.5.2'].includes(runner.version))return undefined;
+ if(trust.config.testRunner&&trust.config.testRunner!==runner.kind||trust.config.reports[runner.kind]&&trust.config.reports[runner.kind]!==testRef)return undefined;
  const spec=trust.manifests.find(row=>row.ref===runner.manifestRef),validation=auth.manifests.find(row=>row.ref===runner.manifestRef)?.validation;
  if(!spec?.expected.artifacts.some(row=>row.kind==='test'&&row.ref===testRef)||!validation||![validation.artifactIntegrity,validation.producerTrust,validation.subjectMatch,validation.executionStatus].every(status=>status==='pass'))return undefined;
  return {runner:runner.kind,version:runner.version};

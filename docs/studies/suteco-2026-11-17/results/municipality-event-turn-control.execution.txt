@@ -1,0 +1,12 @@
+PASS validation/repros/startup-state.spec.ts
+  ✓ municipality-event-turn-control: a later event-turn selection survives the real synchronous SQLite load (10 ms)
+  ○ skipped startup-version-only: updated bundled version reaches DB, store, persistence and settings
+  ○ skipped startup-content-change-control: changed content and version refresh through the real provider
+  ○ skipped municipality-late-load: same-turn subsequent selection and clearing survive an earlier load
+
+Test Suites: 1 passed, 1 total
+Tests:       3 skipped, 1 passed, 4 total
+Snapshots:   0 total
+Time:        0.663 s, estimated 1 s
+Ran all test suites within paths "validation/repros/startup-state.spec.ts".
+Test results written to: .behavproof/study-calls/municipality-event-turn-control-w1f81t/jest.json

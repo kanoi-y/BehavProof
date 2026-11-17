@@ -1,0 +1,14 @@
+{
+  "municipality-event-turn-control": {
+    "events": [
+      "load-A-resolved",
+      "select-B-in-later-event-turn"
+    ],
+    "finalState": {
+      "selectedMunicipalityId": "probe-city-b",
+      "selectedMunicipalityName": "Probe city B",
+      "datasetVersion": "2026-02-01",
+      "hasHydrated": true
+    }
+  }
+}

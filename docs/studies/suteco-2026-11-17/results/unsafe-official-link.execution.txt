@@ -1,0 +1,35 @@
+FAIL validation/repros/links.spec.ts
+  BehavProof original-code official link probes
+    ✕ unsafe-official-link: only safe web links reach the native opener (28 ms)
+    ○ skipped safe-official-link: only safe web links reach the native opener
+
+  ● BehavProof original-code official link probes › unsafe-official-link: only safe web links reach the native opener
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "file:///tmp/suteco-study-only",
+    + ]
+
+      109 |     } else {
+      110 |       // Either import rejection or omission/guarding in the UI can satisfy this.
+    > 111 |       expect(openedUris).toEqual([]);
+          |                          ^
+      112 |     }
+      113 |   });
+      114 | });
+
+      at toEqual (validation/repros/links.spec.ts:111:26)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 1 skipped, 2 total
+Snapshots:   0 total
+Time:        0.692 s, estimated 1 s
+Ran all test suites within paths "validation/repros/links.spec.ts".
+Test results written to: .behavproof/study-calls/unsafe-official-link-7nA8jr/jest.json

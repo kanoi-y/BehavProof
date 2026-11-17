@@ -1,0 +1,114 @@
+import { writeFileSync } from 'node:fs';
+import { getDb } from '@/lib/db/client';
+import { importDataset } from '@/lib/dataset/import';
+import { DisposalRuleRepository } from '@/lib/repositories/disposal-rule-repository';
+import { municipalityDatasetSchema, type MunicipalityDataset } from '@/schema/municipality-dataset-schema';
+import { useMunicipalityStore } from '@/stores/municipality-store';
+import { fireEvent, renderAsync, screen, waitFor } from '@testing-library/react-native';
+import { migrate } from 'drizzle-orm/expo-sqlite/migrator';
+import { useLocalSearchParams } from 'expo-router';
+import { createElement } from 'react';
+import { Linking } from 'react-native';
+import ItemDetailScreen from '../../app/items/[id]';
+import migrations from '../../drizzle/migrations';
+
+// No production module is replaced here. Existing Jest native adapters remain in
+// effect; the only added mock is the link opener, which never opens anything.
+const observations: Record<string, unknown> = {};
+function observe(caseId: string, actual: unknown): void {
+  observations[caseId] = actual;
+  const outputPath = process.env.BEHAVPROOF_STUDY_OBSERVATIONS;
+  if (outputPath) writeFileSync(outputPath, `${JSON.stringify(observations, null, 2)}\n`, 'utf8');
+}
+
+const cases = [
+  { caseId: 'unsafe-official-link', uri: 'file:///tmp/suteco-study-only', safe: false },
+  { caseId: 'safe-official-link', uri: 'https://example.invalid/suteco-study-only', safe: true },
+];
+
+function dataset(caseId: string, uri: string): MunicipalityDataset {
+  return {
+    municipality: { id: caseId, displayName: 'Study city', version: '2026-11-17' },
+    items: [{ id: `${caseId}-item`, displayName: 'Study item', aliases: [], keywords: [] }],
+    rules: [{
+      municipalityId: caseId,
+      itemId: `${caseId}-item`,
+      categoryName: 'Study category',
+      instructions: 'Study instructions',
+      officialUrl: uri,
+    }],
+  };
+}
+
+describe('BehavProof original-code official link probes', () => {
+  const db = getDb();
+
+  beforeAll(async () => {
+    await migrate(db, migrations);
+  });
+
+  afterAll(async () => {
+    await db.$client.closeAsync();
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it.each(cases)('$caseId: only safe web links reach the native opener', async ({ caseId, uri, safe }) => {
+    const openedUris: string[] = [];
+    jest.spyOn(Linking, 'openURL').mockImplementation(async (url: string) => {
+      openedUris.push(url);
+    });
+    useMunicipalityStore.setState({
+      selectedMunicipalityId: caseId,
+      selectedMunicipalityName: 'Study city',
+      datasetVersion: '2026-11-17',
+      _hasHydrated: true,
+    });
+    (useLocalSearchParams as jest.Mock).mockReturnValue({ id: `${caseId}-item` });
+
+    const input = dataset(caseId, uri);
+    const parsed = municipalityDatasetSchema.safeParse(input);
+    let importAccepted = false;
+    let importError: string | null = null;
+    try {
+      await importDataset(db, input);
+      importAccepted = true;
+    } catch (error) {
+      importError = error instanceof Error ? error.message : String(error);
+    }
+    let storedOfficialUrl: string | null = null;
+    let renderedOfficialUrl = false;
+    if (importAccepted) {
+      const storedRule = await new DisposalRuleRepository(db).findByMunicipalityAndItem(caseId, `${caseId}-item`);
+      storedOfficialUrl = storedRule?.officialUrl ?? null;
+      await renderAsync(createElement(ItemDetailScreen));
+      await waitFor(() => expect(screen.getByText('Study instructions')).toBeTruthy());
+      const linkText = screen.queryByText(uri);
+      renderedOfficialUrl = linkText != null;
+      if (linkText) fireEvent.press(linkText);
+    }
+    observe(caseId, {
+      uri,
+      schemaAccepted: parsed.success,
+      importAccepted,
+      importError,
+      storedOfficialUrl,
+      renderedOfficialUrl,
+      openedUris,
+      sqliteVersion: db.$client.getAllSync('SELECT sqlite_version() AS version'),
+    });
+
+    if (safe) {
+      expect(parsed.success).toBe(true);
+      expect(importAccepted).toBe(true);
+      expect(storedOfficialUrl).toBe(uri);
+      expect(renderedOfficialUrl).toBe(true);
+      expect(openedUris).toEqual([uri]);
+    } else {
+      // Either import rejection or omission/guarding in the UI can satisfy this.
+      expect(openedUris).toEqual([]);
+    }
+  });
+});

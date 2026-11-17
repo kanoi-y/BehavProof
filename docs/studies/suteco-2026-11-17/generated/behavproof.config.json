@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "assurance": {
+    "driver": "validation/driver.mjs",
+    "driverSources": [
+      "__mocks__/@react-native-async-storage/async-storage.js",
+      "babel.config.js",
+      "jest.config.js",
+      "tests/helpers/db.ts",
+      "tests/helpers/expo-router-mock.ts",
+      "tests/integration/app.test.tsx",
+      "tests/integration/camera.test.tsx",
+      "tests/integration/candidates.test.tsx",
+      "tests/integration/item-detail.test.tsx",
+      "tests/integration/municipality-selection.test.tsx",
+      "tests/integration/routing.test.tsx",
+      "tests/integration/settings.test.tsx",
+      "tests/integration/startup-import.test.tsx",
+      "tests/integration/text-search.test.tsx",
+      "tests/integration/top-screen.test.tsx",
+      "tests/setup.ts",
+      "tests/unit/components/EmptyState.test.tsx",
+      "tests/unit/components/ErrorState.test.tsx",
+      "tests/unit/components/LoadingView.test.tsx",
+      "tests/unit/components/PrimaryButton.test.tsx",
+      "tests/unit/components/ScreenContainer.test.tsx",
+      "tests/unit/components/SectionCard.test.tsx",
+      "tests/unit/dataset-import.test.ts",
+      "tests/unit/db-schema.test.ts",
+      "tests/unit/errors/app-error.test.ts",
+      "tests/unit/municipality-dataset-schema.test.ts",
+      "tests/unit/repositories/candidate-log-repository.test.ts",
+      "tests/unit/repositories/disposal-rule-repository.test.ts",
+      "tests/unit/repositories/item-repository.test.ts",
+      "tests/unit/repositories/municipality-repository.test.ts",
+      "tests/unit/services/item-search-service.test.ts",
+      "tests/unit/services/recognizer/api-recognizer.test.ts",
+      "tests/unit/services/recognizer/factory.test.ts",
+      "tests/unit/services/recognizer/mock-recognizer.test.ts",
+      "tests/unit/stores/classification-store.test.ts",
+      "tests/unit/stores/municipality-store.test.ts",
+      "tests/unit/stores/settings-store.test.ts",
+      "tests/unit/validate-dataset-cli.test.ts",
+      "tsconfig.json",
+      "validation/driver.mjs",
+      "validation/target.mjs",
+      "validation/toolchain.json",
+      "validation/repros/dataset.spec.ts",
+      "validation/repros/startup-state.spec.ts",
+      "validation/repros/links.spec.ts"
+    ],
+    "implementationSources": [
+      "app/_layout.tsx",
+      "app/api/recognize+api.ts",
+      "app/camera.tsx",
+      "app/candidates.tsx",
+      "app/index.tsx",
+      "app/items/[id].tsx",
+      "app/municipalities.tsx",
+      "app/search.tsx",
+      "app/settings.tsx",
+      "datasets/kumamoto-kikuchi-dataset.json",
+      "datasets/kumamoto-yamaga-dataset.json",
+      "drizzle/0000_closed_felicia_hardy.sql",
+      "drizzle/0001_fancy_ultimates.sql",
+      "drizzle/meta/0000_snapshot.json",
+      "drizzle/meta/0001_snapshot.json",
+      "drizzle/meta/_journal.json",
+      "drizzle/migrations.d.ts",
+      "drizzle/migrations.js",
+      "src/components/EmptyState.tsx",
+      "src/components/ErrorState.tsx",
+      "src/components/InitializationProvider.tsx",
+      "src/components/LoadingView.tsx",
+      "src/components/PrimaryButton.tsx",
+      "src/components/ScreenContainer.tsx",
+      "src/components/SectionCard.tsx",
+      "src/components/TopLinkHeader.tsx",
+      "src/constants/.gitkeep",
+      "src/hooks/.gitkeep",
+      "src/lib/dataset/content-digest.ts",
+      "src/lib/dataset/import.ts",
+      "src/lib/datasets.ts",
+      "src/lib/db/client.ts",
+      "src/lib/db/schema.ts",
+      "src/lib/errors/app-error.ts",
+      "src/lib/repositories/candidate-log-repository.ts",
+      "src/lib/repositories/disposal-rule-repository.ts",
+      "src/lib/repositories/index.ts",
+      "src/lib/repositories/item-repository.ts",
+      "src/lib/repositories/municipality-repository.ts",
+      "src/lib/services/item-search-service.ts",
+      "src/lib/services/recognizer/api-recognizer.ts",
+      "src/lib/services/recognizer/factory.ts",
+      "src/lib/services/recognizer/index.ts",
+      "src/lib/services/recognizer/mock-recognizer.ts",
+      "src/lib/services/recognizer/types.ts",
+      "src/schema/municipality-dataset-schema.ts",
+      "src/stores/classification-store.ts",
+      "src/stores/municipality-store.ts",
+      "src/stores/settings-store.ts",
+      "src/types/candidate-log.ts",
+      "src/types/candidate.ts",
+      "src/types/index.ts",
+      "src/types/recognizer-type.ts",
+      "src/utils/.gitkeep",
+      "validation/target.mjs"
+    ],
+    "report": ".behavproof/study-assurance.json",
+    "timeoutMs": 120000
+  },
+  "mode": "audit",
+  "profile": "basic",
+  "profileVersion": "1",
+  "riskOverrides": [],
+  "git": {
+    "base": "HEAD"
+  },
+  "reports": {},
+  "executionManifests": [],
+  "rules": {
+    "testResult": {
+      "severity": "error"
+    },
+    "changedLineCoverage": {
+      "severity": "warn",
+      "min": 80
+    },
+    "mutationScore": {
+      "severity": "off",
+      "min": 70,
+      "minMutants": 10
+    },
+    "pipelineIntegrity": {
+      "severity": "warn"
+    }
+  },
+  "contracts": {
+    "enabled": true,
+    "sources": [
+      {
+        "type": "manifest",
+        "include": [
+          "validation/contracts.json"
+        ]
+      }
+    ],
+    "requireExecutionEvidence": true,
+    "approval": {
+      "provider": "github-protected-review",
+      "requiredForRisk": [
+        "critical"
+      ],
+      "onUnverifiable": "unknown"
+    },
+    "documents": {
+      "output": ".behavproof/generated",
+      "commit": false
+    }
+  }
+}

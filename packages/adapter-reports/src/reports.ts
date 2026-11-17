@@ -5,6 +5,28 @@ const count=(n:unknown):number=>{if(!Number.isSafeInteger(n)||Number(n)<0)throw 
 const object=(v:unknown):Record<string,unknown>=>{if(!v||typeof v!=='object'||Array.isArray(v))throw new Error('Expected object');return v as Record<string,unknown>};
 const path=(p:string)=>RelativePathSchema.parse(p);
 export type VitestInventory={suiteCount:number;testCount:number;files:readonly string[]};
+export type JestInventory=VitestInventory&{complete?:boolean};
+/** Native Jest file counts differ from Vitest's nested-suite inventory. */
+export function normalizeJest(value:unknown,inventory?:JestInventory):{payload:Counts;status:EvidenceStatus}{
+ const v=object(value),payload={total:count(v.numTotalTests),passed:count(v.numPassedTests),failed:count(v.numFailedTests),skipped:count(v.numPendingTests)+count(v.numTodoTests)};
+ if(typeof v.success!=='boolean'||payload.passed+payload.failed+payload.skipped!==payload.total||!Array.isArray(v.testResults)||v.wasInterrupted!==undefined&&typeof v.wasInterrupted!=='boolean')throw Error('Inconsistent Jest report');
+ const suites={total:count(v.numTotalTestSuites),passed:count(v.numPassedTestSuites),failed:count(v.numFailedTestSuites),pending:count(v.numPendingTestSuites)},runtime=v.numRuntimeErrorTestSuites===undefined?0:count(v.numRuntimeErrorTestSuites);
+ if(suites.passed+suites.failed+suites.pending!==suites.total||runtime>suites.failed)throw Error('Inconsistent Jest suite counts');
+ const observed={total:0,passed:0,failed:0,skipped:0},files:string[]=[];let fileFailed=false,fileIncomplete=false,retried=false;
+ for(const item of v.testResults){
+  const file=object(item);if(typeof file.name!=='string'||!file.name||!Array.isArray(file.assertionResults))throw Error('Invalid Jest file inventory');
+  if(files.includes(file.name))throw Error('Duplicate Jest file');files.push(file.name);
+  if(file.status==='failed')fileFailed=true;else if(file.status!=='passed')fileIncomplete=true;
+  for(const item of file.assertionResults){const a=object(item);if(typeof a.title!=='string'||typeof a.fullName!=='string'||!Array.isArray(a.ancestorTitles)||a.ancestorTitles.some(x=>typeof x!=='string'))throw Error('Invalid Jest assertion identity');
+   observed.total++;if(a.status==='passed')observed.passed++;else if(a.status==='failed')observed.failed++;else if(['pending','skipped','todo','disabled'].includes(String(a.status)))observed.skipped++;else throw Error('Unknown Jest assertion status');
+   if(a.invocations!==undefined&&count(a.invocations)!==1)retried=true;
+  }
+ }
+ if(Object.keys(payload).some(k=>payload[k as keyof Counts]!==observed[k as keyof Counts]))throw Error('Inconsistent Jest assertion counts');
+ let complete=files.length===suites.total;
+ if(inventory!==undefined)complete=complete&&inventory.complete!==false&&Number.isSafeInteger(inventory.suiteCount)&&Number.isSafeInteger(inventory.testCount)&&Array.isArray(inventory.files)&&new Set(inventory.files).size===inventory.files.length&&inventory.suiteCount===suites.total&&inventory.testCount===payload.total&&inventory.files.length===files.length&&inventory.files.every(p=>files.includes(p));
+ return {payload,status:payload.failed||suites.failed||runtime||fileFailed||!v.success?'fail':!payload.total||payload.skipped||suites.pending||fileIncomplete||retried||v.wasInterrupted||!complete?'unknown':'pass'};
+}
 export function normalizeVitest(value:unknown,inventory?:VitestInventory):{payload:Counts;status:EvidenceStatus}{
  const v=object(value); const payload={total:count(v.numTotalTests),passed:count(v.numPassedTests),failed:count(v.numFailedTests),skipped:count(v.numPendingTests)+count(v.numTodoTests)};
  if(typeof v.success!=='boolean'||payload.passed+payload.failed+payload.skipped!==payload.total||!Array.isArray(v.testResults))throw new Error('Inconsistent Vitest report');

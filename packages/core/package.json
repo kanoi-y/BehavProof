@@ -6,12 +6,20 @@
     "node": "24.x"
   },
   "files": [
-    "dist"
+    "dist",
+    "cjs/dist",
+    "cjs/package.json"
   ],
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./cjs/dist/index.d.ts",
+        "default": "./cjs/dist/index.js"
+      }
     }
   },
   "dependencies": {

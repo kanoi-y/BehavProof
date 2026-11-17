@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased — Jest support
+
+- Add optional native Jest29.7.0 / 30.5.2 contracts, Circus adapter, reporter, CLI execution/detection/init and protected source/canary observations.
+- Bind native/contract evidence to the protected runner and invocation; preserve existing Vitest defaults and package publication scope.
+- Verify installed package consumers and original suteco: existing181 tests pass; three measured regressions fail through the standard authenticated Jest gate.
+
 ## 0.2.0 — public preview (2026-11-17)
 
 - Add optional revision-bound contract conditions, required checks and relevant fault types, preserving non-adopter hashes and documents.

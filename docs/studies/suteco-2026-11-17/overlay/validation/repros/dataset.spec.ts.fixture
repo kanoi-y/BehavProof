@@ -1,0 +1,161 @@
+import { writeFileSync } from 'node:fs';
+import type { SQLiteDatabase } from 'expo-sqlite';
+import { importDataset } from '@/lib/dataset/import';
+import { DisposalRuleRepository } from '@/lib/repositories/disposal-rule-repository';
+import {
+  municipalityDatasetSchema,
+  type MunicipalityDataset,
+} from '@/schema/municipality-dataset-schema';
+import { openTestDb } from '../../tests/helpers/db';
+
+// This study deliberately asserts required behavior against unmodified production code.
+// The optional output contains observed values, independent of assertion success.
+function observe(caseId: string, actual: unknown): void {
+  const outputPath = process.env.BEHAVPROOF_STUDY_OBSERVATIONS;
+  if (outputPath) {
+    writeFileSync(outputPath, `${JSON.stringify({ caseId, actual }, null, 2)}\n`, 'utf8');
+  }
+}
+
+function dataset(city: string): MunicipalityDataset {
+  return {
+    municipality: { id: city, displayName: city, version: '2026-11-17' },
+    items: [{ id: `${city}-item`, displayName: `${city} item`, aliases: [], keywords: [] }],
+    rules: [{
+      municipalityId: city,
+      itemId: `${city}-item`,
+      categoryName: `${city} category`,
+      instructions: `${city} instructions`,
+    }],
+  };
+}
+
+function snapshot(expoDb: SQLiteDatabase) {
+  return {
+    municipalities: expoDb.getAllSync('SELECT * FROM municipalities ORDER BY id'),
+    items: expoDb.getAllSync('SELECT * FROM items ORDER BY id'),
+    rules: expoDb.getAllSync(
+      'SELECT * FROM disposal_rules ORDER BY municipality_id, item_id'
+    ),
+  };
+}
+
+async function attemptImport(
+  db: Awaited<ReturnType<typeof openTestDb>>['db'],
+  input: MunicipalityDataset
+) {
+  try {
+    await importDataset(db, input);
+    return { rejected: false, error: null };
+  } catch (error) {
+    return {
+      rejected: true,
+      error: error instanceof Error ? { name: error.name, message: error.message } : String(error),
+    };
+  }
+}
+
+describe('BehavProof original-code municipality dataset probes', () => {
+  it('dataset-valid: valid municipality data imports through the actual database stack', async () => {
+    const { expoDb, db } = await openTestDb('behavproof_dataset_valid');
+    try {
+      const input = dataset('valid-city');
+      const parsed = municipalityDatasetSchema.safeParse(input);
+      const result = await attemptImport(db, input);
+      const state = snapshot(expoDb);
+      const storedRule = await new DisposalRuleRepository(db).findByMunicipalityAndItem(
+        'valid-city', 'valid-city-item'
+      );
+      observe('dataset-valid', {
+        schemaAccepted: parsed.success,
+        import: result,
+        state,
+        storedRule,
+        sqliteVersion: expoDb.getAllSync('SELECT sqlite_version() AS version'),
+      });
+      expect(parsed.success).toBe(true);
+      expect(result.rejected).toBe(false);
+      expect(state.municipalities).toHaveLength(1);
+      expect(state.items).toHaveLength(1);
+      expect(state.rules).toHaveLength(1);
+      expect(storedRule).toEqual({ ...input.rules[0], notes: undefined, officialUrl: undefined });
+    } finally {
+      await expoDb.closeAsync();
+    }
+  });
+
+  it('dataset-cross-municipality: an A dataset must reject a B rule and preserve B data', async () => {
+    const { expoDb, db } = await openTestDb('behavproof_dataset_cross_municipality');
+    try {
+      const inputA = dataset('city-a');
+      const inputB = dataset('city-b');
+      await importDataset(db, inputB);
+      await importDataset(db, inputA);
+      const repository = new DisposalRuleRepository(db);
+      const before = snapshot(expoDb);
+      const ruleBefore = await repository.findByMunicipalityAndItem('city-b', 'city-b-item');
+      const mixedDataset: MunicipalityDataset = {
+        ...inputA,
+        municipality: { ...inputA.municipality, version: '2026-11-18' },
+        items: [...inputA.items, ...inputB.items],
+        rules: [
+          ...inputA.rules,
+          {
+            ...inputB.rules[0],
+            categoryName: 'category supplied by city-a file',
+            instructions: 'instructions supplied by city-a file',
+          },
+        ],
+      };
+      const parsed = municipalityDatasetSchema.safeParse(mixedDataset);
+      const result = await attemptImport(db, mixedDataset);
+      const after = snapshot(expoDb);
+      const ruleAfter = await repository.findByMunicipalityAndItem('city-b', 'city-b-item');
+      observe('dataset-cross-municipality', {
+        input: mixedDataset,
+        schemaAccepted: parsed.success,
+        import: result,
+        before,
+        after,
+        ruleBefore,
+        ruleAfter,
+      });
+      expect({ schemaAccepted: parsed.success, importRejected: result.rejected, ruleAfter }).toEqual({
+        schemaAccepted: false,
+        importRejected: true,
+        ruleAfter: ruleBefore,
+      });
+    } finally {
+      await expoDb.closeAsync();
+    }
+  });
+
+  it('dataset-dangling-item: unknown item references are rejected before any writes', async () => {
+    const { expoDb, db } = await openTestDb('behavproof_dataset_dangling_item');
+    try {
+      const input = dataset('dangling-control-city');
+      await importDataset(db, input);
+      const before = snapshot(expoDb);
+      const invalid: MunicipalityDataset = {
+        ...input,
+        municipality: { ...input.municipality, version: '2026-11-18' },
+        rules: [{ ...input.rules[0], itemId: 'missing-item' }],
+      };
+      const parsed = municipalityDatasetSchema.safeParse(invalid);
+      const result = await attemptImport(db, invalid);
+      const after = snapshot(expoDb);
+      observe('dataset-dangling-item', {
+        input: invalid,
+        schemaAccepted: parsed.success,
+        import: result,
+        before,
+        after,
+      });
+      expect(parsed.success).toBe(false);
+      expect(result.rejected).toBe(true);
+      expect(after).toEqual(before);
+    } finally {
+      await expoDb.closeAsync();
+    }
+  });
+});

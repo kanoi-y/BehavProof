@@ -3,9 +3,30 @@ import {execFileSync} from 'node:child_process';
 import {realpath,readdir,lstat} from 'node:fs/promises';
 import {resolve,relative,join,isAbsolute,sep} from 'node:path';
 import {safeRead,RelativePathSchema,HashSchema,hashBytes} from '@behavproof/core';
-const packages=['core','adapter-reports','contract-registry','contract-vitest','adapter-github','adapter-quint','adapter-model-test','cli'];
+export const sdkPackages=['core','adapter-reports','contract-registry','contract-vitest','contract-jest','adapter-github','adapter-quint','adapter-model-test','cli'];
+const packages=sdkPackages;
 const within=(base,path)=>{const r=relative(base,path);return r===''||!isAbsolute(r)&&r!=='..'&&!r.startsWith(`..${sep}`);};
-const sourcePath=path=>['package.json','package-lock.json','tsconfig.json','tsconfig.base.json','scripts/build-artifacts.mjs','scripts/protected-probe-worker.mjs'].includes(path)||path.startsWith('templates/')||packages.some(name=>path===`packages/${name}/package.json`||path===`packages/${name}/tsconfig.json`||path.startsWith(`packages/${name}/src/`)&&path.endsWith('.ts'));
+export const sdkSourcePath=path=>['package.json','package-lock.json','tsconfig.json','tsconfig.base.json','scripts/build-artifacts.mjs','scripts/build-commonjs.mjs','scripts/protected-probe-worker.mjs','packages/core/cjs/package.json'].includes(path)||path.startsWith('templates/')||packages.some(name=>path===`packages/${name}/package.json`||path===`packages/${name}/tsconfig.json`||path.startsWith(`packages/${name}/src/`)&&path.endsWith(name==='contract-jest'?'.cts':'.ts'));
+/** Derive individual artifacts only from the selected tracked public source files. */
+export function sdkArtifacts(sources){
+ const artifacts=new Set(),executables=[];
+ for(const path of sources){
+  const match=/^packages\/([^/]+)\/src\/(.+)\.(ts|cts)$/.exec(path);
+  if(!match||/\.d\.(?:ts|cts)$/.test(path))continue;
+  const [,name,stem,extension]=match,base=`packages/${name}/dist/${stem}`,suffixes=extension==='cts'?['.cjs','.cjs.map','.d.cts','.d.cts.map']:['.js','.js.map','.d.ts','.d.ts.map'];
+  for(const suffix of suffixes)artifacts.add(base+suffix);
+  executables.push(base+suffixes[0]);
+  if(name==='core'){
+   const cjs=`packages/core/cjs/dist/${stem}`;
+   for(const suffix of suffixes)artifacts.add(cjs+suffix);
+   executables.push(cjs+'.js');
+  }
+ }
+ for(const schema of ['config','policy','evidence','manifest','registry','trust-root','registration','assurance'])artifacts.add(`packages/cli/schemas/${schema}.schema.json`);
+ for(const profile of ['basic','standard','critical'])artifacts.add(`packages/cli/presets/${profile}-v1.json`);
+ for(const path of sources.filter(path=>path.startsWith('templates/')))artifacts.add('packages/cli/'+path);
+ return {artifacts,executables};
+}
 /** Structural/private-surface check; installed dependencies must already be trusted.
  * The canonical path returned here, not the supplied alias, is used for the mount.
  */
@@ -17,15 +38,9 @@ export async function validateStagedSdk(input,{referenceRoot,uid=process.getuid?
  if(within(top,sdk))throw Error('Sandbox SDK must be outside the entire workspace checkout');
  const owner=await lstat(sdk);if(!owner.isDirectory()||owner.uid!==uid||(owner.mode&0o077)!==0)throw Error('Staged SDK directory must be private and owned by the non-root host user');
  const inventory=z.strictObject({schemaVersion:z.literal(1),sourceCommit:z.string().regex(/^[a-f0-9]{40}$/),sourceDirty:z.boolean(),built:z.boolean(),platform:z.string().min(1),arch:z.string().min(1),dependencyLockHash:HashSchema,files:z.array(z.strictObject({path:RelativePathSchema,sha256:HashSchema,size:z.number().int().nonnegative().safe()})).max(10000),limits:z.array(z.string())}).parse(JSON.parse((await safeRead(sdk,'sdk-source-inventory.json')).toString('utf8')));
- const sources=git(['ls-files','-z','--','.']).split('\0').filter(sourcePath),allowed=new Set(sources),executables=[];
- for(const path of sources)if(path.startsWith('packages/')&&path.includes('/src/')&&path.endsWith('.ts')&&!path.endsWith('.d.ts')){
-  const base=path.replace('/src/','/dist/').slice(0,-3);for(const suffix of ['.js','.js.map','.d.ts','.d.ts.map'])allowed.add(base+suffix);executables.push(base+'.js');
- }
+ const sources=git(['ls-files','-z','--','.']).split('\0').filter(sdkSourcePath),{artifacts,executables}=sdkArtifacts(sources),allowed=new Set([...sources,...artifacts]);
  for(const name of packages)allowed.add(`packages/${name}/tsconfig.tsbuildinfo`);
  allowed.add('tsconfig.tsbuildinfo');
- for(const schema of ['config','policy','evidence','manifest','registry','trust-root','registration','assurance'])allowed.add(`packages/cli/schemas/${schema}.schema.json`);
- for(const profile of ['basic','standard','critical'])allowed.add(`packages/cli/presets/${profile}-v1.json`);
- for(const path of sources.filter(path=>path.startsWith('templates/')))allowed.add('packages/cli/'+path);
  const recorded=new Set();
  for(const entry of inventory.files){RelativePathSchema.parse(entry.path);HashSchema.parse(entry.sha256);if(!allowed.has(entry.path)||recorded.has(entry.path)||hashBytes(await safeRead(sdk,entry.path))!==entry.sha256)throw Error('Staged SDK inventory is incomplete or altered');recorded.add(entry.path);}
  for(const path of sources){if(!recorded.has(path)||hashBytes(await safeRead(sdk,path))!==hashBytes(await safeRead(reference,path)))throw Error('Staged SDK differs from selected verifier source');}

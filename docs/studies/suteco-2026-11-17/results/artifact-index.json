@@ -1,0 +1,132 @@
+[
+  {
+    "sourceRef": ".behavproof/collected/suteco-study-1794869385670-0/assurance.json",
+    "saved": "assurance.json",
+    "sha256": "c3065167debbbfbd334fbfb59793c4f339dfe92719f0ef25a5a5498e4bd8db47"
+  },
+  {
+    "sourceRef": ".behavproof/collected/suteco-study-1794869385670-0/collector-result.json",
+    "saved": "collector-result.json",
+    "sha256": "f07d80d37519ae2467f36e06351f2dd507b6986bc17dc3a4938982460bc5b341"
+  },
+  {
+    "sourceRef": ".behavproof/collected/suteco-study-1794869385670-0/dataset-cross-municipality.observation.json",
+    "saved": "dataset-cross-municipality.observation.json",
+    "sha256": "9ce3fab9d2ac458bf5d43bbf6a37ac3ce8a7c1f005d1aaf6d1cc084ad8a16c10"
+  },
+  {
+    "sourceRef": ".behavproof/collected/suteco-study-1794869385670-0/dataset-cross-municipality.jest.json",
+    "saved": "dataset-cross-municipality.jest.json",
+    "sha256": "e61b1ddcac0aa64c895f36f74c7ac8c0e60ecfef04041f658a1ba548c5113e47"
+  },
+  {
+    "sourceRef": ".behavproof/collected/suteco-study-1794869385670-0/dataset-cross-municipality.execution.log",
+    "saved": "dataset-cross-municipality.execution.txt",
+    "sha256": "e1a3292fe47e948942ad2f55561e81475e7c4f794980431415e463ca02fcebc8"
+  },
+  {
+    "sourceRef": ".behavproof/collected/suteco-study-1794869385670-0/dataset-valid.observation.json",
+    "saved": "dataset-valid.observation.json",
+    "sha256": "a97fe5316ffe2eeb30e2c313889a13c51bf7e88750f09574bb57cc5a41936f54"
+  },
+  {
+    "sourceRef": ".behavproof/collected/suteco-study-1794869385670-0/dataset-valid.jest.json",
+    "saved": "dataset-valid.jest.json",
+    "sha256": "3de34b4374a853e0bff9086954877133f286bacdb888cc9c90a1714c819cd381"
+  },
+  {
+    "sourceRef": ".behavproof/collected/suteco-study-1794869385670-0/dataset-valid.execution.log",
+    "saved": "dataset-valid.execution.txt",
+    "sha256": "b8fd2bb8920845fab936722dd5ab8a1358fbf4dadfd3ad7c98ed805e757c89bf"
+  },
+  {
+    "sourceRef": ".behavproof/collected/suteco-study-1794869385670-0/dataset-dangling-item.observation.json",
+    "saved": "dataset-dangling-item.observation.json",
+    "sha256": "e102866b014b48e4e59dfe4a773a46fac4a2834f102d53a03307aa5d14ce8037"
+  },
+  {
+    "sourceRef": ".behavproof/collected/suteco-study-1794869385670-0/dataset-dangling-item.jest.json",
+    "saved": "dataset-dangling-item.jest.json",
+    "sha256": "00a0c439e49aa60db1497eae0e68376e84603344c5bf5ef3f6b462958798d0e2"
+  },
+  {
+    "sourceRef": ".behavproof/collected/suteco-study-1794869385670-0/dataset-dangling-item.execution.log",
+    "saved": "dataset-dangling-item.execution.txt",
+    "sha256": "28a6ffa23fb9390d693842ff401fe24513458cb43ad8cb6e4cec9b822f7e4030"
+  },
+  {
+    "sourceRef": ".behavproof/collected/suteco-study-1794869385670-0/startup-version-only.observation.json",
+    "saved": "startup-version-only.observation.json",
+    "sha256": "8e95ae14b262096a511ede2b582445c3486830ddcb190c86c428f84521ab5ba1"
+  },
+  {
+    "sourceRef": ".behavproof/collected/suteco-study-1794869385670-0/startup-version-only.jest.json",
+    "saved": "startup-version-only.jest.json",
+    "sha256": "0e0aff68554ac718192b0d7e9609c6651eecae037abbf8d2a82760473a7a660b"
+  },
+  {
+    "sourceRef": ".behavproof/collected/suteco-study-1794869385670-0/startup-version-only.execution.log",
+    "saved": "startup-version-only.execution.txt",
+    "sha256": "8aa96e2d7d181f927a0ee757b21826043b3a16807b6bd735c4f09dd1eed75992"
+  },
+  {
+    "sourceRef": ".behavproof/collected/suteco-study-1794869385670-0/startup-content-change-control.observation.json",
+    "saved": "startup-content-change-control.observation.json",
+    "sha256": "4334bdd4547d1dce62c487aff3aebec2ecc53afaa1e4c8724f7a2783a00d0d3d"
+  },
+  {
+    "sourceRef": ".behavproof/collected/suteco-study-1794869385670-0/startup-content-change-control.jest.json",
+    "saved": "startup-content-change-control.jest.json",
+    "sha256": "e1fff371f164a60141ff04a094e01644ca73e451ae5805c21e75cc7e61cb7c4f"
+  },
+  {
+    "sourceRef": ".behavproof/collected/suteco-study-1794869385670-0/startup-content-change-control.execution.log",
+    "saved": "startup-content-change-control.execution.txt",
+    "sha256": "2bf65874337896f4faf0db6532675e23f9a82b140d20b14915acb43b45930374"
+  },
+  {
+    "sourceRef": ".behavproof/collected/suteco-study-1794869385670-0/unsafe-official-link.observation.json",
+    "saved": "unsafe-official-link.observation.json",
+    "sha256": "aa3c8e5307b4447896ee77d65ec1098ecce82bf6061e10c42f10352fb5f101c3"
+  },
+  {
+    "sourceRef": ".behavproof/collected/suteco-study-1794869385670-0/unsafe-official-link.jest.json",
+    "saved": "unsafe-official-link.jest.json",
+    "sha256": "e5183eb2ce0d0ff34b3aea94b98a233bd969b9c5e0854e7a68e59c697ecabf31"
+  },
+  {
+    "sourceRef": ".behavproof/collected/suteco-study-1794869385670-0/unsafe-official-link.execution.log",
+    "saved": "unsafe-official-link.execution.txt",
+    "sha256": "e9d7b18096a2477aa5ef6b2f5b0f95fa92df50a8f57fa5021b24e1ab2479e35e"
+  },
+  {
+    "sourceRef": ".behavproof/collected/suteco-study-1794869385670-0/safe-official-link.observation.json",
+    "saved": "safe-official-link.observation.json",
+    "sha256": "8492a3c4ac984001409b5acb7b250b61b555ef97f955b58e4f3af72ee5527fa0"
+  },
+  {
+    "sourceRef": ".behavproof/collected/suteco-study-1794869385670-0/safe-official-link.jest.json",
+    "saved": "safe-official-link.jest.json",
+    "sha256": "6ec3a61ab61fa42afc22dc15ff7005eb68bd4efebe4f5dd6b53f891caa6c3cfe"
+  },
+  {
+    "sourceRef": ".behavproof/collected/suteco-study-1794869385670-0/safe-official-link.execution.log",
+    "saved": "safe-official-link.execution.txt",
+    "sha256": "44ce35d84fc9c7a47c59bec357dcf3d7660dc705a51a276c655df83c9e2561b9"
+  },
+  {
+    "sourceRef": ".behavproof/collected/suteco-study-1794869385670-0/municipality-event-turn-control.observation.json",
+    "saved": "municipality-event-turn-control.observation.json",
+    "sha256": "00d0c7bf8ed46a30a0da8f9b0a11f9d52f8d714f22b6142036bf78dbf13f591a"
+  },
+  {
+    "sourceRef": ".behavproof/collected/suteco-study-1794869385670-0/municipality-event-turn-control.jest.json",
+    "saved": "municipality-event-turn-control.jest.json",
+    "sha256": "012d3a76000a1dbb00c54a9cffd851b9940395875ea66a2481423729b801d786"
+  },
+  {
+    "sourceRef": ".behavproof/collected/suteco-study-1794869385670-0/municipality-event-turn-control.execution.log",
+    "saved": "municipality-event-turn-control.execution.txt",
+    "sha256": "81a00af55ccbff6298f2505dd13c2bcf86e8512bffa01ce56ac28271941fd4d7"
+  }
+]

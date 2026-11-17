@@ -1,0 +1,196 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-18",
+  "repository": "https://github.com/kanoi-y/suteco",
+  "sourceCommit": "79bbcaab65539a1f5d080a98710e52bf06764283",
+  "sdkSourceCommit": "ff322eb293c12f226ceaf4c8facf0ef6a8fc1956",
+  "sdkSourceDirty": false,
+  "sdkVersion": "0.2.0",
+  "nodeForSDK": "v24.14.1",
+  "nodeForProducer": "v20.19.4",
+  "runner": "Jest29.7.0",
+  "integration": "Standard @behavproof/jest runner/reporter + native JSON + Collector + protected CLI gate; no case-by-case bridge",
+  "originalSourceChanged": false,
+  "executions": [
+    {
+      "id": "baseline",
+      "producerExit": 0,
+      "gateExit": 0,
+      "status": "pass",
+      "testResult": {
+        "evidenceIds": [
+          ".behavproof/collected/baseline/jest.json"
+        ],
+        "message": "Jest {\"total\":181,\"passed\":181,\"failed\":0,\"skipped\":0}; verified current producer",
+        "ruleId": "testResult",
+        "scope": [],
+        "severity": "error",
+        "status": "pass"
+      },
+      "detection": {
+        "evidence": [
+          "package.json",
+          "pnpm-lock.yaml",
+          ".github/workflows",
+          "git",
+          "jest dependency",
+          "Protected host selected Jest 29.7.0; package script is not executed",
+          "Node.js project"
+        ],
+        "reasons": [],
+        "support": "single-package"
+      },
+      "suiteCount": 32,
+      "tests": {
+        "total": 181,
+        "passed": 181,
+        "failed": 0,
+        "pending": 0,
+        "todo": 0
+      },
+      "sdkRunner": {
+        "kind": "jest",
+        "version": "29.7.0"
+      },
+      "inventoryComplete": true,
+      "elapsedSeconds": 15.478507875000002,
+      "manifestHash": "5d7839eb2dd2ac2b657d9da43d8ede3b6e8f362d41c87d0dc11274af0978d5d6",
+      "nativeHash": "62b1c6adc83943bede6000be93fda21b82c5c8b78d2296961be1900a105519d7",
+      "provenance": {
+        "manifests": [
+          {
+            "ref": ".behavproof/collected/baseline/manifest.json",
+            "validation": {
+              "artifactIntegrity": "pass",
+              "executionStatus": "pass",
+              "producerTrust": "pass",
+              "reasons": [],
+              "subjectMatch": "pass"
+            }
+          }
+        ],
+        "reasons": []
+      }
+    },
+    {
+      "id": "regressions",
+      "cases": [
+        {
+          "name": "startup-version-only: updated bundled version reaches DB, store, persistence and settings",
+          "status": "failed",
+          "failureMessages": [
+            "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"2025-09-01\"\nReceived: \"2000-01-01\"\n    at Object.toBe (/private/var/folders/75/13zljh113nb7gk1_vwwf7frr0000gn/T/behavproof-jest-suteco-1rGfa1/candidate/validation/repros/startup-state.spec.ts:98:46)\n    at Generator.next (<anonymous>)\n    at asyncGeneratorStep (/Users/kanoi/Documents/ChatGPT/BehavProof/.behavproof/studies/suteco/node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)\n    at _next (/Users/kanoi/Documents/ChatGPT/BehavProof/.behavproof/studies/suteco/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)"
+          ]
+        },
+        {
+          "name": "startup-content-change-control: changed content and version refresh through the real provider",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "name": "municipality-late-load: same-turn subsequent selection and clearing survive an earlier load",
+          "status": "pending",
+          "failureMessages": []
+        },
+        {
+          "name": "municipality-event-turn-control: a later event-turn selection survives the real synchronous SQLite load",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "name": "dataset-valid: valid municipality data imports through the actual database stack",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "name": "dataset-cross-municipality: an A dataset must reject a B rule and preserve B data",
+          "status": "failed",
+          "failureMessages": [
+            "Error: expect(received).toEqual(expected) // deep equality\n\n- Expected  - 4\n+ Received  + 4\n\n  Object {\n-   \"importRejected\": true,\n+   \"importRejected\": false,\n    \"ruleAfter\": Object {\n-     \"categoryName\": \"city-b category\",\n-     \"instructions\": \"city-b instructions\",\n+     \"categoryName\": \"category supplied by city-a file\",\n+     \"instructions\": \"instructions supplied by city-a file\",\n      \"itemId\": \"city-b-item\",\n      \"municipalityId\": \"city-b\",\n      \"notes\": undefined,\n      \"officialUrl\": undefined,\n    },\n-   \"schemaAccepted\": false,\n+   \"schemaAccepted\": true,\n  }\n    at Object.toEqual (/private/var/folders/75/13zljh113nb7gk1_vwwf7frr0000gn/T/behavproof-jest-suteco-1rGfa1/candidate/validation/repros/dataset.spec.ts:123:94)\n    at Generator.next (<anonymous>)\n    at asyncGeneratorStep (/Users/kanoi/Documents/ChatGPT/BehavProof/.behavproof/studies/suteco/node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)\n    at _next (/Users/kanoi/Documents/ChatGPT/BehavProof/.behavproof/studies/suteco/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)"
+          ]
+        },
+        {
+          "name": "dataset-dangling-item: unknown item references are rejected before any writes",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "name": "unsafe-official-link: only safe web links reach the native opener",
+          "status": "failed",
+          "failureMessages": [
+            "Error: expect(received).toEqual(expected) // deep equality\n\n- Expected  - 1\n+ Received  + 3\n\n- Array []\n+ Array [\n+   \"file:///tmp/suteco-study-only\",\n+ ]\n    at toEqual (/private/var/folders/75/13zljh113nb7gk1_vwwf7frr0000gn/T/behavproof-jest-suteco-1rGfa1/candidate/validation/repros/links.spec.ts:111:26)\n    at Generator.next (<anonymous>)\n    at asyncGeneratorStep (/Users/kanoi/Documents/ChatGPT/BehavProof/.behavproof/studies/suteco/node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)\n    at _next (/Users/kanoi/Documents/ChatGPT/BehavProof/.behavproof/studies/suteco/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)"
+          ]
+        },
+        {
+          "name": "safe-official-link: only safe web links reach the native opener",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ],
+      "producerExit": 0,
+      "gateExit": 1,
+      "status": "fail",
+      "testResult": {
+        "evidenceIds": [
+          ".behavproof/collected/regressions/jest.json"
+        ],
+        "message": "Jest {\"total\":9,\"passed\":5,\"failed\":3,\"skipped\":1}; verified current producer",
+        "remediation": "Inspect failed, skipped or missing tests; rerun the trusted Collector and authenticate its current reports.",
+        "ruleId": "testResult",
+        "scope": [],
+        "severity": "error",
+        "status": "fail"
+      },
+      "detection": {
+        "evidence": [
+          "package.json",
+          "pnpm-lock.yaml",
+          ".github/workflows",
+          "git",
+          "jest dependency",
+          "Protected host selected Jest 29.7.0; package script is not executed",
+          "Node.js project"
+        ],
+        "reasons": [],
+        "support": "single-package"
+      },
+      "suiteCount": 3,
+      "tests": {
+        "total": 9,
+        "passed": 5,
+        "failed": 3,
+        "pending": 1,
+        "todo": 0
+      },
+      "sdkRunner": {
+        "kind": "jest",
+        "version": "29.7.0"
+      },
+      "inventoryComplete": true,
+      "elapsedSeconds": 8.872773083999997,
+      "manifestHash": "836eeb6f54131687464dae2cfa222a0183380455c0a730533be458980cf464e2",
+      "nativeHash": "eeb26e922e701e58e46e66a23c0fadd1333371fd4ec557e437ac72160a4e04c8",
+      "provenance": {
+        "manifests": [
+          {
+            "ref": ".behavproof/collected/regressions/manifest.json",
+            "validation": {
+              "artifactIntegrity": "pass",
+              "executionStatus": "pass",
+              "producerTrust": "pass",
+              "reasons": [],
+              "subjectMatch": "pass"
+            }
+          }
+        ],
+        "reasons": []
+      }
+    }
+  ],
+  "limits": [
+    "Local explicitly selected host authority, not new human approval or live merge protection.",
+    "Existing Expo/Jest native adapters with actual SQLite SQL; no physical device, camera, Gemini request or actual URL opening.",
+    "SDK host requires Node24. The existing native suteco producer is separately selected Node20.19.4.",
+    "Native ordinary tests verify test-result obligations; arbitrary production reach and complete domain requirements are not inferred."
+  ]
+}

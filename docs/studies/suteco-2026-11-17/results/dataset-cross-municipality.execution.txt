@@ -1,0 +1,48 @@
+FAIL validation/repros/dataset.spec.ts
+  BehavProof original-code municipality dataset probes
+    ✕ dataset-cross-municipality: an A dataset must reject a B rule and preserve B data (27 ms)
+    ○ skipped dataset-valid: valid municipality data imports through the actual database stack
+    ○ skipped dataset-dangling-item: unknown item references are rejected before any writes
+
+  ● BehavProof original-code municipality dataset probes › dataset-cross-municipality: an A dataset must reject a B rule and preserve B data
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 4
+    + Received  + 4
+
+      Object {
+    -   "importRejected": true,
+    +   "importRejected": false,
+        "ruleAfter": Object {
+    -     "categoryName": "city-b category",
+    -     "instructions": "city-b instructions",
+    +     "categoryName": "category supplied by city-a file",
+    +     "instructions": "instructions supplied by city-a file",
+          "itemId": "city-b-item",
+          "municipalityId": "city-b",
+          "notes": undefined,
+          "officialUrl": undefined,
+        },
+    -   "schemaAccepted": false,
+    +   "schemaAccepted": true,
+      }
+
+      121 |         ruleAfter,
+      122 |       });
+    > 123 |       expect({ schemaAccepted: parsed.success, importRejected: result.rejected, ruleAfter }).toEqual({
+          |                                                                                              ^
+      124 |         schemaAccepted: false,
+      125 |         importRejected: true,
+      126 |         ruleAfter: ruleBefore,
+
+      at Object.toEqual (validation/repros/dataset.spec.ts:123:94)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 2 skipped, 3 total
+Snapshots:   0 total
+Time:        0.884 s, estimated 1 s
+Ran all test suites within paths "validation/repros/dataset.spec.ts".
+Test results written to: .behavproof/study-calls/dataset-cross-municipality-xdI3fy/jest.json

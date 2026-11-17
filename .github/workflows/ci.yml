@@ -18,7 +18,7 @@ jobs:
           node-version: '24'
       - run: npm ci --ignore-scripts --cache .npm-cache
       - run: npm test
-      - run: node scripts/package-smoke.mjs --online
+      - run: node scripts/package-smoke.mjs --online --jest
       - run: node scripts/assurance-flow.mjs
       - run: node scripts/acceptance-flow.mjs
       - run: node scripts/protected-probe-flow.mjs

@@ -1,0 +1,367 @@
+{
+  "notice": "Assurance declarations and independently verified evaluations. Missing or unverified evidence is unknown.",
+  "limits": [
+    "Undeclared requirements and unlisted dependencies are outside assurance scope.",
+    "Result authentication, current source identity and observation integrity must be established by the caller. A declaration or raw report is not proof."
+  ],
+  "contracts": [
+    {
+      "key": "[\"SUTECO-STUDY\",\"93c382d4e83ee5f0b9bc75f86a4b631f5ba0d2e91f040d6e839519262b374099\"]",
+      "contractId": "SUTECO-STUDY",
+      "revisionHash": "93c382d4e83ee5f0b9bc75f86a4b631f5ba0d2e91f040d6e839519262b374099",
+      "sourceRef": "validation/contracts.json",
+      "feature": {
+        "id": "suteco-municipality-study",
+        "entrypoints": [
+          "dataset import",
+          "application startup and settings",
+          "item detail reference link"
+        ]
+      },
+      "status": "fail",
+      "reasons": [],
+      "evidenceRefs": [
+        ".behavproof/collected/suteco-study-1794869385670-0/assurance.json"
+      ],
+      "checks": [
+        {
+          "checkId": "dataset-cross-municipality",
+          "method": "example",
+          "scope": {
+            "id": "dataset-cross-municipality",
+            "targetRef": "validation/target.mjs#observe",
+            "method": "example",
+            "cases": [
+              {
+                "id": "dataset-cross-municipality",
+                "input": {
+                  "id": "dataset-cross-municipality"
+                },
+                "expected": {
+                  "schemaAccepted": false,
+                  "importRejected": true,
+                  "foreignRule": {
+                    "municipalityId": "city-b",
+                    "itemId": "city-b-item",
+                    "categoryName": "city-b category",
+                    "instructions": "city-b instructions"
+                  }
+                }
+              }
+            ]
+          },
+          "status": "fail",
+          "comparisons": 1,
+          "implementationCalls": 1,
+          "reasons": [],
+          "limits": [
+            "Only declared inputs and observed target comparisons are covered."
+          ]
+        },
+        {
+          "checkId": "dataset-valid",
+          "method": "example",
+          "scope": {
+            "id": "dataset-valid",
+            "targetRef": "validation/target.mjs#observe",
+            "method": "example",
+            "cases": [
+              {
+                "id": "dataset-valid",
+                "input": {
+                  "id": "dataset-valid"
+                },
+                "expected": {
+                  "schemaAccepted": true,
+                  "importRejected": false,
+                  "counts": {
+                    "municipalities": 1,
+                    "items": 1,
+                    "rules": 1
+                  },
+                  "storedItemId": "valid-city-item"
+                }
+              }
+            ]
+          },
+          "status": "pass",
+          "comparisons": 1,
+          "implementationCalls": 1,
+          "reasons": [],
+          "limits": [
+            "Only declared inputs and observed target comparisons are covered."
+          ]
+        },
+        {
+          "checkId": "dataset-dangling-item",
+          "method": "example",
+          "scope": {
+            "id": "dataset-dangling-item",
+            "targetRef": "validation/target.mjs#observe",
+            "method": "example",
+            "cases": [
+              {
+                "id": "dataset-dangling-item",
+                "input": {
+                  "id": "dataset-dangling-item"
+                },
+                "expected": {
+                  "schemaAccepted": false,
+                  "importRejected": true,
+                  "unchanged": true
+                }
+              }
+            ]
+          },
+          "status": "pass",
+          "comparisons": 1,
+          "implementationCalls": 1,
+          "reasons": [],
+          "limits": [
+            "Only declared inputs and observed target comparisons are covered."
+          ]
+        },
+        {
+          "checkId": "startup-version-only",
+          "method": "example",
+          "scope": {
+            "id": "startup-version-only",
+            "targetRef": "validation/target.mjs#observe",
+            "method": "example",
+            "cases": [
+              {
+                "id": "startup-version-only",
+                "input": {
+                  "id": "startup-version-only"
+                },
+                "expected": {
+                  "database": "2025-09-01",
+                  "store": "2025-09-01",
+                  "persistence": "2025-09-01",
+                  "display": "2025-09-01"
+                }
+              }
+            ]
+          },
+          "status": "fail",
+          "comparisons": 1,
+          "implementationCalls": 1,
+          "reasons": [],
+          "limits": [
+            "Only declared inputs and observed target comparisons are covered."
+          ]
+        },
+        {
+          "checkId": "startup-content-change-control",
+          "method": "example",
+          "scope": {
+            "id": "startup-content-change-control",
+            "targetRef": "validation/target.mjs#observe",
+            "method": "example",
+            "cases": [
+              {
+                "id": "startup-content-change-control",
+                "input": {
+                  "id": "startup-content-change-control"
+                },
+                "expected": {
+                  "database": "2025-09-01",
+                  "store": "2025-09-01",
+                  "persistence": "2025-09-01",
+                  "display": "2025-09-01"
+                }
+              }
+            ]
+          },
+          "status": "pass",
+          "comparisons": 1,
+          "implementationCalls": 1,
+          "reasons": [],
+          "limits": [
+            "Only declared inputs and observed target comparisons are covered."
+          ]
+        },
+        {
+          "checkId": "unsafe-official-link",
+          "method": "example",
+          "scope": {
+            "id": "unsafe-official-link",
+            "targetRef": "validation/target.mjs#observe",
+            "method": "example",
+            "cases": [
+              {
+                "id": "unsafe-official-link",
+                "input": {
+                  "id": "unsafe-official-link"
+                },
+                "expected": {
+                  "openedUris": []
+                }
+              }
+            ]
+          },
+          "status": "fail",
+          "comparisons": 1,
+          "implementationCalls": 1,
+          "reasons": [],
+          "limits": [
+            "Only declared inputs and observed target comparisons are covered."
+          ]
+        },
+        {
+          "checkId": "safe-official-link",
+          "method": "example",
+          "scope": {
+            "id": "safe-official-link",
+            "targetRef": "validation/target.mjs#observe",
+            "method": "example",
+            "cases": [
+              {
+                "id": "safe-official-link",
+                "input": {
+                  "id": "safe-official-link"
+                },
+                "expected": {
+                  "schemaAccepted": true,
+                  "importAccepted": true,
+                  "renderedOfficialUrl": true,
+                  "openedUris": [
+                    "https://example.invalid/suteco-study-only"
+                  ]
+                }
+              }
+            ]
+          },
+          "status": "pass",
+          "comparisons": 1,
+          "implementationCalls": 1,
+          "reasons": [],
+          "limits": [
+            "Only declared inputs and observed target comparisons are covered."
+          ]
+        },
+        {
+          "checkId": "municipality-event-turn-control",
+          "method": "example",
+          "scope": {
+            "id": "municipality-event-turn-control",
+            "targetRef": "validation/target.mjs#observe",
+            "method": "example",
+            "cases": [
+              {
+                "id": "municipality-event-turn-control",
+                "input": {
+                  "id": "municipality-event-turn-control"
+                },
+                "expected": {
+                  "events": [
+                    "load-A-resolved",
+                    "select-B-in-later-event-turn"
+                  ],
+                  "selectedMunicipalityId": "probe-city-b"
+                }
+              }
+            ]
+          },
+          "status": "pass",
+          "comparisons": 1,
+          "implementationCalls": 1,
+          "reasons": [],
+          "limits": [
+            "Only declared inputs and observed target comparisons are covered."
+          ]
+        }
+      ],
+      "conditions": [
+        {
+          "conditionId": "dataset-cross-municipality",
+          "kind": "postcondition",
+          "statement": "A municipality dataset rejects foreign rules and preserves the foreign municipality rule.",
+          "checkIds": [
+            "dataset-cross-municipality"
+          ],
+          "status": "fail",
+          "reasons": [],
+          "faults": []
+        },
+        {
+          "conditionId": "dataset-valid",
+          "kind": "postcondition",
+          "statement": "A valid dataset imports the declared municipality, item and rule.",
+          "checkIds": [
+            "dataset-valid"
+          ],
+          "status": "pass",
+          "reasons": [],
+          "faults": []
+        },
+        {
+          "conditionId": "dataset-dangling-item",
+          "kind": "postcondition",
+          "statement": "An unknown item reference is rejected without changing existing state.",
+          "checkIds": [
+            "dataset-dangling-item"
+          ],
+          "status": "pass",
+          "reasons": [],
+          "faults": []
+        },
+        {
+          "conditionId": "startup-version-only",
+          "kind": "postcondition",
+          "statement": "A version-only bundled update reaches the database, selected state, persistence and settings display.",
+          "checkIds": [
+            "startup-version-only"
+          ],
+          "status": "fail",
+          "reasons": [],
+          "faults": []
+        },
+        {
+          "conditionId": "startup-content-change-control",
+          "kind": "postcondition",
+          "statement": "Changed content and version refresh correctly through the original startup flow.",
+          "checkIds": [
+            "startup-content-change-control"
+          ],
+          "status": "pass",
+          "reasons": [],
+          "faults": []
+        },
+        {
+          "conditionId": "unsafe-official-link",
+          "kind": "postcondition",
+          "statement": "A local-file reference URI is not handed to the native link opener.",
+          "checkIds": [
+            "unsafe-official-link"
+          ],
+          "status": "fail",
+          "reasons": [],
+          "faults": []
+        },
+        {
+          "conditionId": "safe-official-link",
+          "kind": "postcondition",
+          "statement": "An HTTPS reference survives validation/storage and is handed to the recorded opener.",
+          "checkIds": [
+            "safe-official-link"
+          ],
+          "status": "pass",
+          "reasons": [],
+          "faults": []
+        },
+        {
+          "conditionId": "municipality-event-turn-control",
+          "kind": "postcondition",
+          "statement": "A later event-turn municipality selection remains selected after a synchronous SQLite load.",
+          "checkIds": [
+            "municipality-event-turn-control"
+          ],
+          "status": "pass",
+          "reasons": [],
+          "faults": []
+        }
+      ]
+    }
+  ]
+}

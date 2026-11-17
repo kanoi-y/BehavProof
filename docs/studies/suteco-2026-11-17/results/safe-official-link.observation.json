@@ -1,0 +1,18 @@
+{
+  "safe-official-link": {
+    "uri": "https://example.invalid/suteco-study-only",
+    "schemaAccepted": true,
+    "importAccepted": true,
+    "importError": null,
+    "storedOfficialUrl": "https://example.invalid/suteco-study-only",
+    "renderedOfficialUrl": true,
+    "openedUris": [
+      "https://example.invalid/suteco-study-only"
+    ],
+    "sqliteVersion": [
+      {
+        "version": "3.49.2"
+      }
+    ]
+  }
+}

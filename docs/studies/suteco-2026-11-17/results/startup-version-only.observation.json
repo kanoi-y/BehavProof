@@ -1,0 +1,33 @@
+{
+  "startup-version-only": {
+    "bundledMunicipality": {
+      "id": "kumamoto-kikuchi",
+      "displayName": "熊本県菊池市",
+      "version": "2025-09-01"
+    },
+    "previousMunicipality": {
+      "id": "kumamoto-kikuchi",
+      "displayName": "熊本県菊池市",
+      "version": "2000-01-01"
+    },
+    "bundledDigest": "d1fabf41",
+    "previousDigest": "d1fabf41",
+    "storedMunicipality": {
+      "id": "kumamoto-kikuchi",
+      "displayName": "熊本県菊池市",
+      "version": "2000-01-01"
+    },
+    "store": {
+      "selectedMunicipalityId": "kumamoto-kikuchi",
+      "selectedMunicipalityName": "熊本県菊池市",
+      "datasetVersion": "2000-01-01",
+      "hasHydrated": true
+    },
+    "persistedState": {
+      "selectedMunicipalityId": "kumamoto-kikuchi",
+      "selectedMunicipalityName": "熊本県菊池市",
+      "datasetVersion": "2000-01-01"
+    },
+    "displayedVersion": "2000-01-01"
+  }
+}

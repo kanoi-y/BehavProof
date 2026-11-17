@@ -1,0 +1,172 @@
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import React from 'react';
+import { cleanupAsync, renderAsync, screen, waitFor } from '@testing-library/react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { InitializationProvider } from '@/components/InitializationProvider';
+import { defaultDatasets } from '@/lib/datasets';
+import { computeDatasetContentDigest } from '@/lib/dataset/content-digest';
+import { importDataset } from '@/lib/dataset/import';
+import { getDb } from '@/lib/db/client';
+import { MunicipalityRepository } from '@/lib/repositories/municipality-repository';
+import type { MunicipalityDataset } from '@/schema/municipality-dataset-schema';
+import { useMunicipalityStore } from '@/stores/municipality-store';
+import HomeScreen from '../../app/index';
+import SettingsScreen from '../../app/settings';
+import { openTestDb } from '../../tests/helpers/db';
+
+// Redirect only the database boundary. Provider, digest, importer, repository,
+// migrations, SQLite queries and Zustand actions are the original implementations.
+jest.mock('@/lib/db/client', () => ({
+  ...jest.requireActual<typeof import('@/lib/db/client')>('@/lib/db/client'),
+  getDb: jest.fn(),
+}));
+
+const mockGetDb = jest.mocked(getDb);
+
+function observe(caseId: string, actual: unknown) {
+  const file = process.env.BEHAVPROOF_STUDY_OBSERVATIONS;
+  if (!file) return;
+  const existing = existsSync(file) ? readFileSync(file, 'utf8').trim() : '';
+  const previous = existing ? JSON.parse(existing) : {};
+  writeFileSync(file, JSON.stringify({ ...previous, [caseId]: actual }, null, 2));
+}
+
+function snapshot() {
+  const state = useMunicipalityStore.getState();
+  return {
+    selectedMunicipalityId: state.selectedMunicipalityId,
+    selectedMunicipalityName: state.selectedMunicipalityName,
+    datasetVersion: state.datasetVersion,
+    hasHydrated: state._hasHydrated,
+  };
+}
+
+beforeEach(async () => {
+  jest.clearAllMocks();
+  await AsyncStorage.removeItem('municipality-storage');
+  useMunicipalityStore.setState({
+    selectedMunicipalityId: null,
+    selectedMunicipalityName: null,
+    datasetVersion: null,
+    _hasHydrated: true,
+  });
+});
+
+async function startupObservation(caseId: string, changeContent: boolean) {
+  const { expoDb, db } = await openTestDb(caseId);
+  try {
+    const target = defaultDatasets[0];
+    if (!target) throw new Error('No bundled dataset available');
+    const previous: MunicipalityDataset = JSON.parse(JSON.stringify(target));
+    previous.municipality.version = '2000-01-01';
+    if (changeContent) previous.municipality.displayName += ' (previous release)';
+    for (const dataset of defaultDatasets) {
+      await importDataset(db, dataset === target ? previous : dataset);
+    }
+    mockGetDb.mockReturnValue(db);
+    useMunicipalityStore.getState().setMunicipality(previous.municipality);
+
+    await renderAsync(React.createElement(InitializationProvider, null, React.createElement(HomeScreen)));
+    await waitFor(() => expect(screen.getByText('カメラで判定')).toBeTruthy());
+    const stored = await new MunicipalityRepository(db).findById(target.municipality.id);
+    const store = snapshot();
+    const persisted = JSON.parse((await AsyncStorage.getItem('municipality-storage'))!);
+    await cleanupAsync();
+    await renderAsync(React.createElement(SettingsScreen));
+    const displayedVersion = screen.queryByText(store.datasetVersion ?? '不明')?.props.children;
+    const actual = {
+      bundledMunicipality: target.municipality,
+      previousMunicipality: previous.municipality,
+      bundledDigest: computeDatasetContentDigest(target),
+      previousDigest: computeDatasetContentDigest(previous),
+      storedMunicipality: stored,
+      store,
+      persistedState: persisted.state,
+      displayedVersion,
+    };
+    observe(caseId, actual);
+    return actual;
+  } finally {
+    await cleanupAsync();
+    await expoDb.closeAsync();
+  }
+}
+
+it('startup-version-only: updated bundled version reaches DB, store, persistence and settings', async () => {
+  const actual = await startupObservation('startup-version-only', false);
+  expect(actual.previousDigest).toBe(actual.bundledDigest);
+  expect(actual.storedMunicipality?.version).toBe(actual.bundledMunicipality.version);
+  expect(actual.store.datasetVersion).toBe(actual.bundledMunicipality.version);
+  expect(actual.persistedState.datasetVersion).toBe(actual.bundledMunicipality.version);
+  expect(actual.displayedVersion).toBe(actual.bundledMunicipality.version);
+});
+
+it('startup-content-change-control: changed content and version refresh through the real provider', async () => {
+  const actual = await startupObservation('startup-content-change-control', true);
+  expect(actual.previousDigest).not.toBe(actual.bundledDigest);
+  expect(actual.storedMunicipality).toEqual(actual.bundledMunicipality);
+  expect(actual.store.datasetVersion).toBe(actual.bundledMunicipality.version);
+  expect(actual.persistedState.datasetVersion).toBe(actual.bundledMunicipality.version);
+  expect(actual.displayedVersion).toBe(actual.bundledMunicipality.version);
+});
+
+const cityA = { id: 'probe-city-a', displayName: 'Probe city A', version: '2026-01-01' };
+const cityB = { id: 'probe-city-b', displayName: 'Probe city B', version: '2026-02-01' };
+
+// API-level robustness probe only: existing UI call sites do not establish this
+// same-event-turn ordering, and the real SQLite adapter performs synchronous reads.
+it('municipality-late-load: same-turn subsequent selection and clearing survive an earlier load', async () => {
+  const { expoDb, db } = await openTestDb('municipality-late-load');
+  try {
+    mockGetDb.mockReturnValue(db);
+    await new MunicipalityRepository(db).upsertAll([cityA, cityB]);
+    const store = useMunicipalityStore.getState();
+    const pendingSelection = store.loadMunicipality(cityA.id);
+    store.setMunicipality(cityB);
+    const beforeSelectionLoadResolves = snapshot();
+    await pendingSelection;
+    const afterSelectionLoadResolves = snapshot();
+
+    const pendingClear = store.loadMunicipality(cityA.id);
+    store.clearMunicipality();
+    const beforeClearLoadResolves = snapshot();
+    await pendingClear;
+    const afterClearLoadResolves = snapshot();
+    observe('municipality-late-load', {
+      scheduling: 'direct API calls within one JavaScript event turn; no deferred repository mock',
+      beforeSelectionLoadResolves,
+      afterSelectionLoadResolves,
+      beforeClearLoadResolves,
+      afterClearLoadResolves,
+    });
+    expect(afterSelectionLoadResolves.selectedMunicipalityId).toBe(cityB.id);
+    expect(afterClearLoadResolves.selectedMunicipalityId).toBeNull();
+  } finally {
+    await expoDb.closeAsync();
+  }
+});
+
+it('municipality-event-turn-control: a later event-turn selection survives the real synchronous SQLite load', async () => {
+  const { expoDb, db } = await openTestDb('municipality-event-turn-control');
+  try {
+    mockGetDb.mockReturnValue(db);
+    await new MunicipalityRepository(db).upsertAll([cityA, cityB]);
+    const store = useMunicipalityStore.getState();
+    const events: string[] = [];
+    const pending = store.loadMunicipality(cityA.id).then(() => events.push('load-A-resolved'));
+    const nextTurn = new Promise<void>((resolve) => {
+      setTimeout(() => {
+        store.setMunicipality(cityB);
+        events.push('select-B-in-later-event-turn');
+        resolve();
+      }, 0);
+    });
+    await Promise.all([pending, nextTurn]);
+    const actual = { events, finalState: snapshot() };
+    observe('municipality-event-turn-control', actual);
+    expect(actual.events).toEqual(['load-A-resolved', 'select-B-in-later-event-turn']);
+    expect(actual.finalState.selectedMunicipalityId).toBe(cityB.id);
+  } finally {
+    await expoDb.closeAsync();
+  }
+});

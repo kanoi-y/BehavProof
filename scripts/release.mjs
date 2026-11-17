@@ -16,7 +16,7 @@ export function validatePackage(p,version){
  if(p.publishConfig?.access!=='public'||p.publishConfig?.registry!==registry||Object.keys(p.publishConfig).some(k=>!['access','registry'].includes(k)))throw Error('Release must use the approved public npm registry');
  if(p.scripts&&Object.keys(p.scripts).length||p.bundledDependencies||p.bundleDependencies)throw Error('Package lifecycle scripts and bundled dependencies are prohibited');
  for(const group of ['dependencies','peerDependencies','optionalDependencies'])for(const [name,range] of Object.entries(p[group]??{}))if(name.startsWith('@behavproof/')&&range!==version)throw Error('Internal version mismatch');
- if(!Array.isArray(p.files)||!p.files.length||p.files.some(f=>!['dist','schemas','presets','templates'].includes(f)))throw Error('Invalid package allowlist');
+ if(!Array.isArray(p.files)||!p.files.length||p.files.some(f=>!['dist','schemas','presets','templates',...(p.name==='@behavproof/core'?['cjs/dist','cjs/package.json']:[])].includes(f)))throw Error('Invalid package allowlist');
 }
 export function inspectArchive(bytes,expected){
  if(bytes.length>10*1024*1024)throw Error('Archive too large');
@@ -28,7 +28,7 @@ export function inspectArchive(bytes,expected){
   const h=tar.subarray(offset,offset+512);if(h.every(b=>b===0)){if(tar.subarray(offset).some(b=>b!==0))throw Error('Unexpected trailing tar data');break;}
   const checksum=octal(field(h,148,156)),copy=Buffer.from(h);copy.fill(32,148,156);if([...copy].reduce((a,b)=>a+b,0)!==checksum)throw Error('Invalid tar checksum');
   const prefix=field(h,345,500),name=(prefix?prefix+'/':'')+field(h,0,100),size=octal(field(h,124,136)),type=field(h,156,157);
-  if(!['','0'].includes(type)||!/^package\/(?:package\.json|README(?:\.md)?|(?:dist|schemas|presets|templates)\/.+)$/.test(name)||name.split('/').some(p=>['.','..',''].includes(p))||name.includes('\\')||seen.has(name))throw Error('Unsafe or unexpected packed file');
+  if(!['','0'].includes(type)||!(/^package\/(?:package\.json|README(?:\.md)?|(?:dist|schemas|presets|templates)\/.+)$/.test(name)||expected.name==='@behavproof/core'&&/^package\/cjs\/(?:package\.json|dist\/.+\.(?:js|js\.map|d\.ts|d\.ts\.map))$/.test(name))||name.split('/').some(p=>['.','..',''].includes(p))||name.includes('\\')||seen.has(name))throw Error('Unsafe or unexpected packed file');
   if(!Number.isSafeInteger(size)||size>10*1024*1024||offset+512+size>tar.length)throw Error('Invalid tar payload bounds');
   seen.add(name);files.push(name);const body=tar.subarray(offset+512,offset+512+size),content=text(body);
   if(/(?:^|\/)(?:\.env(?:\.[^/]*)?|\.npmrc|[^/]*\.(?:pem|key|p12|pfx))$/i.test(name)||/-----BEGIN (?:[A-Z]+ )?PRIVATE KEY-----|\b(?:gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{40,}|npm_[A-Za-z0-9]{30,}|AKIA[A-Z0-9]{16})\b/.test(content))throw Error('Credential-shaped payload in '+name);
@@ -39,7 +39,7 @@ export function inspectArchive(bytes,expected){
  const targets=[];
  const collect=value=>{if(typeof value==='string')targets.push(value);else if(value&&typeof value==='object')for(const child of Object.values(value))collect(child);};
  collect(packaged.exports);collect(packaged.main);collect(packaged.types);collect(packaged.bin);
- if(!targets.length||!targets.some(t=>t.endsWith('.js')))throw Error('Missing executable package entrypoint');
+ if(!targets.length||!targets.some(t=>/\.(?:js|cjs)$/.test(t)))throw Error('Missing executable package entrypoint');
  for(const target of targets){if(!target.startsWith('./')||!seen.has('package/'+target.slice(2)))throw Error('Missing packed entrypoint: '+target);}
  if(packaged.name==='@behavproof/cli')for(const file of ['schemas/config.schema.json','schemas/registration.schema.json','schemas/trust-root.schema.json','presets/basic-v1.json','presets/standard-v1.json','presets/critical-v1.json','templates/audit.yml','templates/protected-github-producer.yml','templates/protected-github-publisher.yml'])if(!seen.has('package/'+file))throw Error('Missing CLI asset: '+file);
  return files;

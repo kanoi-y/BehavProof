@@ -1,0 +1,49 @@
+{
+  "caseId": "dataset-valid",
+  "actual": {
+    "schemaAccepted": true,
+    "import": {
+      "rejected": false,
+      "error": null
+    },
+    "state": {
+      "municipalities": [
+        {
+          "id": "valid-city",
+          "display_name": "valid-city",
+          "version": "2026-11-17",
+          "content_digest": "18c866f8"
+        }
+      ],
+      "items": [
+        {
+          "id": "valid-city-item",
+          "display_name": "valid-city item",
+          "aliases_json": "[]",
+          "keywords_json": "[]"
+        }
+      ],
+      "rules": [
+        {
+          "municipality_id": "valid-city",
+          "item_id": "valid-city-item",
+          "category_name": "valid-city category",
+          "instructions": "valid-city instructions",
+          "notes": null,
+          "official_url": null
+        }
+      ]
+    },
+    "storedRule": {
+      "municipalityId": "valid-city",
+      "itemId": "valid-city-item",
+      "categoryName": "valid-city category",
+      "instructions": "valid-city instructions"
+    },
+    "sqliteVersion": [
+      {
+        "version": "3.49.2"
+      }
+    ]
+  }
+}
