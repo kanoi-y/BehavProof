@@ -1,6 +1,6 @@
 # Condition-scoped refund assurance
 
-Unreleased BehavProof source example. See [Japanese adoption guide](../../docs/assurance.ja.md).
+BehavProof 0.2.0 source example. See [Japanese adoption guide](../../docs/assurance.ja.md).
 
 From the product checkout, build and run `node scripts/assurance-flow.mjs`. It creates an isolated consumer and a separately pinned local host, runs real Vitest plus explicit assurance observations, collects reports, verifies the gate and generated documents, and tests missing/stale/duplicated/weakened evidence. It does not publish packages, approve a real PR or change GitHub protection.
 
