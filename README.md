@@ -1,8 +1,8 @@
 # BehavProof
 
-Canonical public repository: [kanoi-y/BehavProof](https://github.com/kanoi-y/BehavProof). This repository owns the implementation, tests, examples and product CI. [pdd-ts](https://github.com/kanoi-y/pdd-ts) is an application used to evaluate BehavProof; it consumes a pinned BehavProof commit and does not host this product's source tree. See [repository boundaries](docs/repository-boundaries.md).
+Canonical public repository: [kanoi-y/BehavProof](https://github.com/kanoi-y/BehavProof). This repository owns the implementation, tests, examples and product CI. See [repository boundaries](docs/repository-boundaries.md).
 
-TypeScript / Node.js 24 / Vitest and Jest evidence auditing and executable contract registry. This checkout implements the mandatory M1/M2 libraries and CLI, with live issuer-bound protection verified on an isolated pdd-ts branch. The npm release remains a public preview on the `next` channel; publication status and the exact source commit are recorded in [GitHub Releases](https://github.com/kanoi-y/BehavProof/releases). Use an explicit published version when installing.
+TypeScript / Node.js 24 / Vitest and Jest evidence auditing and executable contract registry. This checkout implements the mandatory M1/M2 libraries and CLI, with issuer-bound protection verified on an isolated consumer branch. The npm release remains a public preview on the `next` channel; publication status and the exact source commit are recorded in [GitHub Releases](https://github.com/kanoi-y/BehavProof/releases). Use an explicit published version when installing.
 
 ```sh
 npm ci --ignore-scripts --cache .npm-cache
@@ -61,15 +61,13 @@ Jest support is available in this unreleased source through the optional `@behav
 
 Development packaging checks: `node scripts/package-smoke.mjs --online` tests a fresh consumer using registry metadata; `--offline` requires a fully seeded npm cache. Both disable lifecycle scripts and install the six local tarballs without publishing. Add `--formal` to explicitly test the eight-package consumer; Quint and external runtimes remain separately installed in the opt-in project. Add `--jest` to explicitly pack/install the seventh, optional Jest package and test actual Jest 29/30 consumers; ordinary CLI consumers do not install Jest. The existing publication allowlist is unchanged; the new package has not been published.
 
-The explicit [protected producer components](docs/protected-producer.md) add case-scoped production-call observations, same-callback fault probes, live upstream-job verification and a dedicated App check publisher. `node scripts/protected-probe-flow.mjs` exercises the real Collector/worker/CLI path. The approved PR7 source has also been verified against its actual registered baseline (`docs/evidence/approved-probe-live.json`); its complete critical gate remains incomplete while quality/external evidence is absent.
+The explicit [protected producer components](docs/protected-producer.md) add case-scoped production-call observations, same-callback fault probes, live upstream-job verification and a dedicated App check publisher. `node scripts/protected-probe-flow.mjs` exercises the real Collector/worker/CLI path.
 
 [Next-compatible route handler example](examples/next-route/README.md) uses native Web APIs and four executable contract cases without installing Next. Framework server/session/database verification remains an application responsibility.
 
-Protected GitHub integration: [日本語の導入・検証手順](docs/protected-github-deployment.ja.md) and [実地検証結果](docs/github-live-validation.ja.md). The separate [enforcement probe](examples/enforcement-probe/README.md) has an explicit proposed policy and does not alter the approved critical example.
+Protected GitHub integration uses the workflow templates under templates/ and the [protected producer components](docs/protected-producer.md). The separate [enforcement probe](examples/enforcement-probe/README.md) has an explicit proposed policy.
 
-[Actual PDD acceptance experiment](docs/pdd-adoption.md) runs all64 six-condition inputs on PDD's real production predicate, then verifies fake callbacks, an actual always-accept fault and coordinated test/implementation weakening. Product CI and scoped runtime observations remain separate from human approval and live issuer-bound enforcement.
-
-See [schema compatibility](docs/schema-compatibility.md), [evaluation snapshots and historical replay](docs/evaluation-snapshots.md), and [measured adoption footprint/CI time](docs/pdd-adoption-cost.md). Console/Markdown reports show each target and action; JSON additionally retains policy comparisons and normalized authority observations.
+See [schema compatibility](docs/schema-compatibility.md) and [evaluation snapshots and historical replay](docs/evaluation-snapshots.md). Console/Markdown reports show each target and action; JSON additionally retains policy comparisons and normalized authority observations.
 
 Initial npm distribution preparation: [日本語の公開・タグ・Release手順](docs/releasing.ja.md) and [配布前セキュリティ点検](docs/security-review-2026-11-15.ja.md). The owner approved initial public publication on the next channel; the helper enforces this policy and refuses to change an existing private package to public. Public GitHub source does not imply an open-source license.
 
