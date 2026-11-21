@@ -111,3 +111,20 @@ test('uses Jest discovery and confirms the adapter recorded a complete native ru
   const report = JSON.parse(await readFile(join(root, '.behavproof/input/jest.json'), 'utf8'));
   expect(report.numPassedTests).toBe(1);
 });
+
+test('quality evidence keeps a failing test run distinct from a passing configuration', async () => {
+  const {qualityEvidence} = await import('../../packages/cli/src/quality-evidence.js');
+  const policyHash = 'a'.repeat(64);
+  expect(qualityEvidence({
+    schemaVersion: 1, policyHash,
+    lint: {status: 'pass', message: 'lint ok'},
+    types: {status: 'pass', message: 'types ok'},
+    tests: {status: 'fail', message: 'tests failed'},
+    configuration: {status: 'pass', message: 'configuration ok'},
+  }, policyHash)).toEqual({
+    lintResult: {status: 'pass', message: 'lint ok'},
+    typecheckResult: {status: 'pass', message: 'types ok'},
+    testResult: {status: 'fail', message: 'tests failed'},
+    qualityConfiguration: {status: 'pass', message: 'configuration ok'},
+  });
+});

@@ -120,7 +120,7 @@ function lintTargets(args: string[], tool: 'eslint'|'biome') {
   const targets: string[] = [];
   for (let i=tool === 'eslint' ? 1 : 2; i<args.length; i++) {
     const arg = args[i]!;
-    if (['-c','--config','--config-path','--max-warnings','--ext'].includes(arg)) {i++; continue;}
+    if (['-c','--config','--config-path','--max-warnings','--max-diagnostics','--ext'].includes(arg)) {i++; continue;}
     if (!arg.startsWith('-')) targets.push(arg);
   }
   return targets;

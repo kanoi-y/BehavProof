@@ -62,3 +62,18 @@ test('never evaluates dynamic configuration and detects failure swallowing and e
   ]));
   await expect(access(join(root, 'executed'))).rejects.toThrow();
 });
+
+test('does not treat a Biome --max-diagnostics value as a lint target', async () => {
+  await put('package.json', {
+    type: 'module', scripts: {lint: 'biome check --max-diagnostics none', typecheck: 'tsc --noEmit', test: 'vitest run'},
+    devDependencies: {'@biomejs/biome': '2.0.0', typescript: '5.9.3', vitest: '5.1.0'},
+  });
+  await put('biome.json', {linter: {rules: {
+    suspicious: {'noDebugger': 'error', 'noDuplicateParameters': 'error', 'noDuplicateObjectKeys': 'error'},
+    correctness: {'noUnreachable': 'error', 'noConstantCondition': 'error'},
+  }}});
+  const result = doctor();
+  expect(result.status, result.stderr + result.stdout).toBe(0);
+  expect(findings(result)).toContainEqual(expect.objectContaining({id: 'lint.scope', status: 'pass'}));
+  expect(findings(result)).toContainEqual(expect.objectContaining({id: 'lint.rules', status: 'pass'}));
+});

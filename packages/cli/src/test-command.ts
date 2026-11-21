@@ -32,11 +32,14 @@ export async function runTests(root:string,configPath?:string,requested?:string,
  const old:string[]=[];for(const path of paths){try{const info=await lstat(join(root,path));if(!info.isFile()||info.isSymbolicLink()||info.nlink>1)throw Error('Unsafe existing test report');old.push(path);}catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;}}
  const runnerConfig=options.runnerConfig===undefined?[]:['--config',join(root,RelativePathSchema.parse(options.runnerConfig))];
  const runEnv=options.qualityRun?{...process.env,CI:'true'}:process.env;
+ // Jest loads ESM test files through the VM-modules loader; without it a
+ // type:module project fails before any test runs.
+ const jestEnv=runner==='jest'?{...runEnv,NODE_OPTIONS:[...(runEnv.NODE_OPTIONS??'').split(/\s+/).filter(Boolean),'--experimental-vm-modules'].join(' ')}:runEnv;
  let args:string[];
  if(runner==='jest'){
   if(process.env.JEST_JASMINE==='1')throw Error('BehavProof Jest requires jest-circus; Jasmine is unsupported');
   let adapter:string,reporter:string;try{adapter=require.resolve('@behavproof/jest/runner');reporter=require.resolve('@behavproof/jest/reporter');}catch{throw Error('behavproof test requires project-installed @behavproof/jest');}
-  const shown=await exec(process.execPath,[entry!,'--showConfig',...runnerConfig],{cwd:root,env:runEnv,timeout:30000,maxBuffer:10*1024*1024,encoding:'utf8'});
+  const shown=await exec(process.execPath,[entry!,'--showConfig',...runnerConfig],{cwd:root,env:jestEnv,timeout:30000,maxBuffer:10*1024*1024,encoding:'utf8'});
   const selected=JSON.parse(shown.stdout) as {configs?:{testRunner?:string}[]};
   const expected=await realpath(createRequire(metadata!).resolve('jest-circus/runner'));
   const officialAdapter=await realpath(adapter);
@@ -45,7 +48,7 @@ export async function runTests(root:string,configPath?:string,requested?:string,
  }else args=[entry!,'run','--reporter=default','--reporter=json','--reporter=@behavproof/vitest/reporter','--outputFile',join(root,native),...runnerConfig,...(options.qualityRun?['--allowOnly=false','--passWithNoTests=false']:[])];
  for(const path of old)await unlink(join(root,path));
  return new Promise<number>((resolve,reject)=>{
-  const child=spawn(process.execPath,args,{cwd:root,env:{...runEnv,BEHAVPROOF_REPORT:join(root,contracts)},stdio:'inherit',shell:false});
+  const child=spawn(process.execPath,args,{cwd:root,env:{...jestEnv,BEHAVPROOF_REPORT:join(root,contracts)},stdio:'inherit',shell:false});
   const interrupt=()=>{child.kill('SIGINT');},terminate=()=>{child.kill('SIGTERM');};
   process.on('SIGINT',interrupt);process.on('SIGTERM',terminate);
   const cleanup=()=>{process.removeListener('SIGINT',interrupt);process.removeListener('SIGTERM',terminate);};

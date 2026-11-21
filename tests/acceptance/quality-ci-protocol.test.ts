@@ -111,6 +111,13 @@ test('real tool runs can satisfy the gate, and low lint severity cannot',async (
     const weak=await evaluate('weakened');
     expect(weak.exitCode).toBe(1);
     expect(weak.evaluations).toContainEqual(expect.objectContaining({ruleId:'qualityConfiguration',status:'fail'}));
+    await writeFile(join(root,'eslint.config.mjs'),"export default [{rules:{'no-debugger':'error'}}];");
+    await writeFile(join(root,'test/calc.test.mjs'),"import {test,expect} from 'vitest'; import {count} from '../src/calc.js'; test('count bags',()=>expect(count([1,2])).toBe(3));");
+    git('add','.'); git('commit','-qm','failing test');
+    const failing=await evaluate('failing-test');
+    expect(failing.exitCode).toBe(1);
+    expect(failing.evaluations).toContainEqual(expect.objectContaining({ruleId:'testResult',status:'fail'}));
+    expect(failing.evaluations).toContainEqual(expect.objectContaining({ruleId:'qualityConfiguration',status:'pass'}));
   } finally {
     vi.unstubAllEnvs();
     await rm(host,{force:true,recursive:true});

@@ -107,6 +107,16 @@ async function checkCommand(command: Command, observe: (args: string[]) => Promi
 type Eslint = {calculateConfigForFile(path: string): Promise<unknown>};
 type EslintConstructor = new (options: {cwd: string; overrideConfigFile?: string}) => Eslint;
 
+// ESLint 9.39 resolves the configured JavaScript language to a Language object;
+// its parser lives in languageOptions and is espree for plain JavaScript.
+// Older resolutions return the '@/js' string form.
+const jsLanguage = (config: Data): boolean => {
+  const language = config.language;
+  if (language === undefined) return true;
+  if (language === '@/js' || language === 'js/js') return true;
+  return object(object(config.languageOptions)?.parser)?.name === 'espree';
+};
+
 async function observeEslint(root: string, sources: string[], rules: string[], args: string[]): Promise<Check> {
   const {entry,require} = await installed(root,'eslint','bin/eslint.js');
   const selected = configArg(args,['--config','-c']);
@@ -126,7 +136,7 @@ async function observeEslint(root: string, sources: string[], rules: string[], a
   for (const file of sources) {
     if (!files.has(file)) continue;
     const effective = object(await eslint.calculateConfigForFile(join(root,file)));
-    if (!effective || effective.processor || effective.language && effective.language !== '@/js') {
+    if (!effective || effective.processor || !jsLanguage(effective)) {
       unsupported.push(file);
       continue;
     }

@@ -14,6 +14,7 @@ export function qualityEvidence(value:unknown, policyHash:string) {
   return {
     lintResult:data.lint,
     typecheckResult:data.types,
-    qualityConfiguration:data.tests.status==='pass'?data.configuration:data.tests,
+    testResult:data.tests,
+    qualityConfiguration:data.configuration,
   };
 }
