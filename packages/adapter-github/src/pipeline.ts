@@ -17,6 +17,11 @@ export function evaluateUpstream(jobs:Record<string,string>,available:string[],e
   if(expected.requiredJobs.some(name=>jobs[name]!=='success')||expected.artifacts.some(name=>!available.includes(name)))return unknown('Upstream jobs or artifacts are incomplete');
   return observed({jobs,available},[]);
 }
+export function parseGitHubWorkflow(source: string): unknown {
+  const doc = parseDocument(source, {uniqueKeys: true, version: '1.2'});
+  if (doc.errors.length) throw Error('Invalid or duplicate YAML keys');
+  return doc.toJS({maxAliasCount: 100}) as unknown;
+}
 export function diagnoseWorkflow(source:string,expected:{gateJob:string;requiredJobs:string[]}){
   const protection=unknown('External issuer-bound branch protection and workflow integrity must be verified independently');
   const invalid=(reason:string)=>({internal:unknown(reason),protection});
