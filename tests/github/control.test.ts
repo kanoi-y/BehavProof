@@ -1,11 +1,12 @@
 import {test,expect} from 'vitest';import {githubClient,boundedBody,protectedState} from '../../scripts/github-control.mjs';
+const controlEnv={BEHAVPROOF_REPOSITORY:'acme/shop',BEHAVPROOF_REPOSITORY_ID:'123456789',BEHAVPROOF_APP_ID:'12345',BEHAVPROOF_PROTECTED_BRANCH:'main',BEHAVPROOF_REVIEWERS:'acme-user'};
 test('artifact storage redirect never forwards the GitHub credential and refuses unrelated origins',async()=>{
- const calls:any[]=[];const client=githubClient('controlled-fixture',async(url:any,options:any)=>{calls.push({url:String(url),options});return calls.length===1?new Response(null,{status:302,headers:{location:'https://fixture.blob.core.windows.net/artifact?signature=fixture'}}):new Response('archive');});
+ const calls:any[]=[];const client=githubClient('controlled-fixture',async(url:any,options:any)=>{calls.push({url:String(url),options});return calls.length===1?new Response(null,{status:302,headers:{location:'https://fixture.blob.core.windows.net/artifact?signature=fixture'}}):new Response('archive');},controlEnv);
  expect((await client.archive(1)).toString()).toBe('archive');expect(calls[0].options.headers.Authorization).toContain('controlled-fixture');expect(calls[1].options.headers).toBeUndefined();
- await expect(githubClient('fixture',async()=>new Response(null,{status:302,headers:{location:'https://example.invalid/artifact'}})).archive(1)).rejects.toThrow(/origin/);
+ await expect(githubClient('fixture',async()=>new Response(null,{status:302,headers:{location:'https://example.invalid/artifact'}}),controlEnv).archive(1)).rejects.toThrow(/origin/);
 });
 test('control-plane input is bounded and feature-branch dispatch cannot select protected authority',async()=>{
- await expect(boundedBody(new Response('oversized'),2)).rejects.toThrow(/bound/);expect(()=>protectedState({GITHUB_REPOSITORY:'kanoi-y/pdd-ts',GITHUB_REF:'refs/heads/candidate',GITHUB_EVENT_NAME:'workflow_dispatch'})).toThrow(/main/);
+ await expect(boundedBody(new Response('oversized'),2)).rejects.toThrow(/bound/);expect(()=>protectedState({...controlEnv,GITHUB_REPOSITORY:'acme/shop',GITHUB_REF:'refs/heads/candidate',GITHUB_EVENT_NAME:'workflow_dispatch'})).toThrow(/main/);
 });
 test('protected publisher template retains its unconditional real CLI gate and separate final publication',async()=>{
  const {readFile}=await import('node:fs/promises'),{diagnoseWorkflow}=await import('../../packages/adapter-github/src/index.js');const source=await readFile('templates/protected-github-publisher.yml','utf8');expect(diagnoseWorkflow(source,{gateJob:'gate',requiredJobs:['verify']}).internal.status).toBe('pass');

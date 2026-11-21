@@ -13,7 +13,7 @@ permissions:
   pull-requests: read
 jobs:
   collect:
-    if: github.repository == 'kanoi-y/pdd-ts' && github.ref == 'refs/heads/main'
+    if: github.repository == 'OWNER/REPO' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     defaults:
