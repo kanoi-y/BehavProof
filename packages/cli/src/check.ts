@@ -68,6 +68,15 @@ export async function check(root:string,options:CheckOptions){
   const verified=trusted(nativePath)&&runnerAuthenticated&&contractReportCompatible;
   set('testResult',result.status==='fail'?'fail':verified?result.status:'unknown',`${nativeSelection.kind==='jest'?'Jest':'Vitest'} ${JSON.stringify(result.payload)}; ${verified?'verified current producer':'producer/subject/runner unverified'}`,[nativePath]);
  }
+ if(trust?.quality){
+  const path=trust.quality.reportRef;
+  const spec=trust.manifests.find(row=>row.ref===trust.runner?.manifestRef&&row.expected.artifacts.some(artifact=>artifact.ref===path&&artifact.kind==='quality_observation'));
+  if(spec&&trusted(path)){
+   const {qualityEvidence}=await import('./quality-evidence.js');
+   const evidence=qualityEvidence(await readArtifactJson(path),trust.quality.policyHash);
+   for(const [id,observation] of Object.entries(evidence))set(id,observation.status,observation.message,[path]);
+  }
+ }
  const qualityPaths=trust?.qualitySources?select(files,trust.qualitySources):undefined;
  if(qualityPaths&&(!qualityPaths.length||qualityPaths.some(path=>!inputPaths.includes(path))))throw Error('Protected quality sources must be present within the hashed input scope');
  const qualityFiles=diff.files.filter(f=>!qualityPaths||qualityPaths.includes(f.path));
