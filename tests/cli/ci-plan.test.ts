@@ -19,6 +19,10 @@ test('a protected CI proposal is deterministic and applies only after every dest
     expect(run('plan',...options).stdout).toBe(preview.stdout);
     const proposal = JSON.parse(preview.stdout);
     expect(proposal.deployment).toMatchObject({repository:'demo/shop',protectedBranch:'release/v1',workflowBranch:'automation',appId:12345});
+    expect(proposal.unresolved).toEqual(['sources','workflowSha']);
+    const noRunner = run('plan',...options.slice(0,-2));
+    expect(noRunner.status,noRunner.stderr).toBe(0);
+    expect(JSON.parse(noRunner.stdout).unresolved).toEqual(['runner','sources','workflowSha']);
     expect(proposal.files.map((file: {path:string}) => file.path)).toContain(producer);
     await writeFile(join(root,'proposal.json'),preview.stdout);
     expect(run('apply','--plan','proposal.json','--dry-run').status).toBe(0);

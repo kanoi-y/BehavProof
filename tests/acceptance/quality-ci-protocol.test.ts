@@ -41,6 +41,33 @@ test('the trusted protocol rejects changed deployment files and stale manifest s
   }
 });
 
+test('the trusted protocol rejects a protected report path outside .behavproof/ and accepts one inside it', async () => {
+  const { prepareQuality } = await import('../../scripts/quality-ci-protocol.mjs');
+  const root = await mkdtemp(join(tmpdir(),'behavproof-ci-protocol-'));
+  const git = (...args:string[]) => execFileSync('git',['-c','user.name=Test','-c','user.email=test@example.invalid',...args],{cwd:root,encoding:'utf8'}).trim();
+  try {
+    await mkdir(join(root,'.github/behavproof'),{recursive:true});
+    const policyFile = '.github/behavproof/quality-policy.json';
+    const deploymentFile = '.github/behavproof/deployment.json';
+    const bytes = '{}\n';
+    const paths = ['package.json','package-lock.json',policyFile,deploymentFile];
+    for(const path of paths) await writeFile(join(root,path),path==='package-lock.json'?JSON.stringify({packages:{'node_modules/vitest':{version:'5.1.0'}}}):bytes);
+    git('init','-q'); git('add','.'); git('commit','-qm','candidate');
+    const sha=git('rev-parse','HEAD');
+    const base = {deployment:{configPath:'behavproof.config.json',policyPath:policyFile}, policy:{runner:'vitest'},
+      files:{[policyFile]:hashBytes(Buffer.from(bytes)),[deploymentFile]:hashBytes(Buffer.from(bytes))},
+      baseline:{contracts:[],intents:[]}};
+    const pr={number:2,head:{sha},base:{sha}};
+    const outside = {...base, config:{schemaVersion:1, reports:{coverage:'coverage.lcov'}}};
+    await expect(prepareQuality({root,inputs:paths.sort()},outside,pr)).rejects.toThrow(/protected report path/i);
+    const inside = {...base, config:{schemaVersion:1, reports:{coverage:'.behavproof/coverage.lcov'}}};
+    const plan = await prepareQuality({root,inputs:paths.sort()},inside,pr);
+    expect(plan.auxiliary).toEqual([['coverage','coverage.lcov']]);
+  } finally {
+    await rm(root,{recursive:true,force:true});
+  }
+});
+
 test('real tool runs can satisfy the gate, and low lint severity cannot',async () => {
   const {prepareQuality,captureQuality,restoreQuality} = await import('../../scripts/quality-ci-protocol.mjs');
   const {check} = await import('../../packages/cli/dist/api.js');

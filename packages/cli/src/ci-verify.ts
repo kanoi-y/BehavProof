@@ -89,7 +89,7 @@ function verifyInput(input: DeploymentVerificationInput) {
       !Number.isSafeInteger(input.appId) || input.appId < 1 || input.appId === 15368 ||
       !input.checkName.trim() || !/^[A-Za-z0-9_-][A-Za-z0-9_.-]*$/.test(input.environment) || input.environment.includes('..') ||
       !digest.test(input.registrationDigest) || !input.reviewers.length ||
-      input.reviewers.some(login => !/^[A-Za-z0-9-]+$/.test(login)) ||
+      input.reviewers.some(login => !/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?$/.test(login)) ||
       new Set(input.reviewers.map(login => login.toLowerCase())).size !== input.reviewers.length ||
       [descriptorPath, input.producerPath, input.publisherPath].some(path => !Object.hasOwn(input.files, path))) {
     throw Error('Invalid registered deployment requirements');

@@ -15,7 +15,7 @@ export const CIRegistration = z.strictObject({
   repositoryId:z.string().regex(/^[1-9][0-9]*$/),
   workflowSha:commitSha,
   files:z.record(RelativePathSchema,HashSchema),
-  reviewers:z.array(z.string().regex(/^[A-Za-z0-9_-]+$/)).min(1).max(6),
+  reviewers:z.array(z.string().regex(/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?$/)).min(1).max(6),
   requiredTests:z.array(RelativePathSchema).max(1000),
   approval:ApprovalSchema,
   baseline:RegistrySnapshotSchema,
@@ -69,7 +69,7 @@ export async function enrollCI(root:string, options:{
   const head = commitSha.parse((await git(root,['rev-parse','HEAD'])).trim());
   const workflowSha=commitSha.parse(options.workflowSha);
   const reviewers=[...new Set(options.reviewers.map(value => value.toLowerCase()))].sort();
-  if (!reviewers.length || reviewers.length>6 || reviewers.some(value => !/^[a-z0-9_-]+$/.test(value))) throw Error('Supply one to six authorized reviewer logins');
+  if (!reviewers.length || reviewers.length>6 || reviewers.some(value => !/^[a-z0-9](?:[a-z0-9-]{0,37}[a-z0-9])?$/.test(value))) throw Error('Supply one to six authorized reviewer logins');
   if (!Number.isSafeInteger(options.pr) || options.pr<1) throw Error('A positive approval PR number is required');
   const output=await externalFile(root,options.registration);
   const at=async(path:string) => {
