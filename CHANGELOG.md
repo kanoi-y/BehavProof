@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased — Quality diagnostics and protected CI onboarding
+
+- Add `behavproof doctor --quality` for versioned static quality diagnostics over the `quality-baseline-v1` policy (ESLint/Biome rules, TypeScript strict, test discovery and settings), with exit codes 0/1/2. `doctor` stays read-only and never imports project configuration, runs package scripts or downloads packages; dynamic or unresolvable shared configuration is `unknown`, never pass.
+- Add `behavproof ci plan|apply|enroll|verify` for deterministic protected-CI onboarding of single-package Vitest/Jest projects. `plan` lists unresolved choices, `apply` pre-checks every destination, rejects conflicts and links and is idempotent, `enroll` records the reviewed deployment outside the repository, and `verify` compares the registration with remote GitHub state read-only. A generated plan does not establish protected CI; App, environment, branch protection and repository variables are configured separately in GitHub.
+- Generalize the protected producer/publisher execution into reusable components (pdd-ts samples and tests kept); candidate code runs only in a credential-free container, the publisher never executes candidate code, and the test container is network-disabled with read-only dependencies.
+- Add versioned JSON schemas for the quality policy, CI registration and deployment (`packages/cli/schemas/quality-policy.schema.json`, `ci-registration.schema.json`, `deployment.schema.json`).
+- Document the flow in [README](README.md) and [docs/quality-ci.ja.md](docs/quality-ci.ja.md). Verification: build clean; 59 new tests pass (3 sandbox tests skipped on root/win32); full serial suite 676 pass, 3 fail on pre-existing root-host sandbox staging rejections unrelated to this branch (see `tests/packages/jest-distribution.test.ts`, `tests/acceptance/sandbox-sdk.test.ts`, `tests/acceptance/staged-sdk-validation.test.ts`).
+
 ## Unreleased — Jest support
 
 - Add optional native Jest29.7.0 / 30.5.2 contracts, Circus adapter, reporter, CLI execution/detection/init and protected source/canary observations.

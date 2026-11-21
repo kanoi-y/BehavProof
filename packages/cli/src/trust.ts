@@ -9,6 +9,7 @@ export const TrustRootSchema=z.strictObject({
  schemaVersion:z.literal(1),policy:PolicySchema,config:ConfigSchema,baseline:RegistrySnapshotSchema,
  assuranceSources:z.record(RelativePathSchema,HashSchema).optional(),
  policySource:z.strictObject({repository:z.string().regex(/^[\w-]+\/[\w.-]+$/),commitSha:z.string().regex(/^[a-f0-9]{40}$/),ref:RelativePathSchema,fileHash:HashSchema,policyHash:HashSchema}).optional(),
+ quality:z.strictObject({policyHash:HashSchema,reportRef:RelativePathSchema}).optional(),
  runner:z.strictObject({kind:z.enum(['vitest','jest']),version:z.string().regex(/^\d+\.\d+\.\d+(?:[-+][\w.-]+)?$/),manifestRef:RelativePathSchema}).optional(),
  inputs:z.array(RelativePathSchema).min(1),qualitySources:z.array(RelativePathSchema).min(1).optional(),configPaths:z.array(RelativePathSchema),dependencyLockPath:RelativePathSchema.optional(),
  manifests:z.array(z.strictObject({ref:RelativePathSchema,manifestHash:HashSchema.optional(),expected:ManifestExpectedSchema,authority:ProducerAuthoritySchema,github:z.strictObject({repository:z.string().min(1),workflowPath:z.string(),workflowSha:z.string(),jobName:z.string(),artifactName:z.string(),archivePath:RelativePathSchema,archiveEntries:z.record(RelativePathSchema,RelativePathSchema)}).optional()}).refine(row=>row.authority.kind!=='local'||row.manifestHash!==undefined,'Local authority requires host-pinned manifestHash')),

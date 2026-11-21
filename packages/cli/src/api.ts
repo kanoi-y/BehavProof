@@ -5,3 +5,5 @@ export { RegistrationSchema, createRegistration, persistRegistration, loadRegist
 export type { Registration, RegistrationAuthority, VerifiedRegistration } from './registration.js';
 
 export {assuranceInputPaths,assuranceCriterionPaths,assuranceIdentity} from './assurance-inputs.js';
+export {CIRegistration, registeredCI} from './ci-registration.js';
+export {QualityPolicy, diagnoseQuality} from './quality.js';
