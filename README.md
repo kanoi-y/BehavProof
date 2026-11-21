@@ -41,6 +41,27 @@ It prepares `.behavproof/input/`, removes the previous two managed report files,
 
 `test` supports `--root`, `--config` and `--runner jest|vitest`. With both runners declared, select one explicitly or set `testRunner` in configuration. It is an explicit execution command, separate from audit/gate verification. A successful local test run does not authenticate reports or establish approval authority. To inspect the generated evidence afterwards, run `behavproof check --mode audit` with the intended Git base.
 
+Quality diagnostics and protected CI onboarding are available in this unreleased source. `doctor` always reports the static quality diagnosis; `--quality` additionally gates its exit code on the result:
+
+```sh
+behavproof doctor --quality
+behavproof doctor --quality --format json
+```
+
+A passing project reports `Quality configuration: pass (quality-baseline-v1)` and exits 0. The baseline requires the five ESLint rules (`no-debugger`, `no-dupe-args`, `no-dupe-keys`, `no-unreachable`, `no-constant-condition`) at error severity, TypeScript `strict: true`, at least one discovered test, and no `only`/pending tests. A weakened project fails, for example `fail lint.rules: Required lint rules are missing, disabled or below error severity` and `fail types.strict: Strict compiler settings are missing or overridden`, and exits 1. `doctor` is read-only and static: it never imports project configuration, never runs package scripts, and never downloads packages. Dynamic configuration and unresolvable shared configuration are `unknown`, never pass. Zero tests, broad lint exclusions, swallowed exit codes (`|| true`, `--passWithNoTests`) and cyclic npm-script references never pass. `doctor` requires a Git repository for single-package support; exit 2 is invalid input or an infrastructure error.
+
+Protected onboarding generates the deployment plan locally, then verifies the remote state read-only:
+
+```sh
+behavproof ci plan --repository OWNER/REPO --branch main --sdk-sha <40-hex> --app-id <id>
+behavproof ci apply --plan plan.json --dry-run
+behavproof ci apply --plan plan.json
+behavproof ci enroll --workflow-sha <40-hex> --reviewers alice,bob --registration /outside/repo/registration.json --pr 12
+behavproof ci verify --registration /outside/repo/registration.json --digest <sha256>
+```
+
+`ci plan` writes nothing; it prints a deterministic plan with the quality policy, producer/publisher workflows, deployment file contents and SHA-256 hashes, prerequisites and GitHub setup steps. Choices it could not resolve are listed in `unresolved` (`runner`, `sources`, `workflowSha`). `ci apply` writes only the reviewed plan, checks every destination before writing anything, rejects conflicts, symlinks and hardlinks, and is idempotent. `ci enroll` runs on an independent host and records the reviewed workflow, file inventory, reviewers and baseline outside the repository. `ci verify` compares that registration with remote GitHub state and reports each observation separately; missing permission, unsupported protection, a missing App ID or an unobserved attribute stays `unknown`. A generated plan does not establish protected CI: the App, environment, branch protection and repository variables are configured separately in GitHub, and `ci verify` reports whether that setup is present. See [日本語の品質診断・保護CI導入手順](docs/quality-ci.ja.md). The new versioned schemas are `packages/cli/schemas/quality-policy.schema.json`, `ci-registration.schema.json` and `deployment.schema.json`.
+
 Version0.2.0 remains an npm public preview on `next`; pin the exact published version. Jest support described here is unreleased.
 
 Exit codes: audit normally 0 even when evidence fails; gate 0 only for a complete pass, 1 for mandatory fail/unknown, 2 for invalid configuration, malformed evidence or infrastructure errors. `doctor` returns 1 for unsupported detection and 2 for invalid configuration. Gate requires an explicit external root:
