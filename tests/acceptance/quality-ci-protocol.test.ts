@@ -68,6 +68,41 @@ test('the trusted protocol rejects a protected report path outside .behavproof/ 
   }
 });
 
+test('the trusted protocol rejects stale or missing producer artifacts on restore', async () => {
+  const { prepareQuality, restoreQuality, collectorProducer } = await import('../../scripts/quality-ci-protocol.mjs');
+  const root = await mkdtemp(join(tmpdir(),'behavproof-ci-protocol-'));
+  const git = (...args:string[]) => execFileSync('git',['-c','user.name=Test','-c','user.email=test@example.invalid',...args],{cwd:root,encoding:'utf8'}).trim();
+  try {
+    await mkdir(join(root,'.github/behavproof'),{recursive:true});
+    const policyFile = '.github/behavproof/quality-policy.json';
+    const deploymentFile = '.github/behavproof/deployment.json';
+    const bytes = '{}\n';
+    const paths = ['package.json','package-lock.json',policyFile,deploymentFile];
+    for(const path of paths) await writeFile(join(root,path),path==='package-lock.json'?JSON.stringify({packages:{'node_modules/vitest':{version:'5.1.0'}}}):bytes);
+    git('init','-q'); git('add','.'); git('commit','-qm','candidate');
+    const sha=git('rev-parse','HEAD');
+    const r = {deployment:{configPath:'behavproof.config.json',policyPath:policyFile}, policy:{runner:'vitest'},
+      files:{[policyFile]:hashBytes(Buffer.from(bytes)),[deploymentFile]:hashBytes(Buffer.from(bytes))},
+      config:{schemaVersion:1}, baseline:{contracts:[],intents:[]}};
+    const pr={number:2,head:{sha},base:{sha}};
+    const plan=await prepareQuality({root,inputs:paths.sort()},r,pr);
+    const expected=await plan.expectation('quality-1-1-1');
+    const ci={repositoryId:'1',workflowRef:'demo/app/.github/workflows/behavproof-producer.yml@'+'1'.repeat(40),runId:'1',runAttempt:1,jobId:'1',eventName:'workflow_dispatch'};
+    const reports=Object.fromEntries(expected.artifacts.map((item:{ref:string})=>[item.ref,Buffer.from('probe')]));
+    const manifest={...expected,schemaVersion:1,producer:collectorProducer,ci,
+      environment:{nodeVersion:'v24.14.1',platform:'linux'},startedAt:'2026-01-01T00:00:00Z',completedAt:'2026-01-01T00:00:01Z',
+      exitCode:0,artifacts:expected.artifacts.map((item:{ref:string})=>({...item,sha256:hashBytes(reports[item.ref]!)}))};
+    const trustPath=join(root,'trust.json');
+    const named=Object.fromEntries(expected.artifacts.map((item:{ref:string})=>[item.ref.split('/').at(-1),reports[item.ref]]));
+    const missing={...named}; delete missing['native.json'];
+    await expect(restoreQuality(plan,'quality-1-1-1',undefined,archive({...missing,'manifest.json':Buffer.from(JSON.stringify(manifest))}),undefined,trustPath,r)).rejects.toThrow(/unexpected producer archive/i);
+    const stale={...manifest,subject:{...manifest.subject,prHeadSha:'2'.repeat(40)}};
+    await expect(restoreQuality(plan,'quality-1-1-1',undefined,archive({...named,'manifest.json':Buffer.from(JSON.stringify(stale))}),undefined,trustPath,r)).rejects.toThrow();
+  } finally {
+    await rm(root,{recursive:true,force:true});
+  }
+});
+
 test('real tool runs can satisfy the gate, and low lint severity cannot',async () => {
   const {prepareQuality,captureQuality,restoreQuality} = await import('../../scripts/quality-ci-protocol.mjs');
   const {check} = await import('../../packages/cli/dist/api.js');
