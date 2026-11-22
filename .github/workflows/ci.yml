@@ -29,7 +29,6 @@ jobs:
           node scripts/prepare-sandbox-sdk.mjs --built --output "$RUNNER_TEMP/behavproof-sdk-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
           docker pull --platform linux/amd64 node:24.14.1-bookworm@sha256:80fc934952c8f1b2b4d39907af7211f8a9fff1a4c2cf673fb49099292c251cec
           node scripts/protected-probe-flow.mjs --sandbox-sdk "$RUNNER_TEMP/behavproof-sdk-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
-          node scripts/pdd-acceptance-flow.mjs --sandbox-sdk "$RUNNER_TEMP/behavproof-sdk-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
           BEHAVPROOF_SANDBOX_SDK="$RUNNER_TEMP/behavproof-sdk-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" node node_modules/vitest/vitest.mjs run tests/acceptance/protected-protocol.test.ts --maxWorkers=1
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()

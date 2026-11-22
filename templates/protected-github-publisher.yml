@@ -21,13 +21,18 @@ permissions:
   pull-requests: read
 jobs:
   verify:
-    if: github.repository == 'kanoi-y/pdd-ts' && github.ref == 'refs/heads/main' && !inputs.skip_verify
+    if: github.repository == 'OWNER/REPO' && github.ref == 'refs/heads/main' && !inputs.skip_verify
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     defaults:
       run:
         working-directory: sdk
     env:
+      BEHAVPROOF_REPOSITORY: ${{ vars.BEHAVPROOF_REPOSITORY }}
+      BEHAVPROOF_REPOSITORY_ID: ${{ vars.BEHAVPROOF_REPOSITORY_ID }}
+      BEHAVPROOF_APP_ID: ${{ vars.BEHAVPROOF_APP_ID }}
+      BEHAVPROOF_PROTECTED_BRANCH: ${{ vars.BEHAVPROOF_PROTECTED_BRANCH }}
+      BEHAVPROOF_REVIEWERS: ${{ vars.BEHAVPROOF_REVIEWERS }}
       BEHAVPROOF_WORKFLOW_SHA: ${{ vars.BEHAVPROOF_WORKFLOW_SHA }}
       BEHAVPROOF_CURRENT_WORKFLOW_SHA: ${{ github.workflow_sha }}
       BEHAVPROOF_SDK_SHA: ${{ vars.BEHAVPROOF_SDK_SHA }}
@@ -57,11 +62,16 @@ jobs:
     if: always()
     runs-on: ubuntu-24.04
     timeout-minutes: 10
-    environment: pdd-publisher
+    environment: behavproof-publisher
     defaults:
       run:
         working-directory: sdk
     env:
+      BEHAVPROOF_REPOSITORY: ${{ vars.BEHAVPROOF_REPOSITORY }}
+      BEHAVPROOF_REPOSITORY_ID: ${{ vars.BEHAVPROOF_REPOSITORY_ID }}
+      BEHAVPROOF_APP_ID: ${{ vars.BEHAVPROOF_APP_ID }}
+      BEHAVPROOF_PROTECTED_BRANCH: ${{ vars.BEHAVPROOF_PROTECTED_BRANCH }}
+      BEHAVPROOF_REVIEWERS: ${{ vars.BEHAVPROOF_REVIEWERS }}
       BEHAVPROOF_WORKFLOW_SHA: ${{ vars.BEHAVPROOF_WORKFLOW_SHA }}
       BEHAVPROOF_CURRENT_WORKFLOW_SHA: ${{ github.workflow_sha }}
       BEHAVPROOF_SDK_SHA: ${{ vars.BEHAVPROOF_SDK_SHA }}
@@ -81,13 +91,22 @@ jobs:
       - run: npm run build
       - run: npm rebuild @behavproof/cli --ignore-scripts --offline
       - run: echo "$PWD/node_modules/.bin" >> "$GITHUB_PATH"
+      - name: Confirm trusted dispatch before minting an App token
+        id: trusted_dispatch
+        run: |
+          test "$GITHUB_REPOSITORY" = "$BEHAVPROOF_REPOSITORY"
+          test "$GITHUB_REPOSITORY_ID" = "$BEHAVPROOF_REPOSITORY_ID"
+          test "$GITHUB_REF" = refs/heads/main
+          test "$GITHUB_EVENT_NAME" = workflow_dispatch
+          test -n "$BEHAVPROOF_WORKFLOW_SHA"
+          test "$BEHAVPROOF_CURRENT_WORKFLOW_SHA" = "$BEHAVPROOF_WORKFLOW_SHA"
       - uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
         id: app
         with:
-          app-id: ${{ vars.PDD_APP_ID }}
-          private-key: ${{ secrets.PDD_APP_PRIVATE_KEY }}
-          owner: kanoi-y
-          repositories: pdd-ts
+          app-id: ${{ vars.BEHAVPROOF_APP_ID }}
+          private-key: ${{ secrets.BEHAVPROOF_APP_PRIVATE_KEY }}
+          owner: OWNER
+          repositories: REPO
           permission-checks: write
           permission-contents: read
           permission-pull-requests: read

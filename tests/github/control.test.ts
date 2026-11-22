@@ -1,11 +1,12 @@
 import {test,expect} from 'vitest';import {githubClient,boundedBody,protectedState} from '../../scripts/github-control.mjs';
+const controlEnv={BEHAVPROOF_REPOSITORY:'acme/shop',BEHAVPROOF_REPOSITORY_ID:'123456789',BEHAVPROOF_APP_ID:'12345',BEHAVPROOF_PROTECTED_BRANCH:'main',BEHAVPROOF_REVIEWERS:'acme-user'};
 test('artifact storage redirect never forwards the GitHub credential and refuses unrelated origins',async()=>{
- const calls:any[]=[];const client=githubClient('controlled-fixture',async(url:any,options:any)=>{calls.push({url:String(url),options});return calls.length===1?new Response(null,{status:302,headers:{location:'https://fixture.blob.core.windows.net/artifact?signature=fixture'}}):new Response('archive');});
+ const calls:any[]=[];const client=githubClient('controlled-fixture',async(url:any,options:any)=>{calls.push({url:String(url),options});return calls.length===1?new Response(null,{status:302,headers:{location:'https://fixture.blob.core.windows.net/artifact?signature=fixture'}}):new Response('archive');},controlEnv);
  expect((await client.archive(1)).toString()).toBe('archive');expect(calls[0].options.headers.Authorization).toContain('controlled-fixture');expect(calls[1].options.headers).toBeUndefined();
- await expect(githubClient('fixture',async()=>new Response(null,{status:302,headers:{location:'https://example.invalid/artifact'}})).archive(1)).rejects.toThrow(/origin/);
+ await expect(githubClient('fixture',async()=>new Response(null,{status:302,headers:{location:'https://example.invalid/artifact'}}),controlEnv).archive(1)).rejects.toThrow(/origin/);
 });
 test('control-plane input is bounded and feature-branch dispatch cannot select protected authority',async()=>{
- await expect(boundedBody(new Response('oversized'),2)).rejects.toThrow(/bound/);expect(()=>protectedState({GITHUB_REPOSITORY:'kanoi-y/pdd-ts',GITHUB_REF:'refs/heads/candidate',GITHUB_EVENT_NAME:'workflow_dispatch'})).toThrow(/main/);
+ await expect(boundedBody(new Response('oversized'),2)).rejects.toThrow(/bound/);expect(()=>protectedState({...controlEnv,GITHUB_REPOSITORY:'acme/shop',GITHUB_REF:'refs/heads/candidate',GITHUB_EVENT_NAME:'workflow_dispatch'})).toThrow(/main/);
 });
 test('protected publisher template retains its unconditional real CLI gate and separate final publication',async()=>{
  const {readFile}=await import('node:fs/promises'),{diagnoseWorkflow}=await import('../../packages/adapter-github/src/index.js');const source=await readFile('templates/protected-github-publisher.yml','utf8');expect(diagnoseWorkflow(source,{gateJob:'gate',requiredJobs:['verify']}).internal.status).toBe('pass');
@@ -21,4 +22,15 @@ test('root-project policy selection uses the actual root-relative enrolled polic
 test('an explicitly enrolled nested config is selected for a repository-root application',async()=>{
  const {selectedProjectConfig}=await import('../../scripts/github-control.mjs'),{mkdtemp,mkdir,writeFile,rm}=await import('node:fs/promises'),{tmpdir}=await import('node:os'),{join}=await import('node:path'),{hashBytes}=await import('../../packages/core/src/index.js'),root=await mkdtemp(join(tmpdir(),'behavproof-enrolled-config-')),policy='{}';
  try{await mkdir(join(root,'integration'));await writeFile(join(root,'integration/policy.json'),policy);await writeFile(join(root,'integration/behavproof.config.json'),'{"schemaVersion":1,"profile":"basic"}');await expect(selectedProjectConfig(root,{source:{projectPath:'.',policyRef:'integration/policy.json',configRef:'integration/behavproof.config.json',fileHashes:{'integration/policy.json':hashBytes(Buffer.from(policy))}}})).resolves.toMatchObject({profile:'basic'});}finally{await rm(root,{recursive:true,force:true});}
+});
+test('legacy workflows pass the selected consumer identity to every control job',async()=>{
+ const {readFile}=await import('node:fs/promises'),{parse}=await import('yaml'),{controlConfig}=await import('../../scripts/github-control.mjs');
+ for(const [kind,jobs] of [['producer',['collect']],['publisher',['verify','gate']]] as const){
+  const workflow=parse(await readFile('templates/protected-github-'+kind+'.yml','utf8'));
+  for(const name of jobs){
+   const mappings=workflow.jobs[name].env;
+   const env=Object.fromEntries(Object.entries(controlEnv).filter(([key])=>Object.hasOwn(mappings,key)));
+   expect(controlConfig(env)).toMatchObject({repository:'acme/shop',repositoryId:'123456789',appId:12345,protectedBranch:'main',reviewers:['acme-user']});
+  }
+ }
 });

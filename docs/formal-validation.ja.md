@@ -2,7 +2,7 @@
 
 実装の検証対象はコミット `dde907172077f8091f2f42eb778f738825155716` です。[3 OS CI](https://github.com/kanoi-y/BehavProof/actions/runs/43690547330) と [任意formal CI](https://github.com/kanoi-y/BehavProof/actions/runs/43690547469) が成功しました。PR検証はこのHEADとmainから作ったmerge commit `06768d890d8b2facdeb2f25cbe97fd090f5c87ce` をcheckoutしています。後続の記録更新とは区別しています。
 
-Linux/macOSは各393テスト成功、Windowsは389成功・POSIX限定4件skipでした。通常6パッケージの新規導入、公開API、既存のCollector・保護ゲート・故障フローも3 OSで成功し、Linuxでは実PDDの64入力と隔離コンテナ検証も成功しました。
+Linux/macOSは各393テスト成功、Windowsは389成功・POSIX限定4件skipでした。通常6パッケージの新規導入、公開API、既存のCollector・保護ゲート・故障フローも3 OSで成功し、Linuxでは隔離コンテナ検証も成功しました。
 
 formal CIでは実Quint 0.33.1の構文・型・モデル内test・simulationと、実Apalache 0.62.4の有界検査が成功しました。8ステップの検査範囲と、simulationの100標本・seed 42、実装再生の10トレース・90比較・90呼出を分けて報告しています。同じDriver/トレースの故障実装では5不一致を検出しました。モデル側の1行の故障はsimulationで同じ反例を2回再現し、有界検査でも失敗しました。
 
