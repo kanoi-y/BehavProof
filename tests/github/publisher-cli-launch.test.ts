@@ -27,7 +27,15 @@ test.skipIf(process.platform==='win32')('protected publisher launches the real C
   const app=steps.findIndex((s:any)=>s.id==='app');
   expect(build).toBeGreaterThan(-1);expect(app).toBeGreaterThan(build);
   const githubPath=join(root,'github-path');await writeFile(githubPath,'');
-  let env={...process.env,GITHUB_PATH:githubPath};
+  const workflowSha='a'.repeat(40);
+  let env={...process.env,GITHUB_PATH:githubPath,
+   GITHUB_REPOSITORY:'acme/shop',BEHAVPROOF_REPOSITORY:'acme/shop',
+   GITHUB_REPOSITORY_ID:'123456789',BEHAVPROOF_REPOSITORY_ID:'123456789',
+   GITHUB_REF:'refs/heads/main',GITHUB_EVENT_NAME:'workflow_dispatch',
+   BEHAVPROOF_WORKFLOW_SHA:workflowSha,BEHAVPROOF_CURRENT_WORKFLOW_SHA:workflowSha};
+  const guard=steps.slice(build+1,app).find((step:any)=>step.id==='trusted_dispatch');
+  expect(guard?.run).toBeTypeOf('string');
+  expect(run('bash',['-e','-c',guard.run],{...env,GITHUB_REF:'refs/heads/feature'}).status).toBe(1);
   for(const step of steps.slice(build+1,app))if(step.run){
    const result=run('bash',['-e','-c',step.run],env);expect(result.status,result.stderr).toBe(0);
    const paths=(await readFile(githubPath,'utf8')).trim().split('\n').filter(Boolean);

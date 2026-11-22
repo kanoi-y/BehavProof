@@ -92,6 +92,7 @@ jobs:
       - run: npm rebuild @behavproof/cli --ignore-scripts --offline
       - run: echo "$PWD/node_modules/.bin" >> "$GITHUB_PATH"
       - name: Confirm trusted dispatch before minting an App token
+        id: trusted_dispatch
         run: |
           test "$GITHUB_REPOSITORY" = "$BEHAVPROOF_REPOSITORY"
           test "$GITHUB_REPOSITORY_ID" = "$BEHAVPROOF_REPOSITORY_ID"
