@@ -5,21 +5,58 @@ import { parseConfig, canonicalJson, hash, safeRead, safeReadJson, type CheckRep
 import { detectProject, gitDiff } from '@behavproof/adapter-reports';
 import { renderDocuments, checkDocuments, analyzeImpact, reconcile } from '@behavproof/contract-registry';
 import { check } from './check.js';
+import { diagnoseQuality, formatQuality } from './quality.js';
+import { applyCI, planCI } from './ci-plan.js';
+import { enrollCI, readCIRegistration } from './ci-registration.js';
 import {executeAssurance} from './assurance-command.js';
 import {formatReport} from './report.js';
 import {executeFormal} from './formal.js';
 import {planGitignore} from './gitignore.js';
 import {runTests,declaredTestRunners} from './test-command.js';
 import { config, exists, fileList, registry, git, writeScoped, select, ref } from './project.js';
-const help=`BehavProof 0.2.0\nCommands: init, test, doctor, check, explain <rule>, baseline create, contracts discover|list|validate, intent diff, impact, docs generate|check, formal discover|check|replay, assurance discover|run|map\ncheck reads artifacts; it never runs tests. Gate requires --trust-root outside project.\nOptions: --runner jest|vitest --config --base --head --profile --mode audit|gate --format console|json|markdown --output --trust-root --dry-run --check --help --version\n`;
+const help=`BehavProof 0.2.0\nCommands: init, test, doctor, check, explain <rule>, baseline create, contracts discover|list|validate, intent diff, impact, docs generate|check, formal discover|check|replay, assurance discover|run|map, ci plan|apply|enroll|verify\ncheck reads artifacts; it never runs tests. Gate requires --trust-root outside project.\nOptions: --runner jest|vitest --config --base --head --profile --mode audit|gate --format console|json|markdown --output --trust-root --dry-run --check --quality --help --version\n`;
 async function main(){
- const {values,positionals}=parseArgs({allowPositionals:true,strict:true,options:{config:{type:'string'},base:{type:'string'},head:{type:'string'},profile:{type:'string'},mode:{type:'string'},format:{type:'string'},output:{type:'string'},'trust-root':{type:'string'},'dry-run':{type:'boolean'},check:{type:'boolean'},help:{type:'boolean'},version:{type:'boolean'},root:{type:'string'},model:{type:'string'},runner:{type:'string'}}});
+ const {values,positionals}=parseArgs({allowPositionals:true,strict:true,options:{config:{type:'string'},base:{type:'string'},head:{type:'string'},profile:{type:'string'},mode:{type:'string'},format:{type:'string'},output:{type:'string'},'trust-root':{type:'string'},'dry-run':{type:'boolean'},check:{type:'boolean'},help:{type:'boolean'},version:{type:'boolean'},root:{type:'string'},model:{type:'string'},runner:{type:'string'},quality:{type:'boolean'},repository:{type:'string'},branch:{type:'string'},'workflow-branch':{type:'string'},'workflow-sha':{type:'string'},'sdk-sha':{type:'string'},'app-id':{type:'string'},plan:{type:'string'},'quality-policy':{type:'string'},registration:{type:'string'},digest:{type:'string'},reviewers:{type:'string'},pr:{type:'string'}}});
  const root=resolve(values.root??process.cwd()),[command,sub,...rest]=positionals;
  if(values.version){process.stdout.write('0.2.0\n');return 0;}if(values.help||!command){process.stdout.write(help);return 0;}
  if(rest.length)throw Error('Unexpected command arguments');
- if(values.runner&&!['test','init','doctor'].includes(command!))throw Error('--runner applies only to test, init and doctor');
+ if(values.runner&&!['test','init','doctor','ci'].includes(command!))throw Error('--runner applies only to test, init and doctor');
  if(values.runner&&!['vitest','jest'].includes(values.runner))throw Error('Expected --runner jest|vitest');
  const emit=async(text:string)=>{if(values.output)await writeScoped(root,values.output,text);else process.stdout.write(text);};
+ if(values.quality&&command!=='doctor')throw Error('--quality applies only to doctor');
+ if(command==='ci'){
+  const args={
+    plan:['repository','branch','workflow-branch','sdk-sha','app-id','config','runner','quality-policy','output'],
+    apply:['plan','dry-run'],
+    enroll:['workflow-sha','reviewers','registration','pr'],
+    verify:['registration','digest'],
+  };
+  if(!sub || !Object.hasOwn(args,sub))throw Error('Expected ci plan|apply|enroll|verify');
+  if(Object.keys(values).some(key=>key!=='root'&&!args[sub as keyof typeof args].includes(key)))throw Error('Unexpected option for ci '+sub);
+  if(sub==='plan'){
+   await emit(canonicalJson(await planCI(root,values))+'\n');
+   return 0;
+  }
+  if(sub==='apply'){
+   if(!values.plan)throw Error('ci apply requires --plan');
+   const result=await applyCI(root,values.plan,values['dry-run']??false);
+   await emit(canonicalJson(result)+'\n');
+   return result.exitCode;
+  }
+  if(!values.registration)throw Error('An external --registration is required');
+  const token=process.env.GITHUB_TOKEN;
+  if(sub==='enroll'){
+   const result=await enrollCI(root,{pr:Number(values.pr),workflowSha:values['workflow-sha']??'',reviewers:values.reviewers?.split(',')??[],registration:values.registration,...(token?{token}:{})});
+   await emit(canonicalJson(result)+'\n');
+   return 0;
+  }
+  if(!values.digest)throw Error('ci verify requires --digest pinned by the independent host');
+  const r=await readCIRegistration(root,values.registration,values.digest);
+  const {verifyDeployment}=await import('./ci-verify.js');
+  const result=await verifyDeployment({...r.deployment,repositoryId:r.repositoryId,workflowSha:r.workflowSha,files:r.files,registrationDigest:values.digest,reviewers:r.reviewers},{root,...(token?{token}:{})});
+  await emit(canonicalJson(result)+'\n');
+  return result.status==='pass'?0:1;
+ }
  if(command==='test'){
   if(sub)throw Error('Unexpected test argument');
   if(Object.keys(values).some(key=>!['root','config','runner'].includes(key)))throw Error('test supports only --root, --config and --runner; it runs tests and does not enforce gate policy');
@@ -38,7 +75,19 @@ async function main(){
   process.stdout.write(JSON.stringify({path,action:found?'preserve':values['dry-run']?'would-create':'created',gitignore:{path:'.gitignore',action:ignoreAction},detection,notice:'init manages config and .gitignore; it does not install packages or edit workflows.'},null,2)+'\n');return 0;
  }
  if(command==='doctor'){
-  if(sub)throw Error('Unexpected doctor argument');const cfg=await config(root,values.config,values.profile),selected=values.runner??cfg.testRunner;const detection=await detectProject(root,selected?{runner:selected as 'vitest'|'jest'}:undefined);await emit(JSON.stringify({node:process.version,...detection,trust:'External producer and protection authority must be configured separately.'},null,2)+'\n');return detection.support==='single-package'?0:1;
+  if(sub)throw Error('Unexpected doctor argument');
+  const cfg=await config(root,values.config,values.profile);
+  const {QualityPolicy}=await import('./quality.js');
+  const qualityPolicy=values['quality-policy']?QualityPolicy.parse(await safeReadJson(root,values['quality-policy'])):undefined;
+  const requested=values.runner??cfg.testRunner;
+  if(requested&&qualityPolicy&&requested!==qualityPolicy.runner)throw Error('Runner does not match the selected quality policy');
+  const selected=(requested??qualityPolicy?.runner) as 'vitest'|'jest'|undefined;
+  const detection=await detectProject(root,selected?{runner:selected}:undefined);
+  const quality=detection.evidence.includes('package.json')?await diagnoseQuality(root,{...(selected?{runner:selected}:{}),...(qualityPolicy?{policy:qualityPolicy}:{})}):undefined;
+  const unavailable={schemaVersion:1,status:'incomplete',findings:[],notice:detection.reasons.join('; ')};
+  const format=values.format??'json';
+  await emit(format==='json'?JSON.stringify({node:process.version,...detection,quality:quality??unavailable,trust:'External producer and protection authority must be configured separately.'},null,2)+'\n':quality?formatQuality(quality,format):format==='console'||format==='markdown'?unavailable.notice+'\n':(()=>{throw Error('Unsupported doctor format');})());
+  return detection.support==='single-package'&&(!values.quality||quality?.status==='pass')?0:1;
  }
  if(command==='explain'){
   const explanations:Record<string,string>={testResult:'Jest or Vitest assertions must complete; skipped/zero tests or unverified producers remain unknown.',changedLineCoverage:'Changed-line coverage requires current authenticated LCOV, complete executable-line scope and source mapping. Missing data is unknown; collect coverage in the verified execution.',mutationScore:'Score = (Killed + Timeout) / (Killed + Timeout + Survived + NoCoverage). Missing mapping or insufficient comparable mutants is unknown.',pipelineIntegrity:'A final always() gate checks all upstream results and artifacts. External issuer-bound branch protection requires independent verification; unavailable authority is unknown.',contractExecution:'Declared contracts require verified runtime binding and all required cases. A fake callback can pass comparisons; production reach and sensitivity remain separate unknown claims.',intentApproval:'Intent and contract transitions require current content-bound human approval from a protected authority.',policyProtection:'Protected policy is supplied through a trusted external host and cannot be weakened by project configuration.'};

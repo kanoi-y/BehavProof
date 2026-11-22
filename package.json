@@ -17,6 +17,7 @@
   },
   "devDependencies": {
     "@types/node": "24.19.2",
+    "eslint": "9.39.5",
     "fast-check": "4.10.2",
     "jest": "30.5.2",
     "jest29": "npm:jest@29.7.0",
