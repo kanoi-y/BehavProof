@@ -4,7 +4,7 @@ import {hash,hashBytes,parseConfig,safeRead,RelativePathSchema} from '@behavproo
 import {RegistrationSchema,registrationProjectData} from '../packages/cli/dist/api.js';
 import {protectedGit,materializeProject,sha} from './protected-checkout.mjs';
 export const REPOSITORY='kanoi-y/pdd-ts',REPOSITORY_ID='1449042266',CHECK='BehavProof protected gate',APP_ID=5653976;
-export {IMAGE} from './protected-container-image.mjs';
+export const IMAGE='node:24.14.1-bookworm@sha256:80fc934952c8f1b2b4d39907af7211f8a9fff1a4c2cf673fb49099292c251cec';
 export const PRODUCER='.github/workflows/behavproof-producer.yml',PUBLISHER='.github/workflows/behavproof-publisher.yml',BASE='behavproof-enforcement-test';
 export const number=value=>{if(!/^[1-9][0-9]*$/.test(String(value))||!Number.isSafeInteger(Number(value)))throw Error('Invalid positive identity');return Number(value);};
 export async function boundedBody(response,max=10*1024*1024){

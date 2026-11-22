@@ -108,3 +108,18 @@ test('generated workflows are valid YAML and only call runtime commands present 
     await expect(readFile(resolve(command.split(' ')[1]!))).resolves.toBeDefined();
   }
 });
+
+test('ci plan resolves a policy runner and rejects a contrary configured runner', async () => {
+  const {planCI}=await import('../../packages/cli/src/ci-plan.js');
+  const root=await mkdtemp(join(tmpdir(),'behavproof-plan-runners-'));
+  const options={repository:'demo/shop',branch:'main','sdk-sha':'d'.repeat(40),'app-id':'12345','quality-policy':'quality.json'};
+  try {
+    await writeFile(join(root,'package.json'),JSON.stringify({scripts:{test:'vitest run'},devDependencies:{vitest:'5.1.0',jest:'30.5.2'}}));
+    await writeFile(join(root,'quality.json'),JSON.stringify({schemaVersion:1,id:'reviewed',lint:{tool:'eslint',rules:['no-debugger']},types:'strict',runner:'vitest',sources:['src/**/*']}));
+    expect((await planCI(root,options)).unresolved).not.toContain('runner');
+    await writeFile(join(root,'behavproof.config.json'),JSON.stringify({schemaVersion:1,testRunner:'jest'}));
+    await expect(planCI(root,{...options,runner:'vitest'})).rejects.toThrow(/runner/i);
+  } finally {
+    await rm(root,{recursive:true,force:true});
+  }
+});

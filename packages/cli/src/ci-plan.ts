@@ -88,9 +88,10 @@ export async function planCI(root: string, options: PlanOptions) {
     configPath:options.config??'behavproof.config.json',
   });
   const cfg = await config(root,deployment.configPath);
-  const runner = (options.runner??cfg.testRunner) as QualityPolicy['runner']|undefined;
   const custom = options['quality-policy'] ? QualityPolicy.parse(await safeReadJson(root,options['quality-policy'])) : undefined;
-  if (runner && custom && runner !== custom.runner) throw Error('Runner does not match the selected quality policy');
+  const runners = [options.runner,cfg.testRunner,custom?.runner].filter(Boolean);
+  if (new Set(runners).size>1) throw Error('Explicit, configured and policy runners must agree');
+  const runner = runners[0] as QualityPolicy['runner']|undefined;
   const quality = await diagnoseQuality(root,{...(runner?{runner}:{}),...(custom?{policy:custom}:{})});
   const unresolved = [...(!runner ? ['runner'] : []), ...(!custom ? ['sources'] : []), 'workflowSha'];
   const prerequisite = [

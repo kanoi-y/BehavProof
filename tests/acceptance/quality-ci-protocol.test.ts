@@ -41,7 +41,7 @@ test('the trusted protocol rejects changed deployment files and stale manifest s
   }
 });
 
-test('the trusted protocol rejects a protected report path outside .behavproof/ and accepts one inside it', async () => {
+test('the trusted protocol accepts conventional untracked report paths and rejects committed reports', async () => {
   const { prepareQuality } = await import('../../scripts/quality-ci-protocol.mjs');
   const root = await mkdtemp(join(tmpdir(),'behavproof-ci-protocol-'));
   const git = (...args:string[]) => execFileSync('git',['-c','user.name=Test','-c','user.email=test@example.invalid',...args],{cwd:root,encoding:'utf8'}).trim();
@@ -58,8 +58,9 @@ test('the trusted protocol rejects a protected report path outside .behavproof/ 
       files:{[policyFile]:hashBytes(Buffer.from(bytes)),[deploymentFile]:hashBytes(Buffer.from(bytes))},
       baseline:{contracts:[],intents:[]}};
     const pr={number:2,head:{sha},base:{sha}};
-    const outside = {...base, config:{schemaVersion:1, reports:{coverage:'coverage.lcov'}}};
-    await expect(prepareQuality({root,inputs:paths.sort()},outside,pr)).rejects.toThrow(/protected report path/i);
+    const defaults = {...base, config:{schemaVersion:1, reports:{coverage:'coverage/lcov.info',mutation:'reports/mutation/mutation.json'}}};
+    await expect(prepareQuality({root,inputs:paths.sort()},defaults,pr)).resolves.toMatchObject({auxiliary:[['coverage','coverage.lcov'],['mutation','mutation.json']]});
+    await expect(prepareQuality({root,inputs:[...paths,'coverage/lcov.info']},defaults,pr)).rejects.toThrow(/protected report path/i);
     const inside = {...base, config:{schemaVersion:1, reports:{coverage:'.behavproof/coverage.lcov'}}};
     const plan = await prepareQuality({root,inputs:paths.sort()},inside,pr);
     expect(plan.auxiliary).toEqual([['coverage','coverage.lcov']]);
@@ -130,7 +131,7 @@ test('real tool runs can satisfy the gate, and low lint severity cannot',async (
     git('init','-q'); git('add','.'); git('commit','-qm','consumer');
     await symlink(resolve('node_modules'),join(root,'node_modules'),process.platform==='win32'?'junction':'dir');
     const base=git('rev-parse','HEAD');
-    const registration={deployment:{configPath:'behavproof.config.json'}, policy, files:{},config:{schemaVersion:1},
+    const registration={deployment:{configPath:'behavproof.config.json'}, policy, files:{},config:{schemaVersion:1,reports:{coverage:'coverage/lcov.info',mutation:'reports/mutation/mutation.json'}},
       baseline:{schemaVersion:1,commitSha:base,contracts:[],intents:[],scope:[],extractorVersion:'1',discoveryDiagnostics:[]}};
     // The local verifier host selects this real worker explicitly. Production uses
     // the separate Docker launcher and independently authenticated CI attempts.

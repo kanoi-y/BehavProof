@@ -111,3 +111,19 @@ test('cannot pass quality when no test files are discovered', async () => {
   expect(result.status).toBe(1);
   expect(findings(result)).toContainEqual(expect.objectContaining({id: 'test.scope', status: 'fail', message: 'No test files match the selected configuration'}));
 });
+
+test('doctor preserves structured unsupported diagnostics without package.json', async () => {
+  await rm(join(root, 'package.json'));
+  const result = doctor();
+  expect(result.status, result.stderr).toBe(1);
+  expect(JSON.parse(result.stdout)).toMatchObject({support:'unsupported',quality:{status:'incomplete'}});
+});
+
+test('Vitest defaults do not discover helper files merely under __tests__', async () => {
+  await rm(join(root,'test/index.test.ts'));
+  await mkdir(join(root,'__tests__'));
+  await put('__tests__/helper.ts','export const helper = 1;');
+  const result=doctor();
+  expect(result.status).toBe(1);
+  expect(findings(result)).toContainEqual(expect.objectContaining({id:'test.scope',status:'fail'}));
+});

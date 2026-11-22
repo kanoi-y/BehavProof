@@ -8,7 +8,9 @@ export const object = (value: unknown): Data | undefined =>
 export const strings = (value: unknown): string[] | undefined =>
   Array.isArray(value) && value.every(item => typeof item === 'string') ? value : undefined;
 export const sourceFile = (path: string) => /\.[cm]?[jt]sx?$/.test(path);
-export const defaultTest = (path: string) => /(?:^|\/)(?:__tests__\/.*|.*\.(?:test|spec))\.[cm]?[jt]sx?$/.test(path);
+export const defaultTest = (path: string, runner: 'vitest'|'jest') =>
+  /\.(?:test|spec)\.[cm]?[jt]sx?$/.test(path) ||
+  runner==='jest' && /(?:^|\/)__tests__\/.+\.[cm]?[jt]sx?$/.test(path);
 export const matches = (file: string, pattern: string) => {
   const path = pattern.replace(/^\.\//, '').replace(/\/$/, '');
   return path === '.' || file === path || file.startsWith(path + '/') || matchesGlob(file, path);

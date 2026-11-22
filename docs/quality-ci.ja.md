@@ -171,4 +171,4 @@ behavproof ci enroll --workflow-sha SHA --reviewers a,b --registration <path> --
 behavproof ci verify --registration <path> --digest <sha256>
 ```
 
-スキーマは`packages/cli/schemas/quality-policy.schema.json`、`ci-registration.schema.json`、`deployment.schema.json`。詳細は[READMEの品質診断・保護CIの節](../README.md)と[保護GitHub統合の手順](protected-github-deployment.ja.md)を参照すること。
+スキーマは`packages/cli/schemas/quality-policy.schema.json`、`ci-registration.schema.json`、`deployment.schema.json`。詳細は[READMEの品質診断・保護CIの節](../README.md)と[保護された証拠収集の仕様](protected-producer.md)を参照すること。

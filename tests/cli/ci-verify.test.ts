@@ -326,3 +326,11 @@ test('accepts a hyphenated reviewer login and rejects it in the registration sch
   expect(() => CIRegistration.shape.reviewers.parse(['-lead'])).toThrow();
   expect(() => CIRegistration.shape.reviewers.parse(['a'.repeat(40)])).toThrow();
 });
+
+test('rejects a pinned workflow commit with an unenrolled config file', async () => {
+  const data=fixture();
+  const stale={...data.register()};
+  const { [deployment.configPath]:_notEnrolled,...files }=stale.files;
+  const result=await verify({...stale,files}, data.fetcher);
+  expect(result.checks).toContainEqual(expect.objectContaining({id:'pinned-source',status:'fail',evidence:[expect.stringMatching(/unenrolled config/i)]}));
+});

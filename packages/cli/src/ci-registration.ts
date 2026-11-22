@@ -96,11 +96,11 @@ export async function enrollCI(root:string, options:{
   const repo=z.object({id:z.number().int().positive(),full_name:z.literal(deployment.repository)}).parse(await http.request(prefix));
   const workflow=z.object({commit:z.object({sha:commitSha})}).parse(await http.request(`${prefix}/branches/${encodeURIComponent(deployment.workflowBranch)}`));
   if (workflow.commit.sha!==workflowSha) throw Error('The trusted workflow branch does not point at the selected workflow commit');
-  await readPinnedFiles(http,{workflowSha,files});
+  await readPinnedFiles(http,{workflowSha,files,configPath:deployment.configPath});
   const pr=z.object({base:z.object({ref:z.literal(deployment.protectedBranch),sha:commitSha})}).parse(await http.request(`${prefix}/pulls/${options.pr}`));
   const requiredChecks=[{context:deployment.checkName,appId:deployment.appId}];
   if ((await authority.protection(deployment.protectedBranch,requiredChecks)).status!=='pass') throw Error('Required issuer-bound branch protection is unavailable');
-  const requiredTests=(await git(root,['ls-tree','-r','--name-only','-z',head])).split('\0').filter(defaultTest).sort();
+  const requiredTests=(await git(root,['ls-tree','-r','--name-only','-z',head])).split('\0').filter(path=>defaultTest(path,policy.runner)).sort();
   const selection={deployment,workflowSha,files,reviewers,policy,config,baseline,requiredTests};
   const approval=await authority.approval(options.pr,registrationTarget(selection),{headSha:head,baseSha:pr.base.sha,reviewers,requiredChecks});
   if (!approval.approval) throw Error(`Independent human approval unavailable: ${approval.reasons.join('; ')}`);

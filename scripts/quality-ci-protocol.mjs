@@ -47,7 +47,7 @@ export async function prepareQuality({root,inputs}, registration, pr) {
   const auxiliary = Object.entries({coverage:'coverage.lcov',mutation:'mutation.json'})
     .filter(([kind])=>config.reports?.[kind]!==undefined);
   for (const [kind] of auxiliary) {
-    if ((active.has(config.reports[kind]) || !config.reports[kind].startsWith('.behavproof/'))) throw Error('A protected report path must refer to freshly generated, untracked evidence');
+    if (active.has(config.reports[kind])) throw Error('A protected report path must refer to freshly generated, untracked evidence');
   }
   if (runner==='vitest' ? version!=='5.1.0' : !['29.7.0','30.5.2'].includes(version)) throw Error('Unsupported runner version in package-lock.json');
   const subject=await gitSubject(root,inputs,pr.head.sha,pr.base.sha);
