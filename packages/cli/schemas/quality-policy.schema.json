@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "number",
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "lint": {
+      "type": "object",
+      "properties": {
+        "tool": {
+          "type": "string",
+          "enum": [
+            "eslint",
+            "biome"
+          ]
+        },
+        "rules": {
+          "minItems": 1,
+          "maxItems": 200,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          }
+        }
+      },
+      "required": [
+        "tool",
+        "rules"
+      ],
+      "additionalProperties": false
+    },
+    "types": {
+      "anyOf": [
+        {
+          "type": "string",
+          "const": "strict"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "notApplicable": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            }
+          },
+          "required": [
+            "notApplicable"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "runner": {
+      "type": "string",
+      "enum": [
+        "vitest",
+        "jest"
+      ]
+    },
+    "sources": {
+      "minItems": 1,
+      "maxItems": 100,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "id",
+    "lint",
+    "types",
+    "runner",
+    "sources"
+  ],
+  "additionalProperties": false
+}

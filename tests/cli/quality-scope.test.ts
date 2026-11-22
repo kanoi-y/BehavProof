@@ -27,3 +27,11 @@ test('a selected production file must be part of the independently hashed input 
 test('omitting explicit quality sources preserves conservative whole-project coverage requirements',()=>fixture(async(root,path,trust)=>{
  delete trust.qualitySources;await writeFile(path,JSON.stringify(trust));const report=await check(root,{mode:'gate','trust-root':path});expect(report.evaluations.find(e=>e.ruleId==='changedLineCoverage')?.status).toBe('unknown');
 }));
+
+test('a trust root without quality keeps the legacy gate behaviour',()=>fixture(async(root,path)=>{
+ const report=await check(root,{mode:'gate','trust-root':path});
+ expect(report.evaluations.map(e=>e.ruleId)).not.toContain('lintResult');
+ expect(report.evaluations.map(e=>e.ruleId)).not.toContain('typecheckResult');
+ expect(report.evaluations.map(e=>e.ruleId)).not.toContain('qualityConfiguration');
+ expect(report.evaluations.find(e=>e.ruleId==='changedLineCoverage')?.status).toBe('pass');
+}),45000);

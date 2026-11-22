@@ -1,10 +1,11 @@
 import { mkdir, writeFile, cp } from 'node:fs/promises';
 import { z } from 'zod';
 import { ConfigSchema, PolicySchema, EvidenceSchema, ExecutionManifestSchema, RegistrySnapshotSchema, AssuranceBundleSchema, getProfilePolicy } from '../packages/core/dist/index.js';
-import { TrustRootSchema, RegistrationSchema } from '../packages/cli/dist/api.js';
+import { TrustRootSchema, RegistrationSchema, QualityPolicy, CIRegistration } from '../packages/cli/dist/api.js';
+import { Deployment } from '../packages/cli/dist/ci-plan.js';
 const root=new URL('../packages/cli/',import.meta.url);
 for(const dir of ['schemas','presets','templates'])await mkdir(new URL(dir+'/',root),{recursive:true});
-for(const [name,schema] of Object.entries({config:ConfigSchema,policy:PolicySchema,evidence:EvidenceSchema,manifest:ExecutionManifestSchema,registry:RegistrySnapshotSchema,assurance:AssuranceBundleSchema,'trust-root':TrustRootSchema,registration:RegistrationSchema})){
+for(const [name,schema] of Object.entries({config:ConfigSchema,policy:PolicySchema,evidence:EvidenceSchema,manifest:ExecutionManifestSchema,registry:RegistrySnapshotSchema,assurance:AssuranceBundleSchema,'trust-root':TrustRootSchema,registration:RegistrationSchema,'quality-policy':QualityPolicy,'ci-registration':CIRegistration,deployment:Deployment})){
  const value=z.toJSONSchema(schema,{io:'input',unrepresentable:'any'});await writeFile(new URL(`schemas/${name}.schema.json`,root),JSON.stringify(value,null,2)+'\n');
 }
 for(const profile of ['basic','standard','critical'])await writeFile(new URL(`presets/${profile}-v1.json`,root),JSON.stringify(getProfilePolicy(profile),null,2)+'\n');
