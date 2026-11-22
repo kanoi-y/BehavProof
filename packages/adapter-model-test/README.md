@@ -1,11 +1,11 @@
 # @behavproof/adapter-model-test
 
-BehavProof 0.2.0 public preview distribution. Requires Node.js 24.x.
+BehavProof 0.3.0 public preview distribution. Requires Node.js 24.x.
 
 After publication, install from the public npm registry:
 
 ```sh
-npm install --ignore-scripts @behavproof/adapter-model-test@0.2.0
+npm install --ignore-scripts @behavproof/adapter-model-test@0.3.0
 ```
 
 See the [security boundaries](https://github.com/kanoi-y/BehavProof/blob/main/docs/security.md).

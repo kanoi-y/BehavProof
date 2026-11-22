@@ -1,6 +1,6 @@
 {
   "name": "@behavproof/jest",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "type": "commonjs",
   "exports": {
     ".": {
@@ -25,7 +25,7 @@
     }
   },
   "dependencies": {
-    "@behavproof/core": "0.2.0"
+    "@behavproof/core": "0.3.0"
   },
   "peerDependencies": {
     "jest": "29.7.0 || 30.5.2"
