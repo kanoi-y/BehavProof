@@ -23,3 +23,14 @@ test('an explicitly enrolled nested config is selected for a repository-root app
  const {selectedProjectConfig}=await import('../../scripts/github-control.mjs'),{mkdtemp,mkdir,writeFile,rm}=await import('node:fs/promises'),{tmpdir}=await import('node:os'),{join}=await import('node:path'),{hashBytes}=await import('../../packages/core/src/index.js'),root=await mkdtemp(join(tmpdir(),'behavproof-enrolled-config-')),policy='{}';
  try{await mkdir(join(root,'integration'));await writeFile(join(root,'integration/policy.json'),policy);await writeFile(join(root,'integration/behavproof.config.json'),'{"schemaVersion":1,"profile":"basic"}');await expect(selectedProjectConfig(root,{source:{projectPath:'.',policyRef:'integration/policy.json',configRef:'integration/behavproof.config.json',fileHashes:{'integration/policy.json':hashBytes(Buffer.from(policy))}}})).resolves.toMatchObject({profile:'basic'});}finally{await rm(root,{recursive:true,force:true});}
 });
+test('legacy workflows pass the selected consumer identity to every control job',async()=>{
+ const {readFile}=await import('node:fs/promises'),{parse}=await import('yaml'),{controlConfig}=await import('../../scripts/github-control.mjs');
+ for(const [kind,jobs] of [['producer',['collect']],['publisher',['verify','gate']]] as const){
+  const workflow=parse(await readFile('templates/protected-github-'+kind+'.yml','utf8'));
+  for(const name of jobs){
+   const mappings=workflow.jobs[name].env;
+   const env=Object.fromEntries(Object.entries(controlEnv).filter(([key])=>Object.hasOwn(mappings,key)));
+   expect(controlConfig(env)).toMatchObject({repository:'acme/shop',repositoryId:'123456789',appId:12345,protectedBranch:'main',reviewers:['acme-user']});
+  }
+ }
+});

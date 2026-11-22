@@ -48,6 +48,19 @@ One claim scope per contract is currently supported. Duplicate contract scopes o
 
 The main-only workflow templates under templates/ and the concrete control-plane scripts are a deployment proposal until the actual human enrollment, main integration, App read grants, protected variables and isolated-base enforcement tests are complete. `prepareFailedCheck(identity)` provides an opaque failure-only publication path when producer evidence is absent; it never manufactures a subject or producer CI and cannot publish success.
 
+Replace `OWNER/REPO` in the workflow guards and `OWNER` / `REPO` in the App-token action with the consumer's identity. The legacy reference fetches source over unauthenticated HTTPS and supports public repositories. Set the following repository variables before dispatch:
+
+| Variable | Value |
+| --- | --- |
+| `BEHAVPROOF_REPOSITORY`, `BEHAVPROOF_REPOSITORY_ID` | Consumer owner/name and numeric GitHub repository ID |
+| `BEHAVPROOF_APP_ID` | Dedicated App ID used by the branch's required check |
+| `BEHAVPROOF_PROTECTED_BRANCH` | PR target branch |
+| `BEHAVPROOF_REVIEWERS` | Comma-separated authorized GitHub logins |
+| `BEHAVPROOF_SDK_SHA`, `BEHAVPROOF_WORKFLOW_SHA` | Reviewed SDK commit and exact workflow commit on the trusted `main` ref |
+| `BEHAVPROOF_REGISTRATION_JSON`, `BEHAVPROOF_REGISTRATION_DIGEST` | Independently enrolled registration and its digest |
+
+Restrict the `behavproof-publisher` deployment environment to the trusted `main` branch and place `BEHAVPROOF_APP_PRIVATE_KEY` in that environment. Keep the final job unconditional so it can report a failed upstream check on a trusted dispatch.
+
 ## Shared controller transport and selected runner
 
 `scripts/protected-protocol.mjs` supplies the host-owned capture/restore path used by the live producer/verifier. Capture retains the actual Collector return object and writes host context only after the selected runner returns from checked sandbox cleanup. Restore validates digest, bounded ZIP, complete reports, current independently materialized input/config/subject selection and exact artifact bytes before writing selected files. These helpers do not grant CI or human authority; the live verifier authenticates the registered GitHub producer before calling restore.

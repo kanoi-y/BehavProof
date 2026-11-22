@@ -3,9 +3,9 @@
 > BehavProof is managed in [kanoi-y/BehavProof](https://github.com/kanoi-y/BehavProof). Consumer integration lives in a separate repository. See [repository boundaries](repository-boundaries.md).
 
 
-基準: `BehavProof_開発仕様書_v0.6.md` §19。既存M1/M2の43件（AC-01〜17、AC-19〜30、AC-37〜49、AC-51）に、今回明示選択したM2-Fの6件を追加する。各範囲の実ツール・ローカル検証を区別する。外部の実地検証のみを根拠としていた2件（AC-18、AC-50）は、導入先固有の記録であったためこの表から除いた。
+基準: `BehavProof_開発仕様書_v0.6.md` §19。既存M1/M2の45件（AC-01〜30、AC-37〜51）と、今回明示選択したM2-Fの6件を示す。導入先固有の外部検証記録はこの表に含めない。
 
-既存の必須43件と今回選択したM2-Fの6件は、下記の実行証拠で検証済み。ローカル検査と外部の保護検証を区別する。
+下表はこのリポジトリに残る検証根拠を示す。実際のGitHub保護は導入先で確認する。
 
 | ID | 段階 | 条件と期待結果 | 状態 | 実行証拠 |
 | --- | --- | --- | --- | --- |
@@ -19,13 +19,14 @@
 | AC-08 | M1 | 変更対象はあるがLCOV欠損 → unknown | ローカル検証済み | tests/reports/adapters.test.ts |
 | AC-09 | M1 | 変異対象0 → 100%扱いをしない | ローカル検証済み | tests/reports/adapters.test.ts |
 | AC-10 | M1 | Survived mutation → 数と対象を正確に表示 | ローカル検証済み | tests/reports/adapters.test.ts |
-| AC-11 | M1 | Policy緩和のPR → 差分を表示し、PR側の閾値・severity・対象除外で保護基準を緩和せず再評価 | 外部実地・ローカル検証済み | tests/cli/commands.test.ts。設定offでも保護基準を保持、Policyファイル変更は再登録を要求 |
+| AC-11 | M1 | Policy緩和のPR → 差分を表示し、PR側の閾値・severity・対象除外で保護基準を緩和せず再評価 | ローカル検証済み | tests/cli/commands.test.ts。設定offでも保護基準を保持、Policyファイル変更は再登録を要求 |
 | AC-12 | M1 | 必須チェック設定が取得不能 → 設定済みと断定しない | ローカル検証済み | tests/github/authority.test.ts |
 | AC-13 | M1 | auditでfailがある → レポート生成はexit 0、問題を明示 | ローカル検証済み | tests/cli/commands.test.ts |
 | AC-14 | M1 | gateで必須unknownがある → exit 1 | ローカル検証済み | tests/cli/commands.test.ts |
 | AC-15 | M1 | 設定パースエラー → 理由とexit 2 | ローカル検証済み | tests/cli/commands.test.ts |
 | AC-16 | M1 | 同じ入力で再評価 → 結果が再現 | ローカル検証済み | tests/cli/commands.test.ts |
 | AC-17 | M1 | 非対応プロジェクト → 自動設定に失敗した理由を明示 | ローカル検証済み | tests/cli/commands.test.ts |
+| AC-18 | M1 | 必須の上流ジョブがskipされた場合は合格にしない | ローカル検証済み | tests/github/authority.test.ts |
 | AC-19 | M2 | Contract宣言のみ・テスト実行0件 → binding/executionはunknown | ローカル検証済み | tests/contracts/registry.test.ts |
 | AC-20 | M2 | Contractの2例を実行 → case別の契約版・bindingハッシュ・実行・比較証拠を記録。本番到達を自動推定しない | ローカル検証済み | scripts/acceptance-flow.mjs; docs/evidence/public-flow.json |
 | AC-21 | M2 | `non-owner`をskip → criticalの必須ケースではgate block | ローカル検証済み | scripts/acceptance-flow.mjs; docs/evidence/public-flow.json |
@@ -57,6 +58,7 @@
 | AC-47 | M2 | コールバックをモック／期待動作の再実装へ置換 → 比較成功だけで本番対象観測・変異感度をpassにせず、必須観測不足ならblock | ローカル検証済み | scripts/acceptance-flow.mjs |
 | AC-48 | M2 | 本番対象へ故障を注入し当該ケースが失敗 → 対象・case・故障内容・失敗結果を別Evidenceとして記録 | ローカル検証済み | scripts/acceptance-flow.mjs |
 | AC-49 | M1 | 変更した対象ソースファイルがLCOVから欠落 → 独立した対象外根拠がなければunknown。分母から黙って除外しない | ローカル検証済み | tests/reports/adapters.test.ts |
+| AC-50 | M1 | 最終ゲート欠損や別のAppの同名成功結果で保護を満たさない | ローカル検証済み。実リポジトリでの保護は導入先で確認 | tests/github/authority.test.ts; tests/github/publisher.test.ts |
 | AC-51 | M1 | 保護Policyの信頼基点が未登録／PRが参照元を自己変更 → auditは可能、未登録gateは設定エラー。PRの自己変更では基準を置換しない | ローカル検証済み | tests/cli/commands.test.ts |
 
 M0の5条件と採用判断は[m0-results.md](m0-results.md)に記録した。
@@ -66,4 +68,3 @@ M0の5条件と採用判断は[m0-results.md](m0-results.md)に記録した。
 全体独立レビューで再現したManifestのSHA付替えとマージ専用の契約変更による承認流用は、tests/acceptance/local-replay.test.tsとmerge-approval.test.tsで回帰検査する。AC-44/46等の契約削除・廃止承認はRegistryの実行済み自動検査を根拠とし、未実施の外部操作へ置換しない。
 
 M2-Fの全6条件と付録B.9の7条件は[受入検証・採用判断](formal-validation.ja.md)と[機械可読記録](evidence/formal-validation.json)を参照。通常6/任意8パッケージの導入、全393ローカルテスト、3 OS回帰CI、実Apalacheと故障注入を含む任意formal CIを検証した。無制限証明や新しい実User承認を意味しない。
-
