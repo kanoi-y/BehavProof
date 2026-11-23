@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1
+
+- Update the npm package READMEs with current installation instructions and package-specific descriptions.
+
 ## 0.3.0 — public preview
 
 - Add `behavproof doctor --quality` for versioned static quality diagnostics over the `quality-baseline-v1` policy (ESLint/Biome rules, TypeScript strict, test discovery and settings), with exit codes 0/1/2. `doctor` stays read-only and never imports project configuration, runs package scripts or downloads packages; dynamic or unresolvable shared configuration is `unknown`, never pass.

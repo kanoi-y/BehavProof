@@ -9,7 +9,7 @@ M2-Fは明示導入するオプションです。通常の `check` はモデル�
 各パッケージは公開npmレジストリからインストールできます。導入先プロジェクトで次を実行します。既にCLIを導入している場合は、そのバージョンに両アダプターのバージョンを揃えてください。
 
 ```sh
-npm install --save-dev --ignore-scripts @behavproof/cli@0.3.0 @behavproof/adapter-quint@0.3.0 @behavproof/adapter-model-test@0.3.0
+npm install --save-dev --ignore-scripts @behavproof/cli@0.3.1 @behavproof/adapter-quint@0.3.1 @behavproof/adapter-model-test@0.3.1
 npm install --save-dev --ignore-scripts @informalsystems/quint@0.33.1
 ```
 
