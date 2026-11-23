@@ -78,7 +78,8 @@ function containerArgs(name, network, uid, gid, tmpSize, executableTmp=false) {
     'run', '--rm', '--name', name, '--platform', 'linux/amd64', '--network', network,
     '--read-only', '--init', '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges',
     '--pids-limit', '256', '--memory', '2g', '--memory-swap', '2g', '--cpus', '2',
-    '--log-driver', 'local', '--log-opt', 'max-size=1m', '--log-opt', 'max-file=1',
+    // The local driver requires compression disabled when retention is one file.
+    '--log-driver', 'local', '--log-opt', 'max-size=1m', '--log-opt', 'max-file=1', '--log-opt', 'compress=false',
     '--user', `${uid}:${gid}`, '--tmpfs', `/tmp:rw,nosuid,nodev,${executableTmp?'exec,':''}size=${tmpSize},nr_inodes=150000,mode=0700,uid=${uid},gid=${gid}`,
     '--env', 'HOME=/tmp', '--env', 'CI=true',
   ];

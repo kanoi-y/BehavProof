@@ -109,6 +109,9 @@ test.skipIf(process.platform === 'win32' || process.getuid?.() === 0)('the offli
     expect(requests).toEqual([{runnerVersion: '5.1.0', executionId: 'fixture-run'}]);
     const [install, worker] = calls.filter(args => args[0] === 'run');
     expect(install).toEqual(expect.arrayContaining(['--network', 'bridge', '--read-only']));
+    for(const args of [install, worker]){
+      expect(args).toEqual(expect.arrayContaining(['--log-driver','local','max-size=1m','max-file=1','compress=false']));
+    }
     expect(install.join(' ')).not.toContain(input.sourceRoot);
     expect(install.join(' ')).not.toContain(input.requestPath);
     expect(worker).toEqual(expect.arrayContaining(['--network', 'none', '--read-only', '--cap-drop', 'ALL', '--user', `${process.getuid?.()}:${process.getgid?.()}`]));
