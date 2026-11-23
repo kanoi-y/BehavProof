@@ -62,3 +62,68 @@ test('never evaluates dynamic configuration and detects failure swallowing and e
   ]));
   await expect(access(join(root, 'executed'))).rejects.toThrow();
 });
+
+test('does not treat a Biome --max-diagnostics value as a lint target', async () => {
+  await put('package.json', {
+    type: 'module', scripts: {lint: 'biome check --max-diagnostics none', typecheck: 'tsc --noEmit', test: 'vitest run'},
+    devDependencies: {'@biomejs/biome': '2.0.0', typescript: '5.9.3', vitest: '5.1.0'},
+  });
+  await put('biome.json', {linter: {rules: {
+    suspicious: {'noDebugger': 'error', 'noDuplicateParameters': 'error', 'noDuplicateObjectKeys': 'error'},
+    correctness: {'noUnreachable': 'error', 'noConstantCondition': 'error'},
+  }}});
+  const result = doctor();
+  expect(result.status, result.stderr + result.stdout).toBe(0);
+  expect(findings(result)).toContainEqual(expect.objectContaining({id: 'lint.scope', status: 'pass'}));
+  expect(findings(result)).toContainEqual(expect.objectContaining({id: 'lint.rules', status: 'pass'}));
+});
+
+test('detects a cyclic npm script reference instead of treating it as a lint command', async () => {
+  await put('package.json', {
+    type: 'module', scripts: {lint: 'npm run lint', typecheck: 'tsc --noEmit', test: 'vitest run'},
+    devDependencies: {eslint: '9.0.0', typescript: '5.9.3', vitest: '5.1.0'},
+  });
+  const result = doctor();
+  expect(result.status).toBe(1);
+  expect(findings(result)).toContainEqual(expect.objectContaining({id: 'lint.command', status: 'fail', message: 'Cyclic npm script reference'}));
+});
+
+test('rejects a lint configuration path outside the project', async () => {
+  await put('package.json', {
+    type: 'module', scripts: {lint: 'eslint --config ../outside.json .', typecheck: 'tsc --noEmit', test: 'vitest run'},
+    devDependencies: {eslint: '9.0.0', typescript: '5.9.3', vitest: '5.1.0'},
+  });
+  const result = doctor();
+  expect(result.status).toBe(1);
+  expect(findings(result)).toContainEqual(expect.objectContaining({id: 'lint.command', status: 'fail'}));
+});
+
+test('reports a broad lint exclusion that removes every selected source', async () => {
+  await put('eslint.config.mjs', `export default [{ignores: ['src/**']}, {files: ['**/*.ts'], rules: ${JSON.stringify(lintRules)}}];`);
+  const result = doctor();
+  expect(result.status).toBe(1);
+  expect(findings(result)).toContainEqual(expect.objectContaining({id: 'lint.scope', status: 'fail'}));
+});
+
+test('cannot pass quality when no test files are discovered', async () => {
+  await rm(join(root, 'test/index.test.ts'));
+  const result = doctor();
+  expect(result.status).toBe(1);
+  expect(findings(result)).toContainEqual(expect.objectContaining({id: 'test.scope', status: 'fail', message: 'No test files match the selected configuration'}));
+});
+
+test('doctor preserves structured unsupported diagnostics without package.json', async () => {
+  await rm(join(root, 'package.json'));
+  const result = doctor();
+  expect(result.status, result.stderr).toBe(1);
+  expect(JSON.parse(result.stdout)).toMatchObject({support:'unsupported',quality:{status:'incomplete'}});
+});
+
+test('Vitest defaults do not discover helper files merely under __tests__', async () => {
+  await rm(join(root,'test/index.test.ts'));
+  await mkdir(join(root,'__tests__'));
+  await put('__tests__/helper.ts','export const helper = 1;');
+  const result=doctor();
+  expect(result.status).toBe(1);
+  expect(findings(result)).toContainEqual(expect.objectContaining({id:'test.scope',status:'fail'}));
+});

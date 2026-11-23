@@ -16,11 +16,11 @@ import {renderSpecificationDocuments} from './specification-documents.js';
 import {planGitignore} from './gitignore.js';
 import {runTests,declaredTestRunners} from './test-command.js';
 import { config, exists, fileList, git, writeScoped, ref } from './project.js';
-const help=`BehavProof 0.2.0\nCommands: init, test, doctor, check, explain <rule>, impact, docs generate|check, formal discover|check|replay|adequacy, exceptions discover|check, assurance discover|run|map, ci plan|apply|enroll|verify|init-registry|advance\ncheck reads artifacts; it never runs tests. Gate requires --trust-root outside project.\nOptions: --runner jest|vitest --config --base --head --profile --mode audit|gate --format console|json|markdown --output --trust-root --dry-run --check --quality --help --version\n`;
+const help=`BehavProof 0.3.1\nCommands: init, test, doctor, check, explain <rule>, impact, docs generate|check, formal discover|check|replay|adequacy, exceptions discover|check, assurance discover|run|map, ci plan|apply|enroll|verify|init-registry|advance\ncheck reads artifacts; it never runs tests. Gate requires --trust-root outside project.\nOptions: --runner jest|vitest --config --base --head --profile --mode audit|gate --format console|json|markdown --output --trust-root --dry-run --check --quality --help --version\n`;
 async function main(){
  const {values,positionals}=parseArgs({allowPositionals:true,strict:true,options:{config:{type:'string'},base:{type:'string'},head:{type:'string'},profile:{type:'string'},mode:{type:'string'},format:{type:'string'},output:{type:'string'},'trust-root':{type:'string'},'dry-run':{type:'boolean'},check:{type:'boolean'},help:{type:'boolean'},version:{type:'boolean'},root:{type:'string'},model:{type:'string'},runner:{type:'string'},quality:{type:'boolean'},repository:{type:'string'},branch:{type:'string'},'workflow-branch':{type:'string'},'workflow-sha':{type:'string'},'sdk-sha':{type:'string'},'app-id':{type:'string'},plan:{type:'string'},'quality-policy':{type:'string'},registration:{type:'string'},digest:{type:'string'},reviewers:{type:'string'},pr:{type:'string'},'check-id':{type:'string'}}});
  const root=resolve(values.root??process.cwd()),[command,sub,...rest]=positionals;
- if(values.version){process.stdout.write('0.2.0\n');return 0;}if(values.help||!command){process.stdout.write(help);return 0;}
+ if(values.version){process.stdout.write('0.3.1\n');return 0;}if(values.help||!command){process.stdout.write(help);return 0;}
  if(rest.length)throw Error('Unexpected command arguments');
  if(values.runner&&!['test','init','doctor','ci'].includes(command!))throw Error('--runner applies only to test, init and doctor');
  if(values.runner&&!['vitest','jest'].includes(values.runner))throw Error('Expected --runner jest|vitest');
@@ -91,14 +91,18 @@ async function main(){
  }
  if(command==='doctor'){
   if(sub)throw Error('Unexpected doctor argument');
-  const cfg=await config(root,values.config,values.profile),selected=(values.runner??cfg.testRunner) as 'vitest'|'jest'|undefined;
-  const detection=await detectProject(root,selected?{runner:selected}:undefined);
+  const cfg=await config(root,values.config,values.profile);
   const {QualityPolicy}=await import('./quality.js');
   const qualityPolicy=values['quality-policy']?QualityPolicy.parse(await safeReadJson(root,values['quality-policy'])):undefined;
-  const quality=await diagnoseQuality(root,{...(selected?{runner:selected}:{}),...(qualityPolicy?{policy:qualityPolicy}:{})});
+  const requested=values.runner??cfg.testRunner;
+  if(requested&&qualityPolicy&&requested!==qualityPolicy.runner)throw Error('Runner does not match the selected quality policy');
+  const selected=(requested??qualityPolicy?.runner) as 'vitest'|'jest'|undefined;
+  const detection=await detectProject(root,selected?{runner:selected}:undefined);
+  const quality=detection.evidence.includes('package.json')?await diagnoseQuality(root,{...(selected?{runner:selected}:{}),...(qualityPolicy?{policy:qualityPolicy}:{})}):undefined;
+  const unavailable={schemaVersion:1,status:'incomplete',findings:[],notice:detection.reasons.join('; ')};
   const format=values.format??'json';
-  await emit(format==='json'?JSON.stringify({node:process.version,...detection,quality,trust:'External producer and protection authority must be configured separately.'},null,2)+'\n':formatQuality(quality,format));
-  return detection.support==='single-package'&&(!values.quality||quality.status==='pass')?0:1;
+  await emit(format==='json'?JSON.stringify({node:process.version,...detection,quality:quality??unavailable,trust:'External producer and protection authority must be configured separately.'},null,2)+'\n':quality?formatQuality(quality,format):format==='console'||format==='markdown'?unavailable.notice+'\n':(()=>{throw Error('Unsupported doctor format');})());
+  return detection.support==='single-package'&&(!values.quality||quality?.status==='pass')?0:1;
  }
  if(command==='explain'){
   const explanations:Record<string,string>={testResult:'Jest or Vitest assertions must complete; skipped/zero tests or unverified producers remain unknown.',changedLineCoverage:'Changed-line coverage requires current authenticated LCOV, complete executable-line scope and source mapping. Missing data is unknown; collect coverage in the verified execution.',mutationScore:'Score = (Killed + Timeout) / (Killed + Timeout + Survived + NoCoverage). Missing mapping or insufficient comparable mutants is unknown.',pipelineIntegrity:'A final always() gate checks all upstream results and artifacts. External issuer-bound branch protection requires independent verification; unavailable authority is unknown.',policyProtection:'Protected policy is supplied through a trusted external host and cannot be weakened by project configuration.'};

@@ -22,7 +22,7 @@ export function sdkArtifacts(sources){
    executables.push(cjs+'.js');
   }
  }
- for(const schema of ['config','policy','evidence','manifest','specification-registry','trust-root','ci-registration','assurance'])artifacts.add(`packages/cli/schemas/${schema}.schema.json`);
+ for(const schema of ['config','policy','evidence','manifest','specification-registry','trust-root','ci-registration','quality-policy','deployment','assurance'])artifacts.add(`packages/cli/schemas/${schema}.schema.json`);
  for(const profile of ['basic','standard','critical'])artifacts.add(`packages/cli/presets/${profile}-v2.json`);
  for(const path of sources.filter(path=>path.startsWith('templates/')))artifacts.add('packages/cli/'+path);
  return {artifacts,executables};

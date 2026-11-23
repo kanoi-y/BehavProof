@@ -6,16 +6,10 @@
 
 `@behavproof/adapter-quint` と `@behavproof/adapter-model-test` を、既存のBehavProofパッケージと同じ版で追加します。CLIの任意peerDependenciesなので、形式検証を使わないconsumerへは追加されません。Quint、Java、Rust、Connectも通常パッケージに含めません。
 
-現時点でnpmへの公開は行っていません。別プロジェクトへ導入する場合は、ビルド後に各パッケージのtarballを作り、そのファイルを導入してください。形式検証を選ぶプロジェクトは、通常のSDKに2つの形式検証アダプターを加えます。
+公開版0.3.1を使う場合は、公開npmレジストリから同じ版のCLIと両アダプターを導入できます。このガイドのバージョン2の設定・保護CIを試す場合は、このチェックアウトからビルドしたCLIと両アダプターを使ってください。
 
 ```sh
-# BehavProofリポジトリで実行
-mkdir -p .behavproof/packages
-for package in core adapter-reports spec-registry adapter-github cli adapter-quint adapter-model-test; do
-  npm pack "./packages/$package" --ignore-scripts --pack-destination .behavproof/packages
-done
-# 導入先プロジェクトで実行。パスは実際のBehavProofチェックアウトへ置換
-npm install --save-dev --ignore-scripts /path/to/BehavProof/.behavproof/packages/*.tgz
+npm install --save-dev --ignore-scripts @behavproof/cli@0.3.1 @behavproof/adapter-quint@0.3.1 @behavproof/adapter-model-test@0.3.1
 npm install --save-dev --ignore-scripts @informalsystems/quint@0.33.1
 ```
 

@@ -19,4 +19,4 @@ The canary harness can itself complete successfully after observing the expected
 
 ## External verification
 
-The user-designated repository is kanoi-y/pdd-ts. Preserve its main branch and existing protections. Historical PR6 and its PDD App check demonstrate API feasibility only; they do not approve BehavProof code or substitute for a BehavProof gate. Prepare concrete isolated validation branches/PRs after local implementation. Human approval and any security-sensitive protection/credential change require a reviewable exact candidate; do not fabricate approval or silently merge.
+The consumer repository is designated by the user. Preserve its main branch and existing protections. Historical checks from an earlier consumer demonstrate API feasibility only; they do not approve BehavProof code or substitute for a BehavProof gate. Prepare concrete isolated validation branches/PRs after local implementation. Human approval and any security-sensitive protection/credential change require a reviewable exact candidate; do not fabricate approval or silently merge.

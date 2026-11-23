@@ -206,7 +206,7 @@ export async function runQualitySandbox({sourceRoot, stagedSdk, outputDir, reque
       '--mount', bind(dependencies, '/dependencies/node_modules', true),
       '--entrypoint', '/bin/sh', IMAGE, '-eu', '-c', installScript,
     ], installName, 180000);
-    if (install.status !== 0) throw Error(`Protected npm install failed with exit code ${install.status}`);
+    if (install.status !== 0) throw Error(`Protected npm install failed with exit code ${install.status}: ${JSON.stringify(String(install.stderr??'').slice(-2000))}`);
     const result = runContainer(execute, [
       ...containerArgs(name, 'none', uid, gid, requiresToolchain?'1g':'512m', requiresToolchain),
       '--mount', bind(source, '/source'),
@@ -216,7 +216,9 @@ export async function runQualitySandbox({sourceRoot, stagedSdk, outputDir, reque
       ...formalArgs,
       '--entrypoint', '/usr/local/bin/node', IMAGE, '/sdk/packages/cli/dist/quality-ci-worker.js',
     ], name, requiresToolchain?600000:180000);
-    if (result.status !== 0) return result.status;
+    if (result.status !== 0) {
+      throw Error(`Protected quality worker failed with exit code ${result.status}: ${JSON.stringify(String(result.stderr??'').slice(-2000))}`);
+    }
     const reports = reportFiles(result.stdout,formalEnabled,!!workerRequest.config?.assurance?.definitions);
     for (const [file, data] of reports) await writeFile(join(output, file), data, {flag: 'wx', mode: 0o600});
     return 0;

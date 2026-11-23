@@ -1,6 +1,14 @@
 # Protected collection and check publication
 
-This page records the earlier Contract producer and its validation. Current deployments use the native runner and Quint [Protected Quality CI setup](formal.ja.md).
+## Current Protected Quality CI
+
+`ci plan` generates the two workflow files. The producer runs the enrolled native Vitest or Jest command in an isolated container without network or credentials. It seals the native report and invocation receipt together and includes evidence for any enrolled Quint specifications or Assurance checks. Dependency installation takes place separately using the reviewed public-registry lockfile with lifecycle scripts disabled.
+
+The publisher verifies the enrolled workflow, producer run and archive before evaluating the evidence against the version 2 trust root and active specification registry. It publishes the result through the dedicated GitHub App from the protected publisher environment. See the [Protected Quality CI setup](quality-ci.ja.md) and [trust root](trust-root.md).
+
+## Historical Contract producer
+
+The sections below record the earlier Contract producer and its validation. Reproduce those commands from the corresponding historical checkout.
 
 The host owns the approved registration, verifier installation, workflow identity and credentials. The candidate owns none of those. The APIs below are explicit integration components; a workflow naming itself protected grants no authority.
 
@@ -8,7 +16,7 @@ The host owns the approved registration, verifier installation, workflow identit
 
 `loadRegistration(projectRoot, path, protectedDigest)` reads an owner-private snapshot outside the entire candidate Git checkout. `registrationProjectData(registration)` translates only the selected Git subtree into project-relative paths, preserving the actual commit and semantic hashes. `source.projectPath: "."` means the Git root. An obligation or input outside the selected subtree is an error, not a silently dropped requirement. The projection is data conversion; it does not authenticate an arbitrary supplied object.
 
-The actual PR7 source at `5cb1133e45d3fe73974401d8c666ad1eab6fff78` was checked out and every enrolled file hash matched the externally registered baseline. The public Collector, new worker and built CLI then accepted its human baseline, comparisons, per-case target observations and canaries under an explicit local host. See `docs/evidence/approved-probe-live.json`. Its full critical gate remains incomplete because coverage, sufficient mutation-score evidence and external pipeline protection are absent.
+An enrolled source was checked out and every enrolled file hash matched the externally registered baseline. The public Collector, new worker and built CLI then accepted its human baseline, comparisons, per-case target observations and canaries under an explicit local host. Its full critical gate remains incomplete because coverage, sufficient mutation-score evidence and external pipeline protection are absent.
 
 ## Scoped production probes
 
@@ -48,13 +56,26 @@ One claim scope per contract is currently supported. Duplicate contract scopes o
 
 ## GitHub reference deployment
 
-The main-only workflow templates and concrete control-plane scripts are described in [protected-github-deployment.md](protected-github-deployment.md). They are a deployment proposal until the actual human enrollment, main integration, App read grants, protected variables and isolated-base enforcement tests are complete. `prepareFailedCheck(identity)` provides an opaque failure-only publication path when producer evidence is absent; it never manufactures a subject or producer CI and cannot publish success.
+The main-only workflow templates under templates/ and the concrete control-plane scripts are a deployment proposal until the actual human enrollment, main integration, App read grants, protected variables and isolated-base enforcement tests are complete. `prepareFailedCheck(identity)` provides an opaque failure-only publication path when producer evidence is absent; it never manufactures a subject or producer CI and cannot publish success.
+
+Replace `OWNER/REPO` in the workflow guards and `OWNER` / `REPO` in the App-token action with the consumer's identity. The legacy reference fetches source over unauthenticated HTTPS and supports public repositories. Set the following repository variables before dispatch:
+
+| Variable | Value |
+| --- | --- |
+| `BEHAVPROOF_REPOSITORY`, `BEHAVPROOF_REPOSITORY_ID` | Consumer owner/name and numeric GitHub repository ID |
+| `BEHAVPROOF_APP_ID` | Dedicated App ID used by the branch's required check |
+| `BEHAVPROOF_PROTECTED_BRANCH` | PR target branch |
+| `BEHAVPROOF_REVIEWERS` | Comma-separated authorized GitHub logins |
+| `BEHAVPROOF_SDK_SHA`, `BEHAVPROOF_WORKFLOW_SHA` | Reviewed SDK commit and exact workflow commit on the trusted `main` ref |
+| `BEHAVPROOF_REGISTRATION_JSON`, `BEHAVPROOF_REGISTRATION_DIGEST` | Independently enrolled registration and its digest |
+
+Restrict the `behavproof-publisher` deployment environment to the trusted `main` branch and place `BEHAVPROOF_APP_PRIVATE_KEY` in that environment. Keep the final job unconditional so it can report a failed upstream check on a trusted dispatch.
 
 ## Shared controller transport and selected runner
 
 `scripts/protected-protocol.mjs` supplies the host-owned capture/restore path used by the live producer/verifier. Capture retains the actual Collector return object and writes host context only after the selected runner returns from checked sandbox cleanup. Restore validates digest, bounded ZIP, complete reports, current independently materialized input/config/subject selection and exact artifact bytes before writing selected files. These helpers do not grant CI or human authority; the live verifier authenticates the registered GitHub producer before calling restore.
 
-An external trust root may declare `runner: {kind: "vitest", version: "5.1.0", manifestRef: "..."}`. This selects a runner through the protected invocation, tied to a specific authenticated manifest containing the selected test artifact. It requires all integrity/producer/subject/execution axes to pass and `package.json` in the hashed inputs. Candidate config cannot select this path. A successful declaration without authenticated current evidence does not change support or grant a pass. The supplied version describes the protected host's selection; it is not an independently measured binary-version claim. The package build/test wrapper is not executed by `check` or by this selection. See [actual PDD observations](pdd-adoption.md).
+An external trust root may declare `runner: {kind: "vitest", version: "5.1.0", manifestRef: "..."}`. This selects a runner through the protected invocation, tied to a specific authenticated manifest containing the selected test artifact. It requires all integrity/producer/subject/execution axes to pass and `package.json` in the hashed inputs. Candidate config cannot select this path. A successful declaration without authenticated current evidence does not change support or grant a pass. The supplied version describes the protected host's selection; it is not an independently measured binary-version claim. The package build/test wrapper is not executed by `check` or by this selection.
 
 For Jest, the protected root must select `kind: "jest"` and supported version `29.7.0` or `30.5.2`. Native and contract reports must belong to that selected invocation, with a matching SDK runner marker. Removing or invalidating selection cannot become a pass by disabling project rules. Implicit legacy Vitest roots retain their existing separately authenticated report behavior; new explicit runner roots use the invocation binding.
 

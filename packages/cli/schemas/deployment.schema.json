@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "repository": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]+\\/[A-Za-z0-9_-][A-Za-z0-9_.-]*$"
+    },
+    "protectedBranch": {
+      "type": "string",
+      "maxLength": 200,
+      "pattern": "^[\\w-][\\w./-]*$"
+    },
+    "workflowBranch": {
+      "type": "string",
+      "maxLength": 200,
+      "pattern": "^[\\w-][\\w./-]*$"
+    },
+    "sdkSha": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "appId": {
+      "type": "integer",
+      "exclusiveMinimum": 0,
+      "maximum": 9007199254740991
+    },
+    "checkName": {
+      "type": "string",
+      "const": "BehavProof protected gate"
+    },
+    "environment": {
+      "type": "string",
+      "const": "behavproof-publisher"
+    },
+    "producerPath": {
+      "type": "string",
+      "const": ".github/workflows/behavproof-producer.yml"
+    },
+    "publisherPath": {
+      "type": "string",
+      "const": ".github/workflows/behavproof-publisher.yml"
+    },
+    "policyPath": {
+      "type": "string",
+      "const": ".github/behavproof/quality-policy.json"
+    },
+    "configPath": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "repository",
+    "protectedBranch",
+    "workflowBranch",
+    "sdkSha",
+    "appId",
+    "checkName",
+    "environment",
+    "producerPath",
+    "publisherPath",
+    "policyPath",
+    "configPath"
+  ],
+  "additionalProperties": false
+}

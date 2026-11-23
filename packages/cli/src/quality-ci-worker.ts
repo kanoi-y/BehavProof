@@ -50,7 +50,7 @@ async function runObservation(executionId: string) {
     const child = spawn(process.execPath, [fileURLToPath(import.meta.url), '--observe'], {
       cwd: project,
       env: {...process.env, BEHAVPROOF_EXECUTION_ID: executionId},
-      stdio: 'ignore',
+      stdio: ['ignore','ignore','inherit'],
       shell: false,
     });
     child.once('error', reject);
@@ -150,7 +150,9 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     if (process.argv.length === 3 && process.argv[2] === '--observe') await observe();
     else if (process.argv.length === 2) await collectReports();
     else throw Error('Invalid protected quality worker arguments');
-  } catch {
+  } catch(error) {
+    const reason=error instanceof Error?error.message:'Unknown worker failure';
+    process.stderr.write('Protected quality worker error '+JSON.stringify(reason.slice(0,1000))+'\n');
     process.exitCode = 1;
   }
 }

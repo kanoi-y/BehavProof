@@ -41,7 +41,7 @@ export function inspectArchive(bytes,expected){
  collect(packaged.exports);collect(packaged.main);collect(packaged.types);collect(packaged.bin);
  if(!targets.length||!targets.some(t=>/\.(?:js|cjs)$/.test(t)))throw Error('Missing executable package entrypoint');
  for(const target of targets){if(!target.startsWith('./')||!seen.has('package/'+target.slice(2)))throw Error('Missing packed entrypoint: '+target);}
- if(packaged.name==='@behavproof/cli')for(const file of ['schemas/config.schema.json','schemas/ci-registration.schema.json','schemas/specification-registry.schema.json','schemas/trust-root.schema.json','presets/basic-v2.json','presets/standard-v2.json','presets/critical-v2.json','templates/audit.yml'])if(!seen.has('package/'+file))throw Error('Missing CLI asset: '+file);
+ if(packaged.name==='@behavproof/cli')for(const file of ['schemas/config.schema.json','schemas/ci-registration.schema.json','schemas/specification-registry.schema.json','schemas/quality-policy.schema.json','schemas/deployment.schema.json','schemas/trust-root.schema.json','presets/basic-v2.json','presets/standard-v2.json','presets/critical-v2.json','templates/audit.yml'])if(!seen.has('package/'+file))throw Error('Missing CLI asset: '+file);
  return files;
 }
 const project=fileURLToPath(new URL('..',import.meta.url));

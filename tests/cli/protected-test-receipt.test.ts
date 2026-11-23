@@ -14,6 +14,8 @@ it('uses a receipt only from the host-selected native execution, without a Contr
   const runner = {kind: 'jest', version: '30.5.2'} as const;
   const config = {schemaVersion: 2, profile: 'basic', git: {base: 'HEAD'},
     testRunner: 'jest', reports: {jest: nativeRef}, rules: {testResult: {severity: 'error'}}};
+  const policyHash=hash({rule:'fixture'});
+  const finding={status:'pass',message:'Quality observation reports success'};
   const producer = {tool: 'fixture', version: '1', collectorVersion: '1'};
   const inputs = ['.gitignore','package.json','behavproof.config.json','produce.mjs'];
   const native = Buffer.from(JSON.stringify({
@@ -35,7 +37,7 @@ it('uses a receipt only from the host-selected native execution, without a Contr
     await writeFile(join(root, 'behavproof.config.json'), JSON.stringify(config));
     await writeFile(join(root, 'produce.mjs'), `import {copyFile} from 'node:fs/promises';
 if (process.env.BEHAVPROOF_EXECUTION_ID !== 'current-run') throw Error('Collector did not select the test invocation');
-for (const name of ['jest.json','receipt.json']) await copyFile('.behavproof/input/'+name, process.env.BEHAVPROOF_OUTPUT_DIR+'/'+name);`);
+for (const name of ['jest.json','receipt.json','quality.json']) await copyFile('.behavproof/input/'+name, process.env.BEHAVPROOF_OUTPUT_DIR+'/'+name);`);
     const git = (...args: string[]) => execFileSync('git', [
       '-c', 'user.name=Fixture', '-c', 'user.email=test@example.invalid', ...args,
     ], {cwd: root, encoding: 'utf8'}).trim();
@@ -44,11 +46,14 @@ for (const name of ['jest.json','receipt.json']) await copyFile('.behavproof/inp
     git('commit', '-qm', 'fixture');
     const head = git('rev-parse', 'HEAD');
     await writeFile(join(root, nativeRef), native);
+    await writeFile(join(root,'.behavproof/input/quality.json'),JSON.stringify({schemaVersion:1,policyHash,
+      lint:finding,types:finding,configuration:finding,tests:finding}));
     for (const invocation of ['current-run', 'other-run', 'not-collected']) {
       const executionId = 'current-run';
       const receipt = captureTestEvidence(native, inventory, {invocation, runner});
       await writeFile(join(root, '.behavproof/input/receipt.json'), JSON.stringify(receipt));
       const artifacts = [{ref: 'jest.json', kind: 'test', scope: []},
+        {ref:'quality.json',kind:'quality_observation',scope:[]},
         ...(invocation==='not-collected'?[]:[{ref:'receipt.json',kind:'test_receipt',scope:[]}])];
       const manifest = await collect({root, executionId, command: process.execPath,
         args: ['produce.mjs'], inputPaths: inputs, configPaths: ['behavproof.config.json'],
@@ -60,6 +65,7 @@ for (const name of ['jest.json','receipt.json']) await copyFile('.behavproof/inp
         schemaVersion: 2, config: {...config, reports: {jest: '.behavproof/current-run/jest.json'}},
         policy: {schemaVersion: 1, profileVersion: '2', rules: config.rules},
         sourceCommit: head, specifications: [],
+        quality:{policyHash,reportRef:'.behavproof/current-run/quality.json'},
         inputs, configPaths: ['behavproof.config.json'], runner: {...runner, manifestRef: ref},
         manifests: [{ref, manifestHash: hash(manifest),
           expected: {executionId, commandHash: manifest.commandHash, subject: manifest.subject,

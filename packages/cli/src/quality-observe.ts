@@ -127,6 +127,7 @@ async function observeEslint(root: string, sources: string[], rules: string[], a
   for (const file of sources) {
     if (!files.has(file)) continue;
     const effective = object(await eslint.calculateConfigForFile(join(root,file)));
+    // ESLint 9.39 exposes the configured language as the built-in language object.
     const corePlugin = object(object(effective?.plugins)?.['@']);
     const javascript = object(corePlugin?.languages)?.js;
     if (!effective || effective.processor || effective.language && effective.language !== '@/js' && effective.language !== javascript) {
@@ -335,7 +336,7 @@ async function observeTests(root: string, policy: QualityPolicy, files: string[]
   if (inventory.unsafe.length) return prevented(fail('Unsafe effective test settings: ' + describe(inventory.unsafe)));
   if (unique.size !== inventory.files.length) return prevented(unknown('The selected runner reported duplicate test files'));
   if (!unique.size) return prevented(fail('The selected runner discovered no tests'));
-  const omitted = files.filter(path => defaultTest(path) && !unique.has(path));
+  const omitted = files.filter(path => defaultTest(path,policy.runner) && !unique.has(path));
   if (omitted.length) return prevented(fail('Conventional test files were excluded: ' + describe(omitted)));
   const projectFiles = new Set(files);
   const external = inventory.files.filter(path => !projectFiles.has(path));

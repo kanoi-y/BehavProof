@@ -17,7 +17,7 @@ export const CIRegistration = z.strictObject({
   repositoryId:z.string().regex(/^[1-9][0-9]*$/),
   workflowSha:commitSha,
   files:z.record(RelativePathSchema,HashSchema),
-  reviewers:z.array(z.string().regex(/^[A-Za-z0-9_-]+$/)).min(1).max(6),
+  reviewers:z.array(z.string().regex(/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?$/)).min(1).max(6),
   requiredTests:z.array(RelativePathSchema).max(1000),
   approval:ApprovalSchema,
   sourceCommit:commitSha,
@@ -77,7 +77,7 @@ export async function enrollCI(root:string, options:{
   const head = commitSha.parse((await git(root,['rev-parse','HEAD'])).trim());
   const workflowSha=commitSha.parse(options.workflowSha);
   const reviewers=[...new Set(options.reviewers.map(value => value.toLowerCase()))].sort();
-  if (!reviewers.length || reviewers.length>6 || reviewers.some(value => !/^[a-z0-9_-]+$/.test(value))) throw Error('Supply one to six authorized reviewer logins');
+  if (!reviewers.length || reviewers.length>6 || reviewers.some(value => !/^[a-z0-9](?:[a-z0-9-]{0,37}[a-z0-9])?$/.test(value))) throw Error('Supply one to six authorized reviewer logins');
   if (!Number.isSafeInteger(options.pr) || options.pr<1) throw Error('A positive approval PR number is required');
   const output=await externalFile(root,options.registration);
   const at=async(path:string) => {
@@ -105,11 +105,11 @@ export async function enrollCI(root:string, options:{
   const repo=z.object({id:z.number().int().positive(),full_name:z.literal(deployment.repository)}).parse(await http.request(prefix));
   const workflow=z.object({commit:z.object({sha:commitSha})}).parse(await http.request(`${prefix}/branches/${encodeURIComponent(deployment.workflowBranch)}`));
   if (workflow.commit.sha!==workflowSha) throw Error('The trusted workflow branch does not point at the selected workflow commit');
-  await readPinnedFiles(http,{workflowSha,files});
+  await readPinnedFiles(http,{workflowSha,files,configPath:deployment.configPath});
   const pr=z.object({base:z.object({ref:z.literal(deployment.protectedBranch),sha:commitSha})}).parse(await http.request(`${prefix}/pulls/${options.pr}`));
   const requiredChecks=[{context:deployment.checkName,appId:deployment.appId}];
   if ((await authority.protection(deployment.protectedBranch,requiredChecks)).status!=='pass') throw Error('Required issuer-bound branch protection is unavailable');
-  const requiredTests=(await git(root,['ls-tree','-r','--name-only','-z',head])).split('\0').filter(defaultTest).sort();
+  const requiredTests=(await git(root,['ls-tree','-r','--name-only','-z',head])).split('\0').filter(path=>defaultTest(path,policy.runner)).sort();
   const selection={deployment,workflowSha,files,reviewers,policy,config,sourceCommit:head,requiredTests,specifications,
     ...(assuranceSources?{assuranceSources}:{})};
   const approval=await authority.approval(options.pr,registrationTarget(selection),{headSha:head,baseSha:pr.base.sha,reviewers,requiredChecks});

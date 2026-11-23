@@ -48,7 +48,7 @@ export const configArg = (args: string[], keys: string[]) => {
 };
 
 export const qualitySources = (files: string[], policy: QualityPolicy) =>
-  files.filter(file => sourceFile(file) && !defaultTest(file) && !/(?:^|\/)(?:dist|coverage|build|__mocks__)\//.test(file) &&
+  files.filter(file => sourceFile(file) && !defaultTest(file,policy.runner) && !/(?:^|\/)(?:dist|coverage|build|__mocks__)\//.test(file) &&
     !/(?:^|\/)(?:[\w.-]+\.config|\.eslintrc)\.[cm]?[jt]s$/.test(file) && !/\.d\.[cm]?ts$/.test(file) &&
     policy.sources.some(pattern => matches(file,pattern)));
 
@@ -120,7 +120,7 @@ function lintTargets(args: string[], tool: 'eslint'|'biome') {
   const targets: string[] = [];
   for (let i=tool === 'eslint' ? 1 : 2; i<args.length; i++) {
     const arg = args[i]!;
-    if (['-c','--config','--config-path','--max-warnings','--ext'].includes(arg)) {i++; continue;}
+    if (['-c','--config','--config-path','--max-warnings','--max-diagnostics','--ext'].includes(arg)) {i++; continue;}
     if (!arg.startsWith('-')) targets.push(arg);
   }
   return targets;
@@ -249,7 +249,7 @@ async function tests(root: string, files: string[], pkg: Data, args: string[], p
     if (['projects','preset','root','rootDir','workspace','dir','includeSource','testRegex','filters','filter','testRunner','runner'].some(key => config[key] !== undefined || settings[key] !== undefined)) {
       throw Error('Custom test selection requires effective runner observation');
     }
-    const tests = files.filter(defaultTest);
+    const tests = files.filter(file=>defaultTest(file,runner));
     const rawInclude = runner === 'vitest' ? settings.include : settings.testMatch;
     const patterns = strings(rawInclude);
     const excludes = strings(settings.exclude);
@@ -257,7 +257,7 @@ async function tests(root: string, files: string[], pkg: Data, args: string[], p
     const normalize = (pattern: string) => pattern.replace(/^<rootDir>\//,'');
     if (rawInclude !== undefined && !patterns || settings.exclude !== undefined && !excludes || settings.testPathIgnorePatterns !== undefined && !jestIgnore) throw Error('Invalid test scope patterns');
     const selected = files.filter(file => sourceFile(file) &&
-      (patterns ? included(file,patterns.map(normalize)) : defaultTest(file)) &&
+      (patterns ? included(file,patterns.map(normalize)) : defaultTest(file,runner)) &&
       !(excludes ?? []).some(pattern => matches(file,normalize(pattern))) &&
       !(jestIgnore ?? []).some(pattern => new RegExp(pattern.replace('<rootDir>','^')).test('/' + file)));
     const excluded = tests.filter(file => !selected.includes(file));
@@ -298,7 +298,7 @@ export async function diagnoseQuality(root: string, options: QualityOptions = {}
   const tool = lintScript.args[0] === 'biome' || typeof dependencies['@biomejs/biome'] === 'string' && typeof dependencies.eslint !== 'string' ? 'biome' : 'eslint';
   const policy = options.policy ?? QualityPolicy.parse({schemaVersion:1,id:'quality-baseline-v1',
     lint:{tool,rules:baselineRules[tool]}, types:'strict', runner:selected ?? 'vitest',
-    sources: files.some(file => file.startsWith('src/') && sourceFile(file) && !defaultTest(file)) ? ['src/**/*'] : ['**/*']});
+    sources: files.some(file => file.startsWith('src/') && sourceFile(file) && !defaultTest(file,selected==='jest'?'jest':'vitest')) ? ['src/**/*'] : ['**/*']});
   const findings: Finding[] = [];
   const find: Find = (id,status,evidence,message,action,required = true) =>
     findings.push({id,status,evidence:[...new Set(evidence)].sort(),message,action,required});

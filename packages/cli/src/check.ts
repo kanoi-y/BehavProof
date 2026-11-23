@@ -73,7 +73,13 @@ export async function check(root:string,options:CheckOptions){
   if(spec&&trusted(path)){
    const {qualityEvidence}=await import('./quality-evidence.js');
    const evidence=qualityEvidence(await readArtifactJson(path),trust.quality.policyHash);
-   for(const [id,observation] of Object.entries(evidence))set(id,observation.status,observation.message,[path]);
+   const {testResult,...qualityChecks}=evidence;
+   for(const [id,observation] of Object.entries(qualityChecks))set(id,observation.status,observation.message,[path]);
+   const native=states.get('testResult');
+   const status=native?.status==='fail'||testResult.status==='fail'?'fail':
+    native?.status==='pass'&&testResult.status==='pass'?'pass':'unknown';
+   set('testResult',status,[native?.message,testResult.message].filter(Boolean).join('; '),
+    [...(native?.evidenceIds??[]),path]);
   }
  }
  const qualityPaths=trust?.qualitySources?select(files,trust.qualitySources):undefined;

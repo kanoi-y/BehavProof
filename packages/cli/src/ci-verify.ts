@@ -9,6 +9,7 @@ export interface DeploymentVerificationInput {
   repository: string;
   repositoryId: string;
   protectedBranch: string;
+  configPath: string;
   workflowBranch: string;
   workflowSha: string;
   producerPath: string;
@@ -91,12 +92,12 @@ function verifyInput(input: DeploymentVerificationInput) {
     name.split('/').every(part => part && !part.startsWith('.') && !part.endsWith('.') && !part.endsWith('.lock'));
   if (!/^[A-Za-z0-9_-]+\/[A-Za-z0-9_-][A-Za-z0-9_.-]*$/.test(input.repository) || input.repository.includes('..') ||
       !/^[1-9]\d*$/.test(input.repositoryId) || !commit.test(input.workflowSha) || !commit.test(input.sdkSha) ||
-      !validBranch(input.protectedBranch) || !validBranch(input.workflowBranch) ||
+      !RelativePathSchema.safeParse(input.configPath).success || !validBranch(input.protectedBranch) || !validBranch(input.workflowBranch) ||
       !workflowFile.test(input.producerPath) || !workflowFile.test(input.publisherPath) || input.producerPath === input.publisherPath ||
       !Number.isSafeInteger(input.appId) || input.appId < 1 || input.appId === 15368 ||
       !input.checkName.trim() || !/^[A-Za-z0-9_-][A-Za-z0-9_.-]*$/.test(input.environment) || input.environment.includes('..') ||
       !digest.test(input.registrationDigest) || !input.reviewers.length ||
-      input.reviewers.some(login => !/^[A-Za-z0-9-]+$/.test(login)) ||
+      input.reviewers.some(login => !/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?$/.test(login)) ||
       new Set(input.reviewers.map(login => login.toLowerCase())).size !== input.reviewers.length ||
       [descriptorPath, input.producerPath, input.publisherPath].some(path => !Object.hasOwn(input.files, path))) {
     throw Error('Invalid registered deployment requirements');
@@ -124,8 +125,10 @@ function regularBlob(entry: ReturnType<typeof githubObject> | undefined) {
   return entry?.type === 'blob' && (entry.mode === '100644' || entry.mode === '100755');
 }
 
-export async function readPinnedFiles(http: GitHubTransport, input: Pick<DeploymentVerificationInput, 'workflowSha' | 'files'>) {
+export async function readPinnedFiles(http: GitHubTransport, input: Pick<DeploymentVerificationInput, 'workflowSha' | 'files' | 'configPath'>) {
   const entries = await readPinnedTree(http, input.workflowSha);
+  requireMatch(Object.hasOwn(input.files,input.configPath) || !entries.has(input.configPath),
+    `Pinned Git tree contains an unenrolled config at ${input.configPath}`);
   const contents = new Map<string, Buffer>();
   for (const [path, expected] of Object.entries(input.files).sort(([a], [b]) => a.localeCompare(b))) {
     const entry = entries.get(path);
@@ -184,7 +187,7 @@ async function readRegistration(http: GitHubTransport, input: DeploymentVerifica
     Array.isArray(registration.reviewers) && hash(registration.reviewers) === hash(input.reviewers),
   'Repository registration does not bind this repository, workflow, file inventory and reviewers');
   const deployment = githubObject(registration.deployment);
-  for (const key of ['repository', 'protectedBranch', 'workflowBranch', 'producerPath', 'publisherPath', 'sdkSha', 'appId', 'checkName', 'environment'] as const) {
+  for (const key of ['repository', 'protectedBranch', 'workflowBranch', 'producerPath', 'publisherPath', 'sdkSha', 'appId', 'checkName', 'environment', 'configPath'] as const) {
     requireMatch(deployment[key] === input[key], `Repository registration has a different ${key}`);
   }
   requireMatch(RelativePathSchema.safeParse(deployment.configPath).success &&

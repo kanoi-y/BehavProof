@@ -32,7 +32,7 @@ const deployment = {
   environment, checkName, policyPath: '.github/behavproof/quality-policy.json', configPath: 'behavproof.config.json',
 };
 
-function fixture() {
+function fixture(reviewers = ['maintainer']) {
   function workflow(role: 'produce' | 'publish') {
     const publisher = role === 'publish';
     return `name: BehavProof ${role}
@@ -111,7 +111,6 @@ ${publisher ? '' : `      - uses: actions/upload-artifact@ea165f8d65b6e75b540449
   const workflowProtectionPath = `${prefix}/branches/trusted%2Fworkflows/protection`;
   const policiesPath = `${envPrefix}/deployment-branch-policies?per_page=100&page=1`;
   const repositorySecretsPath = `${prefix}/actions/secrets?per_page=100&page=1`;
-  const reviewers = ['maintainer'];
   const endpoints = new Map<string, unknown>([
     [prefix, { id: 9184, full_name: repository, owner: { type: 'Organization' } }],
     [refPath, { ref: `refs/heads/${workflowBranch}`, object: { type: 'commit', sha: workflowSha } }],
@@ -134,7 +133,7 @@ ${publisher ? '' : `      - uses: actions/upload-artifact@ea165f8d65b6e75b540449
       deployment_branch_policy: { custom_branch_policies: true, protected_branches: false },
       protection_rules: [
         { id: 401, type: 'branch_policy' },
-        { id: 402, type: 'required_reviewers', prevent_self_review: true, reviewers: [{ type: 'User', reviewer: { login: 'maintainer' } }] },
+        { id: 402, type: 'required_reviewers', prevent_self_review: true, reviewers: [{ type: 'User', reviewer: { login: reviewers[0] } }] },
       ],
     }],
     [policiesPath, { total_count: 1, branch_policies: [{ id: 551, name: workflowBranch, type: 'branch' }] }],
@@ -308,8 +307,36 @@ test('detects a changed local integration file while preserving remote observati
     const input = data.register();
     expect((await verify(input, data.fetcher, root)).status).toBe('pass');
     await writeFile(join(root, producerPath), '# local drift\n');
+
     expect(await verify(input, data.fetcher, root)).toMatchObject({ status: 'incomplete', checks: expect.arrayContaining([expect.objectContaining({ id: 'local-integration', status: 'fail' }), expect.objectContaining({ id: 'pinned-source', status: 'pass' })]) });
   } finally {
     await rm(root, { recursive: true, force: true });
   }
+});
+
+test.each([
+  ['bad_name'], ['-lead'], ['trail-'], ['a'.repeat(40)],
+])('rejects an invalid GitHub reviewer login (%s)', async (login) => {
+  const data = fixture();
+  const input = {...data.register(), reviewers: [login]};
+  await expect(verify(input, data.fetcher)).rejects.toThrow('Invalid registered deployment requirements');
+});
+
+test('accepts a hyphenated reviewer login and rejects it in the registration schema when it carries an underscore', async () => {
+  const data = fixture(['a-b']);
+  const report = await verify(data.register(), data.fetcher);
+  expect(report.status, JSON.stringify(report.checks.filter(item => item.status !== 'pass'))).toBe('pass');
+  const {CIRegistration} = await import('../../packages/cli/src/ci-registration.js');
+  expect(() => CIRegistration.shape.reviewers.parse(['a-b'])).not.toThrow();
+  expect(() => CIRegistration.shape.reviewers.parse(['bad_name'])).toThrow();
+  expect(() => CIRegistration.shape.reviewers.parse(['-lead'])).toThrow();
+  expect(() => CIRegistration.shape.reviewers.parse(['a'.repeat(40)])).toThrow();
+});
+
+test('rejects a pinned workflow commit with an unenrolled config file', async () => {
+  const data=fixture();
+  const stale={...data.register()};
+  const { [deployment.configPath]:_notEnrolled,...files }=stale.files;
+  const result=await verify({...stale,files}, data.fetcher);
+  expect(result.checks).toContainEqual(expect.objectContaining({id:'pinned-source',status:'fail',evidence:[expect.stringMatching(/unenrolled config/i)]}));
 });

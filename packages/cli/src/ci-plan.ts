@@ -88,15 +88,17 @@ export async function planCI(root: string, options: PlanOptions) {
     configPath:options.config??'behavproof.config.json',
   });
   const cfg = await config(root,deployment.configPath);
-  const runner = (options.runner??cfg.testRunner) as QualityPolicy['runner']|undefined;
   const custom = options['quality-policy'] ? QualityPolicy.parse(await safeReadJson(root,options['quality-policy'])) : undefined;
-  if (runner && custom && runner !== custom.runner) throw Error('Runner does not match the selected quality policy');
+  const runners = [options.runner,cfg.testRunner,custom?.runner].filter(Boolean);
+  if (new Set(runners).size>1) throw Error('Explicit, configured and policy runners must agree');
+  const runner = runners[0] as QualityPolicy['runner']|undefined;
   const quality = await diagnoseQuality(root,{...(runner?{runner}:{}),...(custom?{policy:custom}:{})});
+  const unresolved = [...(!runner ? ['runner'] : []), ...(!custom ? ['sources'] : []), 'workflowSha'];
   const prerequisite = [
     {id:'configuration', status:quality.status, issues:quality.findings.filter(row => row.required && ['fail','unknown'].includes(row.status))},
     {id:'lockfile', status:await pathState(root,'package-lock.json') === 'regular'?'present':'missing', action:'Commit a reviewed npm package-lock.json.'},
   ];
-  return {schemaVersion:1, deployment, policy:quality.policy, files:packageFiles(deployment,quality.policy), prerequisite,
+  return {schemaVersion:1, deployment, policy:quality.policy, files:packageFiles(deployment,quality.policy), unresolved, prerequisite,
     provisioning:[
       `Review the proposed files, apply them locally and install them on the trusted workflow branch ${deployment.workflowBranch}.`,
       `Install dedicated GitHub App ${deployment.appId} with Checks write and Actions, Contents, Pull requests, Administration read. Restrict the ${deployment.environment} environment to the trusted workflow branch, require approved reviewers, disable self-review and administrator bypass, and store BEHAVPROOF_APP_PRIVATE_KEY there.`,

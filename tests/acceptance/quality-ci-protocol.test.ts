@@ -7,8 +7,8 @@ import { pathToFileURL } from 'node:url';
 import { archive } from './zip-fixture.js';
 import { hash, hashBytes, parseConfig, specificationRevision } from '@behavproof/core';
 
-test('the trusted protocol rejects changed deployment files and stale manifest subjects', async () => {
-  const { prepareQuality, checkQualityManifest, collectorProducer } = await import('../../scripts/quality-ci-protocol.mjs');
+test('the trusted protocol rejects changed deployment files and stale or missing producer evidence', async () => {
+  const { prepareQuality, checkQualityManifest, restoreQuality, collectorProducer } = await import('../../scripts/quality-ci-protocol.mjs');
   const root = await mkdtemp(join(tmpdir(),'behavproof-ci-protocol-'));
   const git = (...args:string[]) => execFileSync('git',['-c','user.name=Test','-c','user.email=test@example.invalid',...args],{cwd:root,encoding:'utf8'}).trim();
   try {
@@ -36,9 +36,40 @@ test('the trusted protocol rejects changed deployment files and stale manifest s
       exitCode:0,artifacts:expected.artifacts.map((item:{ref:string})=>({...item,sha256:hashBytes(reports[item.ref]!)}))};
     expect(hash(checkQualityManifest(manifest,expected,ci,reports))).toBe(hash(manifest));
     expect(()=>checkQualityManifest({...manifest,artifacts:manifest.artifacts.filter((item:{ref:string})=>item.ref!==receiptRef)},expected,ci,reports)).toThrow();
-    expect(()=>checkQualityManifest({...manifest,subject:{...manifest.subject,prHeadSha:'2'.repeat(40)}},expected,ci,reports)).toThrow();
+    const stale={...manifest,subject:{...manifest.subject,prHeadSha:'2'.repeat(40)}};
+    expect(()=>checkQualityManifest(stale,expected,ci,reports)).toThrow();
+    const named=Object.fromEntries(expected.artifacts.map((item:{ref:string})=>[item.ref.split('/').at(-1),reports[item.ref]]));
+    const missing={...named}; delete missing['native.json'];
+    const trustPath=join(root,'trust.json');
+    await expect(restoreQuality(plan,expected.executionId,ci,archive({...missing,'manifest.json':Buffer.from(JSON.stringify(manifest))}),undefined,trustPath,r)).rejects.toThrow(/unexpected producer archive/i);
+    await expect(restoreQuality(plan,expected.executionId,ci,archive({...named,'manifest.json':Buffer.from(JSON.stringify(stale))}),undefined,trustPath,r)).rejects.toThrow(/producer evidence/i);
     await writeFile(join(root,policyFile),'{"changed":true}');
     await expect(prepareQuality({root,inputs:paths},r,pr)).rejects.toThrow(/protected/i);
+  } finally {
+    await rm(root,{recursive:true,force:true});
+  }
+});
+
+test('the trusted protocol accepts conventional untracked report paths and rejects committed reports', async () => {
+  const { prepareQuality } = await import('../../scripts/quality-ci-protocol.mjs');
+  const root = await mkdtemp(join(tmpdir(),'behavproof-ci-protocol-'));
+  const git = (...args:string[]) => execFileSync('git',['-c','user.name=Test','-c','user.email=test@example.invalid',...args],{cwd:root,encoding:'utf8'}).trim();
+  try {
+    await writeFile(join(root,'package.json'),'{}');
+    await writeFile(join(root,'package-lock.json'),JSON.stringify({packages:{'node_modules/vitest':{version:'5.1.0'}}}));
+    git('init','-q'); git('add','.'); git('commit','-qm','candidate');
+    const base=git('rev-parse','HEAD');
+    const registration={deployment:{configPath:'behavproof.config.json'},policy:{runner:'vitest'},files:{},specifications:[],
+      config:{schemaVersion:2,reports:{coverage:'coverage/lcov.info',mutation:'reports/mutation/mutation.json'}}};
+    const inputs=['package.json','package-lock.json'];
+    await expect(prepareQuality({root,inputs},registration,{head:{sha:base},base:{sha:base}})).resolves.toMatchObject({
+      auxiliary:[['coverage','coverage.lcov'],['mutation','mutation.json']],
+    });
+    await mkdir(join(root,'coverage'));
+    await writeFile(join(root,'coverage/lcov.info'),'stale coverage');
+    git('add','.'); git('commit','-qm','commit stale coverage');
+    const head=git('rev-parse','HEAD');
+    await expect(prepareQuality({root,inputs:[...inputs,'coverage/lcov.info']},registration,{head:{sha:head},base:{sha:base}})).rejects.toThrow(/protected report path/i);
   } finally {
     await rm(root,{recursive:true,force:true});
   }
@@ -215,6 +246,15 @@ test.each([['vitest','5.1.0',false,false],['jest','30.5.2',false,false],['vitest
     const weak=await evaluate('weakened');
     expect(weak.exitCode).toBe(1);
     expect(weak.evaluations).toContainEqual(expect.objectContaining({ruleId:'qualityConfiguration',status:'fail'}));
+    if(!formal&&!assurance){
+      await writeFile(join(root,'eslint.config.mjs'),files['eslint.config.mjs']);
+      await writeFile(join(root,testPath),files[testPath]!.replace('.toBe(2)', '.toBe(3)'));
+      git('add','.');git('commit','-qm','failing test');
+      const failing=await evaluate('failing-test');
+      expect(failing.exitCode).toBe(1);
+      expect(failing.evaluations).toContainEqual(expect.objectContaining({ruleId:'testResult',status:'fail'}));
+      expect(failing.evaluations).toContainEqual(expect.objectContaining({ruleId:'qualityConfiguration',status:'pass'}));
+    }
   } finally {
     vi.unstubAllEnvs();
     await rm(host,{force:true,recursive:true});

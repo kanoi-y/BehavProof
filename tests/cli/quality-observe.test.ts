@@ -101,14 +101,32 @@ test('fails when the adopted lint source is outside the actual command targets',
   expect(result.configuration).toMatchObject({status: 'fail', message: expect.stringMatching(/src\/other\.js/)});
 });
 
-test('uses Jest discovery and confirms the adapter recorded a complete native run', async () => {
+test('uses Jest discovery and records a complete receipt for a native ESM run', async () => {
   await put('package.json', {...pkg, scripts: {...scripts, test: 'jest --config run-jest.cjs'}});
   await put('jest.config.cjs', "throw Error('Wrong config');");
-  await put('run-jest.cjs', "module.exports = {testMatch: ['**/spec/*.test.cjs']};");
-  await rm(join(root, 'spec/count.test.mjs'));
-  await put('spec/count.test.cjs', "test('count', () => expect(1).toBe(1));");
+  await put('run-jest.cjs', "module.exports = {testMatch: ['**/spec/*.test.mjs']};");
+  await put('spec/count.test.mjs', "import {test, expect} from '@jest/globals'; test('count', () => expect(1).toBe(1));");
   const result = await observeQuality(root,{...policy,runner:'jest'});
   expect(result.tests).toMatchObject({status: 'pass'});
   const report = JSON.parse(await readFile(join(root, '.behavproof/input/jest.json'), 'utf8'));
   expect(report.numPassedTests).toBe(1);
+  const receipt = JSON.parse(await readFile(join(root, '.behavproof/input/jest.json.receipt.json'), 'utf8'));
+  expect(receipt).toMatchObject({runner:{kind:'jest',version:'30.5.2'},inventory:{complete:true,testCount:1}});
+});
+
+test('quality evidence keeps a failing test run distinct from a passing configuration', async () => {
+  const {qualityEvidence} = await import('../../packages/cli/src/quality-evidence.js');
+  const policyHash = 'a'.repeat(64);
+  expect(qualityEvidence({
+    schemaVersion: 1, policyHash,
+    lint: {status: 'pass', message: 'lint ok'},
+    types: {status: 'pass', message: 'types ok'},
+    tests: {status: 'fail', message: 'tests failed'},
+    configuration: {status: 'pass', message: 'configuration ok'},
+  }, policyHash)).toEqual({
+    lintResult: {status: 'pass', message: 'lint ok'},
+    typecheckResult: {status: 'pass', message: 'types ok'},
+    testResult: {status: 'fail', message: 'tests failed'},
+    qualityConfiguration: {status: 'pass', message: 'configuration ok'},
+  });
 });

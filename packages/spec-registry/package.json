@@ -1,6 +1,6 @@
 {
   "name": "@behavproof/spec-registry",
-  "version": "0.2.0",
+  "version": "0.3.1",
   "type": "module",
   "exports": {
     ".": {
@@ -9,7 +9,7 @@
     }
   },
   "dependencies": {
-    "@behavproof/core": "0.2.0",
+    "@behavproof/core": "0.3.1",
     "typescript-parser": "npm:typescript@5.9.3"
   },
   "files": [

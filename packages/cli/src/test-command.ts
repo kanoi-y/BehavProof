@@ -35,7 +35,9 @@ export async function runTests(root:string,configPath?:string,requested?:string,
  // Validate all managed reports before removing any.
  const old:string[]=[];for(const path of paths){try{const info=await lstat(join(root,path));if(!info.isFile()||info.isSymbolicLink()||info.nlink>1)throw Error('Unsafe existing test report');old.push(path);}catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;}}
  const runnerConfig=options.runnerConfig===undefined?[]:['--config',join(root,RelativePathSchema.parse(options.runnerConfig))];
- const runEnv=options.qualityRun?{...process.env,CI:'true'}:process.env;
+ const runEnv:NodeJS.ProcessEnv={...process.env,...(options.qualityRun?{CI:'true'}:{})};
+ // Jest needs the VM-modules loader to run ESM tests.
+ if(runner==='jest')runEnv.NODE_OPTIONS=[runEnv.NODE_OPTIONS,'--experimental-vm-modules'].filter(Boolean).join(' ');
  const temporary=await mkdtemp(join(root,'.behavproof/native-run-'));
  const nativeOutput=join(temporary,'native.json');
  const relativeOutput=relative(root,nativeOutput).replaceAll('\\','/');
