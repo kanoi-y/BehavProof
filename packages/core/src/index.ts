@@ -8,3 +8,6 @@ export * from './evidence.js';
 export * from './profiles.js';
 export * from './formal.js';
 export * from './assurance.js';
+export * from './test-evidence.js';
+export * from './specification-registry.js';
+export * from './formal-adequacy.js';

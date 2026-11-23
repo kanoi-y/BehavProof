@@ -3,10 +3,10 @@ import {execFileSync} from 'node:child_process';
 import {realpath,readdir,lstat} from 'node:fs/promises';
 import {resolve,relative,join,isAbsolute,sep} from 'node:path';
 import {safeRead,RelativePathSchema,HashSchema,hashBytes} from '@behavproof/core';
-export const sdkPackages=['core','adapter-reports','contract-registry','contract-vitest','contract-jest','adapter-github','adapter-quint','adapter-model-test','cli'];
+export const sdkPackages=['core','adapter-reports','spec-registry','adapter-github','adapter-quint','adapter-model-test','cli'];
 const packages=sdkPackages;
 const within=(base,path)=>{const r=relative(base,path);return r===''||!isAbsolute(r)&&r!=='..'&&!r.startsWith(`..${sep}`);};
-export const sdkSourcePath=path=>['package.json','package-lock.json','tsconfig.json','tsconfig.base.json','scripts/build-artifacts.mjs','scripts/build-commonjs.mjs','scripts/protected-probe-worker.mjs','packages/core/cjs/package.json'].includes(path)||path.startsWith('templates/')||packages.some(name=>path===`packages/${name}/package.json`||path===`packages/${name}/tsconfig.json`||path.startsWith(`packages/${name}/src/`)&&path.endsWith(name==='contract-jest'?'.cts':'.ts'));
+export const sdkSourcePath=path=>['package.json','package-lock.json','tsconfig.json','tsconfig.base.json','scripts/build-artifacts.mjs','scripts/build-commonjs.mjs','packages/core/cjs/package.json'].includes(path)||path.startsWith('templates/')||packages.some(name=>path===`packages/${name}/package.json`||path===`packages/${name}/tsconfig.json`||path.startsWith(`packages/${name}/src/`)&&/\.c?ts$/.test(path));
 /** Derive individual artifacts only from the selected tracked public source files. */
 export function sdkArtifacts(sources){
  const artifacts=new Set(),executables=[];
@@ -22,8 +22,8 @@ export function sdkArtifacts(sources){
    executables.push(cjs+'.js');
   }
  }
- for(const schema of ['config','policy','evidence','manifest','registry','trust-root','registration','assurance'])artifacts.add(`packages/cli/schemas/${schema}.schema.json`);
- for(const profile of ['basic','standard','critical'])artifacts.add(`packages/cli/presets/${profile}-v1.json`);
+ for(const schema of ['config','policy','evidence','manifest','specification-registry','trust-root','ci-registration','assurance'])artifacts.add(`packages/cli/schemas/${schema}.schema.json`);
+ for(const profile of ['basic','standard','critical'])artifacts.add(`packages/cli/presets/${profile}-v2.json`);
  for(const path of sources.filter(path=>path.startsWith('templates/')))artifacts.add('packages/cli/'+path);
  return {artifacts,executables};
 }

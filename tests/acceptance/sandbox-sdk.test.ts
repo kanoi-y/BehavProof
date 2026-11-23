@@ -3,7 +3,7 @@ test('a separately staged verifier includes its pinned build inputs and excludes
  const scratch=await mkdtemp(join(tmpdir(),'behavproof-sanitized-')),output=join(scratch,'sdk');
  try{
   execFileSync(process.execPath,['scripts/prepare-sandbox-sdk.mjs','--output',output],{cwd:resolve('.'),stdio:'pipe'});
-  const manifest=JSON.parse(await readFile(join(output,'sdk-source-inventory.json'),'utf8'));expect(manifest.files.length).toBeGreaterThan(0);expect(manifest.files.some((row:any)=>row.path==='scripts/protected-probe-worker.mjs')).toBe(true);
+  const manifest=JSON.parse(await readFile(join(output,'sdk-source-inventory.json'),'utf8'));expect(manifest.files.length).toBeGreaterThan(0);expect(manifest.files.some((row:any)=>row.path==='packages/cli/src/quality-ci-worker.ts')).toBe(true);
   expect(await readFile(join(output,'packages/core/src/schemas.ts'),'utf8')).toBe(await readFile('packages/core/src/schemas.ts','utf8'));
   for(const path of ['node_modules','.git','.superpowers','.codex','.aws','BehavProof_開発仕様書_v0.6.md'])await expect(access(join(output,path))).rejects.toThrow();
   const before=await readdir(output);expect(spawnSync(process.execPath,['scripts/prepare-sandbox-sdk.mjs','--output',output],{encoding:'utf8'}).status).not.toBe(0);expect(await readdir(output)).toEqual(before);

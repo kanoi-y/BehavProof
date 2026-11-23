@@ -30,8 +30,8 @@ function fixture(method='example') {
  }
  const definition:any={feature:{id:'refund',entrypoints:['POST /refund']},conditions:[{id:'condition',kind:method==='example'?'postcondition':method==='sequence'?'invariant':method==='effects'?'effect':method,statement:'refund safely',checks:['check'],requiredFaults:[]}],checks:[check]};
  observation.checkHash=core.hash(check);
- const report:any={schemaVersion:1,contractId:'contract',revisionHash:h,subject:{testedCommitSha:'commit-1',sourceTreeHash:h},inputHashes,checks:[observation],faults:[]};
- const expected=()=>({contractId:'contract',revisionHash:h,subject:{testedCommitSha:'commit-1',sourceTreeHash:h},inputHashes,checkHashes:{check:core.hash(check)},implementationSources:['implementation.ts'],authenticatedReportHashes:[core.hash(report)]});
+ const report:any={schemaVersion:2,definitionId:'contract',revisionHash:h,subject:{testedCommitSha:'commit-1',sourceTreeHash:h},inputHashes,checks:[observation],faults:[]};
+ const expected=()=>({definitionId:'contract',revisionHash:h,subject:{testedCommitSha:'commit-1',sourceTreeHash:h},inputHashes,checkHashes:{check:core.hash(check)},implementationSources:['implementation.ts'],authenticatedReportHashes:[core.hash(report)]});
  const evaluate=(reports:any[]=[report],overrides:any={})=>core.evaluateAssuranceConditions(definition,reports,{...expected(),...overrides});
  return {check,definition,observation,report,expected,evaluate};
 }
@@ -43,13 +43,12 @@ describe('consumer assurance obligations',()=>{
   f.observation.comparisonCount=0;
   expect(f.evaluate().status).toBe('unknown');
  });
- it('retains legacy config/contract defaults and hashes without opt-in',()=>{
-  const config=core.ConfigSchema.parse({schemaVersion:1});
+ it('keeps Assurance optional and validates selected definitions',()=>{
+  const config=core.ConfigSchema.parse({schemaVersion:2});
   expect(Object.hasOwn(config,'assurance')).toBe(false);
-  const contract=core.ContractSchema.parse({id:'c',kind:'examples',intentIds:[],revisionHash:h,sourceRef:'contract.ts'});
-  expect(Object.hasOwn(contract,'assurance')).toBe(false);
-  expect(core.ConfigSchema.safeParse({schemaVersion:1,assurance:{driver:'driver.ts',driverSources:['driver.ts'],implementationSources:['implementation.ts'],report:'report.json'}}).success).toBe(true);
-  expect(core.ContractSchema.safeParse({...contract,assurance:fixture().definition}).success).toBe(true);
+  const selection={driver:'driver.ts',driverSources:['driver.ts'],implementationSources:['implementation.ts'],report:'report.json'};
+  expect(core.ConfigSchema.safeParse({schemaVersion:2,assurance:selection}).success).toBe(false);
+  expect(core.ConfigSchema.safeParse({schemaVersion:2,assurance:{...selection,definitions:[{id:'refund',definition:fixture().definition}]}}).success).toBe(true);
  });
  it('never authenticates its own reports or accepts stale source/check identities',()=>{
   const f=fixture();

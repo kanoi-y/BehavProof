@@ -52,7 +52,9 @@ export const AssuranceDefinitionSchema=z.strictObject({feature:z.strictObject({i
   if(f.detects.some(s=>s.kind==='rule'?check.method!=='architecture'||!check.rules.some(r=>r.id===s.id):s.kind==='unchanged'?check.method!=='effects'||!check.cases.some(c=>c.id===s.id)||!check.unchangedFields.some(c=>c.scope===s.scope&&c.field===s.field):s.kind==='effect'?check.method!=='effects'||!check.cases.some(c=>c.id===s.id)||!check.effects.some(c=>c.scope===s.scope&&c.id===s.effectId):check.method==='architecture'||('cases' in check&&!check.cases.some(c=>c.id===s.id))||(check.method==='journey'&&!check.steps.some(c=>c.id===s.id))))issue(`Fault detection selector is outside check scope: ${f.id}`);
  }
 });
-export const AssuranceConfigSchema=z.strictObject({driver:path,driverSources:unique(path).min(1),implementationSources:unique(path).min(1),report:path,timeoutMs:count.min(1).max(3600000).optional()}).refine(c=>c.driverSources.includes(c.driver),'Driver must belong to driverSources');
+const assuranceDefinitions=z.array(z.strictObject({id:text,definition:AssuranceDefinitionSchema})).min(1).max(100)
+ .refine(rows=>new Set(rows.map(row=>row.id)).size===rows.length,'Duplicate assurance definition IDs');
+export const AssuranceConfigSchema=z.strictObject({driver:path,driverSources:unique(path).min(1),implementationSources:unique(path).min(1),report:path,timeoutMs:count.min(1).max(3600000).optional(),definitions:assuranceDefinitions}).refine(c=>c.driverSources.includes(c.driver),'Driver must belong to driverSources');
 export const AssuranceInputHashesSchema=z.record(path,digest);
 export const AssuranceCallReceiptSchema=z.strictObject({callId:text,targetRef:text,implementation:path,implementationHash:digest,variant:z.enum(['baseline','fault']),faultId:text.optional(),input:json,output:json.optional(),error:text.optional()});
 export const AssuranceComparisonSchema=z.strictObject({id:text,input:json,inputHash:digest,expected:json,actual:json.optional(),calls:count,receipts:list(AssuranceCallReceiptSchema),error:text.optional()});
@@ -73,8 +75,8 @@ export const AssuranceJourneyObservationSchema=z.strictObject({...observed,metho
 export const AssuranceObservationSchema=z.discriminatedUnion('method',[AssuranceExampleObservationSchema,AssuranceEffectsObservationSchema,AssurancePropertyObservationSchema,AssuranceSequenceObservationSchema,AssuranceArchitectureObservationSchema,AssuranceJourneyObservationSchema]);
 export const AssuranceFaultObservationSchema=z.strictObject({faultId:text,checkId:text,implementationHash:digest,observation:AssuranceObservationSchema});
 export const AssuranceSubjectSchema=z.strictObject({testedCommitSha:text,sourceTreeHash:digest});
-export const AssuranceReportSchema=z.strictObject({schemaVersion:z.literal(1),contractId:text,revisionHash:digest,subject:AssuranceSubjectSchema,inputHashes:AssuranceInputHashesSchema,checks:list(AssuranceObservationSchema),faults:list(AssuranceFaultObservationSchema)});
-export const AssuranceBundleSchema=z.strictObject({schemaVersion:z.literal(1),reports:list(AssuranceReportSchema).min(1)});
+export const AssuranceReportSchema=z.strictObject({schemaVersion:z.literal(2),definitionId:text,revisionHash:digest,subject:AssuranceSubjectSchema,inputHashes:AssuranceInputHashesSchema,checks:list(AssuranceObservationSchema),faults:list(AssuranceFaultObservationSchema)});
+export const AssuranceBundleSchema=z.strictObject({schemaVersion:z.literal(2),reports:list(AssuranceReportSchema).min(1)});
 
 export type AssuranceMethod=z.infer<typeof AssuranceMethodSchema>;
 export type AssuranceExampleCheck=z.infer<typeof AssuranceExampleCheckSchema>;
@@ -86,6 +88,7 @@ export type AssuranceArchitectureRule=z.infer<typeof AssuranceArchitectureRuleSc
 export type AssuranceJourneyCheck=z.infer<typeof AssuranceJourneyCheckSchema>;
 export type AssuranceLayerBinding=z.infer<typeof AssuranceLayerBindingSchema>;
 export type AssuranceDefinition=z.infer<typeof AssuranceDefinitionSchema>;
+export type AssuranceTarget={id:string;revisionHash:string;sourceRef:string;assurance?:AssuranceDefinition|undefined};
 export type AssuranceCondition=z.infer<typeof AssuranceConditionSchema>;
 export type AssuranceCheck=z.infer<typeof AssuranceCheckSchema>;
 export type AssuranceFaultDefinition=z.infer<typeof AssuranceFaultDefinitionSchema>;
@@ -114,7 +117,7 @@ export type AssuranceReport=z.infer<typeof AssuranceReportSchema>;
 export type AssuranceBundle=z.infer<typeof AssuranceBundleSchema>;
 export type AssuranceSubject=z.infer<typeof AssuranceSubjectSchema>;
 export type AssuranceStatus='pass'|'fail'|'unknown';
-export type AssuranceExpectation={contractId:string;revisionHash:string;subject:AssuranceSubject;inputHashes:AssuranceInputHashes;implementationSources:readonly string[];checkHashes:Record<string,string>;authenticatedReportHashes:readonly string[];authenticatedMedia?:Record<string,string>};
+export type AssuranceExpectation={definitionId:string;revisionHash:string;subject:AssuranceSubject;inputHashes:AssuranceInputHashes;implementationSources:readonly string[];checkHashes:Record<string,string>;authenticatedReportHashes:readonly string[];authenticatedMedia?:Record<string,string>};
 export type AssuranceCheckEvaluation={checkId:string;method:AssuranceMethod;status:AssuranceStatus;reasons:string[];comparisons:number;implementationCalls:number;scope:AssuranceCheck};
 export type AssuranceFaultEvaluation={faultId:string;checkId:string;status:AssuranceStatus;reasons:string[]};
 export type AssuranceConditionEvaluation={conditionId:string;kind:AssuranceCondition['kind'];statement:string;status:AssuranceStatus;checkIds:string[];faults:AssuranceFaultEvaluation[];reasons:string[]};
@@ -264,7 +267,7 @@ export function evaluateAssuranceConditions(definition:AssuranceDefinition,repor
   const parsed=AssuranceReportSchema.safeParse(value);
   if(!parsed.success){reasons.push('Malformed assurance report');continue;}
   const report=parsed.data;
-  if(report.contractId!==expected.contractId)continue;
+  if(report.definitionId!==expected.definitionId)continue;
   if(!expected.authenticatedReportHashes.includes(hash(report))){reasons.push('Assurance report is not authenticated');continue;}
   if(report.revisionHash!==expected.revisionHash||!same(report.subject,expected.subject)||!same(report.inputHashes,expected.inputHashes)){reasons.push('Assurance report has stale subject/contract/current input identities');continue;}
   if(report.checks.some(c=>!d.checks.some(k=>k.id===c.checkId))||report.faults.some(f=>!d.conditions.some(c=>c.requiredFaults.some(k=>k.id===f.faultId&&k.checkId===f.checkId)))){reasons.push('Undeclared check/fault observation');continue;}

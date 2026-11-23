@@ -8,7 +8,7 @@ import {tmpdir} from 'node:os';
 import {createHash} from 'node:crypto';
 import {join,dirname,resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
-export const packageDirs=['core','adapter-reports','contract-registry','contract-vitest','adapter-github','adapter-quint','adapter-model-test','cli'];
+export const packageDirs=['core','adapter-reports','spec-registry','adapter-github','adapter-quint','adapter-model-test','cli'];
 const registry='https://registry.npmjs.org/';
 const sha512=bytes=>'sha512-'+createHash('sha512').update(bytes).digest('base64');
 export function validatePackage(p,version){
@@ -41,7 +41,7 @@ export function inspectArchive(bytes,expected){
  collect(packaged.exports);collect(packaged.main);collect(packaged.types);collect(packaged.bin);
  if(!targets.length||!targets.some(t=>/\.(?:js|cjs)$/.test(t)))throw Error('Missing executable package entrypoint');
  for(const target of targets){if(!target.startsWith('./')||!seen.has('package/'+target.slice(2)))throw Error('Missing packed entrypoint: '+target);}
- if(packaged.name==='@behavproof/cli')for(const file of ['schemas/config.schema.json','schemas/registration.schema.json','schemas/trust-root.schema.json','presets/basic-v1.json','presets/standard-v1.json','presets/critical-v1.json','templates/audit.yml','templates/protected-github-producer.yml','templates/protected-github-publisher.yml'])if(!seen.has('package/'+file))throw Error('Missing CLI asset: '+file);
+ if(packaged.name==='@behavproof/cli')for(const file of ['schemas/config.schema.json','schemas/ci-registration.schema.json','schemas/specification-registry.schema.json','schemas/trust-root.schema.json','presets/basic-v2.json','presets/standard-v2.json','presets/critical-v2.json','templates/audit.yml'])if(!seen.has('package/'+file))throw Error('Missing CLI asset: '+file);
  return files;
 }
 const project=fileURLToPath(new URL('..',import.meta.url));

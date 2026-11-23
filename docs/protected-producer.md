@@ -1,5 +1,7 @@
 # Protected collection and check publication
 
+This page records the earlier Contract producer and its validation. Current deployments use the native runner and Quint [Protected Quality CI setup](formal.ja.md).
+
 The host owns the approved registration, verifier installation, workflow identity and credentials. The candidate owns none of those. The APIs below are explicit integration components; a workflow naming itself protected grants no authority.
 
 ## Approved baseline and nested projects

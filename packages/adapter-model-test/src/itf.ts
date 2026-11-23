@@ -1,5 +1,5 @@
 import { parseUntypedTrace, transformITFValue } from '@firfi/itf-trace-parser';
-import { canonicalJson, hash, type ReplayStep } from '@behavproof/core';
+import { canonicalJson, hash, ReplayOutcomeSchema, type ReplayStep } from '@behavproof/core';
 type Json=ReplayStep['expected'];
 const MAX_BYTES=10*1024*1024;
 const compare=(a:unknown,b:unknown)=>{const x=canonicalJson(a),y=canonicalJson(b);return x<y?-1:x>y?1:0;};
@@ -31,7 +31,7 @@ export function toFormalJson(input:unknown):Json{
  };
  const result=visit(input,0);if(Buffer.byteLength(canonicalJson(result))>MAX_BYTES)throw Error('Formal value size limit exceeded');return result;
 }
-export type ReplayInputTrace={id:string;steps:{index:number;action:string;parameters:Json;expected:Json}[]};
+export type ReplayInputTrace={id:string;steps:{index:number;action:string;parameters:Json;expected:Json;expectedOutcome?:ReplayStep['expectedOutcome']}[]};
 export function readITF(input:unknown,options:{id?:string;maxBytes?:number}={}):ReplayInputTrace{
  const max=options.maxBytes??MAX_BYTES;if(!Number.isSafeInteger(max)||max<1||max>MAX_BYTES)throw Error('Invalid trace size limit');
  // Check depth/accessors before the external value decoder traverses data.
@@ -40,7 +40,9 @@ export function readITF(input:unknown,options:{id?:string;maxBytes?:number}={}):
  const trace=parseUntypedTrace(value),vars=trace.vars;
  if(vars.length>1000||new Set(vars).size!==vars.length||trace.states.length>10001)throw Error('ITF inventory limit or duplicate variables');
  if(!vars.includes('mbt::actionTaken')||!vars.includes('mbt::nondetPicks'))throw Error('ITF action metadata unavailable; generate with --mbt');
- const names=vars.filter(v=>!v.startsWith('mbt::'));
+ const outcomeVariable='replayOutcome';
+ const hasOutcome=vars.includes(outcomeVariable);
+ const names=vars.filter(v=>!v.startsWith('mbt::')&&v!==outcomeVariable);
  const steps=trace.states.map((state,index)=>{
   if(!plain(state))throw Error('Invalid ITF state fields');
   const meta=state['#meta'];if(!plain(meta)||meta.index!==index)throw Error('ITF state index mismatch');
@@ -49,7 +51,9 @@ export function readITF(input:unknown,options:{id?:string;maxBytes?:number}={}):
   const action=state['mbt::actionTaken'];if(typeof action!=='string'||!action)throw Error('ITF action metadata unavailable');
   if(index===0&&action!=='init')throw Error('ITF initial action must be init');
   const expected=Object.fromEntries(names.map(name=>[name,state[name]]));
-  return {index,action,parameters:toFormalJson(transformITFValue(state['mbt::nondetPicks'])),expected:toFormalJson(transformITFValue(expected))};
+  const outcome=hasOutcome?ReplayOutcomeSchema.safeParse(state[outcomeVariable]):undefined;
+  if(outcome&&!outcome.success)throw Error(`Invalid replay outcome at step ${index}`);
+  return {index,action,parameters:toFormalJson(transformITFValue(state['mbt::nondetPicks'])),expected:toFormalJson(transformITFValue(expected)),...(outcome?{expectedOutcome:outcome.data}:{})};
  });
  return {id:options.id??`trace-${hash(steps).slice(0,16)}`,steps};
 }

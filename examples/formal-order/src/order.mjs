@@ -4,7 +4,9 @@ export function pay(state){
  return {...state,paid:true};
 }
 export function ship(state){
- if(!state.paid||state.shipped||state.cancelled||state.refunds!==0)throw Error('Shipping transition unavailable');
+ if(!state.paid||state.shipped||state.cancelled||state.refunds!==0){
+  throw Object.assign(Error('Shipping transition unavailable'),{code:'SHIP_NOT_AVAILABLE'});
+ }
  return {...state,shipped:true};
 }
 export function cancel(state){

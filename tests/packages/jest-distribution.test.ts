@@ -13,11 +13,11 @@ test('source SDK includes the native Jest inputs and exact core CommonJS build i
  try{
   stage(output);
   const inventory=JSON.parse(await readFile(join(output,'sdk-source-inventory.json'),'utf8'));
-  for(const path of ['scripts/build-commonjs.mjs','packages/core/cjs/package.json','packages/contract-jest/package.json','packages/contract-jest/tsconfig.json','packages/contract-jest/src/index.cts','packages/contract-jest/src/runner.cts','packages/contract-jest/src/reporter.cts','packages/contract-jest/src/probe.cts']){
+  for(const path of ['scripts/build-commonjs.mjs','packages/core/cjs/package.json','packages/adapter-reports/package.json','packages/adapter-reports/tsconfig.json','packages/adapter-reports/src/jest-inventory-reporter.cts']){
    expect(inventory.files.map((file:{path:string})=>file.path)).toContain(path);
    expect(await readFile(join(output,path),'utf8')).toBe(await readFile(path,'utf8'));
   }
-  await expect(access(join(output,'packages/contract-jest/dist/index.cjs'))).rejects.toThrow();
+  await expect(access(join(output,'packages/adapter-reports/dist/jest-inventory-reporter.cjs'))).rejects.toThrow();
  }finally{await rm(scratch,{recursive:true,force:true});}
 },30000);
 
@@ -27,15 +27,15 @@ test.skipIf(process.platform==='win32')('built SDK verifies native CJS bytes and
   stage(output,true);
   await expect(validateStagedSdk(output,{referenceRoot:resolve('.')})).resolves.toMatchObject({path:await realpath(output)});
   const inventory=JSON.parse(await readFile(join(output,'sdk-source-inventory.json'),'utf8'));
-  for(const path of ['packages/core/cjs/dist/index.js','packages/core/cjs/dist/index.d.ts','packages/contract-jest/dist/index.cjs','packages/contract-jest/dist/index.cjs.map','packages/contract-jest/dist/index.d.cts','packages/contract-jest/dist/index.d.cts.map'])expect(inventory.files.map((file:{path:string})=>file.path)).toContain(path);
-  execFileSync(process.execPath,['--input-type=commonjs','-e',`const {hash}=require('@behavproof/core');if(hash({}).length!==64)throw Error('CJS core missing');for(const name of ['@behavproof/jest','@behavproof/jest/runner','@behavproof/jest/reporter','@behavproof/jest/probe'])require.resolve(name);`],{cwd:output,stdio:'pipe'});
-  for(const path of ['packages/core/cjs/dist/private.js','packages/contract-jest/dist/private.cjs']){
+  for(const path of ['packages/core/cjs/dist/index.js','packages/core/cjs/dist/index.d.ts','packages/adapter-reports/dist/jest-inventory-reporter.cjs','packages/adapter-reports/dist/jest-inventory-reporter.cjs.map','packages/adapter-reports/dist/jest-inventory-reporter.d.cts','packages/adapter-reports/dist/jest-inventory-reporter.d.cts.map'])expect(inventory.files.map((file:{path:string})=>file.path)).toContain(path);
+  execFileSync(process.execPath,['--input-type=commonjs','-e',`const {hash}=require('@behavproof/core');if(hash({}).length!==64)throw Error('CJS core missing');if(typeof require('@behavproof/adapter-reports/jest-inventory-reporter')!=='function')throw Error('Jest inventory reporter missing');`],{cwd:output,stdio:'pipe'});
+  for(const path of ['packages/core/cjs/dist/private.js','packages/adapter-reports/dist/private.cjs']){
    await writeFile(join(output,path),'controlled private fixture');
    await expect(validateStagedSdk(output,{referenceRoot:resolve('.')})).rejects.toThrow(/private|unlisted/i);
    await unlink(join(output,path));
   }
   // Even a self-consistent edited inventory cannot select different executable bytes.
-  for(const path of ['packages/contract-jest/dist/index.cjs','packages/core/cjs/dist/index.js']){
+  for(const path of ['packages/adapter-reports/dist/jest-inventory-reporter.cjs','packages/core/cjs/dist/index.js']){
    const original=await readFile(join(output,path)),changed='module.exports = {};';
    await writeFile(join(output,path),changed);
    const row=inventory.files.find((file:{path:string})=>file.path===path),prior={...row};
@@ -52,12 +52,12 @@ test('release validation accepts actual dual-module and native Jest archives wit
  const scratch=await mkdtemp(join(tmpdir(),'behavproof-cjs-pack-'));
  try{
   const cli=npmCliPath();
-  for(const name of ['core','contract-jest']){
+  for(const name of ['core','adapter-reports']){
    const metadata=JSON.parse(await readFile(`packages/${name}/package.json`,'utf8'));
    expect(()=>validatePackage(metadata,metadata.version)).not.toThrow();
    const [pack]=JSON.parse(execFileSync(process.execPath,[cli,'pack','--ignore-scripts','--json','--cache',resolve('.npm-cache'),'--pack-destination',scratch],{cwd:resolve('packages',name),encoding:'utf8'}));
    const files=inspectArchive(await readFile(join(scratch,pack.filename)),metadata);
-   for(const file of name==='core'?['cjs/package.json','cjs/dist/index.js']:['dist/index.cjs','dist/index.d.cts','dist/reporter.cjs','dist/runner.cjs','dist/probe.cjs'])expect(files).toContain('package/'+file);
+   for(const file of name==='core'?['cjs/package.json','cjs/dist/index.js']:['dist/jest-inventory-reporter.cjs','dist/jest-inventory-reporter.d.cts'])expect(files).toContain('package/'+file);
   }
   expect(()=>validatePackage({name:'@behavproof/cli',version:'0.1.0',license:'UNLICENSED',publishConfig:{access:'public',registry:'https://registry.npmjs.org/'},files:['cjs/dist']},'0.1.0')).toThrow('allowlist');
  }finally{await rm(scratch,{recursive:true,force:true});}

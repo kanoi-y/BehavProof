@@ -11,10 +11,11 @@ const source=fileURLToPath(new URL('../../',import.meta.url));
 const results=[];
 for(const [name,implementation] of [['normal',normal],['implementation-fault',faulty]]){
  let comparisons=0,calls=0;const started=performance.now();
- const factory=defineDriver({init:{},Pay:{},Ship:{},Cancel:{},Refund:{},Wait:{}},()=>{
+ const factory=defineDriver({init:{},Pay:{},Ship:{},TryShipUnpaid:{},Cancel:{},Refund:{},Wait:{}},()=>{
   let state;
   const call=(name)=>{calls++;state=name==='initialize'?implementation.initialize():implementation[name](state);};
-  return {init:()=>call('initialize'),Pay:()=>call('pay'),Ship:()=>call('ship'),Cancel:()=>call('cancel'),Refund:()=>call('refund'),Wait:()=>call('wait'),getState:()=>({...state,refunds:BigInt(state.refunds)})};
+  const tryUnpaid=()=>{try{call('ship');}catch(error){if(error?.code!=='SHIP_NOT_AVAILABLE')throw error;}};
+  return {init:()=>call('initialize'),Pay:()=>call('pay'),Ship:()=>call('ship'),TryShipUnpaid:tryUnpaid,Cancel:()=>call('cancel'),Refund:()=>call('refund'),Wait:()=>call('wait'),getState:()=>({...state,refunds:BigInt(state.refunds)})};
  });
  try{
   const result=await run({spec:join(root,'specs/order.qnt'),quintBin:join(root,'node_modules/.bin/quint'),backend:'typescript',nTraces:20,maxSteps:8,maxSamples:100,seed:'42',invariants:['refundAtMostOnce','noRefundAfterShipping'],driver:factory,stateCheck:stateCheck(raw=>({paid:raw.paid,shipped:raw.shipped,cancelled:raw.cancelled,refunds:raw.refunds}),(expected,actual)=>{comparisons++;return isDeepStrictEqual(expected,actual);})});

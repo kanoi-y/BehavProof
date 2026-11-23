@@ -1,17 +1,17 @@
 # 形式モデルと実装再生の導入
 
-M2-Fは明示導入するオプションです。通常の `check` はモデル検査・テスト・Driverを実行しません。`formal discover` もファイル一覧を調べるだけです。
+形式検証はプロジェクトごとに設定します。通常の `check` は収集済みの証拠を評価します。`formal discover` は設定されたQuintモジュールを一時領域で型検査し、選択された定義と依存ソースを表示します。
 
 ## 導入する範囲
 
 `@behavproof/adapter-quint` と `@behavproof/adapter-model-test` を、既存のBehavProofパッケージと同じ版で追加します。CLIの任意peerDependenciesなので、形式検証を使わないconsumerへは追加されません。Quint、Java、Rust、Connectも通常パッケージに含めません。
 
-現時点でnpmへの公開は行っていません。別プロジェクトへ導入する場合は、ビルド後に各パッケージのtarballを作り、そのファイルを導入してください。通常の6パッケージに加えて、形式検証を選ぶプロジェクトだけが2つのアダプターを導入します。
+現時点でnpmへの公開は行っていません。別プロジェクトへ導入する場合は、ビルド後に各パッケージのtarballを作り、そのファイルを導入してください。形式検証を選ぶプロジェクトは、通常のSDKに2つの形式検証アダプターを加えます。
 
 ```sh
 # BehavProofリポジトリで実行
 mkdir -p .behavproof/packages
-for package in core adapter-reports contract-registry contract-vitest adapter-github cli adapter-quint adapter-model-test; do
+for package in core adapter-reports spec-registry adapter-github cli adapter-quint adapter-model-test; do
   npm pack "./packages/$package" --ignore-scripts --pack-destination .behavproof/packages
 done
 # 導入先プロジェクトで実行。パスは実際のBehavProofチェックアウトへ置換
@@ -35,17 +35,18 @@ Java 21を用意して `JAVA_HOME` と `PATH` を設定してください。`ver
 
 ## プロジェクトの設定
 
-`behavproof.config.json` の `formal.models` に次を登録します。完全な設定を作る例は [formal-flow.mjs](../examples/formal-order/formal-flow.mjs) を参照してください。
+`schemaVersion: 2` の `behavproof.config.json` の `formal.models` に次を登録します。完全な設定を作る例は [formal-flow.mjs](../examples/formal-order/formal-flow.mjs) を参照してください。
 
-- モデルID、対象Contract ID、`.qnt` パスとimport先の `modelSources`。
+- 論理モデルID、`.qnt` パス、対象の `module`、初期化Actionの `init` と遷移Actionの `step`。Quintソースの相対importは再帰的に解決します。
 - QuintのCLI JavaScriptエントリ、Quint版、Apalache版。
-- 検査するproperty名、実行段階 `parse/typecheck/test/run/verify`。
+- 定義名を参照する `invariants`、`witnesses`、`requiredActions` と、実行段階 `parse/typecheck/test/run/verify`。
+- `formal.required` には、形式仕様が必須のパス範囲と対応するモデルIDを設定できます。
 - `maxSteps`、`maxSamples`、`seed`、`timeoutMs`。
 - モデル結果、トレースreceipt・ディレクトリ、実装再生結果の出力先。
 - Driver、実装、追加ソースの明示一覧、必須action、最低トレース数・比較数。
-- 正常と同じDriver・トレースで失敗すべき、既知の故障実装。
+- 同じDriverとトレースで検出する故障実装。モデル側の故障感度を検査する場合は、`mutants` にモデルファイルと検査する不変条件を指定します。
 
-Driverはプロジェクトが提供する実行可能コードです。実装を呼び出す `createDriver(implementation)` をexportし、`dispatch(action, parameters)` と `observe()` を返します。[Driver](../examples/formal-order/driver.mjs) と [実装](../examples/formal-order/src/order.mjs) を参照してください。期待状態はアダプターが保持し、実装関数の呼出回数と期待値・観測値の比較を記録します。
+Driverはプロジェクトが提供する実行可能コードです。実装を呼び出す `createDriver(implementation)` をexportし、`dispatch(action, parameters)` と `observe()` を返します。[Driver](../examples/formal-order/driver.mjs) と [実装](../examples/formal-order/src/order.mjs) を参照してください。期待状態はアダプターが保持し、実装関数の呼び出しと観測値を比較します。モデルに `replayOutcome` がある場合、Driverは `allowed` または `rejected` を返します。注文サンプルは `TryShipUnpaid` で発送拒否と状態の維持を検査します。
 
 依存モジュールや設定を読み込む場合は、保護された入力範囲と `driverSources` / `implementationSources` に含めてください。動的importや外部サービスまで自動的に完全列挙する仕組みではありません。
 
@@ -54,6 +55,7 @@ Driverはプロジェクトが提供する実行可能コードです。実装�
 ```sh
 behavproof formal discover --format json
 behavproof formal check --model specs/order.qnt
+behavproof formal adequacy --model specs/order.qnt
 behavproof formal replay --model specs/order.qnt
 behavproof check --mode gate --trust-root /保護された場所/trust.json --format json
 ```
@@ -64,11 +66,36 @@ behavproof check --mode gate --trust-root /保護された場所/trust.json --fo
 
 ## 成功レポートをゲートへ採用する条件
 
-実行結果のJSONを置くだけでは採用できません。既存のCollectorでモデル結果・再生結果・receipt・receiptが指す全トレースを収集し、現在の入力・設定・コマンド・依存lockを独立したホストが認証します。レポートが申告するproducer名や成功値は承認の代わりになりません。
+実行結果のJSONを置くだけでは採用できません。既存のCollectorでモデル結果、`<model-report>.adequacy.json`、再生結果、トレースreceiptとその参照先を収集し、現在の入力・設定・コマンド・依存lockを独立したホストが認証します。レポートが申告するproducer名や成功値は承認の代わりになりません。
 
-モデルとDriverの意味も別にレビューします。Contractの `formal` に `modelId`、`modelHash`、`driverHash`、`propertyIds` を持たせ、そのContract版とIntentを承認済みbaselineへ登録します。hashは、プロジェクト相対パスから各ファイルのSHA-256へのmapに対するBehavProofのcanonical hashです。モデル・Driver本文やpropertyの対応が変わればContract版も変わります。承認済み登録の作成時には、独立確認した実ファイルhashとの一致を検査します。
+ホステッド Protected CI では、固定した Quint と Apalache を Producer が準備し、検証コンテナに読み取り専用で渡します。Producer はモデル検査・到達可能性・仕様変異の出力を Driver と通常テストの実行前に収集し、再生結果と合わせて認証対象の `formal-evidence.json` に格納します。Publisher は、このファイルのダイジェストと成果物一覧を照合してからゲートへ渡します。形式仕様を登録していない通常テストのジョブでは、形式ツールの準備を省きます。
 
-criticalとして採用したモデルは構文・型・モデル検査・実装再生・意味の結び付けを必須とし、同じDriver・トレースを使う故障canaryも要求します。候補側でモデルを削除したり、検査段階・上限・最低件数を変更しても、保護ホスト側の義務を取り除けません。変更を採用するには独立した再レビューと登録が必要です。
+保護ホストは `specifications` に、モデルIDと承認済みリビジョンのハッシュを登録します。ハッシュには、モジュールの選択、依存ソース、Driver、検査条件が含まれます。変更の承認は旧・新リビジョンとPRのHEADに結び付きます。ゲートは、削除や上限縮小に独立した承認がない場合も、登録済みの義務を評価します。
+
+新しい Protected Quality CI は `ci enroll` が生成する `schemaVersion: 2` の登録を使います。登録には `sourceCommit` と `specifications` が必要です。通常テストだけを登録する場合の `specifications` は空配列です。ゲートに渡す信頼ルートもバージョン2を使用します。
+
+### マージ後の仕様登録
+
+対象リポジトリに専用の `behavproof-registry` ブランチを用意します。書き込みを登録管理者に限定し、管理者にも保護を適用して、ブランチ削除と強制更新を禁止します。Protected Quality CI の Producer と Publisher には読み取り権限を与えます。保護ホストには、ブランチ設定とチェック実行を読める権限と、登録ブランチへ書き込める権限が必要です。
+
+リポジトリのルールセットを使う場合は、更新を制限して登録管理者だけを常時バイパスに指定するルールセットと、削除・強制更新をバイパスなしで禁止するルールセットを設定します。[GitHub のブランチルール API](https://docs.github.com/en/rest/repos/rules#get-rules-for-a-branch)
+
+独立した登録ファイルと登録時のダイジェストで、登録ブランチを初期化します。マージ後は保護ホストの Git オブジェクトに PR の HEAD、マージコミット、対象ブランチの現在のコミットを揃え、Publisher が返したチェックIDを指定します。
+
+```sh
+behavproof ci init-registry --registration "$REGISTRATION" --digest "$REGISTRATION_DIGEST"
+behavproof ci advance --registration "$REGISTRATION" --digest "$REGISTRATION_DIGEST" --pr "$MERGED_PR" --check-id "$CHECK_ID"
+```
+
+`ci advance` は、成功チェックの発行元と旧登録のダイジェスト、PR の HEAD と基点、マージされたツリーを照合します。更新には、審査したツリーと同じマージ結果が必要です。登録ブランチの先端が処理中に変わった場合は更新を中断し、現在の登録から差分を再計算する必要があります。登録とマージ先の仕様が食い違う間は、後続 PR に成功判定を出しません。[GitHub の `createCommitOnBranch` リファレンス](https://docs.github.com/en/graphql/reference/commits#createcommitonbranch)
+
+状態Witnessが見つかれば `pass`、指定上限を調べ切って未到達なら `fail`、タイムアウトなど検査未完了なら `unknown` です。必須Actionには、その遷移を記録した認証済みトレースが必要です。仕様変異では、同じ上限と不変条件で正常モデルが成功し、故障モデルから反例が得られることを確認します。
+
+ゲートの `formal.models[].coverage` では、シミュレーションのシード・標本数の設定値と、認証済みトレースで観測した状態・遷移・Action の件数を確認できます。有界検査の記録には、バックエンド、上限、対象Property、Witnessの判定を含めます。シミュレーションのトレースが得られない場合は、観測件数を `null` として理由を記録します。
+
+`behavproof impact --base <ref>` の `modelIds` には、変更された `.qnt`、推移的な仕様依存、Driver、対応する実装から影響候補となったモデルを表示します。依存ソースの一覧を解決できない場合は `unknown` として記録します。
+
+`behavproof docs generate` はモデルの定義名、検証上限、評価項目、証拠参照を Markdown・HTML・JSON に出力します。保護ホストの評価を反映するには `--trust-root` を指定します。`behavproof docs check` は現在の設定と評価から再生成した結果を保存済みのファイルと照合します。
 
 ## 再現可能な受入フロー
 

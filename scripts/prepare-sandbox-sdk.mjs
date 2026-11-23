@@ -14,7 +14,7 @@ if(within(top,requested))throw Error('SDK staging must be outside the entire Git
 const output=join(await realpath(dirname(requested)),basename(requested));
 if(within(top,output))throw Error('SDK staging must be outside the entire Git checkout');
 const paths=git(['ls-files','-z','--','.']).split('\0').filter(Boolean).filter(sdkSourcePath).sort();
-for(const required of ['package.json','package-lock.json','scripts/build-artifacts.mjs','scripts/build-commonjs.mjs','scripts/protected-probe-worker.mjs','packages/core/cjs/package.json',...packages.map(name=>`packages/${name}/package.json`)])if(!paths.includes(required))throw Error('Required tracked SDK build input is missing');
+for(const required of ['package.json','package-lock.json','scripts/build-artifacts.mjs','scripts/build-commonjs.mjs','packages/core/cjs/package.json',...packages.map(name=>`packages/${name}/package.json`)])if(!paths.includes(required))throw Error('Required tracked SDK build input is missing');
 await mkdir(output,{mode:0o700});
 try{
 const files=[];let total=0;

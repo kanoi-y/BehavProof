@@ -35,19 +35,19 @@ npm whoami --registry=https://registry.npmjs.org
 npm run release -- publish .behavproof/releases/0.2.0 SOURCE_SHA
 ```
 
-依存順で全8パッケージを `--access=public --tag=next --ignore-scripts` で公開する。既存privateパッケージをpublicへ変更する公開を拒否する。公開済みの同一バージョンは、publicかつtarballのSHA-512が完全一致する場合だけ再利用する。途中で失敗した場合、同じmanifestで再実行できる。異なるbytesで同一バージョンを上書きしない。npmの複数パッケージ公開は一括トランザクションではないため、全件確認まで完了扱いにしない。
+依存順で公開対象パッケージを `--access=public --tag=next --ignore-scripts` で公開する。既存privateパッケージをpublicへ変更する公開を拒否する。公開済みの同一バージョンは、publicかつtarballのSHA-512が完全一致する場合だけ再利用する。途中で失敗した場合、同じmanifestで再実行できる。異なるbytesで同一バージョンを上書きしない。npmの複数パッケージ公開は一括トランザクションではないため、全件確認まで完了扱いにしない。
 
 npmは公開受付後にマルウェア検査を行い、取得可能になるまで通常約5分、混雑時は15分以上かかることがある。ツールは全パッケージを受付順に送信した後、20秒間隔・20分のポーリング期間でメタデータを確認する。実行中のregistryリクエスト時間が加わるため、全体の壁時計時間は20分を超える場合がある。受付済みだがまだ404のpublic名は、owner権限とOrganization一覧で確認し、再送せず待つ。期限切れは完了扱いにせず、時間を置いて同じmanifestで再確認する（[公式説明](https://github.blog/changelog/2026-07-28-npm-publish-time-malware-scanning-and-dual-use-metadata/)）。
 
-公開後はnpm APIのアクセス状態 `public` と `dist.integrity` を全件読み戻す。認証情報を持たない利用者の別ディレクトリで、CLI・Vitestアダプターをregistryから実際にインストールして動作確認する。formalアダプターは必要な利用者のみ追加する。
+公開後はnpm APIのアクセス状態 `public` と `dist.integrity` を全件読み戻す。認証情報を持たない利用者の別ディレクトリで、CLIとテストランナーをregistryから実際にインストールして動作確認する。formalアダプターは必要な利用者のみ追加する。
 
 ```sh
-npm install --ignore-scripts @behavproof/cli@0.2.0 @behavproof/vitest@0.2.0 vitest@5.1.0
+npm install --ignore-scripts @behavproof/cli@0.2.0 vitest@5.1.0
 npx --no-install behavproof --help
 ```
 
 ## バージョンタグとGitHub Release
 
-全8件のpublic公開とregistryからのインストール確認後、公開ソースの正確なコミットに注釈付き `v0.2.0` タグを作成する。既存タグを移動・上書きしない。GitHub Releaseには対象コミット、導入方法、検証結果、既知の制約、tarballのSHA-512を記載する。限定公開tarballやmanifest内のファイル内容をpublicのReleaseに添付しない。manifestのハッシュ一覧は公開してよい。初期導入期間中はPrereleaseとして公開する。
+全対象パッケージのpublic公開とregistryからのインストール確認後、公開ソースの正確なコミットに注釈付き `v0.2.0` タグを作成する。既存タグを移動・上書きしない。GitHub Releaseには対象コミット、導入方法、検証結果、既知の制約、tarballのSHA-512を記載する。限定公開tarballやmanifest内のファイル内容をpublicのReleaseに添付しない。manifestのハッシュ一覧は公開してよい。初期導入期間中はPrereleaseとして公開する。
 
 将来の自動公開は、保護されたRelease環境とnpm Trusted Publishingの設定を確認してから導入する。現在は長寿命npmトークンをGitHub Secretsへ新設しない。管理者端末からの初回公開にはOIDC由来の自動provenanceが付かないため、attestation付きと表示しない（[npm公式](https://docs.npmjs.com/trusted-publishers/)）。

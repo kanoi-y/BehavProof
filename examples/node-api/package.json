@@ -1,1 +1,11 @@
-{"name":"behavproof-node-example","private":true,"type":"module","scripts":{"test":"vitest run"},"devDependencies":{"@behavproof/vitest":"0.2.0","vitest":"5.1.0"}}
+{
+  "name": "behavproof-node-example",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "vitest": "5.1.0"
+  }
+}

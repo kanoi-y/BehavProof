@@ -1,0 +1,1870 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "number",
+      "const": 2
+    },
+    "deployment": {
+      "type": "object",
+      "properties": {
+        "repository": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+\\/[A-Za-z0-9_-][A-Za-z0-9_.-]*$"
+        },
+        "protectedBranch": {
+          "type": "string",
+          "maxLength": 200,
+          "pattern": "^[\\w-][\\w./-]*$"
+        },
+        "workflowBranch": {
+          "type": "string",
+          "maxLength": 200,
+          "pattern": "^[\\w-][\\w./-]*$"
+        },
+        "sdkSha": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40}$"
+        },
+        "appId": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        },
+        "checkName": {
+          "type": "string",
+          "const": "BehavProof protected gate"
+        },
+        "environment": {
+          "type": "string",
+          "const": "behavproof-publisher"
+        },
+        "producerPath": {
+          "type": "string",
+          "const": ".github/workflows/behavproof-producer.yml"
+        },
+        "publisherPath": {
+          "type": "string",
+          "const": ".github/workflows/behavproof-publisher.yml"
+        },
+        "policyPath": {
+          "type": "string",
+          "const": ".github/behavproof/quality-policy.json"
+        },
+        "configPath": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "repository",
+        "protectedBranch",
+        "workflowBranch",
+        "sdkSha",
+        "appId",
+        "checkName",
+        "environment",
+        "producerPath",
+        "publisherPath",
+        "policyPath",
+        "configPath"
+      ],
+      "additionalProperties": false
+    },
+    "repositoryId": {
+      "type": "string",
+      "pattern": "^[1-9][0-9]*$"
+    },
+    "workflowSha": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "files": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1
+      },
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[a-f0-9]{64}$"
+      }
+    },
+    "reviewers": {
+      "minItems": 1,
+      "maxItems": 6,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9_-]+$"
+      }
+    },
+    "requiredTests": {
+      "maxItems": 1000,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "approval": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "type": "number",
+          "const": 2
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "target": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "policy",
+                "specification",
+                "exception"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "contentHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "kind",
+            "id",
+            "contentHash"
+          ],
+          "additionalProperties": false
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "unknown",
+            "not_applicable"
+          ]
+        },
+        "source": {
+          "type": "object",
+          "properties": {
+            "provider": {
+              "type": "string",
+              "minLength": 1
+            },
+            "ref": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "provider",
+            "ref"
+          ],
+          "additionalProperties": false
+        },
+        "approvedBy": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "subjectCommitSha": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "id",
+        "target",
+        "status",
+        "source",
+        "approvedBy",
+        "reasons"
+      ],
+      "additionalProperties": false
+    },
+    "sourceCommit": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "specifications": {
+      "maxItems": 100,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "revisionHash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "required": [
+          "id",
+          "revisionHash"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "assuranceSources": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1
+      },
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[a-f0-9]{64}$"
+      }
+    },
+    "policy": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "type": "number",
+          "const": 1
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "lint": {
+          "type": "object",
+          "properties": {
+            "tool": {
+              "type": "string",
+              "enum": [
+                "eslint",
+                "biome"
+              ]
+            },
+            "rules": {
+              "minItems": 1,
+              "maxItems": 200,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+              }
+            }
+          },
+          "required": [
+            "tool",
+            "rules"
+          ],
+          "additionalProperties": false
+        },
+        "types": {
+          "anyOf": [
+            {
+              "type": "string",
+              "const": "strict"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "notApplicable": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 500
+                }
+              },
+              "required": [
+                "notApplicable"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "runner": {
+          "type": "string",
+          "enum": [
+            "vitest",
+            "jest"
+          ]
+        },
+        "sources": {
+          "minItems": 1,
+          "maxItems": 100,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "id",
+        "lint",
+        "types",
+        "runner",
+        "sources"
+      ],
+      "additionalProperties": false
+    },
+    "config": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "type": "number",
+          "const": 2
+        },
+        "testRunner": {
+          "type": "string",
+          "enum": [
+            "vitest",
+            "jest"
+          ]
+        },
+        "assurance": {
+          "type": "object",
+          "properties": {
+            "driver": {
+              "type": "string",
+              "minLength": 1
+            },
+            "driverSources": {
+              "minItems": 1,
+              "maxItems": 10000,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "implementationSources": {
+              "minItems": 1,
+              "maxItems": 10000,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "report": {
+              "type": "string",
+              "minLength": 1
+            },
+            "timeoutMs": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 3600000
+            },
+            "definitions": {
+              "minItems": 1,
+              "maxItems": 100,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "definition": {
+                    "type": "object",
+                    "properties": {
+                      "feature": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "entrypoints": {
+                            "minItems": 1,
+                            "maxItems": 10000,
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1
+                            }
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "entrypoints"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "conditions": {
+                        "minItems": 1,
+                        "maxItems": 10000,
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "kind": {
+                              "type": "string",
+                              "enum": [
+                                "precondition",
+                                "postcondition",
+                                "invariant",
+                                "effect",
+                                "property",
+                                "architecture",
+                                "journey"
+                              ]
+                            },
+                            "statement": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "checks": {
+                              "minItems": 1,
+                              "maxItems": 10000,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "minLength": 1
+                              }
+                            },
+                            "requiredFaults": {
+                              "maxItems": 10000,
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "kind": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "checkId": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "implementation": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "detects": {
+                                    "minItems": 1,
+                                    "maxItems": 10000,
+                                    "type": "array",
+                                    "items": {
+                                      "oneOf": [
+                                        {
+                                          "type": "object",
+                                          "properties": {
+                                            "kind": {
+                                              "type": "string",
+                                              "const": "result"
+                                            },
+                                            "id": {
+                                              "type": "string",
+                                              "minLength": 1
+                                            }
+                                          },
+                                          "required": [
+                                            "kind",
+                                            "id"
+                                          ],
+                                          "additionalProperties": false
+                                        },
+                                        {
+                                          "type": "object",
+                                          "properties": {
+                                            "kind": {
+                                              "type": "string",
+                                              "const": "unchanged"
+                                            },
+                                            "id": {
+                                              "type": "string",
+                                              "minLength": 1
+                                            },
+                                            "scope": {
+                                              "type": "string",
+                                              "minLength": 1
+                                            },
+                                            "field": {
+                                              "type": "string",
+                                              "minLength": 1
+                                            }
+                                          },
+                                          "required": [
+                                            "kind",
+                                            "id",
+                                            "scope",
+                                            "field"
+                                          ],
+                                          "additionalProperties": false
+                                        },
+                                        {
+                                          "type": "object",
+                                          "properties": {
+                                            "kind": {
+                                              "type": "string",
+                                              "const": "effect"
+                                            },
+                                            "id": {
+                                              "type": "string",
+                                              "minLength": 1
+                                            },
+                                            "scope": {
+                                              "type": "string",
+                                              "minLength": 1
+                                            },
+                                            "effectId": {
+                                              "type": "string",
+                                              "minLength": 1
+                                            }
+                                          },
+                                          "required": [
+                                            "kind",
+                                            "id",
+                                            "scope",
+                                            "effectId"
+                                          ],
+                                          "additionalProperties": false
+                                        },
+                                        {
+                                          "type": "object",
+                                          "properties": {
+                                            "kind": {
+                                              "type": "string",
+                                              "const": "rule"
+                                            },
+                                            "id": {
+                                              "type": "string",
+                                              "minLength": 1
+                                            }
+                                          },
+                                          "required": [
+                                            "kind",
+                                            "id"
+                                          ],
+                                          "additionalProperties": false
+                                        }
+                                      ]
+                                    }
+                                  }
+                                },
+                                "required": [
+                                  "id",
+                                  "kind",
+                                  "checkId",
+                                  "implementation",
+                                  "detects"
+                                ],
+                                "additionalProperties": false
+                              }
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "kind",
+                            "statement",
+                            "checks",
+                            "requiredFaults"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "checks": {
+                        "minItems": 1,
+                        "maxItems": 10000,
+                        "type": "array",
+                        "items": {
+                          "oneOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "targetRef": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "method": {
+                                  "type": "string",
+                                  "const": "example"
+                                },
+                                "cases": {
+                                  "minItems": 1,
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "input": {
+                                        "$ref": "#/$defs/__schema0"
+                                      },
+                                      "expected": {
+                                        "$ref": "#/$defs/__schema0"
+                                      }
+                                    },
+                                    "required": [
+                                      "id",
+                                      "input",
+                                      "expected"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "targetRef",
+                                "method",
+                                "cases"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "targetRef": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "method": {
+                                  "type": "string",
+                                  "const": "effects"
+                                },
+                                "cases": {
+                                  "minItems": 1,
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "input": {
+                                        "$ref": "#/$defs/__schema0"
+                                      },
+                                      "expected": {
+                                        "$ref": "#/$defs/__schema0"
+                                      }
+                                    },
+                                    "required": [
+                                      "id",
+                                      "input",
+                                      "expected"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "scope": {
+                                  "minItems": 1,
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                },
+                                "resources": {
+                                  "minItems": 1,
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "scope": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "adapter": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "targets": {
+                                        "minItems": 1,
+                                        "maxItems": 10000,
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string",
+                                          "minLength": 1
+                                        }
+                                      }
+                                    },
+                                    "required": [
+                                      "scope",
+                                      "adapter",
+                                      "targets"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "allowedChanges": {
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "scope": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "field": {
+                                        "type": "string",
+                                        "pattern": "^(?:\\/(?:[^~]|~[01])*)*$"
+                                      }
+                                    },
+                                    "required": [
+                                      "scope",
+                                      "field"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "unchangedFields": {
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "scope": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "field": {
+                                        "type": "string",
+                                        "pattern": "^(?:\\/(?:[^~]|~[01])*)*$"
+                                      }
+                                    },
+                                    "required": [
+                                      "scope",
+                                      "field"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "effects": {
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "scope": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "min": {
+                                        "type": "integer",
+                                        "minimum": 0,
+                                        "maximum": 9007199254740991
+                                      },
+                                      "max": {
+                                        "type": "integer",
+                                        "minimum": 0,
+                                        "maximum": 9007199254740991
+                                      }
+                                    },
+                                    "required": [
+                                      "id",
+                                      "scope",
+                                      "min",
+                                      "max"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "window": {
+                                  "type": "object",
+                                  "properties": {
+                                    "settledBy": {
+                                      "type": "string",
+                                      "minLength": 1
+                                    },
+                                    "durationMs": {
+                                      "type": "integer",
+                                      "minimum": 1,
+                                      "maximum": 3600000
+                                    }
+                                  },
+                                  "required": [
+                                    "settledBy",
+                                    "durationMs"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "targetRef",
+                                "method",
+                                "cases",
+                                "scope",
+                                "resources",
+                                "allowedChanges",
+                                "unchangedFields",
+                                "effects",
+                                "window"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "targetRef": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "method": {
+                                  "type": "string",
+                                  "const": "property"
+                                },
+                                "domain": {
+                                  "$ref": "#/$defs/__schema0"
+                                },
+                                "seed": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "runs": {
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 9007199254740991
+                                },
+                                "minValid": {
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 9007199254740991
+                                },
+                                "maxDiscarded": {
+                                  "type": "integer",
+                                  "minimum": 0,
+                                  "maximum": 9007199254740991
+                                },
+                                "maxDiscardRatio": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "maximum": 1
+                                },
+                                "requiredClasses": {
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                },
+                                "classMinimums": {
+                                  "type": "object",
+                                  "propertyNames": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "additionalProperties": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 9007199254740991
+                                  }
+                                },
+                                "generator": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "predicate": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "shrinker": {
+                                  "type": "string",
+                                  "minLength": 1
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "targetRef",
+                                "method",
+                                "domain",
+                                "seed",
+                                "runs",
+                                "minValid",
+                                "maxDiscarded",
+                                "requiredClasses",
+                                "generator",
+                                "predicate"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "targetRef": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "method": {
+                                  "type": "string",
+                                  "const": "sequence"
+                                },
+                                "seed": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "generator": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "model": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "projection": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "maxSteps": {
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 10000
+                                },
+                                "minTraces": {
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 9007199254740991
+                                },
+                                "requiredActions": {
+                                  "minItems": 1,
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                },
+                                "actionMinimums": {
+                                  "type": "object",
+                                  "propertyNames": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "additionalProperties": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 9007199254740991
+                                  }
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "targetRef",
+                                "method",
+                                "seed",
+                                "generator",
+                                "model",
+                                "projection",
+                                "maxSteps",
+                                "minTraces",
+                                "requiredActions"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "targetRef": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "method": {
+                                  "type": "string",
+                                  "const": "architecture"
+                                },
+                                "files": {
+                                  "minItems": 1,
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                },
+                                "rules": {
+                                  "minItems": 1,
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "from": {
+                                        "minItems": 1,
+                                        "maxItems": 10000,
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string",
+                                          "minLength": 1
+                                        }
+                                      },
+                                      "forbidden": {
+                                        "minItems": 1,
+                                        "maxItems": 10000,
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string",
+                                          "minLength": 1
+                                        }
+                                      }
+                                    },
+                                    "required": [
+                                      "id",
+                                      "from",
+                                      "forbidden"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "targetRef",
+                                "method",
+                                "files",
+                                "rules"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "targetRef": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "method": {
+                                  "type": "string",
+                                  "const": "journey"
+                                },
+                                "entrypoint": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "environment": {
+                                  "$ref": "#/$defs/__schema0"
+                                },
+                                "mockBoundaries": {
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                },
+                                "layers": {
+                                  "minItems": 1,
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                },
+                                "layerBindings": {
+                                  "minItems": 1,
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "adapter": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "targetRef": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      }
+                                    },
+                                    "required": [
+                                      "id",
+                                      "adapter",
+                                      "targetRef"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "steps": {
+                                  "minItems": 1,
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "input": {
+                                        "$ref": "#/$defs/__schema0"
+                                      },
+                                      "expected": {
+                                        "$ref": "#/$defs/__schema0"
+                                      },
+                                      "action": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "layers": {
+                                        "minItems": 1,
+                                        "maxItems": 10000,
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string",
+                                          "minLength": 1
+                                        }
+                                      }
+                                    },
+                                    "required": [
+                                      "id",
+                                      "input",
+                                      "expected",
+                                      "action",
+                                      "layers"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "requiredMedia": {
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "targetRef",
+                                "method",
+                                "entrypoint",
+                                "environment",
+                                "mockBoundaries",
+                                "layers",
+                                "layerBindings",
+                                "steps"
+                              ],
+                              "additionalProperties": false
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "feature",
+                      "conditions",
+                      "checks"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "id",
+                  "definition"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "driver",
+            "driverSources",
+            "implementationSources",
+            "report",
+            "definitions"
+          ],
+          "additionalProperties": false
+        },
+        "formal": {
+          "type": "object",
+          "properties": {
+            "models": {
+              "maxItems": 100,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "model": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "modelSources": {
+                    "default": [],
+                    "maxItems": 10000,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "module": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "init": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "step": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "witnesses": {
+                    "maxItems": 10000,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "mutants": {
+                    "maxItems": 100,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "model": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "invariant": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sources": {
+                          "maxItems": 10000,
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "model",
+                        "invariant"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "quint": {
+                    "type": "object",
+                    "properties": {
+                      "entry": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "version": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "apalacheVersion": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "entry",
+                      "version"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "invariants": {
+                    "minItems": 1,
+                    "maxItems": 10000,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "checks": {
+                    "minItems": 1,
+                    "maxItems": 10000,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "parse",
+                        "typecheck",
+                        "test",
+                        "run",
+                        "verify"
+                      ]
+                    }
+                  },
+                  "maxSteps": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 10000
+                  },
+                  "maxSamples": {
+                    "default": 100,
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100000
+                  },
+                  "seed": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "timeoutMs": {
+                    "default": 60000,
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 3600000
+                  },
+                  "report": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "driver": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "driverSources": {
+                    "maxItems": 10000,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "implementation": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "implementationSources": {
+                    "default": [],
+                    "maxItems": 10000,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "conformanceReport": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "traceReceipt": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "traceDirectory": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "replayScope": {
+                    "type": "object",
+                    "properties": {
+                      "observedFields": {
+                        "minItems": 1,
+                        "maxItems": 1000,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "rationale": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 4000
+                      }
+                    },
+                    "required": [
+                      "observedFields",
+                      "rationale"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "requiredActions": {
+                    "default": [],
+                    "maxItems": 10000,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "minTraces": {
+                    "default": 1,
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "minComparisons": {
+                    "default": 1,
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "requireCanary": {
+                    "default": true,
+                    "type": "boolean"
+                  },
+                  "canary": {
+                    "type": "object",
+                    "properties": {
+                      "faultId": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "implementation": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "targetRef": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "faultId",
+                      "implementation",
+                      "targetRef"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "id",
+                  "model",
+                  "module",
+                  "quint",
+                  "invariants",
+                  "checks",
+                  "maxSteps",
+                  "seed",
+                  "report"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": {
+              "maxItems": 100,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "include": {
+                    "minItems": 1,
+                    "maxItems": 10000,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "modelId": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "id",
+                  "include",
+                  "modelId"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "models"
+          ],
+          "additionalProperties": false
+        },
+        "exceptions": {
+          "maxItems": 100,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "defaultRule": {
+                "type": "string",
+                "minLength": 1
+              },
+              "target": {
+                "type": "object",
+                "properties": {
+                  "module": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "exportName": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "module",
+                  "exportName"
+                ],
+                "additionalProperties": false
+              },
+              "allowedCallers": {
+                "maxItems": 1000,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "sources": {
+                "maxItems": 1000,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "condition": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "static"
+                      },
+                      "rule": {
+                        "type": "string",
+                        "const": "direct-call-scope"
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "rule"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "quint"
+                      },
+                      "modelId": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "witness": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "modelId",
+                      "witness"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "rationaleRef": {
+                "type": "string",
+                "pattern": "^https:\\/\\/github\\.com\\/[\\w-]+\\/[\\w.-]+\\/(?:issues|pull)\\/[1-9]\\d*$"
+              }
+            },
+            "required": [
+              "id",
+              "defaultRule",
+              "target",
+              "allowedCallers",
+              "sources",
+              "condition",
+              "rationaleRef"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "mode": {
+          "default": "audit",
+          "type": "string",
+          "enum": [
+            "audit",
+            "gate"
+          ]
+        },
+        "profile": {
+          "default": "standard",
+          "type": "string",
+          "enum": [
+            "basic",
+            "standard",
+            "critical"
+          ]
+        },
+        "profileVersion": {
+          "default": "2",
+          "type": "string",
+          "const": "2"
+        },
+        "riskOverrides": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "selector": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "path"
+                      },
+                      "value": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "module"
+                      },
+                      "value": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "profile": {
+                "type": "string",
+                "enum": [
+                  "basic",
+                  "standard",
+                  "critical"
+                ]
+              }
+            },
+            "required": [
+              "selector",
+              "profile"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "git": {
+          "default": {
+            "base": "origin/main"
+          },
+          "type": "object",
+          "properties": {
+            "base": {
+              "default": "origin/main",
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "reports": {
+          "default": {},
+          "type": "object",
+          "properties": {
+            "vitest": {
+              "type": "string",
+              "minLength": 1
+            },
+            "jest": {
+              "type": "string",
+              "minLength": 1
+            },
+            "coverage": {
+              "type": "string",
+              "minLength": 1
+            },
+            "mutation": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "executionManifests": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "rules": {
+          "default": {}
+        },
+        "documents": {
+          "type": "object",
+          "properties": {
+            "output": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "output"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "schemaVersion"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "deployment",
+    "repositoryId",
+    "workflowSha",
+    "files",
+    "reviewers",
+    "requiredTests",
+    "approval",
+    "sourceCommit",
+    "specifications",
+    "policy",
+    "config"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "__schema0": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/__schema0"
+          }
+        },
+        {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema0"
+          }
+        }
+      ]
+    }
+  }
+}

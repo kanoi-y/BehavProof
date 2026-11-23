@@ -27,7 +27,7 @@ describe('mandatory gate obligations', () => {
     }));
   });
   it('keeps protected severity, thresholds, and restrictive N/A permissions', () => {
-    const merged=mergeProtectedPolicy({schemaVersion:1,profileVersion:'1',rules:{coverage:{severity:'off',min:10,allowNotApplicable:['anything']}}},{schemaVersion:1,profileVersion:'1',rules:{coverage:{severity:'error',min:80,minMutants:10,allowNotApplicable:[]},approval:{severity:'error'}}});
+    const merged=mergeProtectedPolicy({schemaVersion:1,profileVersion:'2',rules:{coverage:{severity:'off',min:10,allowNotApplicable:['anything']}}},{schemaVersion:1,profileVersion:'2',rules:{coverage:{severity:'error',min:80,minMutants:10,allowNotApplicable:[]},approval:{severity:'error'}}});
     expect(merged.rules.coverage).toEqual({severity:'error',min:80,minMutants:10,allowNotApplicable:[]});
     expect(merged.rules.approval?.severity).toBe('error');
   });
@@ -36,33 +36,33 @@ describe('mandatory gate obligations', () => {
   });
 });
 describe('strict configuration',()=>{
-  it('defaults to audit and disabled contracts with a pinned profile version',()=>{
-    const config=parseConfig({schemaVersion:1});
-    expect(config.mode).toBe('audit'); expect(config.contracts.enabled).toBe(false); expect(config.profileVersion).toBe('1');
+  it('defaults to audit with a pinned profile version',()=>{
+    const config=parseConfig({schemaVersion:2});
+    expect(config.mode).toBe('audit'); expect(config.profileVersion).toBe('2');
   });
-  it.each([{schemaVersion:2},{schemaVersion:1,profileVersion:'2'},{schemaVersion:1,rules:{mutationScore:{severity:'error',minMutants:-1}}},{schemaVersion:1,rules:{coverage:{severity:'error',min:NaN}}},{schemaVersion:1,reports:{vitest:'../escape.json'}},{schemaVersion:1,trusted:true}])('rejects malformed or unsafe configuration %j',value=>{expect(()=>parseConfig(value)).toThrow();});
+  it.each([{schemaVersion:1},{schemaVersion:2,profileVersion:'1'},{schemaVersion:2,rules:{mutationScore:{severity:'error',minMutants:-1}}},{schemaVersion:2,rules:{coverage:{severity:'error',min:NaN}}},{schemaVersion:2,reports:{vitest:'../escape.json'}},{schemaVersion:2,trusted:true},{schemaVersion:2,contracts:{enabled:false}}])('rejects malformed or unsafe configuration %j',value=>{expect(()=>parseConfig(value)).toThrow();});
 });
 
-describe('version 1 profile obligations',()=>{
+describe('version 2 profile obligations',()=>{
   it('selects distinct basic, standard, and critical policies',()=>{
-    const basic=parseConfig({schemaVersion:1,profile:'basic'});
-    const standard=parseConfig({schemaVersion:1,profile:'standard'});
-    const critical=parseConfig({schemaVersion:1,profile:'critical'});
+    const basic=parseConfig({schemaVersion:2,profile:'basic'});
+    const standard=parseConfig({schemaVersion:2,profile:'standard'});
+    const critical=parseConfig({schemaVersion:2,profile:'critical'});
     expect(basic.rules.mutationScore?.severity).toBe('off');
     expect(standard.rules.changedLineCoverage).toEqual({severity:'warn',min:80});
     expect(standard.rules.mutationScore).toEqual({severity:'warn',min:70,minMutants:10});
-    for(const id of ['testResult','changedLineCoverage','mutationScore','pipelineIntegrity','intentApproval','negativeCases','contractExecution','policyProtection','productionTargetObserved','mutationSensitivityObserved'])expect(critical.rules[id]?.severity).toBe('error');
+    for(const id of ['testResult','changedLineCoverage','mutationScore','pipelineIntegrity','policyProtection','changeImpact'])expect(critical.rules[id]?.severity).toBe('error');
   });
-  it('preserves critical obligations through partial rules and explicit contract disabling',()=>{
-    const config=parseConfig({schemaVersion:1,profile:'critical',contracts:{enabled:false},rules:{testResult:{severity:'error'},intentApproval:{severity:'off'},changedLineCoverage:{severity:'warn',min:60}}});
-    expect(config.rules.intentApproval?.severity).toBe('error');
-    expect(config.rules.contractExecution?.severity).toBe('error');
+  it('preserves critical obligations through partial rule overrides',()=>{
+    const config=parseConfig({schemaVersion:2,profile:'critical',rules:{testResult:{severity:'error'},pipelineIntegrity:{severity:'off'},changedLineCoverage:{severity:'warn',min:60}}});
+    expect(config.rules.pipelineIntegrity?.severity).toBe('error');
+    expect(config.rules.policyProtection?.severity).toBe('error');
     expect(config.rules.changedLineCoverage).toEqual({severity:'error',min:60});
     const rows=Object.entries(config.rules).map(([ruleId,rule])=>({...evaluation(ruleId==='testResult'?'pass':'unknown',rule.severity),ruleId}));
     expect(evaluateGate(rows,'gate').status).toBe('incomplete');
   });
   it('keeps profile obligations when a project supplies only one rule override',()=>{
-    const config=parseConfig({schemaVersion:1,rules:{changedLineCoverage:{severity:'error',min:85}}});
+    const config=parseConfig({schemaVersion:2,rules:{changedLineCoverage:{severity:'error',min:85}}});
     expect(config.rules.testResult?.severity).toBe('error');
     expect(config.rules.changedLineCoverage?.min).toBe(85);
   });

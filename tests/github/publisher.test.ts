@@ -1,6 +1,6 @@
 import {test,expect} from 'vitest';
 import {evaluateGate,hash} from '../../packages/core/src/index.js';
-import {prepareCheckPublication,GitHubCheckPublisher} from '../../packages/adapter-github/src/publisher.js';
+import {prepareCheckPublication,GitHubCheckPublisher,registryGateReceipt} from '../../packages/adapter-github/src/publisher.js';
 const head='a'.repeat(40),base='b'.repeat(40),policyHash='c'.repeat(64),registrationDigest='d'.repeat(64);
 const subject={testedCommitSha:head,prHeadSha:head,baseSha:base,sourceTreeHash:'e'.repeat(64),dirty:false};
 const ci={repositoryId:'42',workflowRef:`acme/shop/.github/workflows/producer.yml@${base}`,runId:'8',runAttempt:2,jobId:'9',eventName:'workflow_dispatch'};
@@ -47,6 +47,14 @@ function connection(changes:{head?:string;app?:number;protectedApp?:number;postH
 }
 test('publisher sends only fixed text after live repository/head/base/protection checks',async()=>{
  const {publisher,posts}=connection();const result=await publisher.publish(prepareCheckPublication(packet(),expected(),allow));expect(result.conclusion).toBe('success');expect(posts).toHaveLength(1);expect(posts[0]).toMatchObject({name:'BehavProof protected gate',head_sha:head,status:'completed',conclusion:'success'});expect(JSON.stringify(posts)).not.toContain('candidate-controlled-diagnostic');
+});
+test('only accepted promotion-enabled checks carry the current registry receipt',async()=>{
+ const host={...expected(),allowRegistryPromotion:true};
+ const {publisher,posts}=connection();
+ await publisher.publish(prepareCheckPublication(packet(),host,allow));
+ expect(posts[0].external_id).toBe(registryGateReceipt(host));
+ await publisher.publish(prepareCheckPublication(packet(),host,()=>false));
+ expect(posts[1].external_id).not.toBe(registryGateReceipt(host));
 });
 test('a failed packet publishes a failure rather than neutral or skipped',async()=>{
  const {publisher,posts}=connection();await publisher.publish(prepareCheckPublication(packet(),expected(),()=>false));expect(posts[0].conclusion).toBe('failure');

@@ -12,6 +12,14 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./vitest-inventory-reporter": {
+      "types": "./dist/vitest-inventory-reporter.d.ts",
+      "import": "./dist/vitest-inventory-reporter.js"
+    },
+    "./jest-inventory-reporter": {
+      "types": "./dist/jest-inventory-reporter.d.cts",
+      "require": "./dist/jest-inventory-reporter.cjs"
     }
   },
   "dependencies": {

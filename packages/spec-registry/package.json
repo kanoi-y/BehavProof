@@ -1,0 +1,32 @@
+{
+  "name": "@behavproof/spec-registry",
+  "version": "0.2.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "dependencies": {
+    "@behavproof/core": "0.2.0",
+    "typescript-parser": "npm:typescript@5.9.3"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": "24.x"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kanoi-y/BehavProof.git",
+    "directory": "packages/spec-registry"
+  },
+  "license": "UNLICENSED",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "description": "BehavProof spec-registry: authenticated behavioral evidence for protected development workflows"
+}

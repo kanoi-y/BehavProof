@@ -1,9 +1,8 @@
-import {renderAssuranceMap,type AssuranceMap}from'@behavproof/contract-registry';
+import {renderAssuranceMap,type AssuranceMap}from'@behavproof/spec-registry';
 import {canonicalJson,type CheckReport,type Evaluation,type EvidenceSubject} from '@behavproof/core';
 
 const actions:Record<string,string>={
  assuranceCondition:'Collect current condition/check/fault observations with the protected producer and inspect the precise unmet scope.',
- assuranceBinding:'Approve the current Contract/Intent meaning through the protected host; local report data cannot establish approval.',
  assuranceCriterionBinding:'Review changed generator, oracle, driver, adapter or fault sources and re-register independently verified source hashes.',
  assuranceConfiguration:'Restore the protected assurance source/output selection or re-register an independently reviewed configuration.',
  assuranceDeclarationProtection:'Review and approve the exact assurance declaration transition; deleting a candidate condition does not retire its baseline obligation.',
@@ -13,12 +12,7 @@ const actions:Record<string,string>={
  changedLineCoverage:'Collect complete LCOV for the changed source scope and meet the protected coverage threshold.',
  mutationScore:'Collect current scoped mutants, inspect survivors and uncovered/error cases, and meet the protected score and minimum count.',
  pipelineIntegrity:'Inspect required upstream jobs, current run/attempt artifacts, protected workflow and issuer-bound required checks.',
- intentApproval:'Obtain an authorized human review of this exact Intent/Contract change and register it through the protected host.',
- contractExecution:'Execute every retained required case without skip using the matching contract/binding, and authenticate both test reports.',
- negativeCases:'Declare and execute the required negative cases against their retained contract revision.',
  policyProtection:'Restore the protected policy and source scope, or obtain a separately reviewed host registration for the proposed change.',
- productionTargetObserved:'Collect case-scoped calls of the registered real production target; passing comparisons do not establish reach.',
- mutationSensitivityObserved:'Run the registered case-scoped fault probe and retain actual failing comparisons separately from ordinary successful evidence.',
  evidenceIntegrity:'Discard stale or modified reports; collect fresh bytes through the independently selected producer and retain the host capture.',
  evaluationEnvironment:'Use a supported single-package project with clean, completely inventoried source inputs.',
  evaluationSnapshot:'Keep source, HEAD and configuration stable for the full evaluation, then rerun against freshly authenticated evidence.',

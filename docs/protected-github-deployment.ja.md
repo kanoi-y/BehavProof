@@ -1,4 +1,19 @@
-# BehavProof：pdd-tsへの導入・実地検証手順
+# Protected Quality CI の導入
+
+## 現行の登録とゲート
+
+導入先で Node.js 24 とコミット済みの `package-lock.json` を用意します。BehavProof の設定は `schemaVersion: 2` を使用します。Quint を採用するプロジェクトは、対象モジュールと検証条件を設定します。Producer の実行環境は Linux x64 で、Docker の `bind-recursive=disabled` を使います。
+
+1. `behavproof doctor --quality` で Runner、lint、型検査を確認します。`ci plan` に対象リポジトリ、保護ブランチ、信頼済みワークフローブランチ、BehavProof SDK のコミット SHA、専用 GitHub App ID を渡します。
+2. `ci apply --plan <計画ファイル> --dry-run` で変更内容を確認し、`--dry-run` を外して適用します。生成する Producer と Publisher のワークフローを信頼済みブランチに配置します。
+3. Publisher の環境 `behavproof-publisher` を信頼済みワークフローブランチに制限し、独立レビューと自己承認・管理者バイパスの防止を設定します。専用 App の秘密鍵をその環境に登録します。保護対象ブランチでは、同じ App を発行元とする必須チェックと、最新のベースに対するレビューを設定します。
+4. 対象の PR が独立レビューを受けた後、保護ホストで `ci enroll --pr <番号> --workflow-sha <SHA> --reviewers <ログイン名> --registration <外部パス>` を実行します。保護されたリポジトリ変数に `BEHAVPROOF_WORKFLOW_SHA`、`BEHAVPROOF_REGISTRATION_JSON`、`BEHAVPROOF_REGISTRATION_DIGEST` を登録します。
+5. 専用の `behavproof-registry` ブランチを保護し、外部登録とそのダイジェストで `ci init-registry` を実行します。同じ登録とダイジェストで `ci verify` を実行します。
+6. 開いている PR を指定して Producer を手動実行し、完了した Producer の run ID を Publisher に渡します。専用 App の必須結果を確認します。採用済みの仕様・必須範囲・例外が変わった PR をマージした後は、Publisher のチェック ID を添えて保護ホストで `ci advance` を実行します。
+
+既存の必須チェックは、独立した登録、証拠の収集と認証、新しい App の発行元を一連の受け入れで確認するまで有効にします。手順の詳細は [仕様登録](formal.ja.md#マージ後の仕様登録) と [Trust Root](trust-root.md) を参照してください。
+
+## 過去の pdd-ts 導入記録
 
 BehavProof本体は別のpublicリポジトリ[kanoi-y/BehavProof](https://github.com/kanoi-y/BehavProof)、[pdd-ts](https://github.com/kanoi-y/pdd-ts)は価値検証に使う消費側です。pdd-tsへ製品コードはコピーせず、固定SDKを参照します。
 

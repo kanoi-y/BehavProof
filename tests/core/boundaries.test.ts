@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { canonicalJson, evaluateGate, mergeProtectedPolicy, parseConfig, parseEvidence } from '../../packages/core/src/index.js';
 const digest='a'.repeat(64);
-const evidence=(kind:string,payload:unknown)=>({schemaVersion:1,id:'e',kind,source:{tool:'tool',artifactRef:'report.json'},context:{effectivePolicyHash:digest,collectedAt:'2026-11-13T00:00:00Z'},provenance:{artifactIntegrity:'unknown',producerTrust:'unknown',subjectMatch:'unknown',reasons:[]},subjectRefs:[],payload});
+const evidence=(kind:string,payload:unknown)=>({schemaVersion:2,id:'e',kind,source:{tool:'tool',artifactRef:'report.json'},context:{effectivePolicyHash:digest,collectedAt:'2026-11-13T00:00:00Z'},provenance:{artifactIntegrity:'unknown',producerTrust:'unknown',subjectMatch:'unknown',reasons:[]},subjectRefs:[],payload});
 describe('secondary validation boundaries',()=>{
   it('rejects sparse arrays with added properties and never invokes array accessors',()=>{
     const sparse=new Array(1);sparse.extra=1;
@@ -16,7 +16,7 @@ describe('secondary validation boundaries',()=>{
     expect(()=>parseEvidence(evidence('canary',{contractId:'c',caseIds:['case'],targetRef:'src/a.ts',method:'fault',detected:0,total:0,status:'pass'}))).toThrow();
   });
   it('does not grant N/A permission when either protected policy lacks it',()=>{
-    const policy={schemaVersion:1 as const,profileVersion:'1' as const,rules:{r:{severity:'error' as const}}};
+    const policy={schemaVersion:1 as const,profileVersion:'2' as const,rules:{r:{severity:'error' as const}}};
     expect(mergeProtectedPolicy({...policy,rules:{r:{severity:'error',allowNotApplicable:['no scope']}}},policy).rules.r?.allowNotApplicable).toEqual([]);
   });
   it('handles off rules as nonmandatory and validates malformed gate input',()=>{
@@ -24,7 +24,7 @@ describe('secondary validation boundaries',()=>{
     expect(()=>evaluateGate([{ruleId:'r',severity:'error',status:'success',evidenceIds:[],scope:[],message:'bad'}] as never,'gate')).toThrow();
   });
   it('rejects oversized percentages and fractional count thresholds',()=>{
-    for(const rule of [{severity:'error',min:101},{severity:'error',minMutants:0.5}])expect(()=>parseConfig({schemaVersion:1,rules:{r:rule}})).toThrow();
+    for(const rule of [{severity:'error',min:101},{severity:'error',minMutants:0.5}])expect(()=>parseConfig({schemaVersion:2,rules:{r:rule}})).toThrow();
   });
 });
 
@@ -37,11 +37,11 @@ it('rejects conflicting evidence with the same ID and deterministically deduplic
 });
 
 describe('reserved rule names cannot silently erase protected obligations',()=>{
-  const policy={schemaVersion:1 as const,profileVersion:'1' as const,rules:{x:{severity:'error' as const}}};
+  const policy={schemaVersion:1 as const,profileVersion:'2' as const,rules:{x:{severity:'error' as const}}};
   it.each(['__proto__','constructor','prototype','toString'])('rejects %s from config, project policy, and protected policy',async name=>{
     const {PolicySchema}=await import('../../packages/core/src/index.js');
     const rules=JSON.parse(`{"${name}":{"severity":"error"},"x":{"severity":"error"}}`);
-    expect(()=>parseConfig({schemaVersion:1,rules})).toThrow();
+    expect(()=>parseConfig({schemaVersion:2,rules})).toThrow();
     expect(()=>PolicySchema.parse({...policy,rules})).toThrow();
     expect(()=>mergeProtectedPolicy({...policy,rules},policy)).toThrow();
     expect(()=>mergeProtectedPolicy(policy,{...policy,rules})).toThrow();

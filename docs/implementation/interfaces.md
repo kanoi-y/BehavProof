@@ -1,12 +1,12 @@
 # Shared package interfaces
 
-`@behavproof/core` is ESM on Node 24.x. Its authoritative runtime schemas and inferred types live in `packages/core/src/schemas.ts`; built declarations in `packages/core/dist/*.d.ts` provide exact structural definitions. Later packages must import these types rather than invent another evidence representation. All persisted top-level schemas are strict and versioned `schemaVersion: 1`; profile defaults are pinned at `profileVersion: '1'`.
+`@behavproof/core` is ESM on Node 24.x. Its authoritative runtime schemas and inferred types live in `packages/core/src/schemas.ts`; built declarations in `packages/core/dist/*.d.ts` provide exact structural definitions. Later packages must import these types rather than invent another evidence representation. Each persisted format has its own schema version. Configuration, approvals, evidence and gate reports use version 2. Policy presets use profile version 2, while the policy envelope and execution manifests use schema version 1.
 
 ## Public exports
 
-Types: `EvidenceStatus`, `Severity`, `Risk`, `Mode`, `RulePolicy`, `Policy`, `Config`, `EvidenceSubject`, `ExecutionManifest`, `Intent`, `ContractCase`, `Contract`, `RegistrySnapshot`, `Approval`, `Evaluation`, `Provenance`, `Evidence`, `CheckReport`, `ManifestExpected`, `ProducerAuthority`, `ManifestValidation`.
+Types: `EvidenceStatus`, `Severity`, `Risk`, `Mode`, `RulePolicy`, `Policy`, `Config`, `EvidenceSubject`, `ExecutionManifest`, `SpecificationRegistry`, `Approval`, `Evaluation`, `Provenance`, `Evidence`, `CheckReport`, `ManifestExpected`, `ProducerAuthority`, `ManifestValidation`.
 
-Runtime schemas: `EvidenceStatusSchema`, `SeveritySchema`, `RiskSchema`, `ModeSchema`, `HashSchema`, `CountSchema`, `RelativePathSchema`, `RulePolicySchema`, `RuleIdSchema`, `RulesSchema`, `PolicySchema`, `ConfigSchema`, `EvidenceSubjectSchema`, `ProducerSchema`, `CiIdentitySchema`, `ExecutionManifestSchema`, `IntentSchema`, `ContractCaseSchema`, `ContractSchema`, `RegistrySnapshotSchema`, `ApprovalSchema`, `EvaluationSchema`, `ProvenanceSchema`, `EvidenceSchema`, `CheckReportSchema`, `ManifestExpectedSchema`, `ProducerAuthoritySchema`.
+Runtime schemas: `EvidenceStatusSchema`, `SeveritySchema`, `RiskSchema`, `ModeSchema`, `HashSchema`, `CountSchema`, `RelativePathSchema`, `RulePolicySchema`, `RuleIdSchema`, `RulesSchema`, `PolicySchema`, `ConfigSchema`, `EvidenceSubjectSchema`, `ProducerSchema`, `CiIdentitySchema`, `ExecutionManifestSchema`, `SpecificationRegistrySchema`, `ApprovalSchema`, `EvaluationSchema`, `ProvenanceSchema`, `EvidenceSchema`, `CheckReportSchema`, `ManifestExpectedSchema`, `ProducerAuthoritySchema`.
 
 ```ts
 parseConfig(value: unknown): Config;
@@ -27,28 +27,28 @@ evaluateThreshold(ruleId: string, value: number | undefined, policy: RulePolicy,
   evidenceIds?: string[], scope?: string[]): Evaluation;
 mergeProtectedPolicy(project: Policy, protectedPolicy: Policy): Policy;
 mergeEvidence(evidence: readonly Evidence[]): Evidence[];
-getProfilePolicy(profile: Risk, profileVersion?: '1'): Policy;
+getProfilePolicy(profile: Risk, profileVersion?: '2'): Policy;
 ```
 
 `DEFAULT_MAX_BYTES` is 10 MiB. Paths are nonempty scoped relative POSIX paths; traversal, absolute paths, Windows separators, symlink components, nonregular files, oversized files, and observed concurrent file changes are rejected. Invalid input throws; CLI callers map malformed config/report/infrastructure errors to exit 2. Scoped reads are not an OS sandbox against a hostile process concurrently replacing directory ancestors.
 
 `ManifestExpected` requires `executionId`, `subject`, `commandHash`, `configHashes`, and `artifacts: {ref,kind,scope}[]`, with optional `dependencyLockHash`. `ProducerAuthority` is either `{kind:'ci', producer, ci}` or `{kind:'local', producer, executionId, commandHash}`. `producer` matches the manifest producer schema; `ci` includes repository/workflow/run/attempt/job/event identity. `ManifestValidation` contains `artifactIntegrity`, `producerTrust`, `subjectMatch`, `executionStatus`, and sorted `reasons`.
 
-`Policy` contains `{schemaVersion:1, profileVersion:'1', rules:Record<string,RulePolicy>}`. `RulePolicy` contains `severity` and optional percentage `min`, integer `minMutants`, and `allowNotApplicable:string[]`. `Evaluation` follows spec §11 plus optional `notApplicable:{reason,allowedReasons,evidenceIds}`. Hosts derive permitted reasons from the effective protected policy and verify referenced scope evidence. An unpermitted or unsupported N/A cannot satisfy a mandatory rule.
+`Policy` contains `{schemaVersion:1, profileVersion:'2', rules:Record<string,RulePolicy>}`. `RulePolicy` contains `severity` and optional percentage `min`, integer `minMutants`, and `allowNotApplicable:string[]`. `Evaluation` follows spec §11 plus optional `notApplicable:{reason,allowedReasons,evidenceIds}`. Hosts derive permitted reasons from the effective protected policy and verify referenced scope evidence. An unpermitted or unsupported N/A cannot satisfy a mandatory rule.
 
 `CheckReport` contains `schemaVersion`, `mode`, `status:'pass'|'fail'|'incomplete'`, `exitCode:0|1|2`, `mandatoryCount`, sorted `evaluations`, and sorted `reasons`. Pure gate evaluation emits exit 0 for audit, and exit 1 for blocked gate. It rejects conflicting rule/scope evaluations and blocks zero mandatory rules. Config/IO errors are exceptions, not synthetic successful audit results.
 
-Evidence payloads are discriminated by kind: test counts; coverage covered/total/excluded/unobserved counts; mutation killed/survived/noCoverage/timeout/excluded/unobserved counts; pipeline checks; contract revision/binding/case comparison; approval; execution manifest; scoped target observations; scoped canary detections. Optional M2-F kinds accept typed model-stage reports, source-bound trace receipts and observed implementation replay/canary reports, alongside the legacy explicit unknown payload. Model checking and implementation conformance are evaluated independently against current authenticated input identities. Model/Driver/property meaning also requires an independently approved Contract binding. See [formal interfaces and compatibility](../formal-compatibility.md). Passing contract comparisons and observations require positive counts. `mergeEvidence` rejects conflicting records with the same evidence ID.
+Evidence supports test, coverage and mutation counts, pipeline checks, approvals, execution manifests, Assurance observations, model-stage reports, trace receipts and implementation replay results. The gate evaluates model checking, implementation conformance and specification approval independently. `mergeEvidence` rejects conflicting records with the same evidence ID.
 
 ## Caller trust boundary
 
 The caller supplies `expected` and `authority` from an independently trusted control plane. Never copy authority from the untrusted manifest/report/project configuration. Hashes establish identity; timestamps, self-declared names, attestation references, serialized provenance statuses, and signatures alone confer no producer authority. `parseEvidence` validates structure and preserves claims; it does not authenticate them. Recompute provenance with external expectations before admitting evidence into mandatory evaluations. Missing manifests remain unknown. Dirty inputs fail subject matching; audit may still display their contents. Failed producer execution stays failed despite matching artifacts.
 
-A gate requires an externally registered trust root; absence is a configuration error (exit 2) in the CLI orchestration layer. Approval and protected policy are separate externally obtained inputs; the core never interprets an approved boolean in a report as authority. Contract comparisons establish binding and execution, not production reach or mutation sensitivity.
+A gate requires an externally registered trust root; absence is a configuration error (exit 2) in the CLI orchestration layer. Approval and protected policy are separate externally obtained inputs; the core never interprets an approved boolean in a report as authority.
 
 ## Explicit adapter SDK
 
-Types: `AdapterFormat`, `DetectContext`, `DetectionResult`, `CollectContext`, `DiscoverContext`, `ContractExecutionEvidence`, `BindingContext`, `BehavProofAdapter`, `ContractSourceAdapter` (see `packages/core/src/sdk.ts` / built declaration).
+Types: `AdapterFormat`, `DetectContext`, `DetectionResult`, `CollectContext`, `BehavProofAdapter` (see `packages/core/src/sdk.ts` / built declaration).
 
 ```ts
 interface BehavProofAdapter {
@@ -57,19 +57,13 @@ interface BehavProofAdapter {
   detect(ctx: DetectContext): Promise<DetectionResult>;
   collect(ctx: CollectContext): Promise<Evidence[]>;
 }
-interface ContractSourceAdapter {
-  readonly id: string;
-  readonly apiVersion: 1;
-  discover(ctx: DiscoverContext): Promise<Contract[]>;
-  bindExecution(ctx: BindingContext): Promise<ContractExecutionEvidence[]>;
-}
 ```
 
 Contexts provide explicit inventories and bounded read functions; no command executor or automatic plugin loader is supplied. Hosts explicitly select supported adapters. Core discovery never imports repository test/config code.
 
-## Profile policy version 1
+## Profile policy version 2
 
-`getProfilePolicy(profile, '1')` returns an independent policy snapshot. `ConfigSchema` / `parseConfig` apply the selected profile's defaults, then merge individual project rule fields; a partial `rules` object does not delete other preset rules. Numeric thresholds remain explicitly configurable. Protected policy merging enforces externally registered numerical floors. These preset numbers are initial examples, not universal quality guarantees.
+`getProfilePolicy(profile, '2')` returns an independent policy snapshot. `ConfigSchema` / `parseConfig` apply the selected profile's defaults, then merge individual project rule fields; a partial `rules` object does not delete other preset rules. Numeric thresholds remain explicitly configurable. Protected policy merging enforces externally registered numerical floors. These preset numbers are initial examples, not universal quality guarantees.
 
 | Rule | basic | standard | critical |
 | --- | --- | --- | --- |
@@ -77,14 +71,10 @@ Contexts provide explicit inventories and bounded read functions; no command exe
 | changedLineCoverage | warn, min 80 | warn, min 80 | error, min 80 |
 | mutationScore | off, min 70, minMutants 10 | warn, min 70, minMutants 10 | error, min 70, minMutants 10 |
 | pipelineIntegrity | warn | warn | error |
-| intentApproval | absent | absent | error |
-| negativeCases | absent | absent | error |
-| contractExecution | absent | absent | error |
 | policyProtection | absent | absent | error |
-| productionTargetObserved | absent | absent | error |
-| mutationSensitivityObserved | absent | absent | error |
+| changeImpact | off by default | warn by default | error |
 
-Critical preset severities remain mandatory even if project overrides request `off` or `warn`. Critical does not automatically enable contract collection: `contracts.enabled` retains its explicit/default value. Disabling collection leaves critical contract obligations required; it must produce unknown for unavailable checks, never omit or pass them. Downstream orchestration must evaluate **every rule in the effective policy inventory**, emitting unknown when an evaluator, scope, evidence, or external protection is unavailable. A profile string alone establishes no evidence claim.
+Critical preset severities remain mandatory through project overrides. Additional formal requirements come from the protected required scopes and registered models. Every effective rule with unavailable evidence or authority yields an unknown result.
 
 `RuleIdSchema` and `RulesSchema` reject `prototype` and own names of `Object.prototype` (including `__proto__`, `constructor`, and `toString`). Rule maps are checked before record normalization so reserved JSON keys cannot silently disappear. Both project and protected `PolicySchema` inputs and config rules use this boundary.
 
@@ -112,60 +102,18 @@ Vitest checks internally consistent suite-summary counts, ensures reported file 
 
 `CollectOptions` contains `root`, `executionId`, `command`, argument array `args`, explicit `inputPaths`, `configPaths`, existing `outputRoot`, expected `artifacts: {ref,kind,scope}[]`, and `producer`; optional `dependencyLockPath`, `ci`, `prHead`, `base`, and `timeoutMs`. The caller must enumerate all meaningful source, test, config, generated and ignored inputs. A fresh output directory is created as `<outputRoot>/<executionId>` and its absolute path is passed as `BEHAVPROOF_OUTPUT_DIR`; artifacts must be written there. Execution ID reuse fails, nonzero/signal/timeout seals no artifacts, input/config/lock changes reject the result, and timeout defaults to 10 minutes with a one-hour maximum. `collect` runs only the explicitly supplied executable and argument array, without a shell. Discovery and report evaluation do not execute project commands or import project configuration. Detection requires a bounded, scoped package manifest, Git, a declared Vitest dependency, and a test script exactly `vitest` or `vitest run` (allowing surrounding/inter-token whitespace); all other scripts, including missing or complex wrappers, are unverified/unsupported, and reports workspace markers and reasons explicitly. Git disables external diff, text conversion and fsmonitor hooks during analysis. CI identity, tool versions, scope, and the executable selection are caller assertions requiring independent authority. This wrapper is not a sandbox: it cannot prove the absence of transient input changes or prevent a runner/descendant from writing elsewhere. Run it in an appropriately isolated trusted execution environment; `check` must never invoke it implicitly.
 
-## Contract registry and Vitest integration (Task 3)
+## Specification registry, impact and Assurance
 
-`@behavproof/contract-registry` exports `discover`, `discoverSources`, `snapshot`, `reconcile`, `transitionHash`, `lifecycle`, `lifecycleTransitionHash`, `buildEvidenceGraph`, `bindingKey`, `bindRegistrations`, `evaluateAssurance`, `evaluateScopedClaims`, `renderDocuments`, `checkDocuments`, and `analyzeImpact`; built declarations define exact types. `EXTRACTOR_VERSION` is `1`. Inputs are explicit in-memory data; discovery does not run or import them. Inline extraction recognizes named official imports and top-level direct `defineContract` JSON-compatible literals; common indirect, namespace and dynamic official imports diagnose unknown. JSON manifests accept one literal contract; other kinds are explicitly unsupported. Duplicate contract/case IDs are errors. Snapshot includes extractor version and scope; callers must obtain the baseline through a protected source. Revision hashes exclude paths.
+`@behavproof/spec-registry` exports `SpecificationRegistrySchema`, `specificationTransitionTarget` and `reconcileSpecification`. A registry entry holds its logical model ID and revision digest. The digest covers configuration and selected model, dependency, Driver, tool and mutation inputs. A transition target binds the previous and proposed digests, change type, repository and PR HEAD. The verifier recomputes the reviewed revision from immutable Git objects before consulting independent approval. A synthetic merge must produce the same reviewed transition.
 
-`reconcile` preserves prior obligations unless `verifyApproval` validates a structurally valid approval targeting `transitionHash(old, newOrUndefined)`. `lifecycle` starts proposed; an externally verified approval of the current content hash moves it to approved, and externally verified transition hashes permit superseded or revoked states. Transitions are explicitly ordered inputs; a record's own status is not authority. Changed unsupported semantic kinds diagnose `UNSUPPORTED_SEMANTIC_DIFF`. `buildEvidenceGraph` emits typed intent→contract, contract→case, case→execution, execution→rule, and approval edges. Execution and approval edges require external verifier callbacks, current revision/target hashes, and expected binding identities; malformed, stale, duplicate, or unverified evidence is unknown. Approval verification, snapshot protection, provenance, and freshness are caller responsibilities. Relation edges indicate declared relationships, not intent completeness or production reach.
+`analyzeImpact` follows literal imports, re-exports, requires and dynamic import paths through the static dependency graph. It returns affected files, observed call names and unresolved paths. The CLI associates affected files with configured Quint sources, Drivers, implementations and their selected dependencies. Path and module risk overrides select scoped obligations. An unresolved graph is an error at critical risk and a warning at standard risk unless policy sets a stricter requirement.
 
-`evaluateAssurance(contracts, rows, expectedBindings, verifyEvidence)` and `evaluateScopedClaims(contract, scope, observations, canaries, rows, expectedBindings, verifyEvidence)` default to unknown without independent verification. A negative-case pass requires a declared negative case and matching active revision/binding/execution. Production-target and canary claims require separate scoped observations matching contract, cases, target and method; comparison metadata alone cannot satisfy them. `bindingKey(contractId,caseId)` returns a collision-free canonical JSON tuple key.
+`buildAssuranceMap`, `renderAssuranceMap`, `runAssurance` and `inspectArchitecture` expose the separate Assurance workflow. Map rows bind results to the selected definition revision. An externally authenticated membership predicate determines which evaluations can be shown as verified. The CLI can render current specification and Assurance information in Markdown, HTML or JSON.
 
-`renderDocuments(data, execution, options)` emits deterministic Markdown, HTML and JSON, escaping untrusted Markdown/HTML. It includes declaration origins and scoped execution/approval evidence with effective unknown status unless the supplied verifiers, current hashes and expected bindings match. `checkDocuments` detects edited output. `analyzeImpact` follows literal relative imports, re-exports, require and dynamic import paths in reverse plus explicit file-to-contract mappings; unresolved external/dynamic dependencies and indirect/member calls remain unknown. Static call facts are included, but it does not claim a complete symbol-level call graph or behavioral equivalence.
+## Protected Quality CI
 
-`@behavproof/vitest` exports the literal `defineContract` and `contractTest.each` API. The reporter (`@behavproof/vitest/reporter`) writes to explicit `BEHAVPROOF_REPORT`. It snapshots registration metadata in `onTestModuleCollected` before callbacks execute and separately writes end-of-run comparison rows and actual suite/test/module inventory, including skips. `bindRegistrations(registrations, rows, verifyReport)` accepts only an authenticated current-run artifact: it rejects duplicates, inconsistent IDs/revisions/hashes and non-registration metadata, returning expected binding hashes keyed by `bindingKey`. The caller must authenticate the reporter artifact and Vitest JSON under the same Collector execution and verify the tested subject/current inputs before providing `verifyReport`; merely copying hashes from end rows or project config is not authority. This assumes the observed runner/reporter is a trusted producer for that execution, and is not a sandbox against arbitrary hostile test code. Reporter inventory works without contracts and may be passed to `normalizeVitest` only after the same authentication. Runtime callback hashes use transformed function strings, not AST hashes. Comparison success proves neither production reach nor canary sensitivity.
+`@behavproof/cli` exports `check`, `TrustRootSchema`, `loadTrust`, `CIRegistration`, `registeredCI` and the registry state readers. The version 2 enrollment binds the protected policy, project configuration, reviewer and issuer selection, immutable source commit, adopted specification inventory and integration file hashes. The host constructs a version 2 trust root from the enrollment, active registry and authenticated evidence. Ordinary Jest and Vitest projects use an empty specification inventory and a selected runner manifest with a matching report and receipt.
 
-### Task 3 review corrections
+`@behavproof/adapter-github` exports `GitHubAuthority`, `GitHubCheckPublisher`, `prepareCheckPublication` and `readArtifactArchive`. Approval verifies current head and base, protected review requirements and authorized independent reviewers. Producer verification binds the independently pinned workflow, successful run attempt, job and archive digest. The registry writer checks the issuer-bound successful result, Git merge identity and previous registry digest before updating the protected branch with compare-and-swap.
 
-`snapshot` persists `discoveryDiagnostics` (including unsupported kinds) in the core `RegistrySnapshot`; callers must still independently authenticate the snapshot and scope. `evaluateAssurance(snapshot, ...)` can pass only when diagnostics are present and empty. A legacy contract array or a snapshot without diagnostics cannot establish complete discovery and therefore yields unknown for positive completeness claims.
-
-Registration and execution bindings are per execution identity: `bindingKey(contractId, caseId, testId)` uses a canonical JSON triple, and `bindRegistrations` allows distinct test IDs for the same case while rejecting repeated test IDs. It retains the two-part key only when exactly one registration exists for that case for compatibility with manually supplied rows without a test ID. All verified current executions for a required case must pass; any verified failure fails, while duplicate identities and missing bindings remain unknown. The helper captures a deep isolated contract copy before hashing/registering and passes each callback a separate copy, so mutation after registration or inside a callback cannot alter the compared expectation.
-
-`reconcile` independently returns `intentObligations` as well as contract `obligations`. `intentTransitionHash(oldIntent, newIntentOrUndefined, oldContractIds, newContractIds)` binds both content and many-to-many relationships; only a verified approval scoped to that Intent and transition may supersede its old obligation. Contract transition approval does not approve the Intent. Intent removal, relationship removal, and independent content changes are reported even if contract revision hashes are unchanged.
-
-`evaluateScopedClaims` requires each case to have a separately attributed singleton-case observation/canary before returning a pass for a multi-case scope. Aggregate rows spanning several cases do not prove individual case coverage. Scope must match the contract and its case inventory; verified failures take precedence over passes, including for negative-case execution.
-
-### Task 3 review round 2 corrections
-
-`reconcile` now preserves the old executable contract obligation, including its old Intent relationship, whenever removing that relationship lacks a separately verified Intent transition approval. This holds even if the contract deletion or replacement itself has been approved. Once both relevant transitions are approved, the new active obligations apply. Callers must use the returned contract `obligations` and `intentObligations` together with the effective protected policy; diagnostics alone are not the obligation inventory.
-
-For each required negative case, `evaluateScopedClaims` compares every externally authenticated expected binding identity against all verified current rows. A pass requires every registered identity to have one matching passing comparison. Missing, skipped, unknown, mismatched, or duplicate executions remain unknown; any verified failure remains fail. The two-part key remains supported only when there are no per-test triple keys for that case.
-
-## GitHub authority
-
-`@behavproof/adapter-github` exports `GitHubAuthority({repository, token?, fetcher?, timeoutMs?, maxBytes?, maxPages?})`. `approval(pr, target, expectations)` checks current head/base, protected review requirements, authorized non-self humans, dismissal/latest decisive states, pagination and optional current CODEOWNERS decision. `producer(ci, expectations)` checks independently pinned workflow source, successful run/attempt/job and archive digest/name. Caller computes the archive digest independently and must enforce trusted job isolation (see security.md). Both return pass/unknown observations with snapshot hashes; no repository claim establishes authority. `evaluateUpstream` checks explicit complete job/artifact inventory. `diagnoseWorkflow` returns separate internal-definition and external-protection results; static diagnosis alone never passes external protection.
-
-## CLI integration
-
-`@behavproof/cli` exports `check(root, options)`, `TrustRootSchema`, `loadTrust`, `registry`, `writeScoped`; the binary is `behavproof`. Strict JSON project config, external host-selected roots, all effective rule IDs and separate unknown/fail/infrastructure exits are enforced. Unknown configured evaluators remain unknown rather than disappear. Schemas and versioned presets are packaged by `scripts/build-artifacts.mjs`. `verifyArtifactArchive` authenticates evaluated manifest/report bytes against a separately digest-verified ZIP without extracting files, with bounded entry/payload checks.
-
-`gitSubject` now includes `testedCommitParents` for a distinct tested merge. `verifyMergeSubject` reads actual Git parents and requires the pinned base/head pair; metadata alone cannot establish that relationship. Line mapping remains independently verified per scoped file. Merge relationships that cannot be established stay unknown.
-
-## Protected baseline enrollment
-
-`@behavproof/cli/api` exports `RegistrationSchema`, `createRegistration`, `persistRegistration`, and `loadRegistration`. A registration binds the repository ID/name, exact approved PR source, source-file hashes, policy, config, complete registry snapshot, input scope and required observation protocol. `createRegistration(value, authority)` accepts only strict synchronous `true` from independent source and human-approval verifiers for every policy/Intent/Contract target. It clones and freezes input before callbacks; serialized status fields grant no authority.
-
-Persistence accepts only an opaque verified handle and an existing owner-private directory outside the entire Git checkout. Files are immutable and digest-addressed; an existing file must have identical bytes. `loadRegistration(projectRoot, path, expectedDigest)` verifies the schema and an independently supplied protected digest. POSIX directory ownership/mode is checked; a Windows host must independently provision private ACLs. The baseline authenticates approved obligations, not future execution, production reach, CI authority or required-check enforcement. `scripts/enroll-approved-baseline.mjs` demonstrates enrollment from actual immutable GitHub source and current human review; it makes no branch-protection changes.
-
-## Scoped producer and publication components
-
-Registry additionally exports `instrumentFunction`, `evaluateProbeRuns`, `PROBE_METHOD` and `ProbeProtocol`, `ProbeRun`, `ProbeRow`, `TargetFault`. Vitest's `./probe` export provides target-call capture; raw rows remain untrusted. CLI enrollment additionally exports `registrationProjectData`, preserving approved hashes/commit through a selected subtree projection. GitHub exports `prepareCheckPublication`, `GitHubCheckPublisher`, `PublicationPacket`, `PublicationExpectation`, `PreparedCheck`, plus `GitHubAuthority.upstream` for a running final gate's completed prerequisites. The precise protocol, source/hash and callback assumptions are documented in `docs/protected-producer.md`; none of these APIs implicitly register a producer or change repository protection.
-
-`prepareFailedCheck(identity)` creates a branded failure-only publication decision with current repository/PR/head/base/App identity and a host failure reference. It requires no invented evidence subject or producer CI, cannot produce success, and the publisher retains all live identity/issuer checks. `readArtifactArchive(bytes)` exposes bounded validated ZIP entry bytes in memory; it grants no producer or digest authority. The protected GitHub integration scripts/templates and enrollment/provisioning requirements are described in `docs/protected-github-deployment.md`.
-
-`detectProject(root, selection?)` accepts an explicit host runner selection for a single-package Vitest project; it still rejects monorepos and missing Vitest dependencies. Public CLI accepts that selection only from the external trust root after `selectedRunner` binds its manifest and test artifact to fully authenticated current evidence, including hashed package metadata. Default unverified package-script detection is unchanged. Registered project path `.` is now supported throughout raw Git materialization and policy-file selection, matching registration projection.
-
-Optional `Registration.source.configRef` pins an explicitly reviewed source configuration path (for example a nested consumer config when projectPath is `.`). Enrollment requires its source hash and config-scope membership; projection keeps it project-relative. Existing registrations without this field keep their previous representation and digest. Git input tracking is queried in one bounded batch with literal pathspecs and NUL-separated membership, preserving dirty status for modified and explicit ignored/untracked inputs.
-
-`check` now returns an `impact` analysis and risk-derived `changeImpact` evaluations: critical scopes retain mandatory unknown blocking, standard warns, basic defaults off; explicit protected rules may require it. This runtime evaluation does not add serialized defaults to version1 profiles/registrations. Static graph gaps, syntax errors, missing inputs and unverified synthetic-merge graph correspondence remain unknown. A resolved graph is not behavioral equivalence. Independently selected target mappings preserve affected Contract IDs.
-
-All failed/unknown rows carry remediation; Console/Markdown include scope and action, and `policyDiff` displays protected/project/effective rule and source-selection differences. Optional `TrustRoot.policySource` records a host-selected Git policy origin with a checked parsed-policy hash. Reports retain normalized external observations and root/policy/baseline snapshot hashes. These are historical report data, not a candidate-serializable authority grant. See [snapshot capture/replay limits](../evaluation-snapshots.md) and [schema compatibility](../schema-compatibility.md).
+See [trust roots](../trust-root.md), [formal verification and registration](../formal.ja.md), [Assurance](../assurance.ja.md) and [schema compatibility](../schema-compatibility.md).
