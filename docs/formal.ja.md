@@ -6,16 +6,10 @@ M2-Fは明示導入するオプションです。通常の `check` はモデル�
 
 `@behavproof/adapter-quint` と `@behavproof/adapter-model-test` を、既存のBehavProofパッケージと同じ版で追加します。CLIの任意peerDependenciesなので、形式検証を使わないconsumerへは追加されません。Quint、Java、Rust、Connectも通常パッケージに含めません。
 
-現時点でnpmへの公開は行っていません。別プロジェクトへ導入する場合は、ビルド後に各パッケージのtarballを作り、そのファイルを導入してください。通常の6パッケージに加えて、形式検証を選ぶプロジェクトだけが2つのアダプターを導入します。
+各パッケージは公開npmレジストリからインストールできます。導入先プロジェクトで次を実行します。既にCLIを導入している場合は、そのバージョンに両アダプターのバージョンを揃えてください。
 
 ```sh
-# BehavProofリポジトリで実行
-mkdir -p .behavproof/packages
-for package in core adapter-reports contract-registry contract-vitest adapter-github cli adapter-quint adapter-model-test; do
-  npm pack "./packages/$package" --ignore-scripts --pack-destination .behavproof/packages
-done
-# 導入先プロジェクトで実行。パスは実際のBehavProofチェックアウトへ置換
-npm install --save-dev --ignore-scripts /path/to/BehavProof/.behavproof/packages/*.tgz
+npm install --save-dev --ignore-scripts @behavproof/cli@0.3.0 @behavproof/adapter-quint@0.3.0 @behavproof/adapter-model-test@0.3.0
 npm install --save-dev --ignore-scripts @informalsystems/quint@0.33.1
 ```
 

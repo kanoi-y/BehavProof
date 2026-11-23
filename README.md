@@ -2,7 +2,7 @@
 
 Canonical public repository: [kanoi-y/BehavProof](https://github.com/kanoi-y/BehavProof). This repository owns the implementation, tests, examples and product CI. See [repository boundaries](docs/repository-boundaries.md).
 
-TypeScript / Node.js 24 / Vitest and Jest evidence auditing and executable contract registry. This checkout implements the mandatory M1/M2 libraries and CLI, with issuer-bound protection verified on an isolated consumer branch. The npm release remains a public preview on the `next` channel; publication status and the exact source commit are recorded in [GitHub Releases](https://github.com/kanoi-y/BehavProof/releases). Use an explicit published version when installing.
+TypeScript / Node.js 24 / Vitest and Jest evidence auditing and executable contract registry. This checkout implements the mandatory M1/M2 libraries and CLI, with issuer-bound protection verified on an isolated consumer branch. The CLI is available on the public npm registry. Install it with `npm install --ignore-scripts @behavproof/cli`. See the release notes and source commit in [GitHub Releases](https://github.com/kanoi-y/BehavProof/releases).
 
 ```sh
 npm ci --ignore-scripts --cache .npm-cache

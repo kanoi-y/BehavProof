@@ -16,7 +16,7 @@ GitHub documents [expected status-check sources](https://docs.github.com/en/repo
 
 ## Distribution security and initial release
 
-Initial npm distribution is public on the next preview channel, explicitly approved by the owner after confirming free npm accounts cannot publish restricted packages. Public GitHub source remains public. `next` is a dist-tag, not an access control. No open-source license has been selected; packages are marked `UNLICENSED` pending a deliberate license decision.
+BehavProof packages are publicly available on npm. The `latest` and `next` distribution tags select the version to install. The source is publicly viewable on GitHub. No open-source license has been selected; packages are marked `UNLICENSED` pending a deliberate license decision.
 
 The release helper inspects actual tarball bytes, accepts only regular allowlisted package files, enforces size/structure bounds, rejects common credential shapes and lifecycle scripts, and verifies SHA-512 before publication. It publishes only to the fixed npm registry with explicitly approved public access, then reads back public visibility and integrity. It refuses to convert an existing private package to public. Build/test/package steps must run without publishing credentials; use a separate trusted administrator host for publication. Review the manifest because scanning cannot prove absence of all secrets. Do not attach restricted tarballs to public GitHub Releases.
 
