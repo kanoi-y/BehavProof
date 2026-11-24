@@ -53,6 +53,37 @@ it('passes multiple invariant names as CLI array arguments, not an expression',a
  const result=await adapter.runQuint({root,model:{...model,invariants:['refundAtMostOnce','noRefundAfterShipping']},stage:'run',outputDirectory:'out/invariants'});
  expect(result.result.status).toBe('pass');
 });
+it('reports per-witness sample counts and leaves ambiguous sampling output unknown',async()=>{
+ const output=[
+  '[ok] No violation found (10ms at 1000 traces/second).',
+  'Witnesses:',
+  'refundReached was witnessed in 3 trace(s) out of 20 explored (15.00%)',
+  'otherReached was witnessed in 0 trace(s) out of 20 explored (0.00%)',
+  'Use --seed=0x2a --backend=typescript to reproduce.',
+ ].join('\n');
+ const run=async (summary:string,basename:string)=>{
+  await writeFile(join(root,'quint.mjs'),`import{writeFileSync}from'node:fs';
+   const args=process.argv.slice(2),value=name=>args[args.indexOf(name)+1];
+   if(args.includes('--version'))console.log('0.33.1');
+   else if(args.includes('--out'))writeFileSync(value('--out'),JSON.stringify(${JSON.stringify(raw.run)}));
+   else if(args.includes('--mbt')&&value('--n-traces')==='2'&&value('--seed')==='42'&&value('--max-steps')==='8'&&value('--max-samples')==='20'&&
+     !args.includes('--out-itf')&&args.slice(args.indexOf('--witnesses')+1).join() === 'refundReached,otherReached') console.log(${JSON.stringify(summary)});
+  `);
+  return (await adapter.runQuint({root,model:{...model,minTraces:2,witnesses:['refundReached','otherReached']},stage:'run',outputDirectory:`out/${basename}`})).result;
+ };
+ expect(await run(output,'counted')).toMatchObject({status:'pass',simulationWitnesses:{samplesExplored:20,
+  counts:[{name:'refundReached',traces:3},{name:'otherReached',traces:0}]}});
+ for(const [name,summary] of [
+  ['duplicate',`${output}\n${output}`],
+  ['inconsistent',output.replace('0 trace(s) out of 20','0 trace(s) out of 19')],
+  ['missing',output.replace(/^otherReached.*\n/m,'')],
+ ]){
+  const result=await run(summary,name);
+  expect(result.status).toBe('pass');
+  expect(result.simulationWitnesses).toBeUndefined();
+  expect(result.diagnostics).toContain('Quint simulation witness counts are unavailable');
+ }
+});
 it('resolves the complete imported-model closure before starting a tool',async()=>{
  await writeFile(join(root,'order.qnt'),'module order { import common.* from "common" }');await writeFile(join(root,'common.qnt'),'module common {}');
  const before=await adapter.readModelInputs(root,model);

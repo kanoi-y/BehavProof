@@ -110,8 +110,20 @@ export async function formalEvaluations(o:Options){
     scope:['model',m.id,'action',action],evidenceIds:[traceReceiptRef(m)],
     message:observed?'Action occurred in an authenticated transition trace':'No authenticated transition trace demonstrates this action'});
   }
-  const verification=!problem&&currentModelReport&&o.trusted(m.report)?modelResult.stages.find(stage=>stage.stage==='verify'):undefined;
+  const reportTrusted=!problem&&currentModelReport&&o.trusted(m.report);
+  const verification=reportTrusted?modelResult.stages.find(stage=>stage.stage==='verify'):undefined;
+  const simulation=reportTrusted?modelResult.stages.find(stage=>stage.stage==='run'):undefined;
+  const witnessNames=new Set(m.witnesses);
+  const sampled=simulation?.simulationWitnesses;
+  const witnessCounts=sampled&&stageState('parse')==='pass'&&stageState('typecheck')==='pass'&&
+   simulation?.status==='pass'&&simulation.complete&&simulation.exitCode===0&&
+   simulation.toolVersion===m.quint.version&&simulation.backend==='typescript'&&simulation.method==='simulation'&&
+   simulation.seed===m.seed&&simulation.maxSamples===m.maxSamples&&simulation.maxSteps===m.maxSteps&&
+   formalInvariants(m).every(name=>simulation.properties.includes(name))&&sampled.samplesExplored<=m.maxSamples&&
+   sampled.counts.length===witnessNames.size&&sampled.counts.every(({name})=>witnessNames.has(name))?sampled:null;
   const coverage={simulation:{seed:m.seed,maxSamples:m.maxSamples,
+   ...(witnessNames.size?{witnessObservations:witnessCounts,
+    ...(witnessCounts?{}:{witnessReason:'Authenticated simulation witness counts are unavailable'})}:{}),
    observation:traceTrusted?{traces:trace!.traces.length,distinctStates:observedStates.size,
     distinctTransitions:observedTransitions.size,actions:Object.fromEntries([...actions].sort(([a],[b])=>a.localeCompare(b)))}:null,
    ...(!traceTrusted?{reason:traceProblem??'Authenticated simulation traces are unavailable'}:{})},

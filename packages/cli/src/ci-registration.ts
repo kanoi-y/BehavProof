@@ -6,8 +6,8 @@ import {GitHubAuthority, GitHubTransport, type GitHubOptions} from '@behavproof/
 import {Deployment, commitSha, deploymentPath, packageFiles} from './ci-plan.js';
 import {QualityPolicy} from './quality.js';
 import {defaultTest} from './quality-static.js';
-import {git, readGitFile} from './project.js';
-import {specificationsAt} from './formal-registry.js';
+import {git} from './project.js';
+import {enrollmentSpecifications} from './formal-registry.js';
 import {assuranceCriteriaAt} from './assurance-definitions.js';
 import {readPinnedFiles} from './ci-verify.js';
 
@@ -72,7 +72,7 @@ export async function readCIRegistration(root:string,path:string,digest:string) 
 }
 
 export async function enrollCI(root:string, options:{
-  pr:number;workflowSha:string;reviewers:string[];registration:string;token?:string;fetcher?:GitHubOptions['fetcher'];
+  pr:number;workflowSha:string;reviewers:string[];registration:string;quintToolRoot?:string;token?:string;fetcher?:GitHubOptions['fetcher'];
 }) {
   const head = commitSha.parse((await git(root,['rev-parse','HEAD'])).trim());
   const workflowSha=commitSha.parse(options.workflowSha);
@@ -92,7 +92,7 @@ export async function enrollCI(root:string, options:{
   const cfgExists=(await git(root,['ls-tree',head,'--',`:(literal)${deployment.configPath}`])).length>0;
   const config=parseConfig(cfgExists?JSON.parse(await at(deployment.configPath)):{schemaVersion:2});
   if (config.testRunner && config.testRunner!==policy.runner) throw Error('Reviewed test runner differs from the quality policy');
-  const specifications=await specificationsAt(root,config,path=>readGitFile(root,head,path));
+  const specifications=await enrollmentSpecifications(root,config,head,options.quintToolRoot);
   const assuranceSources=await assuranceCriteriaAt(root,config,deployment.configPath,head);
   const files:Record<string,string>={};
   for (const file of packageFiles(deployment,policy)) {

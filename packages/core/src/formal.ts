@@ -6,6 +6,7 @@ const text=z.string().min(1),digest=z.string().regex(/^[a-f0-9]{64}$/);
 const path=text.refine(p=>!p.includes('\0')&&!p.includes('\\')&&!p.startsWith('/')&&!/^[A-Za-z]:/.test(p)&&!p.split('/').some(s=>s==='.'||s==='..'||!s),'Expected scoped relative POSIX path');
 const count=z.number().int().nonnegative().safe();
 const unique=<T extends z.ZodType>(schema:T)=>z.array(schema).max(10000).refine(a=>new Set(a).size===a.length,'Duplicate values');
+export const PROTECTED_QUINT_ENTRY='node_modules/@informalsystems/quint/dist/src/cli.js';
 export const FormalStageSchema=z.enum(['parse','typecheck','test','run','verify']);
 export const FormalModelConfigSchema=z.strictObject({
  id:text,model:path,modelSources:unique(path).default([]),
@@ -29,6 +30,11 @@ export const FormalConfigSchema=z.strictObject({
  required:z.array(requiredScope).max(100).refine(rows=>new Set(rows.map(row=>row.id)).size===rows.length,'Duplicate specification scope IDs').optional(),
 }).refine(formal=>formal.models.length>0||!!formal.required?.length,'Formal configuration requires models or protected scopes');
 export const FormalInputIdentitySchema=z.strictObject({modelHash:digest,configHash:digest,commandHash:digest,driverHash:digest.optional(),implementationHash:digest.optional(),traceHash:digest.optional()});
+const simulationWitnesses=z.strictObject({
+ samplesExplored:count.min(1).max(100000),
+ counts:z.array(z.strictObject({name:text,traces:count})).min(1).max(10000),
+}).refine(({samplesExplored,counts})=>new Set(counts.map(row=>row.name)).size===counts.length&&
+ counts.every(row=>row.traces<=samplesExplored),'Invalid simulation witness counts');
 export const FormalStageResultSchema=z.strictObject({
  stage:FormalStageSchema,status:z.enum(['pass','fail','unknown']),complete:z.boolean(),exitCode:z.number().int().nullable(),
  toolVersion:text,backend:z.enum(['quint','typescript','rust','apalache','tlc']),
@@ -36,8 +42,15 @@ export const FormalStageResultSchema=z.strictObject({
  properties:unique(text),maxSteps:count.optional(),maxSamples:count.optional(),seed:text.optional(),traceSeed:text.optional(),
  backendVersion:text.optional(),diagnostics:z.array(text).max(1000),stdoutHash:digest.optional(),stderrHash:digest.optional(),
  artifacts:z.array(z.strictObject({ref:path,sha256:digest})).max(1000).optional(),
+ simulationWitnesses:simulationWitnesses.optional(),
 });
-export const FormalModelReportSchema=z.strictObject({schemaVersion:z.literal(1),modelId:text,identity:FormalInputIdentitySchema,stages:z.array(FormalStageResultSchema).max(5).refine(s=>new Set(s.map(x=>x.stage)).size===s.length,'Duplicate model stages')});
+const modelReportFields={modelId:text,identity:FormalInputIdentitySchema};
+const reportStages=<T extends z.ZodType<{stage:z.infer<typeof FormalStageSchema>}>>(stage:T)=>
+ z.array(stage).max(5).refine(rows=>new Set(rows.map(row=>row.stage)).size===rows.length,'Duplicate model stages');
+export const FormalModelReportSchema=z.discriminatedUnion('schemaVersion',[
+ z.strictObject({schemaVersion:z.literal(1),...modelReportFields,stages:reportStages(FormalStageResultSchema.omit({simulationWitnesses:true}))}),
+ z.strictObject({schemaVersion:z.literal(2),...modelReportFields,stages:reportStages(FormalStageResultSchema)}),
+]);
 export const FormalTraceReceiptSchema=z.strictObject({schemaVersion:z.literal(1),modelId:text,identity:FormalInputIdentitySchema,toolVersion:text,backend:z.enum(['typescript','rust']),maxSteps:count.min(1),maxSamples:count.min(1),seed:text,traces:z.array(z.strictObject({ref:path,sha256:digest})).max(10000).refine(rows=>new Set(rows.map(r=>r.ref)).size===rows.length,'Duplicate trace artifact refs')});
 export const ReplayOutcomeSchema=z.enum(['allowed','rejected']);
 const replayOutcomes={expectedOutcome:ReplayOutcomeSchema.optional(),actualOutcome:ReplayOutcomeSchema.optional()};

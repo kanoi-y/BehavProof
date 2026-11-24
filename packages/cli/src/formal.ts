@@ -91,7 +91,7 @@ export async function executeFormal(root:string,action:string,values:Record<stri
     }
    }
    if(hash(before)!==hash(await formalInputIdentity(root,m)))throw Error('Formal inputs changed during execution');
-   const report=FormalModelReportSchema.parse({schemaVersion:1,modelId:m.id,identity:before.model,stages});await writeScoped(root,m.report,canonicalJson(report)+'\n');results.push(report);
+   const report=FormalModelReportSchema.parse({schemaVersion:2,modelId:m.id,identity:before.model,stages});await writeScoped(root,m.report,canonicalJson(report)+'\n');results.push(report);
    if(stages.some(s=>s.status==='unknown'))exitCode=2;else if(exitCode===0&&stages.some(s=>s.status==='fail'))exitCode=1;
   }else{
    if(!m.driver||!m.implementation||!m.conformanceReport)throw Error('Model replay requires configured Driver, implementation and conformanceReport');

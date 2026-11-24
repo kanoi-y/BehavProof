@@ -1,7 +1,7 @@
 import {expect, it} from 'vitest';
 import {execFileSync} from 'node:child_process';
-import {mkdtemp, rm, writeFile} from 'node:fs/promises';
-import {join} from 'node:path';
+import {mkdir, mkdtemp, rm, stat, writeFile} from 'node:fs/promises';
+import {join, dirname} from 'node:path';
 import {tmpdir} from 'node:os';
 import {specificationReview} from '../../packages/cli/src/formal-registry.js';
 import {formalSpecificationIdentity} from '../../packages/cli/src/formal.js';
@@ -108,3 +108,67 @@ it('retains a removed required scope until the exact scope deletion in Git is in
     expect(approved.evaluations).toEqual([]);
   }finally{await rm(root,{recursive:true,force:true});}
 });
+
+it('typechecks committed Quint selections on the protected host before enrolling or consulting GitHub', async () => {
+  const {enrollCI}=await import('../../packages/cli/src/ci-registration.js');
+  const {packageFiles,Deployment}=await import('../../packages/cli/src/ci-plan.js');
+  const scratch=await mkdtemp(join(tmpdir(),'formal-enrollment-'));
+  const root=join(scratch,'project'),toolRoot=join(scratch,'trusted'),registration=join(scratch,'registration.json');
+  const entry='node_modules/@informalsystems/quint/dist/src/cli.js';
+  const git=(...args:string[])=>execFileSync('git',['-c','user.name=Fixture','-c','user.email=fixture@example.invalid',...args],
+    {cwd:root,encoding:'utf8'}).trim();
+  const write=async (path:string,value:string)=>{
+    await mkdir(dirname(path),{recursive:true});
+    await writeFile(path,value);
+  };
+  const deployment=Deployment.parse({repository:'acme/orders',protectedBranch:'main',workflowBranch:'trusted/main',
+    sdkSha:'a'.repeat(40),appId:5300,checkName:'BehavProof protected gate',environment:'behavproof-publisher',
+    producerPath:'.github/workflows/behavproof-producer.yml',publisherPath:'.github/workflows/behavproof-publisher.yml',
+    policyPath:'.github/behavproof/quality-policy.json',configPath:'behavproof.config.json'});
+  const policy={schemaVersion:1 as const,id:'quality',lint:{tool:'eslint' as const,rules:['no-debugger']},
+    types:'strict' as const,runner:'vitest' as const,sources:['src/**/*']};
+  const model={id:'orders',model:'orders.qnt',module:'orders',invariants:['safe'],checks:['parse','typecheck','run'],
+    maxSteps:6,seed:'1',quint:{entry,version:'0.33.1'},report:'.behavproof/formal.json'};
+  const types={1:{type:{kind:'bool'}},2:{type:{kind:'bool'}},3:{type:{kind:'bool'}}};
+  const effect=(kind:string)=>({effect:{kind:'concrete',components:[{kind}]}});
+  const output={stage:'typechecking',modules:[{name:'orders',declarations:[
+    {id:1,name:'init',kind:'def',qualifier:'action'},
+    {id:2,name:'step',kind:'def',qualifier:'action'},
+    {id:3,name:'safe',kind:'def',qualifier:'val',expr:{id:4,kind:'bool',value:true}},
+  ]}],types,effects:{1:effect('update'),2:effect('update'),3:effect('read')}};
+  let contacted=false;
+  const run=(chosenRoot?:string)=>enrollCI(root,{pr:7,workflowSha:'c'.repeat(40),reviewers:['alice'],registration,
+    ...(chosenRoot?{quintToolRoot:chosenRoot}:{}),async fetcher(){
+      contacted=true;
+      throw new Error('fixture deliberately stops at remote validation');
+    }});
+  try{
+    for(const file of packageFiles(deployment,policy))await write(join(root,file.path),file.content);
+    await write(join(root,'orders.qnt'),'module orders { import State.* from "state" }');
+    await write(join(root,'state.qnt'),'reviewed dependency bytes');
+    await write(join(root,'package.json'),'{"type":"module"}');
+    await write(join(root,'node_modules/.keep'),'');
+    await write(join(root,entry),'throw Error("Candidate executable ran");');
+    await write(join(toolRoot,entry),`(async()=>{
+      const fs=await import('node:fs/promises');
+      if(process.argv[2]==='--version'){console.log('0.33.1');return;}
+      if(await fs.readFile('state.qnt','utf8')!=='reviewed dependency bytes')throw Error('Wrong source snapshot');
+      await fs.writeFile(process.argv[process.argv.indexOf('--out')+1],${JSON.stringify(JSON.stringify(output))});
+    })().catch(error=>{console.error(error.message);process.exitCode=1;});`);
+    const configPath=join(root,deployment.configPath);
+    await write(configPath,JSON.stringify({schemaVersion:2,formal:{models:[{...model,invariants:['missing']}]}}));
+    git('init','-qb','main');git('add','.');git('commit','-qm','invalid enrolled selection');
+    await expect(run()).rejects.toThrow(/quint-tool-root/i);
+    await expect(run(root)).rejects.toThrow(/outside/i);
+    await expect(run(toolRoot)).rejects.toThrow(/orders.*missing/i);
+    expect(contacted).toBe(false);
+    await expect(stat(registration)).rejects.toHaveProperty('code','ENOENT');
+
+    await write(configPath,JSON.stringify({schemaVersion:2,formal:{models:[model]}}));
+    git('add',deployment.configPath);git('commit','-qm','valid enrolled selection');
+    await write(join(root,'state.qnt'),'unreviewed working-tree dependency');
+    await expect(run(toolRoot)).rejects.toThrow(/GitHub response/i);
+    expect(contacted).toBe(true);
+    await expect(stat(registration)).rejects.toHaveProperty('code','ENOENT');
+  }finally{await rm(scratch,{recursive:true,force:true});}
+},15000);
