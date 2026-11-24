@@ -126,12 +126,18 @@ behavproof ci apply --plan plan.json
 
 次の作業はGitHub上で人間が行う。CLIはこれらを作らないし、作ったと主張もしない。
 
+日常的に更新する保護対象ブランチとは別に、信頼済みワークフローブランチを用意し、`ci plan --workflow-branch` で指定します。実行時にはこのブランチの先端が登録時の `WORKFLOW_SHA` と一致する必要があります。
+
+初回は、既存の必須チェックの下で、生成された Producer と Publisher を既定ブランチに取り込みます。GitHub の手動実行は既定ブランチ上にも両ファイルを必要とします。その後、レビュー済みの同じ生成ファイルを信頼済みワークフローブランチに置き、実行時はそのブランチを選びます。[GitHub の手動実行の前提](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/manually-run-a-workflow)
+
 1. 専用のGitHub Appを作る。権限はChecksの書き込みと、Actions・Contents・Pull requests・Administrationの読み取りに絞る。
 2. `behavproof-publisher`環境を作る。対象ブランチを信頼するワークフローブランチだけに制限し、登録したレビュアーを必須にし、自己レビューと管理者のバイパスを無効にする。Appの秘密鍵を`BEHAVPROOF_APP_PRIVATE_KEY`としてこの環境に置く。
 3. 保護対象ブランチに厳格なブランチ保護を設定する。管理者にも適用し、人のレビューを必須にし、古いレビューを破棄する設定にし、必須チェックとしてApp由来の`BehavProof protected gate`を選ぶ。
-4. Repository Variablesに3件を登録する。`BEHAVPROOF_WORKFLOW_SHA`、`BEHAVPROOF_REGISTRATION_JSON`、`BEHAVPROOF_REGISTRATION_DIGEST`。
+4. §5-2 の登録が完了したら、Repository Variables に `BEHAVPROOF_WORKFLOW_SHA`、`BEHAVPROOF_REGISTRATION_JSON`、`BEHAVPROOF_REGISTRATION_DIGEST` を設定する。
 5. 信頼済みワークフローブランチにも管理者を含む保護を適用し、古いレビューの破棄を有効にして強制更新と削除を禁止する。
 6. 保護対象・信頼済みワークフローブランチとは別に、専用の`behavproof-registry`ブランチを用意する。登録管理者だけに書き込みを許可し、強制更新と削除を禁止する。[登録ブランチの保護設定](formal.ja.md#マージ後の仕様登録)
+
+切り替え時は、既存の必須チェックに専用 App のチェックを追加します。`ci enroll` はこの設定を検証するため、追加は登録より先に行います。既存のチェックを外す判断は、登録、証拠照合、専用 App からの発行、マージ制御を確認した後に行います。新しいチェックが発行されるまでの間は、対象ブランチへのマージが待機状態になることがあります。
 
 ### 5-2. 独立したホストで登録する：`behavproof ci enroll`
 
@@ -142,7 +148,7 @@ behavproof ci enroll --workflow-sha "$WORKFLOW_SHA" --reviewers alice,bob --regi
 - レビュアーはGitHubのログイン名。英数字とハイフンのみで、先頭と末尾は英数字、最大39文字。1人以上6人以下。
 - `formal.models` を登録する場合は、保護ホストが管理する Quint 0.33.1 のインストール先を `--quint-tool-root /absolute/tool-root` で指定します。そのディレクトリ直下の `node_modules/@informalsystems/quint/dist/src/cli.js` を使用します。登録前に対象コミットの Quint ソースと推移的な依存を一時領域で型検査し、未解決の参照、曖昧な定義、役割に合わない型や effect を拒否します。通常テストのみの登録ではこのオプションを省略します。
 - `--registration`はリポジトリ外のパスにする。登録ファイルは0600で作られ、48 KiBを超えない。
-- `--pr`は承認の対象になるPR番号。enrollはGitHub AuthorityでそのPRの承認を確認する。
+- `--pr` には保護対象ブランチに向けたオープン中の PR を指定します。その PR の最新コミットを独立したホストでチェックアウトし、`--reviewers` で指定する、PR 作成者とは別のレビュアーによる承認を受けてから実行します。生成ファイルと設定は、信頼済みワークフローブランチに固定した内容と一致させます。
 - 登録は`schemaVersion: 2`を使う。レビュー済みの`sourceCommit`と`specifications`、デプロイ、ワークフローのSHA、統合ファイルのハッシュ、レビュアー、品質ポリシー、設定、必須テストが含まれる。通常テストのみの場合、`specifications`は空配列になる。
 - `GITHUB_TOKEN`は環境変数で渡す。トークンがない場合は匿名で読み取りを試みる。
 
@@ -169,6 +175,11 @@ behavproof ci verify --registration "$REGISTRATION" --digest "$REGISTRATION_DIGE
 ## 7. PRで実行し、マージ後の仕様を登録する
 
 信頼済みブランチから、開いているPRの番号を指定してProducerを手動実行します。Producerが成功したら、同じPR番号とProducerのrun IDをPublisherに渡します。PRの最新版に対する`BehavProof protected gate`の結果と専用Appの発行元を確認します。既存の必須チェックは一連の収集・照合・発行を確認するまで維持します。
+
+```sh
+gh workflow run behavproof-producer.yml --repo "$REPOSITORY" --ref "$WORKFLOW_BRANCH" -f pr="$PR"
+gh workflow run behavproof-publisher.yml --repo "$REPOSITORY" --ref "$WORKFLOW_BRANCH" -f pr="$PR" -f producer_run="$PRODUCER_RUN"
+```
 
 採用済みの仕様、必須範囲、例外を更新したPRがマージされたら、保護ホストからPublisherが返したチェックIDを指定して登録を進めます。
 
