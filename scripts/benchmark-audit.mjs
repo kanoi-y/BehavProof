@@ -12,7 +12,7 @@ try{
  await writeFile(join(root,'.gitignore'),'.behavproof/\n');
  await writeFile(join(root,'package.json'),'{"name":"benchmark","type":"module","scripts":{"test":"vitest run"},"devDependencies":{"vitest":"5.1.0"}}');
  await writeFile(join(root,'src.ts'),'export const value=1;\n');
- await writeFile(join(root,'behavproof.config.json'),JSON.stringify({schemaVersion:1,profile:'basic',git:{base:'HEAD'},reports:{vitest:'.behavproof/input/vitest.json'}}));
+ await writeFile(join(root,'behavproof.config.json'),JSON.stringify({schemaVersion:2,profile:'basic',git:{base:'HEAD'},reports:{vitest:'.behavproof/input/vitest.json'}}));
  const count=12000,assertions=Array.from({length:count},(_,i)=>({title:`throughput-${i}-${'x'.repeat(740)}`,ancestorTitles:[],status:'passed'}));
  const data=Buffer.from(JSON.stringify({numTotalTests:count,numPassedTests:count,numFailedTests:0,numPendingTests:0,numTodoTests:0,numTotalTestSuites:1,numPassedTestSuites:1,numFailedTestSuites:0,numPendingTestSuites:0,success:true,testResults:[{name:'synthetic.test.ts',status:'passed',assertionResults:assertions}]}));
  if(data.length<9_000_000||data.length>10*1024*1024)throw Error('Benchmark input outside intended size');

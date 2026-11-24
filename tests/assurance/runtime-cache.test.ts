@@ -2,8 +2,8 @@ import {afterEach,beforeEach,expect,it} from 'vitest';
 import {mkdtemp,mkdir,writeFile,rm,symlink} from 'node:fs/promises';
 import {join} from 'node:path';
 import {tmpdir} from 'node:os';
-import {hash,hashBytes,type Contract} from '../../packages/core/src/index.js';
-import {runAssurance,type AssuranceRunOptions} from '../../packages/contract-registry/src/assurance-runtime.js';
+import {hash,hashBytes,type AssuranceTarget} from '../../packages/core/src/index.js';
+import {runAssurance,type AssuranceRunOptions} from '../../packages/spec-registry/src/assurance-runtime.js';
 
 let root:string,inputs:Record<string,string>;
 const subject={testedCommitSha:'a'.repeat(40),sourceTreeHash:'b'.repeat(64)};
@@ -17,8 +17,8 @@ afterEach(async()=>{await rm(root,{recursive:true,force:true});});
 async function put(path:string,source:string){await writeFile(join(root,path),source);inputs[path]=hashBytes(Buffer.from(source));}
 function options(overrides:Partial<AssuranceRunOptions>={}):AssuranceRunOptions{
  const check={id:'value',method:'example' as const,targetRef:'src/target.mjs#run',cases:[{id:'one',input:null,expected:1}]};
- const contract:Contract={id:'C',kind:'examples',intentIds:[],sourceRef:'contract.json',revisionHash:hash(check),cases:[],assurance:{feature:{id:'cache',entrypoints:['run']},checks:[check],conditions:[{id:'value',kind:'postcondition',statement:'current helper value',checks:['value'],requiredFaults:[]}]}};
- return {root,contracts:[contract],subject,inputHashes:{...inputs},implementationSources:['src/target.mjs','src/helper.mjs'],...overrides};
+ const contract:AssuranceTarget={id:'C',sourceRef:'behavproof.config.json',revisionHash:hash(check),assurance:{feature:{id:'cache',entrypoints:['run']},checks:[check],conditions:[{id:'value',kind:'postcondition',statement:'current helper value',checks:['value'],requiredFaults:[]}]}};
+ return {root,targets:[contract],subject,inputHashes:{...inputs},implementationSources:['src/target.mjs','src/helper.mjs'],...overrides};
 }
 const actual=(bundle:Awaited<ReturnType<typeof runAssurance>>)=>(bundle.reports[0]!.checks[0] as {samples:{actual?:unknown}[]}).samples[0]!.actual;
 
@@ -42,8 +42,8 @@ it('recognizes a root symlink alias before allowing a changed helper snapshot',a
 it('pins overlapping nested roots to the same physical source snapshot',async()=>{
  const o=options();await runAssurance(o);
  const nested=()=>{
-  const c=structuredClone(o.contracts[0]!);c.assurance!.checks[0]!.targetRef='target.mjs#run';
-  return options({root:join(root,'src'),contracts:[c],inputHashes:{'target.mjs':inputs['src/target.mjs']!,'helper.mjs':inputs['src/helper.mjs']!},implementationSources:['target.mjs','helper.mjs']});
+  const c=structuredClone(o.targets[0]!);c.assurance!.checks[0]!.targetRef='target.mjs#run';
+  return options({root:join(root,'src'),targets:[c],inputHashes:{'target.mjs':inputs['src/target.mjs']!,'helper.mjs':inputs['src/helper.mjs']!},implementationSources:['target.mjs','helper.mjs']});
  };
  expect(actual(await runAssurance(nested()))).toBe(1);
  await put('src/helper.mjs','export const value=2;');

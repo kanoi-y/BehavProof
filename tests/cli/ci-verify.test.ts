@@ -21,6 +21,11 @@ const sdkPaths = [
   'scripts/quality-ci.mjs', 'scripts/quality-ci-protocol.mjs', 'scripts/quality-ci-sandbox-entry.mjs', 'scripts/quality-ci-sandbox.mjs',
   'scripts/prepare-sandbox-sdk.mjs', 'scripts/protected-checkout.mjs', 'scripts/protected-container-image.mjs', 'scripts/staged-sdk.mjs',
   'packages/cli/src/api.ts', 'packages/cli/src/quality-ci-worker.ts', 'packages/cli/src/quality-observe.ts',
+  'scripts/formal-toolchain.mjs', 'examples/formal-order/package.json', 'examples/formal-order/package-lock.json',
+  'packages/cli/src/formal-artifacts.ts', 'packages/cli/src/quality-formal-worker.ts',
+  'packages/cli/src/ci-registry-state.ts',
+  'packages/cli/src/assurance-artifacts.ts', 'packages/cli/src/assurance-worker.ts',
+  'packages/cli/src/quality-assurance-worker.ts', 'packages/cli/src/evidence-files.ts',
 ];
 const deployment = {
   repository, workflowBranch, protectedBranch, producerPath, publisherPath, sdkSha, appId,
@@ -302,6 +307,7 @@ test('detects a changed local integration file while preserving remote observati
     const input = data.register();
     expect((await verify(input, data.fetcher, root)).status).toBe('pass');
     await writeFile(join(root, producerPath), '# local drift\n');
+
     expect(await verify(input, data.fetcher, root)).toMatchObject({ status: 'incomplete', checks: expect.arrayContaining([expect.objectContaining({ id: 'local-integration', status: 'fail' }), expect.objectContaining({ id: 'pinned-source', status: 'pass' })]) });
   } finally {
     await rm(root, { recursive: true, force: true });

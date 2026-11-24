@@ -30,6 +30,7 @@ export interface PublicationExpectation {
   subject: EvidenceSubject;
   effectivePolicyHash: string;
   registrationDigest: string;
+  allowRegistryPromotion?: boolean;
   ci: Ci;
   requiredEvaluations: Pick<Evaluation,'ruleId'|'severity'|'scope'>[];
   requiredJobs: string[];
@@ -41,7 +42,11 @@ export interface PreparedCheck {
   readonly conclusion: 'success'|'failure';
 }
 export type PublicationIdentity=Pick<PublicationExpectation,'repository'|'repositoryId'|'pr'|'headSha'|'baseSha'|'protectedBranch'|'checkName'|'appId'>;
-const preparations = new WeakMap<PreparedCheck,{identity:Readonly<PublicationIdentity>;publicationRef:string}>();
+const preparations = new WeakMap<PreparedCheck,{identity:Readonly<PublicationIdentity>;publicationRef:string;promotionRef?:string}>();
+export function registryGateReceipt(value:Pick<PublicationExpectation,'repository'|'repositoryId'|'pr'|'headSha'|'baseSha'|'registrationDigest'>){
+  const {repository,repositoryId,pr,headSha,baseSha,registrationDigest}=value;
+  return hash({purpose:'behavproof-registry-promotion',repository,repositoryId,pr,headSha,baseSha,registrationDigest});
+}
 function freeze<T>(value:T):T {
   if(value && typeof value==='object') {
     for(const child of Object.values(value)) freeze(child);
@@ -126,7 +131,8 @@ export function prepareCheckPublication(
       verifyPacket(p)===true;
   } catch { /* Malformed, incomplete or unverifiable input yields a failure check. */ }
   const result=freeze({headSha:e.headSha,checkName:e.checkName,conclusion:accepted?'success' as const:'failure' as const});
-  preparations.set(result,{identity:e,publicationRef:hash({ci:e.ci,registration:e.registrationDigest})});
+  preparations.set(result,{identity:e,publicationRef:hash({ci:e.ci,registration:e.registrationDigest}),
+    ...(accepted&&e.allowRegistryPromotion===true?{promotionRef:registryGateReceipt(e)}:{})});
   return result;
 }
 
@@ -155,7 +161,8 @@ export class GitHubCheckPublisher {
     await current();
     const conclusion=decision.conclusion==='success' && protection.status==='pass'?'success':'failure';
     const body={name:e.checkName,head_sha:e.headSha,status:'completed',conclusion,
-      external_id:hash({repositoryId:e.repositoryId,pr:e.pr,head:e.headSha,publicationRef:prepared!.publicationRef}),
+      external_id:(conclusion==='success'?prepared!.promotionRef:undefined)??
+        hash({repositoryId:e.repositoryId,pr:e.pr,head:e.headSha,publicationRef:prepared!.publicationRef}),
       output:{title:conclusion==='success'?'BehavProof gate accepted':'BehavProof gate blocked',
         summary:conclusion==='success'?'Current authenticated evidence satisfies the protected obligations.':'Required evidence, upstream outcomes or protected authority is unavailable or unsatisfied.'}};
     const published=object(await this.http.request(`${this.http.prefix}/check-runs`,body));

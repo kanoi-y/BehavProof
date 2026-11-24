@@ -1,7 +1,12 @@
-import { canonicalJson, FormalInputIdentitySchema, ModelConformanceReportSchema, type FormalInputIdentity, type ModelConformanceReport, type ReplayStep, type ReplayTrace } from '@behavproof/core';
+import { canonicalJson, FormalInputIdentitySchema, hasRequiredReplayObservations, ModelConformanceReportSchema, ReplayOutcomeSchema, type FormalInputIdentity, type ModelConformanceReport, type ReplayStep, type ReplayTrace } from '@behavproof/core';
 import { decodeFormalParameters, toFormalJson, type ReplayInputTrace } from './itf.js';
 export type Implementation=Record<string,unknown>;
-export type ReplayDriver={dispatch:(action:string,parameters:unknown)=>unknown|Promise<unknown>;observe?:()=>unknown|Promise<unknown>;dispose?:()=>unknown|Promise<unknown>};
+export type ReplayDriver={
+ /** For explicit-outcome traces, return 'allowed' or map a declared domain rejection to 'rejected'. Unexpected errors propagate. */
+ dispatch:(action:string,parameters:unknown)=>unknown|Promise<unknown>;
+ observe?:()=>unknown|Promise<unknown>;
+ dispose?:()=>unknown|Promise<unknown>;
+};
 export type ReplayOptions={modelId:string;identity:FormalInputIdentity;traces:readonly ReplayInputTrace[];implementation:Implementation;createDriver:(implementation:Implementation)=>ReplayDriver|Promise<ReplayDriver>;canary?:{faultId:string;implementationHash:string;implementation:Implementation}};
 async function execute(options:ReplayOptions,implementation:Implementation){
  const traces:ReplayTrace[]=[],diagnostics:string[]=[];let complete=true;
@@ -19,17 +24,28 @@ async function execute(options:ReplayOptions,implementation:Implementation){
    driver=await options.createDriver(wrapped);
    if(!driver||typeof driver.dispatch!=='function')throw Error('Driver dispatch unavailable');
    for(const step of input.steps){
-    calls=0;const row:ReplayStep={index:step.index,action:step.action,parameters:structuredClone(step.parameters),expected:structuredClone(step.expected),status:'unknown',comparisonCount:0,implementationCalls:0};
+    const explicitOutcome=step.expectedOutcome!==undefined;
+    calls=0;const row:ReplayStep={index:step.index,action:step.action,parameters:structuredClone(step.parameters),expected:structuredClone(step.expected),...(explicitOutcome?{expectedOutcome:step.expectedOutcome}:{}),status:'unknown',comparisonCount:0,implementationCalls:0};
     trace.steps.push(row);
     try{
-     await driver.dispatch(step.action,decodeFormalParameters(step.parameters));
+     let outcome:unknown;
+     try{outcome=await driver.dispatch(step.action,decodeFormalParameters(step.parameters));}
+     finally{if(explicitOutcome)row.implementationCalls=calls;}
+     if(explicitOutcome){
+      if(!row.implementationCalls)throw Error('No implementation call during dispatch');
+      const observed=ReplayOutcomeSchema.safeParse(outcome);
+      if(!observed.success)throw Error('Driver outcome unavailable');
+      row.actualOutcome=observed.data;
+     }
      if(typeof driver.observe!=='function'){row.diagnostic='Driver state comparison unavailable';trace.complete=false;continue;}
-     row.actual=toFormalJson(await driver.observe());row.comparisonCount=1;
-     row.status=canonicalJson(row.expected)===canonicalJson(row.actual)?'pass':'fail';
+     row.actual=toFormalJson(await driver.observe());
+     if(explicitOutcome&&!hasRequiredReplayObservations(row.expected,row.actual))throw Error('Required state observations unavailable');
+     row.comparisonCount=1;
+     row.status=row.expectedOutcome===row.actualOutcome&&canonicalJson(row.expected)===canonicalJson(row.actual)?'pass':'fail';
     }catch(error){
-     row.diagnostic=(error instanceof Error?error.message:'Driver execution error').slice(0,2000);trace.complete=false;
-     if(calls>0){row.actual={error:row.diagnostic};row.comparisonCount=1;row.status='fail';}
-    }finally{row.implementationCalls=calls;}
+     row.diagnostic=((error instanceof Error&&error.message)||'Driver execution error').slice(0,2000);trace.complete=false;
+     if(!explicitOutcome&&calls>0){row.actual={error:row.diagnostic};row.comparisonCount=1;row.status='fail';}
+    }finally{if(!explicitOutcome)row.implementationCalls=calls;}
    }
   }catch(error){trace.complete=false;diagnostics.push((error instanceof Error?error.message:'Driver creation failed').slice(0,2000));}
   finally{try{await driver?.dispose?.();}catch(error){trace.complete=false;diagnostics.push((error instanceof Error?error.message:'Driver cleanup failed').slice(0,2000));}}
@@ -49,8 +65,8 @@ export async function replayTraces(options:ReplayOptions):Promise<ModelConforman
   const faulty=await execute(options,options.canary.implementation);let observedCalls=0,comparedSteps=0,detectedMismatches=0,failure:NonNullable<ModelConformanceReport['canary']>['failure'];
   for(const trace of faulty.traces)for(const step of trace.steps){
    observedCalls+=step.implementationCalls;comparedSteps+=step.comparisonCount;
-   if(step.comparisonCount&&step.actual!==undefined&&canonicalJson(step.actual)!==canonicalJson(step.expected)){
-    detectedMismatches++;failure??={traceId:trace.id,index:step.index,action:step.action,implementationCalls:step.implementationCalls,expected:step.expected,actual:step.actual};
+   if(step.comparisonCount&&step.actual!==undefined&&(step.actualOutcome!==step.expectedOutcome||canonicalJson(step.actual)!==canonicalJson(step.expected))){
+    detectedMismatches++;failure??={traceId:trace.id,index:step.index,action:step.action,implementationCalls:step.implementationCalls,expected:step.expected,actual:step.actual,...(step.expectedOutcome===undefined?{}:{expectedOutcome:step.expectedOutcome,actualOutcome:step.actualOutcome})};
    }
   }
   report.canary={faultId:options.canary.faultId,implementationHash:options.canary.implementationHash,originalImplementationHash:identity.implementationHash,driverHash:identity.driverHash,traceHash:identity.traceHash,observedCalls,comparedSteps,detectedMismatches,...(failure?{failure}:{})};

@@ -10,18 +10,19 @@ import {
   GitHubAuthority, GitHubCheckPublisher, GitHubTransport, prepareCheckPublication, prepareFailedCheck,
 } from '@behavproof/adapter-github';
 import {CheckReportSchema, hash, hashBytes, safeRead} from '@behavproof/core';
-import {check, registeredCI} from '../packages/cli/dist/api.js';
+import {check, registeredCI, loadRegistryCI, requireCurrentRegistryBase} from '../packages/cli/dist/api.js';
 import {protectedGit, materializeProject, sha} from './protected-checkout.mjs';
 import {prepareQuality, captureQuality, restoreQuality} from './quality-ci-protocol.mjs';
 import {validateStagedSdk} from './staged-sdk.mjs';
+import {prepareFormalToolchain} from './formal-toolchain.mjs';
 
 const {positionals}=parseArgs({strict:true,allowPositionals:true,options:{}});
 const [action]=positionals;
 if (positionals.length!==1 || !['produce','publish'].includes(action)) throw Error('Expected produce or publish');
 const env=process.env, sdk=resolve(fileURLToPath(new URL('..', import.meta.url)));
-const registrationDigest=env.BEHAVPROOF_REGISTRATION_DIGEST;
-const registration=registeredCI(JSON.parse(env.BEHAVPROOF_REGISTRATION_JSON??''),registrationDigest);
-const {deployment,repositoryId,workflowSha}=registration;
+const enrollmentDigest=env.BEHAVPROOF_REGISTRATION_DIGEST;
+const enrollment=registeredCI(JSON.parse(env.BEHAVPROOF_REGISTRATION_JSON??''),enrollmentDigest);
+const {deployment,repositoryId,workflowSha}=enrollment;
 const workflowPath=action==='produce'?deployment.producerPath:deployment.publisherPath;
 const workflowRef=`${deployment.repository}/${workflowPath}@refs/heads/${deployment.workflowBranch}`;
 if (env.GITHUB_REPOSITORY!==deployment.repository || String(env.GITHUB_REPOSITORY_ID)!==repositoryId ||
@@ -32,6 +33,8 @@ if (env.GITHUB_REPOSITORY!==deployment.repository || String(env.GITHUB_REPOSITOR
 if (!env.GITHUB_TOKEN) throw Error('Protected host requires a GitHub token');
 const options={repository:deployment.repository,token:env.GITHUB_TOKEN};
 const http=new GitHubTransport(options), authority=new GitHubAuthority(options);
+const active=await loadRegistryCI(enrollment,enrollmentDigest,http);
+const {registration,digest:registrationDigest}=active;
 const number=value=>{
   if (!/^[1-9][0-9]*$/.test(String(value)) || !Number.isSafeInteger(Number(value))) throw Error('Invalid GitHub identity');
   return Number(value);
@@ -64,7 +67,9 @@ async function candidate(dir, pr) {
   protectedGit(dir,['update-ref','refs/heads/candidate',pr.head.sha]);
   protectedGit(dir,['read-tree',pr.head.sha]);
   await writeFile(join(dir,'.git/info/exclude'),'.behavproof/\nnode_modules/\n');
-  return materializeProject({root:dir,projectPath:'.',headSha:pr.head.sha});
+  const source=await materializeProject({root:dir,projectPath:'.',headSha:pr.head.sha});
+  await requireCurrentRegistryBase(source.root,pr.base.sha,pr.head.sha,active);
+  return source;
 }
 const makeCI=(id, runAttempt, jobId)=>({repositoryId,workflowRef:commitPath(deployment.producerPath),
   runId:String(id),runAttempt,jobId:String(jobId),eventName:'workflow_dispatch'});
@@ -117,9 +122,12 @@ async function produce(pr, work) {
   await validateStagedSdk(stagedSdk,{referenceRoot:sdk});
   // The sandbox launcher receives only paths to the clean snapshot, staged SDK
   // and pinned worker request. The core Collector hashes the actual wrapper.
-  await writeFile(requestPath,JSON.stringify({policy:plan.policy,config:plan.rawConfig}),{flag:'wx',mode:0o600});
+  const formalToolchain=plan.rawConfig.formal?.models.length?
+    await prepareFormalToolchain(join(work,'formal-tools')):undefined;
+  await writeFile(requestPath,JSON.stringify({policy:plan.policy,config:plan.rawConfig,runnerVersion:plan.version,
+    formalEnabled:plan.formalEnabled,assurance:plan.assurance}),{flag:'wx',mode:0o600});
   env.BEHAVPROOF_QUALITY_SANDBOX_MODULE=new URL('./quality-ci-sandbox-entry.mjs',import.meta.url).href;
-  env.BEHAVPROOF_QUALITY_REQUEST=JSON.stringify({sourceRoot:clean,stagedSdk,requestPath,executionId:execution(ci)});
+  env.BEHAVPROOF_QUALITY_REQUEST=JSON.stringify({sourceRoot:clean,stagedSdk,requestPath,formalToolchain});
   const artifact=await mkdtemp(join(tmpdir(),'behavproof-quality-artifact-'));
   try {
     await captureQuality(plan,execution(ci),ci,artifact);
@@ -162,9 +170,12 @@ async function publish(pr, work) {
     const packet={schemaVersion:1,repositoryId,subject:restored.expected.subject,effectivePolicyHash:result.effectivePolicyHash,registrationDigest,ci,report,
       upstream:{jobs:{collect:'success'},artifacts:restored.artefacts}};
     const expected={...identity,subject:restored.expected.subject,effectivePolicyHash:result.effectivePolicyHash,registrationDigest,ci,
+      allowRegistryPromotion:true,
       requiredEvaluations:report.evaluations.map(({ruleId,scope,severity})=>({ruleId,scope,severity})),
       requiredJobs:['collect'],requiredArtifacts:restored.expected.artifacts.map(artifact=>artifact.ref)};
     const packetHash=hash(packet);
+    const current=await loadRegistryCI(enrollment,enrollmentDigest,http,{verifyWriteProtection:true});
+    if(current.tip!==active.tip)throw Error('Registry changed during verification');
     decision=prepareCheckPublication(packet,expected,snapshot=>hash(snapshot)===packetHash);
   } catch (error) {
     console.log('BehavProof evidence unavailable '+JSON.stringify(String(error?.message??error)));

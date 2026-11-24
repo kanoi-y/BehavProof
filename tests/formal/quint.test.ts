@@ -5,9 +5,12 @@ import { tmpdir } from 'node:os';
 // Adapter-owned behavior, not Quint implementation tests: absent/incompatible
 // output, interrupted child, reused output and missing property cannot be pass.
 const adapter:any=await import('../../packages/adapter-quint/src/index.js').catch(()=>({}));
-const model={id:'ORDER',contractId:'ORDER-MODEL',model:'order.qnt',quint:{entry:'quint.mjs',version:'0.33.1',apalacheVersion:'0.62.4'},properties:['refundAtMostOnce'],checks:['parse','typecheck','test','run','verify'],maxSteps:8,maxSamples:20,seed:'42',timeoutMs:1000,report:'.behavproof/model.json'};
-const modules=[{name:'order',declarations:[]}];
-const raw={parse:{stage:'parsing',modules,table:{}},typecheck:{stage:'typechecking',modules,table:{},types:{},effects:{}},test:{stage:'testing',passed:['refundTest'],failed:[],ignored:[]},run:{stage:'running',status:'ok',seed:42,trace:[{kind:'app',opcode:'Rec',args:[]}]},verify:{stage:'verifying',status:'ok'}};
+const model={id:'ORDER',module:'order',model:'order.qnt',quint:{entry:'quint.mjs',version:'0.33.1',apalacheVersion:'0.62.4'},invariants:['refundAtMostOnce'],checks:['parse','typecheck','test','run','verify'],maxSteps:8,maxSamples:20,seed:'42',timeoutMs:1000,report:'.behavproof/model.json'};
+const definitions=['init','step','refundAtMostOnce'].map((name,id)=>({id,name,kind:'def',qualifier:id<2?'action':'val'}));
+const modules=[{name:'order',declarations:definitions}];
+const types=Object.fromEntries(definitions.map(({id})=>[id,{type:{kind:'bool'}}]));
+const effects=Object.fromEntries(definitions.map(({id})=>[id,{effect:{kind:'concrete',components:[{kind:id<2?'update':'read'}]}}]));
+const raw={parse:{stage:'parsing',modules,table:{}},typecheck:{stage:'typechecking',modules,table:{},types,effects},test:{stage:'testing',passed:['refundTest'],failed:[],ignored:[]},run:{stage:'running',status:'ok',seed:42,trace:[{kind:'app',opcode:'Rec',args:[]}]},verify:{stage:'verifying',status:'ok'}};
 const normalize=(stage:string,value:unknown,extra={})=>adapter.normalizeQuint(value,{model,stage,toolVersion:'0.33.1',exitCode:0,completed:true,...extra});
 let root:string;
 beforeEach(async()=>{root=await mkdtemp(join(tmpdir(),'behavproof-formal-'));await writeFile(join(root,'order.qnt'),'module order {}');await mkdir(join(root,'out'));});
@@ -20,6 +23,8 @@ it.each(['parse','typecheck','test','run','verify'])('normalizes %s into its dis
 it('decodes pinned real Quint CLI output fixtures',async()=>{
  for(const stage of ['parse','typecheck','test','run','verify']){
   const data=JSON.parse(await readFile(`tests/fixtures/formal/quint-${stage}.json`,'utf8'));
+  // The recorded typecheck predates definition inventory. Supply the selected definitions from this fixture.
+  if(stage==='typecheck')Object.assign(data,{modules,types,effects});
   expect(normalize(stage,data).status).toBe('pass');
  }
 });
@@ -38,24 +43,23 @@ it('keeps syntax/type/spec failures, counterexamples and infrastructure errors d
  expect(normalize('verify',raw.verify,{exitCode:2}).status).toBe('unknown');
 });
 it('keeps the command seed separate from the selected trace seed and rejects empty simulation',()=>{
- expect(adapter.normalizeQuint(raw.run,{model:{...model,properties:[]},stage:'run',toolVersion:'0.33.1',exitCode:0,completed:true}).status).toBe('unknown');
+ expect(()=>adapter.normalizeQuint(raw.run,{model:{...model,invariants:[]},stage:'run',toolVersion:'0.33.1',exitCode:0,completed:true})).toThrow();
  expect(normalize('run',{...raw.run,seed:74})).toMatchObject({status:'pass',seed:'42',traceSeed:'74'});
  expect(normalize('run',{...raw.run,seed:Number.MAX_SAFE_INTEGER+1}).status).toBe('unknown');
  expect(normalize('run',{...raw.run,trace:[]}).status).toBe('unknown');
 });
 it('passes multiple invariant names as CLI array arguments, not an expression',async()=>{
  await writeFile(join(root,'quint.mjs'),`import{writeFileSync}from'node:fs';if(process.argv.includes('--version'))console.log('0.33.1');else{const at=process.argv.indexOf('--invariants');const good=at>=0&&process.argv[at+1]==='refundAtMostOnce'&&process.argv[at+2]==='noRefundAfterShipping';writeFileSync(process.argv[process.argv.indexOf('--out')+1],JSON.stringify({stage:'running',status:good?'ok':'error',seed:42,trace:[{}]}));}`);
- const result=await adapter.runQuint({root,model:{...model,properties:['refundAtMostOnce','noRefundAfterShipping']},stage:'run',outputDirectory:'out/invariants'});
+ const result=await adapter.runQuint({root,model:{...model,invariants:['refundAtMostOnce','noRefundAfterShipping']},stage:'run',outputDirectory:'out/invariants'});
  expect(result.result.status).toBe('pass');
 });
-it('requires the complete declared imported-model closure before starting a tool',async()=>{
+it('resolves the complete imported-model closure before starting a tool',async()=>{
  await writeFile(join(root,'order.qnt'),'module order { import common.* from "common" }');await writeFile(join(root,'common.qnt'),'module common {}');
- await expect(adapter.readModelInputs(root,model)).rejects.toThrow(/modelSources/);
- const before=await adapter.readModelInputs(root,{...model,modelSources:['common.qnt']});
+ const before=await adapter.readModelInputs(root,model);
  await writeFile(join(root,'common.qnt'),'module common { val n = 1 }');
- expect((await adapter.readModelInputs(root,{...model,modelSources:['common.qnt']})).modelHash).not.toBe(before.modelHash);
+ expect((await adapter.readModelInputs(root,model)).modelHash).not.toBe(before.modelHash);
  await writeFile(join(root,'order.qnt'),'module order { import secret.* from "../secret" }');
- await expect(adapter.readModelInputs(root,{...model,modelSources:['common.qnt']})).rejects.toThrow();
+ await expect(adapter.readModelInputs(root,model)).rejects.toThrow();
 });
 it('captures real bounded child results and never reuses an existing result directory',async()=>{
  await writeFile(join(root,'quint.mjs'),`import{writeFileSync}from'node:fs';if(process.argv.includes('--version')){console.log('0.33.1');}else{writeFileSync(process.argv[process.argv.indexOf('--out')+1],JSON.stringify(${JSON.stringify(raw.parse)}));}`);

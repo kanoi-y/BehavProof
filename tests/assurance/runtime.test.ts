@@ -3,9 +3,9 @@ import {mkdtemp,mkdir,writeFile,readFile,rm} from 'node:fs/promises';
 import {join} from 'node:path';
 import {tmpdir} from 'node:os';
 import {createServer} from 'node:http';
-import {hash,hashBytes,evaluateAssuranceConditions,type Contract} from '../../packages/core/src/index.js';
-import {inspectArchitecture} from '../../packages/contract-registry/src/architecture.js';
-import {runAssurance,type RuntimeDriver} from '../../packages/contract-registry/src/assurance-runtime.js';
+import {hash,hashBytes,evaluateAssuranceConditions,type AssuranceTarget} from '../../packages/core/src/index.js';
+import {inspectArchitecture} from '../../packages/spec-registry/src/architecture.js';
+import {runAssurance,type RuntimeDriver} from '../../packages/spec-registry/src/assurance-runtime.js';
 let root:string,inputs:Record<string,string>;
 const subject={testedCommitSha:'a'.repeat(40),sourceTreeHash:'b'.repeat(64)};
 beforeEach(async()=>{
@@ -19,11 +19,11 @@ beforeEach(async()=>{
 });
 afterEach(async()=>{await rm(root,{recursive:true,force:true});});
 async function put(path:string,source:string){await writeFile(join(root,path),source);inputs[path]=hashBytes(Buffer.from(source));}
-function contract(check:any,fault?:any):Contract{return {id:'C',kind:'examples',intentIds:[],sourceRef:'contract.json',revisionHash:hash(check),cases:[],assurance:{feature:{id:'refund',entrypoints:['POST /refund']},checks:[check],conditions:[{id:'safe',kind:check.method==='example'?'postcondition':check.method==='sequence'?'invariant':check.method==='effects'?'effect':check.method,statement:'safe behavior',checks:[check.id],requiredFaults:fault?[fault]:[]}]}};}
+function contract(check:any,fault?:any):AssuranceTarget{return {id:'C',sourceRef:'behavproof.config.json',revisionHash:hash(check),assurance:{feature:{id:'refund',entrypoints:['POST /refund']},checks:[check],conditions:[{id:'safe',kind:check.method==='example'?'postcondition':check.method==='sequence'?'invariant':check.method==='effects'?'effect':check.method,statement:'safe behavior',checks:[check.id],requiredFaults:fault?[fault]:[]}]}};}
 async function run(c:Contract,driver:RuntimeDriver={}){
- const bundle=await runAssurance({root,contracts:[c],subject,inputHashes:inputs,implementationSources:['src/target.mjs'],driver});
+ const bundle=await runAssurance({root,targets:[c],subject,inputHashes:inputs,implementationSources:['src/target.mjs'],driver});
  const report=bundle.reports[0]!;
- return {bundle,report,evaluation:evaluateAssuranceConditions(c.assurance!,[report],{contractId:c.id,revisionHash:c.revisionHash,subject,inputHashes:inputs,implementationSources:['src/target.mjs'],checkHashes:Object.fromEntries(c.assurance!.checks.map(x=>[x.id,hash(x)])),authenticatedReportHashes:[hash(report)]})};
+ return {bundle,report,evaluation:evaluateAssuranceConditions(c.assurance!,[report],{definitionId:c.id,revisionHash:c.revisionHash,subject,inputHashes:inputs,implementationSources:['src/target.mjs'],checkHashes:Object.fromEntries(c.assurance!.checks.map(x=>[x.id,hash(x)])),authenticatedReportHashes:[hash(report)]})};
 }
 const example=()=>({id:'double',method:'example',targetRef:'src/target.mjs#run',cases:[{id:'zero',input:0,expected:0},{id:'two',input:2,expected:4}]});
 it('invokes selected exports and replays exact normal comparisons against a real faulty module',async()=>{
@@ -179,8 +179,9 @@ it('preserves direct static import, export, and require dependency observations'
  expect(evaluation.status).toBe('pass');expect((report.checks[0] as any).files[0].imports.map((i:any)=>i.specifier)).toEqual(['node:path','./target.mjs','node:url']);
 });
 it('preserves the shipped UI boundary normal result and detects its no-filesystem fault with either spelling',async()=>{
- const exampleRoot=join(process.cwd(),'examples/assurance-refund'),declaration=JSON.parse(await readFile(join(exampleRoot,'contract.json'),'utf8'));
- const check=declaration.assurance.checks.find((c:any)=>c.id==='ui-boundary'),condition=declaration.assurance.conditions.find((c:any)=>c.id==='ui-boundary');
+ const exampleRoot=join(process.cwd(),'examples/assurance-refund'),config=JSON.parse(await readFile(join(exampleRoot,'behavproof.config.json'),'utf8'));
+ const declaration=config.assurance.definitions[0].definition;
+ const check=declaration.checks.find((c:any)=>c.id==='ui-boundary'),condition=declaration.conditions.find((c:any)=>c.id==='ui-boundary');
  const sourceBytes=Object.fromEntries(await Promise.all(check.files.map(async(p:string)=>[p,await readFile(join(exampleRoot,p))])));
  const normal=inspectArchitecture(check,sourceBytes);
  expect(normal.unsupported).toEqual([]);expect(normal.violations).toEqual([]);

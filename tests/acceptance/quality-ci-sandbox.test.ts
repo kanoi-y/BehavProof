@@ -1,4 +1,5 @@
 import {mkdtemp, mkdir, readFile, rm, writeFile} from 'node:fs/promises';
+import {readFileSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {expect, test, vi} from 'vitest';
@@ -53,7 +54,7 @@ async function fixture(body: (input: {sourceRoot: string, stagedSdk: string, out
     await Promise.all([
       writeFile(join(sourceRoot, 'package.json'), JSON.stringify(manifest)),
       writeFile(join(sourceRoot, 'package-lock.json'), JSON.stringify(lock)),
-      writeFile(requestPath, '{}'),
+      writeFile(requestPath, JSON.stringify({runnerVersion: '5.1.0', executionId: 'untrusted-value'})),
     ]);
     await body({sourceRoot, stagedSdk, outputDir, requestPath, executionId: 'fixture-run'});
   } finally {
@@ -63,8 +64,11 @@ async function fixture(body: (input: {sourceRoot: string, stagedSdk: string, out
 
 function dockerDouble(payload: Record<string, string>, inspectStatus = 1) {
   const calls: string[][] = [];
+  const requests: unknown[] = [];
   const docker = (args: string[]) => {
     calls.push(args);
+    const requestMount = args.find(arg => arg.includes(',dst=/request.json,'));
+    if (requestMount) requests.push(JSON.parse(readFileSync(requestMount.split(',')[1]!.slice('src='.length), 'utf8')));
     if (args[0] === 'run') return {
       status: 0,
       stdout: Buffer.from(args[args.indexOf('--network') + 1] === 'none' ? JSON.stringify(payload) : ''),
@@ -76,11 +80,11 @@ function dockerDouble(payload: Record<string, string>, inspectStatus = 1) {
     };
     return {status: 0};
   };
-  return {calls, docker};
+  return {calls, requests, docker};
 }
 
 const report = Buffer.from('{}\n').toString('base64');
-const payload = {'quality.json': report, 'native.json': report, 'contracts.json': report};
+const payload = {'quality.json': report, 'native.json': report, 'test-receipt.json': report};
 
 test('the worker compares original source bytes while allowing generated files', async () => {
   await fixture(async ({sourceRoot, outputDir}) => {
@@ -99,11 +103,15 @@ test('the worker compares original source bytes while allowing generated files',
 
 test.skipIf(process.platform === 'win32' || process.getuid?.() === 0)('the offline worker receives read-only mounts and exports only bounded reports', async () => {
   await fixture(async input => {
-    const {calls, docker} = dockerDouble(payload);
+    const {calls, requests, docker} = dockerDouble(payload);
     expect(await runQualitySandbox(input, {docker})).toBe(0);
     expect(await readFile(join(input.outputDir, 'quality.json'), 'utf8')).toBe('{}\n');
+    expect(requests).toEqual([{runnerVersion: '5.1.0', executionId: 'fixture-run'}]);
     const [install, worker] = calls.filter(args => args[0] === 'run');
     expect(install).toEqual(expect.arrayContaining(['--network', 'bridge', '--read-only']));
+    for(const args of [install, worker]){
+      expect(args).toEqual(expect.arrayContaining(['--log-driver','local','max-size=1m','max-file=1','compress=false']));
+    }
     expect(install.join(' ')).not.toContain(input.sourceRoot);
     expect(install.join(' ')).not.toContain(input.requestPath);
     expect(worker).toEqual(expect.arrayContaining(['--network', 'none', '--read-only', '--cap-drop', 'ALL', '--user', `${process.getuid?.()}:${process.getgid?.()}`]));
@@ -130,6 +138,41 @@ test.skipIf(process.platform === 'win32' || process.getuid?.() === 0)('reports a
     await expect(runQualitySandbox(input, uncleared)).rejects.toThrow(/cleanup unconfirmed/i);
     const unexpected = dockerDouble({...payload, '../escape': report});
     await expect(runQualitySandbox(input, unexpected)).rejects.toThrow(/report/i);
+    const incomplete = dockerDouble({'quality.json': report, 'native.json': report});
+    await expect(runQualitySandbox(input, incomplete)).rejects.toThrow(/report/i);
     await expect(readFile(join(input.outputDir, 'quality.json'))).rejects.toHaveProperty('code', 'ENOENT');
+  });
+});
+
+test.skipIf(process.platform==='win32'||process.getuid?.()===0)(
+  'formal evidence is mandatory when requested, and mounted tools are read-only in the offline worker',
+  async()=>{
+    await fixture(async input=>{
+      await writeFile(input.requestPath,JSON.stringify({runnerVersion:'5.1.0',formalEnabled:true,
+        config:{formal:{models:[{id:'orders'}]}}}));
+      const formalToolchain={javaHome:input.stagedSdk,quintHome:input.stagedSdk,quintRoot:input.stagedSdk};
+      const missing=dockerDouble(payload);
+      await expect(runQualitySandbox({...input,formalToolchain},{docker:missing.docker})).rejects.toThrow(/inventory/i);
+      const present=dockerDouble({...payload,'formal-evidence.json':report});
+      await expect(runQualitySandbox({...input,formalToolchain},{docker:present.docker})).resolves.toBe(0);
+      const [installer,worker]=present.calls.filter(args=>args[0]==='run');
+      for(const path of ['/formal/java','/formal/cache','/formal/quint']){
+        expect(installer?.some(arg=>arg.includes('dst='+path+','))).toBe(false);
+        expect(worker?.some(arg=>arg.includes('dst='+path+',')&&arg.endsWith(',readonly'))).toBe(true);
+      }
+      expect(worker?.[worker.indexOf('--network')+1]).toBe('none');
+      expect(worker).toContain('JVM_ARGS=-Xmx768m');
+      expect(await readFile(join(input.outputDir,'formal-evidence.json'),'utf8')).toBe('{}\n');
+    });
+  },
+);
+
+test.skipIf(process.platform==='win32'||process.getuid?.()===0)('requires the Assurance bundle only for an enrolled Assurance worker request',async()=>{
+  await fixture(async input=>{
+    const unexpected=dockerDouble({...payload,'assurance-evidence.json':report});
+    await expect(runQualitySandbox(input,unexpected)).rejects.toThrow(/inventory/i);
+    await writeFile(input.requestPath,JSON.stringify({runnerVersion:'5.1.0',config:{assurance:{definitions:[{id:'counter'}]}}}));
+    await expect(runQualitySandbox(input,dockerDouble(payload))).rejects.toThrow(/inventory/i);
+    await expect(runQualitySandbox(input,dockerDouble({...payload,'assurance-evidence.json':report}))).resolves.toBe(0);
   });
 });

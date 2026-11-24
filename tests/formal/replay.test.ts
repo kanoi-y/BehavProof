@@ -4,7 +4,7 @@ const adapter:any=await import('../../packages/adapter-model-test/src/index.js')
 const production:any=await import('../../examples/formal-order/src/order.mjs').catch(()=>({}));
 const digest='a'.repeat(64),faultHash='b'.repeat(64);
 const identity={modelHash:digest,configHash:digest,commandHash:digest,driverHash:digest,implementationHash:digest,traceHash:digest};
-const model=FormalModelConfigSchema.parse({id:'ORDER',contractId:'ORDER-MODEL',model:'specs/order.qnt',quint:{entry:'quint.js',version:'0.33.1'},properties:['refundAtMostOnce'],checks:['run'],maxSteps:8,maxSamples:20,seed:'42',report:'model.json',requiredActions:['init','Pay','Refund','Cancel'],minTraces:1,minComparisons:4,requireCanary:false});
+const model=FormalModelConfigSchema.parse({id:'ORDER',module:'order',model:'specs/order.qnt',quint:{entry:'quint.js',version:'0.33.1'},invariants:['refundAtMostOnce'],checks:['parse','typecheck','run'],maxSteps:8,maxSamples:20,seed:'42',report:'model.json',replayScope:{observedFields:['paid','shipped','cancelled','refunds'],rationale:'The full action sequence determines the order state.'},requiredActions:['init','Pay','Refund','Cancel'],minTraces:1,minComparisons:4,requireCanary:false});
 const vars=['paid','shipped','cancelled','refunds','mbt::actionTaken','mbt::nondetPicks'];
 const state=(index:number,action:string,paid:boolean,refunds:string,cancelled=false)=>({'#meta':{index},paid,shipped:false,cancelled,refunds:{'#bigint':refunds},'mbt::actionTaken':action,'mbt::nondetPicks':{}});
 const raw=()=>({'#meta':{format:'ITF',status:'ok'},vars,states:[state(0,'init',false,'0'),state(1,'Pay',true,'0'),state(2,'Refund',true,'1'),state(3,'Cancel',true,'1',true)]});

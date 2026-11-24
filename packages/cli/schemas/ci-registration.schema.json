@@ -4,7 +4,7 @@
   "properties": {
     "schemaVersion": {
       "type": "number",
-      "const": 1
+      "const": 2
     },
     "deployment": {
       "type": "object",
@@ -113,7 +113,7 @@
       "properties": {
         "schemaVersion": {
           "type": "number",
-          "const": 1
+          "const": 2
         },
         "id": {
           "type": "string",
@@ -125,10 +125,9 @@
             "kind": {
               "type": "string",
               "enum": [
-                "intent",
-                "contract",
                 "policy",
-                "registry"
+                "specification",
+                "exception"
               ]
             },
             "id": {
@@ -204,1085 +203,42 @@
       ],
       "additionalProperties": false
     },
-    "baseline": {
-      "type": "object",
-      "properties": {
-        "schemaVersion": {
-          "type": "number",
-          "const": 1
-        },
-        "repositoryId": {
-          "type": "string",
-          "minLength": 1
-        },
-        "commitSha": {
-          "type": "string",
-          "minLength": 1
-        },
-        "contracts": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string",
-                "minLength": 1
-              },
-              "assurance": {
-                "type": "object",
-                "properties": {
-                  "feature": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "string",
-                        "minLength": 1
-                      },
-                      "entrypoints": {
-                        "minItems": 1,
-                        "maxItems": 10000,
-                        "type": "array",
-                        "items": {
-                          "type": "string",
-                          "minLength": 1
-                        }
-                      }
-                    },
-                    "required": [
-                      "id",
-                      "entrypoints"
-                    ],
-                    "additionalProperties": false
-                  },
-                  "conditions": {
-                    "minItems": 1,
-                    "maxItems": 10000,
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "string",
-                          "minLength": 1
-                        },
-                        "kind": {
-                          "type": "string",
-                          "enum": [
-                            "precondition",
-                            "postcondition",
-                            "invariant",
-                            "effect",
-                            "property",
-                            "architecture",
-                            "journey"
-                          ]
-                        },
-                        "statement": {
-                          "type": "string",
-                          "minLength": 1
-                        },
-                        "checks": {
-                          "minItems": 1,
-                          "maxItems": 10000,
-                          "type": "array",
-                          "items": {
-                            "type": "string",
-                            "minLength": 1
-                          }
-                        },
-                        "requiredFaults": {
-                          "maxItems": 10000,
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "string",
-                                "minLength": 1
-                              },
-                              "kind": {
-                                "type": "string",
-                                "minLength": 1
-                              },
-                              "checkId": {
-                                "type": "string",
-                                "minLength": 1
-                              },
-                              "implementation": {
-                                "type": "string",
-                                "minLength": 1
-                              },
-                              "detects": {
-                                "minItems": 1,
-                                "maxItems": 10000,
-                                "type": "array",
-                                "items": {
-                                  "oneOf": [
-                                    {
-                                      "type": "object",
-                                      "properties": {
-                                        "kind": {
-                                          "type": "string",
-                                          "const": "result"
-                                        },
-                                        "id": {
-                                          "type": "string",
-                                          "minLength": 1
-                                        }
-                                      },
-                                      "required": [
-                                        "kind",
-                                        "id"
-                                      ],
-                                      "additionalProperties": false
-                                    },
-                                    {
-                                      "type": "object",
-                                      "properties": {
-                                        "kind": {
-                                          "type": "string",
-                                          "const": "unchanged"
-                                        },
-                                        "id": {
-                                          "type": "string",
-                                          "minLength": 1
-                                        },
-                                        "scope": {
-                                          "type": "string",
-                                          "minLength": 1
-                                        },
-                                        "field": {
-                                          "type": "string",
-                                          "minLength": 1
-                                        }
-                                      },
-                                      "required": [
-                                        "kind",
-                                        "id",
-                                        "scope",
-                                        "field"
-                                      ],
-                                      "additionalProperties": false
-                                    },
-                                    {
-                                      "type": "object",
-                                      "properties": {
-                                        "kind": {
-                                          "type": "string",
-                                          "const": "effect"
-                                        },
-                                        "id": {
-                                          "type": "string",
-                                          "minLength": 1
-                                        },
-                                        "scope": {
-                                          "type": "string",
-                                          "minLength": 1
-                                        },
-                                        "effectId": {
-                                          "type": "string",
-                                          "minLength": 1
-                                        }
-                                      },
-                                      "required": [
-                                        "kind",
-                                        "id",
-                                        "scope",
-                                        "effectId"
-                                      ],
-                                      "additionalProperties": false
-                                    },
-                                    {
-                                      "type": "object",
-                                      "properties": {
-                                        "kind": {
-                                          "type": "string",
-                                          "const": "rule"
-                                        },
-                                        "id": {
-                                          "type": "string",
-                                          "minLength": 1
-                                        }
-                                      },
-                                      "required": [
-                                        "kind",
-                                        "id"
-                                      ],
-                                      "additionalProperties": false
-                                    }
-                                  ]
-                                }
-                              }
-                            },
-                            "required": [
-                              "id",
-                              "kind",
-                              "checkId",
-                              "implementation",
-                              "detects"
-                            ],
-                            "additionalProperties": false
-                          }
-                        }
-                      },
-                      "required": [
-                        "id",
-                        "kind",
-                        "statement",
-                        "checks",
-                        "requiredFaults"
-                      ],
-                      "additionalProperties": false
-                    }
-                  },
-                  "checks": {
-                    "minItems": 1,
-                    "maxItems": 10000,
-                    "type": "array",
-                    "items": {
-                      "oneOf": [
-                        {
-                          "type": "object",
-                          "properties": {
-                            "id": {
-                              "type": "string",
-                              "minLength": 1
-                            },
-                            "targetRef": {
-                              "type": "string",
-                              "minLength": 1
-                            },
-                            "method": {
-                              "type": "string",
-                              "const": "example"
-                            },
-                            "cases": {
-                              "minItems": 1,
-                              "maxItems": 10000,
-                              "type": "array",
-                              "items": {
-                                "type": "object",
-                                "properties": {
-                                  "id": {
-                                    "type": "string",
-                                    "minLength": 1
-                                  },
-                                  "input": {
-                                    "$ref": "#/$defs/__schema0"
-                                  },
-                                  "expected": {
-                                    "$ref": "#/$defs/__schema0"
-                                  }
-                                },
-                                "required": [
-                                  "id",
-                                  "input",
-                                  "expected"
-                                ],
-                                "additionalProperties": false
-                              }
-                            }
-                          },
-                          "required": [
-                            "id",
-                            "targetRef",
-                            "method",
-                            "cases"
-                          ],
-                          "additionalProperties": false
-                        },
-                        {
-                          "type": "object",
-                          "properties": {
-                            "id": {
-                              "type": "string",
-                              "minLength": 1
-                            },
-                            "targetRef": {
-                              "type": "string",
-                              "minLength": 1
-                            },
-                            "method": {
-                              "type": "string",
-                              "const": "effects"
-                            },
-                            "cases": {
-                              "minItems": 1,
-                              "maxItems": 10000,
-                              "type": "array",
-                              "items": {
-                                "type": "object",
-                                "properties": {
-                                  "id": {
-                                    "type": "string",
-                                    "minLength": 1
-                                  },
-                                  "input": {
-                                    "$ref": "#/$defs/__schema0"
-                                  },
-                                  "expected": {
-                                    "$ref": "#/$defs/__schema0"
-                                  }
-                                },
-                                "required": [
-                                  "id",
-                                  "input",
-                                  "expected"
-                                ],
-                                "additionalProperties": false
-                              }
-                            },
-                            "scope": {
-                              "minItems": 1,
-                              "maxItems": 10000,
-                              "type": "array",
-                              "items": {
-                                "type": "string",
-                                "minLength": 1
-                              }
-                            },
-                            "resources": {
-                              "minItems": 1,
-                              "maxItems": 10000,
-                              "type": "array",
-                              "items": {
-                                "type": "object",
-                                "properties": {
-                                  "scope": {
-                                    "type": "string",
-                                    "minLength": 1
-                                  },
-                                  "adapter": {
-                                    "type": "string",
-                                    "minLength": 1
-                                  },
-                                  "targets": {
-                                    "minItems": 1,
-                                    "maxItems": 10000,
-                                    "type": "array",
-                                    "items": {
-                                      "type": "string",
-                                      "minLength": 1
-                                    }
-                                  }
-                                },
-                                "required": [
-                                  "scope",
-                                  "adapter",
-                                  "targets"
-                                ],
-                                "additionalProperties": false
-                              }
-                            },
-                            "allowedChanges": {
-                              "maxItems": 10000,
-                              "type": "array",
-                              "items": {
-                                "type": "object",
-                                "properties": {
-                                  "scope": {
-                                    "type": "string",
-                                    "minLength": 1
-                                  },
-                                  "field": {
-                                    "type": "string",
-                                    "pattern": "^(?:\\/(?:[^~]|~[01])*)*$"
-                                  }
-                                },
-                                "required": [
-                                  "scope",
-                                  "field"
-                                ],
-                                "additionalProperties": false
-                              }
-                            },
-                            "unchangedFields": {
-                              "maxItems": 10000,
-                              "type": "array",
-                              "items": {
-                                "type": "object",
-                                "properties": {
-                                  "scope": {
-                                    "type": "string",
-                                    "minLength": 1
-                                  },
-                                  "field": {
-                                    "type": "string",
-                                    "pattern": "^(?:\\/(?:[^~]|~[01])*)*$"
-                                  }
-                                },
-                                "required": [
-                                  "scope",
-                                  "field"
-                                ],
-                                "additionalProperties": false
-                              }
-                            },
-                            "effects": {
-                              "maxItems": 10000,
-                              "type": "array",
-                              "items": {
-                                "type": "object",
-                                "properties": {
-                                  "id": {
-                                    "type": "string",
-                                    "minLength": 1
-                                  },
-                                  "scope": {
-                                    "type": "string",
-                                    "minLength": 1
-                                  },
-                                  "min": {
-                                    "type": "integer",
-                                    "minimum": 0,
-                                    "maximum": 9007199254740991
-                                  },
-                                  "max": {
-                                    "type": "integer",
-                                    "minimum": 0,
-                                    "maximum": 9007199254740991
-                                  }
-                                },
-                                "required": [
-                                  "id",
-                                  "scope",
-                                  "min",
-                                  "max"
-                                ],
-                                "additionalProperties": false
-                              }
-                            },
-                            "window": {
-                              "type": "object",
-                              "properties": {
-                                "settledBy": {
-                                  "type": "string",
-                                  "minLength": 1
-                                },
-                                "durationMs": {
-                                  "type": "integer",
-                                  "minimum": 1,
-                                  "maximum": 3600000
-                                }
-                              },
-                              "required": [
-                                "settledBy",
-                                "durationMs"
-                              ],
-                              "additionalProperties": false
-                            }
-                          },
-                          "required": [
-                            "id",
-                            "targetRef",
-                            "method",
-                            "cases",
-                            "scope",
-                            "resources",
-                            "allowedChanges",
-                            "unchangedFields",
-                            "effects",
-                            "window"
-                          ],
-                          "additionalProperties": false
-                        },
-                        {
-                          "type": "object",
-                          "properties": {
-                            "id": {
-                              "type": "string",
-                              "minLength": 1
-                            },
-                            "targetRef": {
-                              "type": "string",
-                              "minLength": 1
-                            },
-                            "method": {
-                              "type": "string",
-                              "const": "property"
-                            },
-                            "domain": {
-                              "$ref": "#/$defs/__schema0"
-                            },
-                            "seed": {
-                              "type": "string",
-                              "minLength": 1
-                            },
-                            "runs": {
-                              "type": "integer",
-                              "minimum": 1,
-                              "maximum": 9007199254740991
-                            },
-                            "minValid": {
-                              "type": "integer",
-                              "minimum": 1,
-                              "maximum": 9007199254740991
-                            },
-                            "maxDiscarded": {
-                              "type": "integer",
-                              "minimum": 0,
-                              "maximum": 9007199254740991
-                            },
-                            "maxDiscardRatio": {
-                              "type": "number",
-                              "minimum": 0,
-                              "maximum": 1
-                            },
-                            "requiredClasses": {
-                              "maxItems": 10000,
-                              "type": "array",
-                              "items": {
-                                "type": "string",
-                                "minLength": 1
-                              }
-                            },
-                            "classMinimums": {
-                              "type": "object",
-                              "propertyNames": {
-                                "type": "string",
-                                "minLength": 1
-                              },
-                              "additionalProperties": {
-                                "type": "integer",
-                                "minimum": 1,
-                                "maximum": 9007199254740991
-                              }
-                            },
-                            "generator": {
-                              "type": "string",
-                              "minLength": 1
-                            },
-                            "predicate": {
-                              "type": "string",
-                              "minLength": 1
-                            },
-                            "shrinker": {
-                              "type": "string",
-                              "minLength": 1
-                            }
-                          },
-                          "required": [
-                            "id",
-                            "targetRef",
-                            "method",
-                            "domain",
-                            "seed",
-                            "runs",
-                            "minValid",
-                            "maxDiscarded",
-                            "requiredClasses",
-                            "generator",
-                            "predicate"
-                          ],
-                          "additionalProperties": false
-                        },
-                        {
-                          "type": "object",
-                          "properties": {
-                            "id": {
-                              "type": "string",
-                              "minLength": 1
-                            },
-                            "targetRef": {
-                              "type": "string",
-                              "minLength": 1
-                            },
-                            "method": {
-                              "type": "string",
-                              "const": "sequence"
-                            },
-                            "seed": {
-                              "type": "string",
-                              "minLength": 1
-                            },
-                            "generator": {
-                              "type": "string",
-                              "minLength": 1
-                            },
-                            "model": {
-                              "type": "string",
-                              "minLength": 1
-                            },
-                            "projection": {
-                              "type": "string",
-                              "minLength": 1
-                            },
-                            "maxSteps": {
-                              "type": "integer",
-                              "minimum": 1,
-                              "maximum": 10000
-                            },
-                            "minTraces": {
-                              "type": "integer",
-                              "minimum": 1,
-                              "maximum": 9007199254740991
-                            },
-                            "requiredActions": {
-                              "minItems": 1,
-                              "maxItems": 10000,
-                              "type": "array",
-                              "items": {
-                                "type": "string",
-                                "minLength": 1
-                              }
-                            },
-                            "actionMinimums": {
-                              "type": "object",
-                              "propertyNames": {
-                                "type": "string",
-                                "minLength": 1
-                              },
-                              "additionalProperties": {
-                                "type": "integer",
-                                "minimum": 1,
-                                "maximum": 9007199254740991
-                              }
-                            }
-                          },
-                          "required": [
-                            "id",
-                            "targetRef",
-                            "method",
-                            "seed",
-                            "generator",
-                            "model",
-                            "projection",
-                            "maxSteps",
-                            "minTraces",
-                            "requiredActions"
-                          ],
-                          "additionalProperties": false
-                        },
-                        {
-                          "type": "object",
-                          "properties": {
-                            "id": {
-                              "type": "string",
-                              "minLength": 1
-                            },
-                            "targetRef": {
-                              "type": "string",
-                              "minLength": 1
-                            },
-                            "method": {
-                              "type": "string",
-                              "const": "architecture"
-                            },
-                            "files": {
-                              "minItems": 1,
-                              "maxItems": 10000,
-                              "type": "array",
-                              "items": {
-                                "type": "string",
-                                "minLength": 1
-                              }
-                            },
-                            "rules": {
-                              "minItems": 1,
-                              "maxItems": 10000,
-                              "type": "array",
-                              "items": {
-                                "type": "object",
-                                "properties": {
-                                  "id": {
-                                    "type": "string",
-                                    "minLength": 1
-                                  },
-                                  "from": {
-                                    "minItems": 1,
-                                    "maxItems": 10000,
-                                    "type": "array",
-                                    "items": {
-                                      "type": "string",
-                                      "minLength": 1
-                                    }
-                                  },
-                                  "forbidden": {
-                                    "minItems": 1,
-                                    "maxItems": 10000,
-                                    "type": "array",
-                                    "items": {
-                                      "type": "string",
-                                      "minLength": 1
-                                    }
-                                  }
-                                },
-                                "required": [
-                                  "id",
-                                  "from",
-                                  "forbidden"
-                                ],
-                                "additionalProperties": false
-                              }
-                            }
-                          },
-                          "required": [
-                            "id",
-                            "targetRef",
-                            "method",
-                            "files",
-                            "rules"
-                          ],
-                          "additionalProperties": false
-                        },
-                        {
-                          "type": "object",
-                          "properties": {
-                            "id": {
-                              "type": "string",
-                              "minLength": 1
-                            },
-                            "targetRef": {
-                              "type": "string",
-                              "minLength": 1
-                            },
-                            "method": {
-                              "type": "string",
-                              "const": "journey"
-                            },
-                            "entrypoint": {
-                              "type": "string",
-                              "minLength": 1
-                            },
-                            "environment": {
-                              "$ref": "#/$defs/__schema0"
-                            },
-                            "mockBoundaries": {
-                              "maxItems": 10000,
-                              "type": "array",
-                              "items": {
-                                "type": "string",
-                                "minLength": 1
-                              }
-                            },
-                            "layers": {
-                              "minItems": 1,
-                              "maxItems": 10000,
-                              "type": "array",
-                              "items": {
-                                "type": "string",
-                                "minLength": 1
-                              }
-                            },
-                            "layerBindings": {
-                              "minItems": 1,
-                              "maxItems": 10000,
-                              "type": "array",
-                              "items": {
-                                "type": "object",
-                                "properties": {
-                                  "id": {
-                                    "type": "string",
-                                    "minLength": 1
-                                  },
-                                  "adapter": {
-                                    "type": "string",
-                                    "minLength": 1
-                                  },
-                                  "targetRef": {
-                                    "type": "string",
-                                    "minLength": 1
-                                  }
-                                },
-                                "required": [
-                                  "id",
-                                  "adapter",
-                                  "targetRef"
-                                ],
-                                "additionalProperties": false
-                              }
-                            },
-                            "steps": {
-                              "minItems": 1,
-                              "maxItems": 10000,
-                              "type": "array",
-                              "items": {
-                                "type": "object",
-                                "properties": {
-                                  "id": {
-                                    "type": "string",
-                                    "minLength": 1
-                                  },
-                                  "input": {
-                                    "$ref": "#/$defs/__schema0"
-                                  },
-                                  "expected": {
-                                    "$ref": "#/$defs/__schema0"
-                                  },
-                                  "action": {
-                                    "type": "string",
-                                    "minLength": 1
-                                  },
-                                  "layers": {
-                                    "minItems": 1,
-                                    "maxItems": 10000,
-                                    "type": "array",
-                                    "items": {
-                                      "type": "string",
-                                      "minLength": 1
-                                    }
-                                  }
-                                },
-                                "required": [
-                                  "id",
-                                  "input",
-                                  "expected",
-                                  "action",
-                                  "layers"
-                                ],
-                                "additionalProperties": false
-                              }
-                            },
-                            "requiredMedia": {
-                              "maxItems": 10000,
-                              "type": "array",
-                              "items": {
-                                "type": "string",
-                                "minLength": 1
-                              }
-                            }
-                          },
-                          "required": [
-                            "id",
-                            "targetRef",
-                            "method",
-                            "entrypoint",
-                            "environment",
-                            "mockBoundaries",
-                            "layers",
-                            "layerBindings",
-                            "steps"
-                          ],
-                          "additionalProperties": false
-                        }
-                      ]
-                    }
-                  }
-                },
-                "required": [
-                  "feature",
-                  "conditions",
-                  "checks"
-                ],
-                "additionalProperties": false
-              },
-              "formal": {
-                "type": "object",
-                "properties": {
-                  "modelId": {
-                    "type": "string",
-                    "minLength": 1
-                  },
-                  "modelHash": {
-                    "type": "string",
-                    "pattern": "^[a-f0-9]{64}$"
-                  },
-                  "driverHash": {
-                    "type": "string",
-                    "pattern": "^[a-f0-9]{64}$"
-                  },
-                  "propertyIds": {
-                    "minItems": 1,
-                    "maxItems": 10000,
-                    "type": "array",
-                    "items": {
-                      "type": "string",
-                      "minLength": 1
-                    }
-                  }
-                },
-                "required": [
-                  "modelId",
-                  "modelHash",
-                  "propertyIds"
-                ],
-                "additionalProperties": false
-              },
-              "kind": {
-                "type": "string",
-                "enum": [
-                  "examples",
-                  "invariant",
-                  "state_machine",
-                  "api_contract",
-                  "external"
-                ]
-              },
-              "intentIds": {
-                "type": "array",
-                "items": {
-                  "type": "string",
-                  "minLength": 1
-                }
-              },
-              "revisionHash": {
-                "type": "string",
-                "pattern": "^[a-f0-9]{64}$"
-              },
-              "sourceRef": {
-                "type": "string",
-                "minLength": 1
-              },
-              "caseIds": {
-                "type": "array",
-                "items": {
-                  "type": "string",
-                  "minLength": 1
-                }
-              },
-              "risk": {
-                "type": "string",
-                "enum": [
-                  "basic",
-                  "standard",
-                  "critical"
-                ]
-              },
-              "cases": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string",
-                      "minLength": 1
-                    },
-                    "input": {
-                      "$ref": "#/$defs/__schema1"
-                    },
-                    "expected": {
-                      "$ref": "#/$defs/__schema2"
-                    },
-                    "negative": {
-                      "type": "boolean"
-                    }
-                  },
-                  "required": [
-                    "id",
-                    "input",
-                    "expected"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            },
-            "required": [
-              "id",
-              "kind",
-              "intentIds",
-              "revisionHash",
-              "sourceRef"
-            ],
-            "additionalProperties": false
-          }
-        },
-        "intents": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string",
-                "minLength": 1
-              },
-              "statement": {
-                "type": "string",
-                "minLength": 1
-              },
-              "risk": {
-                "type": "string",
-                "enum": [
-                  "basic",
-                  "standard",
-                  "critical"
-                ]
-              },
-              "contentHash": {
-                "type": "string",
-                "pattern": "^[a-f0-9]{64}$"
-              },
-              "origin": {
-                "type": "object",
-                "properties": {
-                  "kind": {
-                    "type": "string",
-                    "enum": [
-                      "inline",
-                      "manifest",
-                      "external"
-                    ]
-                  },
-                  "ref": {
-                    "type": "string",
-                    "minLength": 1
-                  }
-                },
-                "required": [
-                  "kind",
-                  "ref"
-                ],
-                "additionalProperties": false
-              }
-            },
-            "required": [
-              "id",
-              "statement",
-              "risk",
-              "contentHash",
-              "origin"
-            ],
-            "additionalProperties": false
-          }
-        },
-        "policyHash": {
-          "type": "string",
-          "pattern": "^[a-f0-9]{64}$"
-        },
-        "extractorVersion": {
-          "type": "string",
-          "minLength": 1
-        },
-        "scope": {
-          "type": "array",
-          "items": {
+    "sourceCommit": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "specifications": {
+      "maxItems": 100,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
             "type": "string",
             "minLength": 1
+          },
+          "revisionHash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
           }
         },
-        "discoveryDiagnostics": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "code": {
-                "type": "string",
-                "minLength": 1
-              },
-              "sourceRef": {
-                "type": "string",
-                "minLength": 1
-              },
-              "message": {
-                "type": "string",
-                "minLength": 1
-              }
-            },
-            "required": [
-              "code",
-              "sourceRef",
-              "message"
-            ],
-            "additionalProperties": false
-          }
-        }
+        "required": [
+          "id",
+          "revisionHash"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "assuranceSources": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1
       },
-      "required": [
-        "schemaVersion",
-        "commitSha",
-        "contracts",
-        "intents"
-      ],
-      "additionalProperties": false
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[a-f0-9]{64}$"
+      }
     },
     "policy": {
       "type": "object",
@@ -1377,7 +333,7 @@
       "properties": {
         "schemaVersion": {
           "type": "number",
-          "const": 1
+          "const": 2
         },
         "testRunner": {
           "type": "string",
@@ -1419,20 +375,8 @@
               "type": "integer",
               "minimum": 1,
               "maximum": 3600000
-            }
-          },
-          "required": [
-            "driver",
-            "driverSources",
-            "implementationSources",
-            "report"
-          ],
-          "additionalProperties": false
-        },
-        "formal": {
-          "type": "object",
-          "properties": {
-            "models": {
+            },
+            "definitions": {
               "minItems": 1,
               "maxItems": 100,
               "type": "array",
@@ -1443,7 +387,872 @@
                     "type": "string",
                     "minLength": 1
                   },
-                  "contractId": {
+                  "definition": {
+                    "type": "object",
+                    "properties": {
+                      "feature": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "entrypoints": {
+                            "minItems": 1,
+                            "maxItems": 10000,
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1
+                            }
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "entrypoints"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "conditions": {
+                        "minItems": 1,
+                        "maxItems": 10000,
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "kind": {
+                              "type": "string",
+                              "enum": [
+                                "precondition",
+                                "postcondition",
+                                "invariant",
+                                "effect",
+                                "property",
+                                "architecture",
+                                "journey"
+                              ]
+                            },
+                            "statement": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "checks": {
+                              "minItems": 1,
+                              "maxItems": 10000,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "minLength": 1
+                              }
+                            },
+                            "requiredFaults": {
+                              "maxItems": 10000,
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "kind": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "checkId": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "implementation": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "detects": {
+                                    "minItems": 1,
+                                    "maxItems": 10000,
+                                    "type": "array",
+                                    "items": {
+                                      "oneOf": [
+                                        {
+                                          "type": "object",
+                                          "properties": {
+                                            "kind": {
+                                              "type": "string",
+                                              "const": "result"
+                                            },
+                                            "id": {
+                                              "type": "string",
+                                              "minLength": 1
+                                            }
+                                          },
+                                          "required": [
+                                            "kind",
+                                            "id"
+                                          ],
+                                          "additionalProperties": false
+                                        },
+                                        {
+                                          "type": "object",
+                                          "properties": {
+                                            "kind": {
+                                              "type": "string",
+                                              "const": "unchanged"
+                                            },
+                                            "id": {
+                                              "type": "string",
+                                              "minLength": 1
+                                            },
+                                            "scope": {
+                                              "type": "string",
+                                              "minLength": 1
+                                            },
+                                            "field": {
+                                              "type": "string",
+                                              "minLength": 1
+                                            }
+                                          },
+                                          "required": [
+                                            "kind",
+                                            "id",
+                                            "scope",
+                                            "field"
+                                          ],
+                                          "additionalProperties": false
+                                        },
+                                        {
+                                          "type": "object",
+                                          "properties": {
+                                            "kind": {
+                                              "type": "string",
+                                              "const": "effect"
+                                            },
+                                            "id": {
+                                              "type": "string",
+                                              "minLength": 1
+                                            },
+                                            "scope": {
+                                              "type": "string",
+                                              "minLength": 1
+                                            },
+                                            "effectId": {
+                                              "type": "string",
+                                              "minLength": 1
+                                            }
+                                          },
+                                          "required": [
+                                            "kind",
+                                            "id",
+                                            "scope",
+                                            "effectId"
+                                          ],
+                                          "additionalProperties": false
+                                        },
+                                        {
+                                          "type": "object",
+                                          "properties": {
+                                            "kind": {
+                                              "type": "string",
+                                              "const": "rule"
+                                            },
+                                            "id": {
+                                              "type": "string",
+                                              "minLength": 1
+                                            }
+                                          },
+                                          "required": [
+                                            "kind",
+                                            "id"
+                                          ],
+                                          "additionalProperties": false
+                                        }
+                                      ]
+                                    }
+                                  }
+                                },
+                                "required": [
+                                  "id",
+                                  "kind",
+                                  "checkId",
+                                  "implementation",
+                                  "detects"
+                                ],
+                                "additionalProperties": false
+                              }
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "kind",
+                            "statement",
+                            "checks",
+                            "requiredFaults"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "checks": {
+                        "minItems": 1,
+                        "maxItems": 10000,
+                        "type": "array",
+                        "items": {
+                          "oneOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "targetRef": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "method": {
+                                  "type": "string",
+                                  "const": "example"
+                                },
+                                "cases": {
+                                  "minItems": 1,
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "input": {
+                                        "$ref": "#/$defs/__schema0"
+                                      },
+                                      "expected": {
+                                        "$ref": "#/$defs/__schema0"
+                                      }
+                                    },
+                                    "required": [
+                                      "id",
+                                      "input",
+                                      "expected"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "targetRef",
+                                "method",
+                                "cases"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "targetRef": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "method": {
+                                  "type": "string",
+                                  "const": "effects"
+                                },
+                                "cases": {
+                                  "minItems": 1,
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "input": {
+                                        "$ref": "#/$defs/__schema0"
+                                      },
+                                      "expected": {
+                                        "$ref": "#/$defs/__schema0"
+                                      }
+                                    },
+                                    "required": [
+                                      "id",
+                                      "input",
+                                      "expected"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "scope": {
+                                  "minItems": 1,
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                },
+                                "resources": {
+                                  "minItems": 1,
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "scope": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "adapter": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "targets": {
+                                        "minItems": 1,
+                                        "maxItems": 10000,
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string",
+                                          "minLength": 1
+                                        }
+                                      }
+                                    },
+                                    "required": [
+                                      "scope",
+                                      "adapter",
+                                      "targets"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "allowedChanges": {
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "scope": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "field": {
+                                        "type": "string",
+                                        "pattern": "^(?:\\/(?:[^~]|~[01])*)*$"
+                                      }
+                                    },
+                                    "required": [
+                                      "scope",
+                                      "field"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "unchangedFields": {
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "scope": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "field": {
+                                        "type": "string",
+                                        "pattern": "^(?:\\/(?:[^~]|~[01])*)*$"
+                                      }
+                                    },
+                                    "required": [
+                                      "scope",
+                                      "field"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "effects": {
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "scope": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "min": {
+                                        "type": "integer",
+                                        "minimum": 0,
+                                        "maximum": 9007199254740991
+                                      },
+                                      "max": {
+                                        "type": "integer",
+                                        "minimum": 0,
+                                        "maximum": 9007199254740991
+                                      }
+                                    },
+                                    "required": [
+                                      "id",
+                                      "scope",
+                                      "min",
+                                      "max"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "window": {
+                                  "type": "object",
+                                  "properties": {
+                                    "settledBy": {
+                                      "type": "string",
+                                      "minLength": 1
+                                    },
+                                    "durationMs": {
+                                      "type": "integer",
+                                      "minimum": 1,
+                                      "maximum": 3600000
+                                    }
+                                  },
+                                  "required": [
+                                    "settledBy",
+                                    "durationMs"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "targetRef",
+                                "method",
+                                "cases",
+                                "scope",
+                                "resources",
+                                "allowedChanges",
+                                "unchangedFields",
+                                "effects",
+                                "window"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "targetRef": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "method": {
+                                  "type": "string",
+                                  "const": "property"
+                                },
+                                "domain": {
+                                  "$ref": "#/$defs/__schema0"
+                                },
+                                "seed": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "runs": {
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 9007199254740991
+                                },
+                                "minValid": {
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 9007199254740991
+                                },
+                                "maxDiscarded": {
+                                  "type": "integer",
+                                  "minimum": 0,
+                                  "maximum": 9007199254740991
+                                },
+                                "maxDiscardRatio": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "maximum": 1
+                                },
+                                "requiredClasses": {
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                },
+                                "classMinimums": {
+                                  "type": "object",
+                                  "propertyNames": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "additionalProperties": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 9007199254740991
+                                  }
+                                },
+                                "generator": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "predicate": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "shrinker": {
+                                  "type": "string",
+                                  "minLength": 1
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "targetRef",
+                                "method",
+                                "domain",
+                                "seed",
+                                "runs",
+                                "minValid",
+                                "maxDiscarded",
+                                "requiredClasses",
+                                "generator",
+                                "predicate"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "targetRef": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "method": {
+                                  "type": "string",
+                                  "const": "sequence"
+                                },
+                                "seed": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "generator": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "model": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "projection": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "maxSteps": {
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 10000
+                                },
+                                "minTraces": {
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 9007199254740991
+                                },
+                                "requiredActions": {
+                                  "minItems": 1,
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                },
+                                "actionMinimums": {
+                                  "type": "object",
+                                  "propertyNames": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "additionalProperties": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 9007199254740991
+                                  }
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "targetRef",
+                                "method",
+                                "seed",
+                                "generator",
+                                "model",
+                                "projection",
+                                "maxSteps",
+                                "minTraces",
+                                "requiredActions"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "targetRef": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "method": {
+                                  "type": "string",
+                                  "const": "architecture"
+                                },
+                                "files": {
+                                  "minItems": 1,
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                },
+                                "rules": {
+                                  "minItems": 1,
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "from": {
+                                        "minItems": 1,
+                                        "maxItems": 10000,
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string",
+                                          "minLength": 1
+                                        }
+                                      },
+                                      "forbidden": {
+                                        "minItems": 1,
+                                        "maxItems": 10000,
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string",
+                                          "minLength": 1
+                                        }
+                                      }
+                                    },
+                                    "required": [
+                                      "id",
+                                      "from",
+                                      "forbidden"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "targetRef",
+                                "method",
+                                "files",
+                                "rules"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "targetRef": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "method": {
+                                  "type": "string",
+                                  "const": "journey"
+                                },
+                                "entrypoint": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "environment": {
+                                  "$ref": "#/$defs/__schema0"
+                                },
+                                "mockBoundaries": {
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                },
+                                "layers": {
+                                  "minItems": 1,
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                },
+                                "layerBindings": {
+                                  "minItems": 1,
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "adapter": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "targetRef": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      }
+                                    },
+                                    "required": [
+                                      "id",
+                                      "adapter",
+                                      "targetRef"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "steps": {
+                                  "minItems": 1,
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "input": {
+                                        "$ref": "#/$defs/__schema0"
+                                      },
+                                      "expected": {
+                                        "$ref": "#/$defs/__schema0"
+                                      },
+                                      "action": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "layers": {
+                                        "minItems": 1,
+                                        "maxItems": 10000,
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string",
+                                          "minLength": 1
+                                        }
+                                      }
+                                    },
+                                    "required": [
+                                      "id",
+                                      "input",
+                                      "expected",
+                                      "action",
+                                      "layers"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "requiredMedia": {
+                                  "maxItems": 10000,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "targetRef",
+                                "method",
+                                "entrypoint",
+                                "environment",
+                                "mockBoundaries",
+                                "layers",
+                                "layerBindings",
+                                "steps"
+                              ],
+                              "additionalProperties": false
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "feature",
+                      "conditions",
+                      "checks"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "id",
+                  "definition"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "driver",
+            "driverSources",
+            "implementationSources",
+            "report",
+            "definitions"
+          ],
+          "additionalProperties": false
+        },
+        "formal": {
+          "type": "object",
+          "properties": {
+            "models": {
+              "maxItems": 100,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
                     "type": "string",
                     "minLength": 1
                   },
@@ -1458,6 +1267,61 @@
                     "items": {
                       "type": "string",
                       "minLength": 1
+                    }
+                  },
+                  "module": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "init": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "step": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "witnesses": {
+                    "maxItems": 10000,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "mutants": {
+                    "maxItems": 100,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "model": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "invariant": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "sources": {
+                          "maxItems": 10000,
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "model",
+                        "invariant"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "quint": {
@@ -1482,7 +1346,8 @@
                     ],
                     "additionalProperties": false
                   },
-                  "properties": {
+                  "invariants": {
+                    "minItems": 1,
                     "maxItems": 10000,
                     "type": "array",
                     "items": {
@@ -1567,6 +1432,30 @@
                     "type": "string",
                     "minLength": 1
                   },
+                  "replayScope": {
+                    "type": "object",
+                    "properties": {
+                      "observedFields": {
+                        "minItems": 1,
+                        "maxItems": 1000,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "rationale": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 4000
+                      }
+                    },
+                    "required": [
+                      "observedFields",
+                      "rationale"
+                    ],
+                    "additionalProperties": false
+                  },
                   "requiredActions": {
                     "default": [],
                     "maxItems": 10000,
@@ -1618,14 +1507,46 @@
                 },
                 "required": [
                   "id",
-                  "contractId",
                   "model",
+                  "module",
                   "quint",
-                  "properties",
+                  "invariants",
                   "checks",
                   "maxSteps",
                   "seed",
                   "report"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": {
+              "maxItems": 100,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "include": {
+                    "minItems": 1,
+                    "maxItems": 10000,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "modelId": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "id",
+                  "include",
+                  "modelId"
                 ],
                 "additionalProperties": false
               }
@@ -1635,6 +1556,116 @@
             "models"
           ],
           "additionalProperties": false
+        },
+        "exceptions": {
+          "maxItems": 100,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "defaultRule": {
+                "type": "string",
+                "minLength": 1
+              },
+              "target": {
+                "type": "object",
+                "properties": {
+                  "module": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "exportName": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "module",
+                  "exportName"
+                ],
+                "additionalProperties": false
+              },
+              "allowedCallers": {
+                "maxItems": 1000,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "sources": {
+                "maxItems": 1000,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "condition": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "static"
+                      },
+                      "rule": {
+                        "type": "string",
+                        "const": "direct-call-scope"
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "rule"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "quint"
+                      },
+                      "modelId": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "witness": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "modelId",
+                      "witness"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "rationaleRef": {
+                "type": "string",
+                "pattern": "^https:\\/\\/github\\.com\\/[\\w-]+\\/[\\w.-]+\\/(?:issues|pull)\\/[1-9]\\d*$"
+              }
+            },
+            "required": [
+              "id",
+              "defaultRule",
+              "target",
+              "allowedCallers",
+              "sources",
+              "condition",
+              "rationaleRef"
+            ],
+            "additionalProperties": false
+          }
         },
         "mode": {
           "default": "audit",
@@ -1654,9 +1685,9 @@
           ]
         },
         "profileVersion": {
-          "default": "1",
+          "default": "2",
           "type": "string",
-          "const": "1"
+          "const": "2"
         },
         "riskOverrides": {
           "default": [],
@@ -1694,30 +1725,6 @@
                       "value": {
                         "type": "string",
                         "minLength": 1
-                      }
-                    },
-                    "required": [
-                      "kind",
-                      "value"
-                    ],
-                    "additionalProperties": false
-                  },
-                  {
-                    "type": "object",
-                    "properties": {
-                      "kind": {
-                        "type": "string",
-                        "const": "contract-kind"
-                      },
-                      "value": {
-                        "type": "string",
-                        "enum": [
-                          "examples",
-                          "invariant",
-                          "state_machine",
-                          "api_contract",
-                          "external"
-                        ]
                       }
                     },
                     "required": [
@@ -1792,124 +1799,17 @@
         "rules": {
           "default": {}
         },
-        "contracts": {
-          "default": {
-            "enabled": false,
-            "sources": [],
-            "requireExecutionEvidence": true,
-            "approval": {
-              "provider": "github-protected-review",
-              "requiredForRisk": [
-                "critical"
-              ],
-              "onUnverifiable": "unknown"
-            },
-            "documents": {
-              "output": ".behavproof/generated",
-              "commit": false
-            }
-          },
+        "documents": {
           "type": "object",
           "properties": {
-            "enabled": {
-              "default": false,
-              "type": "boolean"
-            },
-            "sources": {
-              "default": [],
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "enum": [
-                      "vitest-inline",
-                      "jest-inline",
-                      "manifest",
-                      "external",
-                      "gherkin",
-                      "openapi"
-                    ]
-                  },
-                  "include": {
-                    "type": "array",
-                    "items": {
-                      "type": "string",
-                      "minLength": 1
-                    }
-                  }
-                },
-                "required": [
-                  "type",
-                  "include"
-                ],
-                "additionalProperties": false
-              }
-            },
-            "requireExecutionEvidence": {
-              "default": true,
-              "type": "boolean"
-            },
-            "approval": {
-              "default": {
-                "provider": "github-protected-review",
-                "requiredForRisk": [
-                  "critical"
-                ],
-                "onUnverifiable": "unknown"
-              },
-              "type": "object",
-              "properties": {
-                "provider": {
-                  "type": "string",
-                  "const": "github-protected-review"
-                },
-                "requiredForRisk": {
-                  "default": [
-                    "critical"
-                  ],
-                  "type": "array",
-                  "items": {
-                    "type": "string",
-                    "enum": [
-                      "basic",
-                      "standard",
-                      "critical"
-                    ]
-                  }
-                },
-                "onUnverifiable": {
-                  "default": "unknown",
-                  "type": "string",
-                  "const": "unknown"
-                }
-              },
-              "required": [
-                "provider"
-              ],
-              "additionalProperties": false
-            },
-            "documents": {
-              "default": {
-                "output": ".behavproof/generated",
-                "commit": false
-              },
-              "type": "object",
-              "properties": {
-                "output": {
-                  "default": ".behavproof/generated",
-                  "type": "string",
-                  "minLength": 1
-                },
-                "commit": {
-                  "default": false,
-                  "type": "boolean"
-                }
-              },
-              "additionalProperties": false
+            "output": {
+              "type": "string",
+              "minLength": 1
             }
           },
+          "required": [
+            "output"
+          ],
           "additionalProperties": false
         }
       },
@@ -1928,7 +1828,8 @@
     "reviewers",
     "requiredTests",
     "approval",
-    "baseline",
+    "sourceCommit",
+    "specifications",
     "policy",
     "config"
   ],
@@ -1961,68 +1862,6 @@
           },
           "additionalProperties": {
             "$ref": "#/$defs/__schema0"
-          }
-        }
-      ]
-    },
-    "__schema1": {
-      "anyOf": [
-        {
-          "type": "string"
-        },
-        {
-          "type": "number"
-        },
-        {
-          "type": "boolean"
-        },
-        {
-          "type": "null"
-        },
-        {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/__schema1"
-          }
-        },
-        {
-          "type": "object",
-          "propertyNames": {
-            "type": "string"
-          },
-          "additionalProperties": {
-            "$ref": "#/$defs/__schema1"
-          }
-        }
-      ]
-    },
-    "__schema2": {
-      "anyOf": [
-        {
-          "type": "string"
-        },
-        {
-          "type": "number"
-        },
-        {
-          "type": "boolean"
-        },
-        {
-          "type": "null"
-        },
-        {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/__schema2"
-          }
-        },
-        {
-          "type": "object",
-          "propertyNames": {
-            "type": "string"
-          },
-          "additionalProperties": {
-            "$ref": "#/$defs/__schema2"
           }
         }
       ]

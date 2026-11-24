@@ -117,7 +117,7 @@ test('ci plan resolves a policy runner and rejects a contrary configured runner'
     await writeFile(join(root,'package.json'),JSON.stringify({scripts:{test:'vitest run'},devDependencies:{vitest:'5.1.0',jest:'30.5.2'}}));
     await writeFile(join(root,'quality.json'),JSON.stringify({schemaVersion:1,id:'reviewed',lint:{tool:'eslint',rules:['no-debugger']},types:'strict',runner:'vitest',sources:['src/**/*']}));
     expect((await planCI(root,options)).unresolved).not.toContain('runner');
-    await writeFile(join(root,'behavproof.config.json'),JSON.stringify({schemaVersion:1,testRunner:'jest'}));
+    await writeFile(join(root,'behavproof.config.json'),JSON.stringify({schemaVersion:2,testRunner:'jest'}));
     await expect(planCI(root,{...options,runner:'vitest'})).rejects.toThrow(/runner/i);
   } finally {
     await rm(root,{recursive:true,force:true});

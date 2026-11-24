@@ -20,7 +20,7 @@ export function evaluateGate(evaluations:readonly Evaluation[],mode:Mode):CheckR
   const incomplete=required.length===0||required.some(r=>r.status==='unknown'||r.status==='not_applicable'&&(!r.notApplicable||!r.notApplicable.allowedReasons.includes(r.notApplicable.reason)||r.notApplicable.evidenceIds.length===0));
   const status=failed?'fail':incomplete?'incomplete':'pass';
   const reasons=sorted([...(required.length===0?['No mandatory rules configured']:[]),...required.filter(r=>r.status==='fail'||r.status==='unknown'||r.status==='not_applicable'&&(!r.notApplicable||!r.notApplicable.allowedReasons.includes(r.notApplicable.reason)||r.notApplicable.evidenceIds.length===0)).map(r=>`${r.ruleId}: ${r.status}`)]);
-  return {schemaVersion:1,mode,status,exitCode:mode==='gate'&&status!=='pass'?1:0,mandatoryCount:required.length,evaluations:rows,reasons};
+  return {schemaVersion:2,mode,status,exitCode:mode==='gate'&&status!=='pass'?1:0,mandatoryCount:required.length,evaluations:rows,reasons};
 }
 export function evaluateThreshold(ruleId:string,value:number|undefined,policy:RulePolicy,evidenceIds:string[]=[],scope:string[]=[]):Evaluation{
   RulePolicySchema.parse(policy);
@@ -40,5 +40,5 @@ export function mergeProtectedPolicy(project:Policy,protectedPolicy:Policy):Poli
     result.allowNotApplicable=sorted((a.allowNotApplicable??[]).filter(x=>(b.allowNotApplicable??[]).includes(x)));
     rules[id]=result;
   }
-  return {schemaVersion:1,profileVersion:'1',rules};
+  return {schemaVersion:1,profileVersion:'2',rules};
 }

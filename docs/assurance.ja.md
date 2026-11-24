@@ -1,10 +1,10 @@
 # 条件ごとの品質保証を導入する
 
-この機能は0.2.0で追加したオプションです。CLIとVitestアダプターを含む使用するBehavProofパッケージを0.2.0に揃えて導入してください。0.1.0には含まれません。既存プロジェクトで未使用の場合、従来の契約版・既定Policy・文書出力は変わりません。
+Assurance は、設定で指定した条件について、実行結果・観測範囲・故障検出を個別に評価します。
 
 ## 保証対象
 
-「テストが成功した」だけでなく、契約の各条件について、必要な観測・比較・故障検出が揃っているかを評価します。
+「テストが成功した」だけでなく、採用した各条件について、必要な観測・比較・故障検出が揃っているかを評価します。
 
 | 導入した指針 | 実装した機能 |
 | --- | --- |
@@ -29,7 +29,7 @@ node scripts/assurance-flow.mjs
 
 [返金の導入例](../examples/assurance-refund)を一時的な消費側Gitプロジェクトへ用意し、実Vitest・明示的な観測worker・Collector・外部のローカル信頼基点・CLI gateまで通します。対象は実際のローカルHTTPと一時ファイルの保存層です。認可、拒否時の書込み、金額境界、二重返金、UI依存、HTTP経路の6条件と6故障を扱います。これが7指針を一つの機能へ組み合わせた例です。
 
-正常系と契約を変えない本番実装リファクタを受け入れ、古い証拠の再封入、証拠欠損・重複、条件削除、探索範囲の縮小、未承認の観測driver変更、基準sourceの登録欠損を拒否します。これは管理されたローカル検証であり、新しい実User承認やGitHubのマージ保護を実施した記録ではありません。
+正常系と検証条件を維持した実装リファクタを受け入れ、古い証拠の再封入、証拠欠損・重複、条件削除、探索範囲の縮小、未承認の観測driver変更、基準sourceの登録欠損を拒否します。これは管理されたローカル検証であり、新しい実User承認やGitHubのマージ保護を実施した記録ではありません。
 
 消費側で使うコマンドは次です。
 
@@ -43,50 +43,19 @@ behavproof check --mode gate --trust-root /保護された場所/trust.json
 behavproof docs generate --trust-root /保護された場所/trust.json
 ```
 
-`assurance discover`、`assurance map`、通常の`check`と契約発見は利用先のdriver・generator・predicate・実装を実行しません。実行は`assurance run`だけが明示的に行い、設定された`.behavproof/`内のreportを書きます。workerの時間切れ・異常終了や新しいreport未生成時には、以前のreportを新しい成功として採用しません。runに`--output`やgate権限のオプションは渡せません。
+`assurance discover`、`assurance map`、通常の`check`は利用先のdriver・generator・predicate・実装を実行しません。実行は`assurance run`だけが明示的に行い、設定された`.behavproof/`内のreportを書きます。workerの時間切れ・異常終了や新しいreport未生成時には、以前のreportを新しい成功として採用しません。runに`--output`やgate権限のオプションは渡せません。
 
 `assurance run`の終了値は、選択したローカル観測が充足すれば0、不一致・不足は1、実行・入力・workerの異常は2です。ローカルの0は来歴認証や承認ではありません。gateは独立して認証した証拠だけで判定します。収集処理自体が失敗した場合、通常のCollectorは成功成果物を封印しません。
 
-## 契約と設定
+## 条件と設定
 
-正式なJSONリテラルの`defineContract`、またはJSON manifestに、任意の`assurance`を追加します。完全な例は[契約](../examples/assurance-refund/contract.json)と[設定](../examples/assurance-refund/behavproof.config.json)を参照してください。新しい独立した言語や証明器は必須ではありません。
+`behavproof.config.json` の `assurance.definitions` に、定義IDと `feature`・`conditions`・`checks` を含む `definition` を指定します。条件は実行する検査と、必要に応じて検出対象の故障を参照します。条件・検査・故障のIDは定義内で一意にします。[返金サンプルの設定](../examples/assurance-refund/behavproof.config.json)
 
-```json
-{
-  "assurance": {
-    "feature": {"id": "refund", "entrypoints": ["POST /refund"]},
-    "conditions": [{
-      "id": "deny-unauthorized",
-      "kind": "postcondition",
-      "statement": "権限のない返金を拒否する",
-      "checks": ["authorization"],
-      "requiredFaults": [{
-        "id": "bypass",
-        "kind": "authorization-bypass",
-        "checkId": "authorization",
-        "implementation": "faults/refund.mjs",
-        "detects": [{"kind": "result", "id": "denied"}]
-      }]
-    }],
-    "checks": [{
-      "id": "authorization",
-      "method": "example",
-      "targetRef": "src/refund.mjs#canRefund",
-      "cases": [{"id": "denied", "input": {"owner": false, "amount": 1, "balance": 100}, "expected": false}]
-    }]
-  }
-}
-```
-
-これは既存契約に追加する部分です。ID・Intent・risk等の従来の必須項目は別途必要です。条件・check・故障のIDは契約内で一意にします。対応しない参照や重複を拒否します。assuranceを含む契約版はその内容をhashに含みます。条件、検査範囲、期待値、故障、層の対応を変えると承認対象も変わります。任意のpredicateの論理的強弱を推測せず、before/afterを明示します。
-
-公開APIの「非所有者を拒否する」という正常な拒否動作を、事前条件違反として検査対象から外さないでください。preconditionという分類は負例を飛ばす指示ではありません。
-
-設定の`assurance`は`driver`、その`driverSources`、`implementationSources`、`report`、任意の`timeoutMs`を持ちます。パス一覧はglobではなく明示的なプロジェクト相対ファイルです。関連するhelper、設定、generator / oracle / model / projection、アダプター、故障実装、依存lockを検証範囲へ含めます。参照元から列挙していない動的依存や外部設定まで完全に発見する仕組みではありません。
+`assurance` には、Driver、Driver のソース一覧、実装ソース一覧、`.behavproof/` 以下のレポート先、任意の時間上限も指定します。追加の generator、oracle、モデル、アダプター、故障実装は対応する検査から参照します。保護ホストの入力範囲には、検証で使用する依存ソースも含めてください。
 
 ## 実行driverと観測API
 
-`@behavproof/contract-registry`は`runAssurance`、`RuntimeDriver`、`RuntimeEnvironment`を公開します。CLIは選択したdriverを別workerで読み込み、`createContext({check,input,harness})`を呼びます。戻り値は`{dependencies, close?}`です。通常の対象は`相対ファイル#export名`で指定し、runnerがそのexportを実際に呼びます。driverが返す`execute`、`calls`、`pass`の値は観測に採用しません。
+`@behavproof/spec-registry`は`runAssurance`、`RuntimeDriver`、`RuntimeEnvironment`を公開します。CLIは選択したdriverを別workerで読み込み、`createContext({check,input,harness})`を呼びます。戻り値は`{dependencies, close?}`です。通常の対象は`相対ファイル#export名`で指定し、runnerがそのexportを実際に呼びます。driverが返す`execute`、`calls`、`pass`の値は観測に採用しません。
 
 公開APIの`runAssurance`を同じNodeプロセスから繰り返す場合、実行モジュールを読み込んだ後は、選択した`inputHashes`のファイル一覧とbytesを同じままにしてください。Nodeは対象がimportしたhelper等をキャッシュするため、実行対象URLのnonceだけでは依存先を再読込みできません。runnerは正規化した実パスで入力一覧とhashを固定し、同じroot、その別名、親子関係にあるrootで一覧の追加・削除やbytesの変更を検出した実行を、新しいreportを返す前に拒否します。同じ物理ファイル群とhashであればrootの表記を変えても再実行できます。モジュール読込みの予約後に`runAssurance`が例外で終了した場合は、途中で依存先がキャッシュされた可能性があるため、bytesを元へ戻してもその範囲のAPI実行を拒否します。変更後や失敗後の再実行には、新しいNodeプロセス、または毎回別workerを使う`behavproof assurance run`を使ってください。静的なarchitecture検査だけの実行はモジュールを読み込まず、このキャッシュ固定を行いません。
 
@@ -109,13 +78,13 @@ propertyの任意の`shrinker`は`shrink(originalInput)`で候補配列を返し
 
 ## 証拠の認証と検証基準の保護
 
-runのbundleは`schemaVersion:1`と`reports`を持ちます。契約版、check hash、観測したコミットとソースツリー、現在の入力hash、具体的な観測を含みます。公開JSON SchemaはCLIの`schemas/assurance.schema.json`です。構造以外の対応・観測条件もZodと評価器で検証します。
+レポートは `schemaVersion: 2` です。各結果は `definitionId`、定義のリビジョン、検査のハッシュ、実行コミット、入力ハッシュと観測結果を保持します。公開JSON SchemaはCLIの`schemas/assurance.schema.json`です。構造以外の対応・観測条件もZodと評価器で検証します。
 
-Collectorで生成されたbundleを`kind: assurance_report`、`scope: [対象Contract ID, ...]`の成果物として捕捉します。保護ホストが選んだManifestと正確な成果物bytesを、既存のproducer・subject・integrity検証に通します。候補のreportパスや自己申告を信頼基点にはしません。
+Protected Quality CI は Assurance レポートと指定された媒体を収集し、`assurance_bundle` として定義IDの一覧に結び付けます。Publisher は選択した実行のマニフェストと照合してから評価します。ローカルホストで直接収集する場合は `assurance_report` に定義IDの一覧を指定します。
 
 特に、現在のソースと一致する新しいreportであるだけでは、oracleやdriverの意味の変更は承認されません。保護された信頼基点の`assuranceSources`に、独立確認したdriver / generator / predicate / model / projection / adapter / faultと設定・依存のsource hashを保持します。
 
-承認した登録から`registrationProjectData`で投影すると、これらの`assuranceSources`が得られます。登録時には選択したsource bytes、Contract/Intent/Policy、configRefと全入力範囲を独立確認する必要があります。単なるJSONの投影を承認と扱わないでください。`@behavproof/cli`は、ホスト実装用に`assuranceInputPaths`、`assuranceCriterionPaths`、`assuranceIdentity`も公開します。
+`ci enroll` は、検証設定と登録コミットから読み出した判定基準のファイルハッシュを同じ承認対象に含めます。`@behavproof/cli`は、ホスト実装用に`assuranceInputPaths`、`assuranceCriterionPaths`、`assuranceIdentity`も公開します。
 
 本番の実装だけを変えるリファクタでは、同じ承認済み条件で新しい実行証拠を集められます。一方、検証基準のsourceやdriver/source/report設定を変える場合は、保護ホストでレビュー・再登録します。実装と観測アダプターを別ファイルに分けると、この区別を保ちやすくなります。
 
@@ -123,7 +92,7 @@ Collectorで生成されたbundleを`kind: assurance_report`、`scope: [対象Co
 
 ## 画面成果物
 
-journeyの`requiredMedia`は任意です。画像等を作るアダプターで、その操作中に`await environment.captureMedia(".behavproof/媒体ファイル")`を呼び、現在のstepと実際のbytesを結び付けます。既存ファイルを自動的に最後のstepへ割り当てることはしません。媒体は`{ref,sha256,stepId}`として記録し、必要な場合はホストが`kind: assurance_media`の成果物を別途捕捉します。保護された成果物の`scope`一つを論理refとして対応付け、取得したbytesのhashを照合します。複数の曖昧な対応や未認証の画像はunknownです。画像だけで操作比較やDB到達を成功にしません。通常の任意画像はレビュー材料です。
+journeyの`requiredMedia`は任意です。画像等を作るアダプターで、その操作中に`await environment.captureMedia(".behavproof/媒体ファイル")`を呼び、現在のstepと実際のbytesを結び付けます。既存ファイルを自動的に最後のstepへ割り当てることはしません。媒体は`{ref,sha256,stepId}`として記録し、Protected Quality CI は `.behavproof/assurance-media/` 以下で `requiredMedia` に指定した媒体を収集します。ローカルホストは `assurance_media` として同じ媒体を個別に収集できます。保護された成果物の`scope`一つを論理refとして対応付け、取得したbytesのhashを照合します。複数の曖昧な対応や未認証の画像はunknownです。画像だけで操作比較やDB到達を成功にしません。通常の任意画像はレビュー材料です。
 
 ## 保証の限界
 

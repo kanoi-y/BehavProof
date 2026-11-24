@@ -1,16 +1,18 @@
 import {readFile, realpath, lstat, writeFile} from 'node:fs/promises';
 import {basename, dirname, isAbsolute, join, relative, resolve, sep} from 'node:path';
 import {z} from 'zod';
-import {ApprovalSchema, ConfigSchema, HashSchema, RegistrySnapshotSchema, RelativePathSchema, canonicalJson, hash, hashBytes, parseConfig} from '@behavproof/core';
+import {ApprovalSchema, ConfigSchema, HashSchema, SpecificationRegistrySchema, RelativePathSchema, canonicalJson, hash, hashBytes, parseConfig} from '@behavproof/core';
 import {GitHubAuthority, GitHubTransport, type GitHubOptions} from '@behavproof/adapter-github';
 import {Deployment, commitSha, deploymentPath, packageFiles} from './ci-plan.js';
 import {QualityPolicy} from './quality.js';
 import {defaultTest} from './quality-static.js';
-import {git, registryAtGit} from './project.js';
+import {git, readGitFile} from './project.js';
+import {specificationsAt} from './formal-registry.js';
+import {assuranceCriteriaAt} from './assurance-definitions.js';
 import {readPinnedFiles} from './ci-verify.js';
 
 export const CIRegistration = z.strictObject({
-  schemaVersion:z.literal(1),
+  schemaVersion:z.literal(2),
   deployment:Deployment,
   repositoryId:z.string().regex(/^[1-9][0-9]*$/),
   workflowSha:commitSha,
@@ -18,29 +20,35 @@ export const CIRegistration = z.strictObject({
   reviewers:z.array(z.string().regex(/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?$/)).min(1).max(6),
   requiredTests:z.array(RelativePathSchema).max(1000),
   approval:ApprovalSchema,
-  baseline:RegistrySnapshotSchema,
+  sourceCommit:commitSha,
+  specifications:SpecificationRegistrySchema,
+  assuranceSources:z.record(RelativePathSchema,HashSchema).optional(),
   policy:QualityPolicy,
   config:ConfigSchema,
 });
 export type CIRegistration = z.infer<typeof CIRegistration>;
 const json = (value:unknown) => canonicalJson(value)+'\n';
 
-export function registrationTarget(r: Pick<CIRegistration,'deployment'|'workflowSha'|'files'|'reviewers'|'policy'|'config'|'baseline'|'requiredTests'>) {
-  const {deployment,workflowSha,files,reviewers,policy,config,baseline,requiredTests}=r;
-  return {kind:'policy' as const,id:'quality-ci-deployment-v1',
-    contentHash:hash({deployment,workflowSha,files,reviewers,policy,config,baseline,requiredTests})};
+export function registrationTarget(r: Pick<CIRegistration,'deployment'|'workflowSha'|'files'|'reviewers'|'policy'|'config'|'sourceCommit'|'requiredTests'|'specifications'|'assuranceSources'>) {
+  const {deployment,workflowSha,files,reviewers,policy,config,sourceCommit,requiredTests,specifications}=r;
+  return {kind:'policy' as const,id:'quality-ci-deployment-v2',
+    contentHash:hash({deployment,workflowSha,files,reviewers,policy,config,sourceCommit,requiredTests,specifications,
+      ...(r.assuranceSources?{assuranceSources:r.assuranceSources}:{})})};
 }
 
 export function registeredCI(input: unknown, digest: string): CIRegistration {
   const r = CIRegistration.parse(input);
   if (hash(r)!==HashSchema.parse(digest)) throw Error('External CI registration digest mismatch');
-  const {deployment,approval,baseline} = r;
+  const {deployment,approval,sourceCommit} = r;
+  const modelIds=(r.config.formal?.models??[]).map(m=>m.id).sort();
+  const registeredIds=r.specifications.map(specification=>specification.id).sort();
   const workflows = packageFiles(deployment,r.policy);
   if (approval.status!=='pass' || approval.source.provider!=='github' ||
       !approval.source.ref.startsWith(`https://github.com/${deployment.repository}/pull/`) ||
-      approval.subjectCommitSha!==baseline.commitSha || hash(approval.target)!==hash(registrationTarget(r)) ||
+      approval.subjectCommitSha!==sourceCommit || hash(approval.target)!==hash(registrationTarget(r)) ||
       !approval.approvedBy.length || !approval.approvedBy.every(user => r.reviewers.some(reviewer => reviewer.toLowerCase()===user.toLowerCase())) ||
-      baseline.discoveryDiagnostics?.length!==0 || !baseline.extractorVersion ||
+      !!r.config.assurance!==!!r.assuranceSources ||
+      hash(modelIds)!==hash(registeredIds) ||
       workflows.some(file => r.files[file.path]!==file.sha256)) throw Error('Incomplete or inconsistent protected CI registration');
   return r;
 }
@@ -82,9 +90,10 @@ export async function enrollCI(root:string, options:{
   const {schemaVersion:_schema,...deployment}=descriptor;
   const policy=QualityPolicy.parse(JSON.parse(await at(deployment.policyPath)));
   const cfgExists=(await git(root,['ls-tree',head,'--',`:(literal)${deployment.configPath}`])).length>0;
-  const config=parseConfig(cfgExists?JSON.parse(await at(deployment.configPath)):{schemaVersion:1});
+  const config=parseConfig(cfgExists?JSON.parse(await at(deployment.configPath)):{schemaVersion:2});
   if (config.testRunner && config.testRunner!==policy.runner) throw Error('Reviewed test runner differs from the quality policy');
-  const baseline=await registryAtGit(root,config,head);
+  const specifications=await specificationsAt(root,config,path=>readGitFile(root,head,path));
+  const assuranceSources=await assuranceCriteriaAt(root,config,deployment.configPath,head);
   const files:Record<string,string>={};
   for (const file of packageFiles(deployment,policy)) {
     files[file.path]=hashBytes(Buffer.from(await at(file.path)));
@@ -101,10 +110,11 @@ export async function enrollCI(root:string, options:{
   const requiredChecks=[{context:deployment.checkName,appId:deployment.appId}];
   if ((await authority.protection(deployment.protectedBranch,requiredChecks)).status!=='pass') throw Error('Required issuer-bound branch protection is unavailable');
   const requiredTests=(await git(root,['ls-tree','-r','--name-only','-z',head])).split('\0').filter(path=>defaultTest(path,policy.runner)).sort();
-  const selection={deployment,workflowSha,files,reviewers,policy,config,baseline,requiredTests};
+  const selection={deployment,workflowSha,files,reviewers,policy,config,sourceCommit:head,requiredTests,specifications,
+    ...(assuranceSources?{assuranceSources}:{})};
   const approval=await authority.approval(options.pr,registrationTarget(selection),{headSha:head,baseSha:pr.base.sha,reviewers,requiredChecks});
   if (!approval.approval) throw Error(`Independent human approval unavailable: ${approval.reasons.join('; ')}`);
-  const registration=CIRegistration.parse({schemaVersion:1,...selection,repositoryId:String(repo.id),approval:approval.approval});
+  const registration=CIRegistration.parse({schemaVersion:2,...selection,repositoryId:String(repo.id),approval:approval.approval});
   const digest=hash(registration);
   registeredCI(registration,digest);
   const content=json(registration);

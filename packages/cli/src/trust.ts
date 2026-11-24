@@ -1,23 +1,30 @@
 import { z } from 'zod';
 import { resolve, dirname, basename, relative, sep, isAbsolute } from 'node:path';
 import { realpath } from 'node:fs/promises';
-import { ConfigSchema, PolicySchema, RegistrySnapshotSchema, RelativePathSchema, HashSchema, CiIdentitySchema, ManifestExpectedSchema, ProducerAuthoritySchema, safeReadJson, safeRead, hashBytes, validateManifest, ExecutionManifestSchema, hash, type EvidenceSubject, type ManifestValidation, type Evidence, type Contract } from '@behavproof/core';
+import { ConfigSchema, PolicySchema, SpecificationRegistrySchema, RelativePathSchema, HashSchema, CiIdentitySchema, ManifestExpectedSchema, ProducerAuthoritySchema, safeReadJson, safeRead, hashBytes, validateManifest, ExecutionManifestSchema, hash, type EvidenceSubject, type ManifestValidation } from '@behavproof/core';
 import { GitHubAuthority, verifyArtifactArchive } from '@behavproof/adapter-github';
 import { git } from './project.js';
-export const ClaimScopesSchema=z.array(z.strictObject({contractId:z.string().min(1),caseIds:z.array(z.string().min(1)).min(1),targetRef:z.string().min(1),method:z.string().min(1)})).superRefine((scopes,ctx)=>{if(new Set(scopes.map(scope=>scope.contractId)).size!==scopes.length)ctx.addIssue({code:'custom',message:'Only one claim scope per contract is supported'});for(const scope of scopes)if(new Set(scope.caseIds).size!==scope.caseIds.length)ctx.addIssue({code:'custom',message:'Duplicate case IDs in claim scope'});});
-export const TrustRootSchema=z.strictObject({
- schemaVersion:z.literal(1),policy:PolicySchema,config:ConfigSchema,baseline:RegistrySnapshotSchema,
+const trustFields={
+ policy:PolicySchema,config:ConfigSchema,
+ specifications:SpecificationRegistrySchema,
+ specificationConfigPath:RelativePathSchema.optional(),
+ formalEvidenceRef:RelativePathSchema.optional(),
  assuranceSources:z.record(RelativePathSchema,HashSchema).optional(),
+ assuranceConfigPath:RelativePathSchema.optional(),
+ assuranceEvidenceRef:RelativePathSchema.optional(),
  policySource:z.strictObject({repository:z.string().regex(/^[\w-]+\/[\w.-]+$/),commitSha:z.string().regex(/^[a-f0-9]{40}$/),ref:RelativePathSchema,fileHash:HashSchema,policyHash:HashSchema}).optional(),
  quality:z.strictObject({policyHash:HashSchema,reportRef:RelativePathSchema}).optional(),
- runner:z.strictObject({kind:z.enum(['vitest','jest']),version:z.string().regex(/^\d+\.\d+\.\d+(?:[-+][\w.-]+)?$/),manifestRef:RelativePathSchema}).optional(),
+ runner:z.strictObject({kind:z.enum(['vitest','jest']),version:z.string().regex(/^\d+\.\d+\.\d+(?:[-+][\w.-]+)?$/),manifestRef:RelativePathSchema}),
  inputs:z.array(RelativePathSchema).min(1),qualitySources:z.array(RelativePathSchema).min(1).optional(),configPaths:z.array(RelativePathSchema),dependencyLockPath:RelativePathSchema.optional(),
  manifests:z.array(z.strictObject({ref:RelativePathSchema,manifestHash:HashSchema.optional(),expected:ManifestExpectedSchema,authority:ProducerAuthoritySchema,github:z.strictObject({repository:z.string().min(1),workflowPath:z.string(),workflowSha:z.string(),jobName:z.string(),artifactName:z.string(),archivePath:RelativePathSchema,archiveEntries:z.record(RelativePathSchema,RelativePathSchema)}).optional()}).refine(row=>row.authority.kind!=='local'||row.manifestHash!==undefined,'Local authority requires host-pinned manifestHash')),
  github:z.strictObject({repository:z.string().regex(/^[\w-]+\/[\w.-]+$/),pr:z.number().int().positive(),reviewers:z.array(z.string().min(1)).min(1),requiredChecks:z.array(z.strictObject({context:z.string().min(1),appId:z.number().int().positive()})).min(1)}).optional(),
  notApplicable:z.array(z.strictObject({ruleId:z.string().min(1),reason:z.string().min(1),evidenceRef:RelativePathSchema})).default([]),
- claimScopes:ClaimScopesSchema.default([]),
  pipeline:z.strictObject({workflow:RelativePathSchema,gateJob:z.string().min(1),requiredJobs:z.array(z.string().min(1)).min(1),artifacts:z.array(RelativePathSchema).min(1),protectedBranch:z.string().min(1),currentRun:z.strictObject({ci:CiIdentitySchema,workflowPath:RelativePathSchema,workflowSha:z.string().regex(/^[a-f0-9]{40}$/),workflowHash:HashSchema}).optional()}).optional(),
-}).refine(trust=>!trust.policySource||trust.policySource.policyHash===hash(trust.policy),'Registered policy source hash does not match policy');
+};
+export const TrustRootSchema=z.strictObject({...trustFields,schemaVersion:z.literal(2),
+ sourceCommit:z.string().regex(/^[a-f0-9]{40}$/),
+}).refine(trust=>!trust.policySource||trust.policySource.policyHash===hash(trust.policy),
+ 'Registered policy source hash does not match policy');
 export type TrustRoot=z.infer<typeof TrustRootSchema>;
 export async function loadTrust(root:string,path:string):Promise<TrustRoot>{
  const actual=await realpath(resolve(root,path)),base=await realpath((await git(root,['rev-parse','--show-toplevel'])).trim()),rel=relative(base,actual);
@@ -50,19 +57,11 @@ export async function authenticate(root:string,trust:TrustRoot|undefined,subject
  }
  return {verified,failures:failures.sort(),unknowns:unknowns.sort(),manifests,trustedCi,artifactBytes,configHashes,dependencyLockHash,observations};
 }
-export const approvalKey=(v:unknown)=>hash(v);
-
-export function isCurrentClaim(evidence:Evidence,artifactRef:string,subject:EvidenceSubject,policyHash:string,contracts:readonly Pick<Contract,'id'|'revisionHash'>[]):boolean{
- const payload=evidence.payload as {contractId?:string};
- const active=contracts.find(c=>c.id===payload.contractId);
- return !!active&&evidence.source.artifactRef===artifactRef&&hash(evidence.context.subject??null)===hash(subject)&&evidence.context.effectivePolicyHash===policyHash&&evidence.context.contractHash===active.revisionHash;
-}
-
 /** Runner selection belongs to the protected invocation and one authenticated
  * test artifact. It never grants artifact/producer authority by itself. */
 export function selectedRunner(trust:TrustRoot|undefined,auth:{failures:readonly string[];verified:ReadonlySet<string>;manifests:readonly {ref:string;validation:ManifestValidation}[]},testRef:string|undefined,inputs:readonly string[]){
  const runner=trust?.runner;if(!runner||!testRef||!inputs.includes('package.json')||auth.failures.length||!auth.verified.has(testRef))return undefined;
- if(runner.kind==='jest'&&!['29.7.0','30.5.2'].includes(runner.version))return undefined;
+ if(runner.kind==='jest'?!['29.7.0','30.5.2'].includes(runner.version):runner.version!=='5.1.0')return undefined;
  if(trust.config.testRunner&&trust.config.testRunner!==runner.kind||trust.config.reports[runner.kind]&&trust.config.reports[runner.kind]!==testRef)return undefined;
  const spec=trust.manifests.find(row=>row.ref===runner.manifestRef),validation=auth.manifests.find(row=>row.ref===runner.manifestRef)?.validation;
  if(!spec?.expected.artifacts.some(row=>row.kind==='test'&&row.ref===testRef)||!validation||![validation.artifactIntegrity,validation.producerTrust,validation.subjectMatch,validation.executionStatus].every(status=>status==='pass'))return undefined;

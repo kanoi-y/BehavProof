@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'vitest';
 import { GitHubAuthority, evaluateUpstream, diagnoseWorkflow } from '../../packages/adapter-github/src/index.js';
 const sha='a'.repeat(40), sourceSha='b'.repeat(40), digest='c'.repeat(64);
-const target={kind:'intent',id:'ORDER-001:intent',contentHash:'d'.repeat(64)};
+const target={kind:'specification',id:'ORDER-001',contentHash:'d'.repeat(64)};
 const pull={number:3,state:'open',user:{login:'bob',type:'User'},head:{sha},base:{sha:sourceSha,ref:'main',repo:{id:42,full_name:'acme/shop'}}};
 const protection={required_pull_request_reviews:{required_approving_review_count:1,dismiss_stale_reviews:true,require_code_owner_reviews:false},required_status_checks:{strict:true,checks:[{context:'BehavProof protected gate',app_id:77}]}};
 const review=(overrides={})=>({id:1,user:{login:'alice',type:'User'},state:'APPROVED',commit_id:sha,submitted_at:'2026-11-13T10:00:00Z',...overrides});

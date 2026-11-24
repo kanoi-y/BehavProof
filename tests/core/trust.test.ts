@@ -84,10 +84,10 @@ describe('canonical data and evidence payload validation',()=>{
     const circular:Record<string,unknown>={};circular.self=circular;expect(()=>canonicalJson(circular)).toThrow();
   });
   it('validates counts against their kind and rejects unsupported evidence schema versions',()=>{
-    const base={schemaVersion:1,id:'e',kind:'test',source:{tool:'vitest',artifactRef:'report.json'},context:{effectivePolicyHash:digest,collectedAt:'2026-11-13T00:00:00Z'},provenance:{artifactIntegrity:'unknown',producerTrust:'unknown',subjectMatch:'unknown',reasons:[]},subjectRefs:[],payload:{total:2,passed:2,failed:0,skipped:0}};
+    const base={schemaVersion:2,id:'e',kind:'test',source:{tool:'vitest',artifactRef:'report.json'},context:{effectivePolicyHash:digest,collectedAt:'2026-11-13T00:00:00Z'},provenance:{artifactIntegrity:'unknown',producerTrust:'unknown',subjectMatch:'unknown',reasons:[]},subjectRefs:[],payload:{total:2,passed:2,failed:0,skipped:0}};
     expect(parseEvidence(base).kind).toBe('test');
     for(const payload of [{total:2,passed:3,failed:0,skipped:0},{total:-1,passed:0,failed:0,skipped:0},{total:NaN,passed:0,failed:0,skipped:0},{approved:true}])expect(()=>parseEvidence({...base,payload})).toThrow();
-    expect(()=>parseEvidence({...base,schemaVersion:2})).toThrow();
+    expect(()=>parseEvidence({...base,schemaVersion:1})).toThrow();
     expect(()=>parseEvidence({...base,kind:'coverage'})).toThrow();
   });
 });

@@ -281,7 +281,7 @@ async function tests(root: string, files: string[], pkg: Data, args: string[], p
       `Coverage ${coverageOn ? 'enabled' : 'not enabled in static config'}; LCOV ${lcov ? 'configured' : 'not explicit'}; thresholds ${thresholds ? canonicalJson(thresholds) : 'not explicit'}`,
       'Enable coverage and LCOV if required by your profile, then collect current coverage evidence.',false);
     find('test.reporters','pass',evidence,`Configured runners' reporters: ${settings.reporters ? canonicalJson(settings.reporters) : 'defaults'}; behavproof test supplies its JSON reporters`,
-      'Collect native test and contract reports with behavproof test.',false);
+      'Collect the native test report and invocation receipt with behavproof test.',false);
   } catch (error) {
     find('test.scope','unknown',path ? [path] : ['package.json'],(error as Error).message,action);
   }

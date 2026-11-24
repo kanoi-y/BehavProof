@@ -6,8 +6,8 @@ import {dirname, isAbsolute, join, relative, resolve, sep} from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {promisify} from 'node:util';
 import {z} from 'zod';
-import {RelativePathSchema, safeReadJson} from '@behavproof/core';
-import {normalizeJest, normalizeVitest} from '@behavproof/adapter-reports';
+import {RelativePathSchema, safeRead, safeReadJson, TestEvidenceReceiptSchema} from '@behavproof/core';
+import {evaluateTestEvidence} from '@behavproof/adapter-reports';
 import {config, fileList} from './project.js';
 import {configArg, qualityCommands, qualitySources, type Command, type QualityPolicy} from './quality.js';
 import {defaultTest, focusLines, hasStrictTypes, object, sourceText, strings, type Data} from './quality-static.js';
@@ -24,6 +24,7 @@ export const QualityObservation = z.strictObject({
 export type QualityObservation = z.infer<typeof QualityObservation>;
 type Finding = z.infer<typeof finding>;
 type Check = {execution: Finding; settings: Finding};
+type TestExecution = {executionId: string; runnerVersion: string};
 
 const exec = promisify(execFile);
 const environment = () => ({...process.env, CI: 'true'});
@@ -107,16 +108,6 @@ async function checkCommand(command: Command, observe: (args: string[]) => Promi
 type Eslint = {calculateConfigForFile(path: string): Promise<unknown>};
 type EslintConstructor = new (options: {cwd: string; overrideConfigFile?: string}) => Eslint;
 
-// ESLint 9.39 resolves the configured JavaScript language to a Language object;
-// its parser lives in languageOptions and is espree for plain JavaScript.
-// Older resolutions return the '@/js' string form.
-const jsLanguage = (config: Data): boolean => {
-  const language = config.language;
-  if (language === undefined) return true;
-  if (language === '@/js' || language === 'js/js') return true;
-  return object(object(config.languageOptions)?.parser)?.name === 'espree';
-};
-
 async function observeEslint(root: string, sources: string[], rules: string[], args: string[]): Promise<Check> {
   const {entry,require} = await installed(root,'eslint','bin/eslint.js');
   const selected = configArg(args,['--config','-c']);
@@ -136,7 +127,10 @@ async function observeEslint(root: string, sources: string[], rules: string[], a
   for (const file of sources) {
     if (!files.has(file)) continue;
     const effective = object(await eslint.calculateConfigForFile(join(root,file)));
-    if (!effective || effective.processor || !jsLanguage(effective)) {
+    // ESLint 9.39 exposes the configured language as the built-in language object.
+    const corePlugin = object(object(effective?.plugins)?.['@']);
+    const javascript = object(corePlugin?.languages)?.js;
+    if (!effective || effective.processor || effective.language && effective.language !== '@/js' && effective.language !== javascript) {
       unsupported.push(file);
       continue;
     }
@@ -328,7 +322,7 @@ async function testInventory(root: string, runner: QualityPolicy['runner'], conf
   return {unsafe,files:readFileNames(root,inventory)};
 }
 
-async function observeTests(root: string, policy: QualityPolicy, files: string[], args: string[], configRef?: string): Promise<Check> {
+async function observeTests(root: string, policy: QualityPolicy, files: string[], args: string[], configRef?: string, execution?: TestExecution): Promise<Check> {
   const nativeRef = `.behavproof/input/${policy.runner}.json`;
   const cfg = await config(root,configRef);
   if (cfg.reports[policy.runner] !== undefined && cfg.reports[policy.runner] !== nativeRef) {
@@ -355,31 +349,29 @@ async function observeTests(root: string, policy: QualityPolicy, files: string[]
   try {
     const code = await runTests(root,configRef,policy.runner,{...(runnerConfig ? {runnerConfig} : {}),coverage:args.includes('--coverage'),qualityRun:true});
     if (code) return {settings,execution:fail(`${policy.runner} exited with code ${code}`)};
-    const native = await safeReadJson(root,nativeRef,reportLimit);
-    const contracts = object(await safeReadJson(root,'.behavproof/input/contracts.json',reportLimit));
-    const receipt = object(contracts?.inventory);
-    const reportFiles = strings(receipt?.files);
-    if (contracts?.schemaVersion !== 1 || !receipt || !reportFiles || !Number.isSafeInteger(receipt.suiteCount) || !Number.isSafeInteger(receipt.testCount)) {
-      return {settings,execution:unknown('The runner did not produce a valid BehavProof test inventory')};
-    }
-    const checked = readFileNames(root,reportFiles);
+    const receipt = TestEvidenceReceiptSchema.parse(await safeReadJson(root,nativeRef + '.receipt.json',reportLimit));
+    const native = await safeRead(root,nativeRef,reportLimit);
+    const normalized = evaluateTestEvidence(native,receipt,{
+      invocation:execution?.executionId ?? receipt.invocation,
+      runner:{kind:policy.runner,version:execution?.runnerVersion ?? receipt.runner.version},
+      authenticated:true,
+    });
+    if (!normalized.payload) return {settings,execution:unknown('The test receipt does not match the native runner output')};
+    const checked = readFileNames(root,receipt.inventory.files);
     const same = checked.length === unique.size && new Set(checked).size === unique.size && checked.every(file => unique.has(file));
     if (!same) return {settings,execution:fail('The executed test inventory differs from the discovered test files')};
-    const proof = {files:reportFiles,suiteCount:Number(receipt.suiteCount),testCount:Number(receipt.testCount)};
-    const normalized = policy.runner === 'vitest' ? normalizeVitest(native,proof) :
-      normalizeJest(native,{...proof,complete:receipt.complete === true});
-    const execution = normalized.status === 'fail' || normalized.payload.skipped || !normalized.payload.total
+    const testFinding = normalized.status === 'fail' || normalized.payload.skipped || !normalized.payload.total
       ? fail('The native test report shows failures, pending cases, or zero executed tests')
       : normalized.status === 'pass' ? pass(`${policy.runner} passed ${normalized.payload.passed} tests`)
       : unknown('The native test report does not establish a complete test run');
-    return {settings,execution};
+    return {settings,execution:testFinding};
   } catch (error) {
     return {settings,execution:unknown(info(error))};
   }
 }
 
 /** Candidate tool configuration executes here. Call from the unprivileged worker. */
-export async function observeQuality(root: string, policy: QualityPolicy, configRef?: string): Promise<QualityObservation> {
+export async function observeQuality(root: string, policy: QualityPolicy, configRef?: string, execution?: TestExecution): Promise<QualityObservation> {
   root = await realpath(root);
   if (configRef) RelativePathSchema.parse(configRef);
   const pkg = object(await safeReadJson(root,'package.json'));
@@ -398,7 +390,7 @@ export async function observeQuality(root: string, policy: QualityPolicy, config
     ? await checkCommand(commands.types,args => observeTypes(root,sources,args))
     : sources.some(file => /\.[cm]?tsx?$/.test(file)) ? prevented(fail('A TypeScript waiver cannot cover TypeScript source files'))
     : prevented(pass('Reviewed JavaScript-only TypeScript exemption: ' + policy.types.notApplicable));
-  const tests = await checkCommand(commands.tests,args => observeTests(root,policy,files,args,configRef));
+  const tests = await checkCommand(commands.tests,args => observeTests(root,policy,files,args,configRef,execution));
   const settings = [['Lint',lint.settings],['TypeScript',types.settings],['Tests',tests.settings]] as const;
   const failed = settings.filter(([,row]) => row.status === 'fail');
   const unobserved = settings.filter(([,row]) => row.status === 'unknown');

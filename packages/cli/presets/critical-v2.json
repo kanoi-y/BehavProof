@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "profileVersion": "2",
+  "rules": {
+    "testResult": {
+      "severity": "error"
+    },
+    "changedLineCoverage": {
+      "severity": "error",
+      "min": 80
+    },
+    "mutationScore": {
+      "severity": "error",
+      "min": 70,
+      "minMutants": 10
+    },
+    "pipelineIntegrity": {
+      "severity": "error"
+    },
+    "policyProtection": {
+      "severity": "error"
+    },
+    "changeImpact": {
+      "severity": "error"
+    }
+  }
+}

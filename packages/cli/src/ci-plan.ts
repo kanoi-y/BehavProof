@@ -104,6 +104,7 @@ export async function planCI(root: string, options: PlanOptions) {
       `Install dedicated GitHub App ${deployment.appId} with Checks write and Actions, Contents, Pull requests, Administration read. Restrict the ${deployment.environment} environment to the trusted workflow branch, require approved reviewers, disable self-review and administrator bypass, and store BEHAVPROOF_APP_PRIVATE_KEY there.`,
       `Configure strict branch protection on ${deployment.protectedBranch}, enforce it for admins, require human review with stale-review dismissal, and select ${deployment.checkName} from App ${deployment.appId}.`,
       'Enroll the reviewed PR and workflow commit from an independent host. Set BEHAVPROOF_WORKFLOW_SHA, BEHAVPROOF_REGISTRATION_JSON and BEHAVPROOF_REGISTRATION_DIGEST as protected repository variables.',
+      'Protect the dedicated behavproof-registry branch, restrict its writers, and initialize it with ci init-registry. After merging a specification change, use ci advance from the protected host.',
       'Run ci verify against the external registration, then dispatch the producer for an open PR and the publisher for the completed producer run.',
     ], protection:'unverified'};
 }

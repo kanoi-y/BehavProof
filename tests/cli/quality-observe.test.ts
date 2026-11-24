@@ -101,7 +101,7 @@ test('fails when the adopted lint source is outside the actual command targets',
   expect(result.configuration).toMatchObject({status: 'fail', message: expect.stringMatching(/src\/other\.js/)});
 });
 
-test('uses Jest discovery and confirms the adapter recorded a complete native run', async () => {
+test('uses Jest discovery and records a complete receipt for a native ESM run', async () => {
   await put('package.json', {...pkg, scripts: {...scripts, test: 'jest --config run-jest.cjs'}});
   await put('jest.config.cjs', "throw Error('Wrong config');");
   await put('run-jest.cjs', "module.exports = {testMatch: ['**/spec/*.test.mjs']};");
@@ -110,6 +110,8 @@ test('uses Jest discovery and confirms the adapter recorded a complete native ru
   expect(result.tests).toMatchObject({status: 'pass'});
   const report = JSON.parse(await readFile(join(root, '.behavproof/input/jest.json'), 'utf8'));
   expect(report.numPassedTests).toBe(1);
+  const receipt = JSON.parse(await readFile(join(root, '.behavproof/input/jest.json.receipt.json'), 'utf8'));
+  expect(receipt).toMatchObject({runner:{kind:'jest',version:'30.5.2'},inventory:{complete:true,testCount:1}});
 });
 
 test('quality evidence keeps a failing test run distinct from a passing configuration', async () => {

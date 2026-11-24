@@ -6,7 +6,7 @@ import * as core from '../../packages/core/src/index.js';
 const digest='a'.repeat(64), changed='b'.repeat(64);
 const fixtureTraceHash=core.hash([{id:'trace-1',steps:['init','Pay','Refund'].map((action,index)=>({index,action,parameters:{},expected:{state:index}}))}]);
 const identity={modelHash:digest,configHash:digest,commandHash:digest,driverHash:digest,implementationHash:digest,traceHash:fixtureTraceHash};
-const model={id:'ORDER',contractId:'ORDER-MODEL',model:'specs/order.qnt',quint:{entry:'.tools/quint.js',version:'0.33.1'},properties:['refundAtMostOnce'],checks:['parse','typecheck','test','run','verify'],maxSteps:8,maxSamples:20,seed:'42',report:'.behavproof/model.json',driver:'driver.mjs',implementation:'src/order.mjs',conformanceReport:'.behavproof/conformance.json',requiredActions:['init','Pay','Refund'],minTraces:1,minComparisons:3,requireCanary:true};
+const model={id:'ORDER',module:'order',model:'specs/order.qnt',quint:{entry:'.tools/quint.js',version:'0.33.1'},invariants:['refundAtMostOnce'],checks:['parse','typecheck','test','run','verify'],maxSteps:8,maxSamples:20,seed:'42',report:'.behavproof/model.json',driver:'driver.mjs',implementation:'src/order.mjs',conformanceReport:'.behavproof/conformance.json',requiredActions:['init','Pay','Refund'],minTraces:1,minComparisons:3,requireCanary:true,replayScope:{observedFields:['state'],rationale:'The complete inputs determine the state.'}};
 const stages=['parse','typecheck','test','run','verify'].map(stage=>({stage,status:'pass',complete:true,exitCode:0,toolVersion:'0.33.1',backend:stage==='verify'?'apalache':stage==='run'?'typescript':'quint',method:({parse:'parse',typecheck:'typecheck',test:'spec_test',run:'simulation',verify:'bounded_model_check'} as any)[stage],properties:['refundAtMostOnce'],maxSteps:8,maxSamples:20,seed:'42',diagnostics:[]}));
 const modelReport=()=>({schemaVersion:1,modelId:'ORDER',identity:{modelHash:digest,configHash:digest,commandHash:digest},stages:structuredClone(stages)});
 const replay=()=>({schemaVersion:1,modelId:'ORDER',identity:{...identity},runner:'behavproof-external-driver/1',observation:'module-functions',complete:true,diagnostics:[],traces:[{id:'trace-1',complete:true,steps:['init','Pay','Refund'].map((action,index)=>({index,action,parameters:{},status:'pass',expected:{state:index},actual:{state:index},comparisonCount:1,implementationCalls:1}))}],canary:{faultId:'double-refund',implementationHash:changed,originalImplementationHash:digest,driverHash:digest,traceHash:fixtureTraceHash,observedCalls:3,comparedSteps:3,detectedMismatches:1,failure:{traceId:'trace-1',index:2,action:'Refund',implementationCalls:1,expected:{state:2},actual:{state:99}}}});
@@ -15,9 +15,15 @@ const evaluateModel=(value:unknown,ex:unknown=expected())=>(core as any).evaluat
 const evaluateReplay=(value:unknown,ex:unknown=expected())=>(core as any).evaluateModelConformance(value,ex);
 
 describe('independent scoped formal evidence',()=>{
- it('adds optional configuration without changing any legacy default digest',()=>{
-  expect(core.hash(core.parseConfig({schemaVersion:1}))).toBe('d43d22a36059709468f7c55bf924f4b93119f56b039a0b05c0cba7ab71c63c6a');
-  expect(core.parseConfig({schemaVersion:1,formal:{models:[model]}}).formal.models[0].id).toBe('ORDER');
+ it('keeps formal evidence opt-in under the versioned native configuration',()=>{
+  expect(core.parseConfig({schemaVersion:2})).not.toHaveProperty('formal');
+  expect(core.parseConfig({schemaVersion:2,formal:{models:[model]}}).formal.models[0].id).toBe('ORDER');
+ });
+ it('rejects historical Contract bindings as Quint model configuration',()=>{
+  const {module,invariants,...base}=model;
+  const legacy={...base,contractId:'ORDER-MODEL',properties:invariants};
+  expect(core.FormalModelConfigSchema.safeParse(legacy).success).toBe(false);
+  expect(core.FormalModelConfigSchema.safeParse({...model,contractId:'ORDER-MODEL'}).success).toBe(false);
  });
  it('preserves each model stage and discloses bounded and sampled scope',()=>{
   const result=evaluateModel(modelReport());expect(result.status).toBe('pass');
@@ -42,7 +48,7 @@ describe('independent scoped formal evidence',()=>{
   for(const edit of [(r:any)=>r.stages[4].properties=[],(r:any)=>r.stages[4].maxSteps=2,(r:any)=>r.stages[4].method='simulation',(r:any)=>r.stages[4].toolVersion='0.1.0',(r:any)=>r.stages[3].seed='17']){
    const report=modelReport();edit(report);expect(evaluateModel(report).status).toBe('unknown');
   }
-  expect(evaluateModel(modelReport(),{...expected(),model:{...model,properties:[]}}).status).toBe('unknown');
+  expect(()=>evaluateModel(modelReport(),{...expected(),model:{...model,invariants:[]}})).toThrow();
  });
  it('does not authenticate report bytes using their own declared success',()=>{
   expect(evaluateModel(modelReport(),{...expected(),authenticated:false}).status).toBe('unknown');
@@ -100,8 +106,8 @@ describe('independent scoped formal evidence',()=>{
   expect(evaluateReplay(report,ex).counts.actions.constructor).toBe(1);
  });
  it('refuses source escapes, duplicate models and unreasonable bounds in opt-in configuration',()=>{
-  for(const change of [{model:'../order.qnt'},{maxSteps:0},{driver:'/tmp/driver.mjs'},{report:'a/../out.json'}])expect(()=>core.parseConfig({schemaVersion:1,formal:{models:[{...model,...change}]}})).toThrow();
-  expect(()=>core.parseConfig({schemaVersion:1,formal:{models:[model,model]}})).toThrow();
+  for(const change of [{model:'../order.qnt'},{maxSteps:0},{driver:'/tmp/driver.mjs'},{report:'a/../out.json'}])expect(()=>core.parseConfig({schemaVersion:2,formal:{models:[{...model,...change}]}})).toThrow();
+  expect(()=>core.parseConfig({schemaVersion:2,formal:{models:[model,model]}})).toThrow();
  });
 });
 it.each(['trace','suffix'])('rejects omitted %s inventory even above action and count floors',kind=>{

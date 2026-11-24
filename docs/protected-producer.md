@@ -1,5 +1,15 @@
 # Protected collection and check publication
 
+## Current Protected Quality CI
+
+`ci plan` generates the two workflow files. The producer runs the enrolled native Vitest or Jest command in an isolated container without network or credentials. It seals the native report and invocation receipt together and includes evidence for any enrolled Quint specifications or Assurance checks. Dependency installation takes place separately using the reviewed public-registry lockfile with lifecycle scripts disabled.
+
+The publisher verifies the enrolled workflow, producer run and archive before evaluating the evidence against the version 2 trust root and active specification registry. It publishes the result through the dedicated GitHub App from the protected publisher environment. See the [Protected Quality CI setup](quality-ci.ja.md) and [trust root](trust-root.md).
+
+## Historical Contract producer
+
+The sections below record the earlier Contract producer and its validation. Reproduce those commands from the corresponding historical checkout.
+
 The host owns the approved registration, verifier installation, workflow identity and credentials. The candidate owns none of those. The APIs below are explicit integration components; a workflow naming itself protected grants no authority.
 
 ## Approved baseline and nested projects

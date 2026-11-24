@@ -2,14 +2,16 @@ import { createHash } from 'node:crypto';
 import { basename } from 'node:path';
 import { GitHubAuthority, GitHubTransport, githubObject, parseGitHubWorkflow, type Fetcher } from '@behavproof/adapter-github';
 import { hash, hashBytes, RelativePathSchema, safeRead } from '@behavproof/core';
+import type {CIRegistration} from './ci-registration.js';
+import {verifyRegistryCI} from './ci-registry-state.js';
 
 export interface DeploymentVerificationInput {
   repository: string;
   repositoryId: string;
   protectedBranch: string;
+  configPath: string;
   workflowBranch: string;
   workflowSha: string;
-  configPath: string;
   producerPath: string;
   publisherPath: string;
   sdkSha: string;
@@ -54,6 +56,11 @@ const sdkRuntimePaths = [
   'scripts/quality-ci.mjs', 'scripts/quality-ci-protocol.mjs', 'scripts/quality-ci-sandbox-entry.mjs', 'scripts/quality-ci-sandbox.mjs',
   'scripts/prepare-sandbox-sdk.mjs', 'scripts/protected-checkout.mjs', 'scripts/protected-container-image.mjs', 'scripts/staged-sdk.mjs',
   'packages/cli/src/api.ts', 'packages/cli/src/quality-ci-worker.ts', 'packages/cli/src/quality-observe.ts',
+  'scripts/formal-toolchain.mjs', 'examples/formal-order/package.json', 'examples/formal-order/package-lock.json',
+  'packages/cli/src/formal-artifacts.ts', 'packages/cli/src/quality-formal-worker.ts',
+  'packages/cli/src/ci-registry-state.ts',
+  'packages/cli/src/assurance-artifacts.ts', 'packages/cli/src/assurance-worker.ts',
+  'packages/cli/src/quality-assurance-worker.ts', 'packages/cli/src/evidence-files.ts',
 ];
 const expression = (value: string) => '${{ ' + value + ' }}';
 const decodeText = (bytes: Uint8Array) => new TextDecoder('utf-8', { fatal: true }).decode(bytes);
@@ -366,10 +373,10 @@ function verifyWorkflowBranch(value: ReturnType<typeof githubObject>, branchName
 
 export async function verifyDeployment(
   input: DeploymentVerificationInput,
-  options: { token?: string; fetcher?: Fetcher; root?: string } = {},
+  options: { token?: string; fetcher?: Fetcher; root?: string; enrollment?:CIRegistration } = {},
 ): Promise<DeploymentVerificationReport> {
   verifyInput(input);
-  const { root, ...transportOptions } = options;
+  const { root, enrollment, ...transportOptions } = options;
   const github = { repository: input.repository, ...transportOptions };
   const http = new GitHubTransport(github);
   const authority = new GitHubAuthority(github);
@@ -411,6 +418,8 @@ export async function verifyDeployment(
   let files: Map<string, Buffer> | undefined;
   let registered: ReturnType<typeof githubObject> | undefined;
   let protectedBranch: ReturnType<typeof githubObject> | undefined;
+  if(enrollment)checks.push(await remote('specification-registry','Initialize the protected registry branch and restrict its writers.',
+    ()=>verifyRegistryCI(enrollment,input.registrationDigest,http)));
   checks.push(...await Promise.all([
     observe('sdk-availability', 'Select a publicly readable BehavProof SDK revision containing the protected runtime.', () => verifySdk(sdk, input.sdkSha)),
     remote('pinned-source', 'Commit and enroll the reviewed descriptor, policy and workflow files.', async () => {

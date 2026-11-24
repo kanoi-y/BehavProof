@@ -32,7 +32,7 @@ test('a later negation is retained and followed by an effective ignore rule',asy
  const before='/.behavproof/\n!/*\n';await writeFile(join(root,'.gitignore'),before);expect(ignored()).toBe(false);expect(init().status).toBe(0);expect(await readFile(join(root,'.gitignore'),'utf8')).toBe(before+'.behavproof/\n');expect(ignored()).toBe(true);
 });
 test('existing custom config is preserved while gitignore is repaired',async()=>{
- const config='{"schemaVersion":1,"profile":"critical"}\n';await writeFile(join(root,'custom.json'),config);const result=init('--config','custom.json');expect(result.status,result.stderr).toBe(0);expect(JSON.parse(result.stdout).action).toBe('preserve');expect(await readFile(join(root,'custom.json'),'utf8')).toBe(config);expect(ignored()).toBe(true);
+ const config='{"schemaVersion":2,"profile":"critical"}\n';await writeFile(join(root,'custom.json'),config);const result=init('--config','custom.json');expect(result.status,result.stderr).toBe(0);expect(JSON.parse(result.stdout).action).toBe('preserve');expect(await readFile(join(root,'custom.json'),'utf8')).toBe(config);expect(ignored()).toBe(true);
 });
 test.skipIf(process.platform==='win32')('refuses a symlink gitignore without changing its target or creating config',async()=>{
  const target=join(root,'original.txt');await writeFile(target,'keep\n');await symlink(target,join(root,'.gitignore'));const result=init();expect(result.status).toBe(2);expect(await readFile(target,'utf8')).toBe('keep\n');await expect(readFile(join(root,'behavproof.config.json'))).rejects.toThrow();

@@ -1,21 +1,31 @@
+import {Deployment,packageFiles} from '../../packages/cli/src/ci-plan.js';
 import {test,expect} from 'vitest';import {readFile,rm} from 'node:fs/promises';import {join} from 'node:path';import {execFileSync} from 'node:child_process';
 const credentialPattern=/-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----|gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,}/;
 const payloadFiles=async()=>{
  const tracked=execFileSync('git',['ls-files','templates','examples/enforcement-probe'],{encoding:'utf8'}).trim().split('\n').filter(Boolean);
- const fixture=['README.md','behavproof.config.json','package.json','policy.json','src/status.ts','tests/status.test.ts'];
+ const fixture=['README.md','behavproof.config.json','package.json','src/status.ts','tests/status.test.ts'];
  return {tracked,fixture};
 };
 test('generic consumer payload contains only consumer workflows and a small verification fixture',async()=>{
  const {tracked,fixture}=await payloadFiles();
- expect(tracked).toContain('templates/protected-github-producer.yml');expect(tracked).toContain('templates/protected-github-publisher.yml');
+ expect(tracked).toContain('templates/audit.yml');
  for(const path of fixture)expect(tracked).toContain('examples/enforcement-probe/'+path);
  for(const path of tracked){
   expect(path.startsWith('templates/')||path.startsWith('examples/enforcement-probe/')).toBe(true);
   expect(path.includes('/packages/')||path.includes('validation/behavproof-m2')).toBe(false);
   const content=await readFile(path,'utf8');expect(content).not.toMatch(credentialPattern);
  }
- for(const path of ['templates/protected-github-producer.yml','templates/protected-github-publisher.yml']){
-  const content=await readFile(path,'utf8');expect(content).toContain('repository: kanoi-y/BehavProof');expect(content).toContain('OWNER/REPO');expect(content).not.toContain('sdk/validation/behavproof-m2');
+ const deployment=Deployment.parse({repository:'acme/shop',protectedBranch:'main',workflowBranch:'automation',
+  sdkSha:'a'.repeat(40),appId:23,checkName:'BehavProof protected gate',environment:'behavproof-publisher',
+  producerPath:'.github/workflows/behavproof-producer.yml',publisherPath:'.github/workflows/behavproof-publisher.yml',
+  policyPath:'.github/behavproof/quality-policy.json',configPath:'behavproof.config.json'});
+ const workflows=packageFiles(deployment,{schemaVersion:1,id:'fixture',lint:{tool:'eslint',rules:['no-debugger']},
+  types:'strict',runner:'vitest',sources:['src/**']}).filter(file=>file.path.startsWith('.github/workflows/'));
+ expect(workflows.map(file=>file.path)).toEqual([deployment.producerPath,deployment.publisherPath]);
+ for(const {content} of workflows){
+  expect(content).toContain('repository: kanoi-y/BehavProof');
+  expect(content).toContain("github.repository == 'acme/shop'");
+  expect(content).not.toMatch(credentialPattern);
  }
 });
 test('untracked private files and dependency trees never enter the consumer fixture payload',async()=>{

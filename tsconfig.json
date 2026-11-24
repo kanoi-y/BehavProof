@@ -8,13 +8,7 @@
       "path": "./packages/adapter-reports"
     },
     {
-      "path": "./packages/contract-registry"
-    },
-    {
-      "path": "./packages/contract-vitest"
-    },
-    {
-      "path": "./packages/contract-jest"
+      "path": "./packages/spec-registry"
     },
     {
       "path": "./packages/adapter-github"

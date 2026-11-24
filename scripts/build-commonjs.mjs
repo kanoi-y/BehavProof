@@ -3,7 +3,7 @@ import {join, relative, dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import ts from 'typescript-parser';
 
-// Lower the already typechecked ESM output; contract/schema logic has one source.
+// Lower the already typechecked ESM output; schema logic has one source.
 const root=fileURLToPath(new URL('../packages/core/',import.meta.url));
 const output=join(root,'cjs/dist');
 await rm(output,{recursive:true,force:true});

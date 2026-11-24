@@ -5,4 +5,5 @@ import {runQualitySandbox} from './quality-ci-sandbox.mjs';
 const request=JSON.parse(process.env.BEHAVPROOF_QUALITY_REQUEST??'');
 const outputDir=process.env.BEHAVPROOF_OUTPUT_DIR;
 if (!outputDir) throw Error('Collector output directory unavailable');
-process.exitCode=await runQualitySandbox({...request,outputDir});
+const executionId=process.env.BEHAVPROOF_EXECUTION_ID;
+process.exitCode=await runQualitySandbox({...request,outputDir,executionId});

@@ -10,7 +10,7 @@ async function main(){
  const load=async(ref:string)=>{await safeRead(root,ref);return import(pathToFileURL(join(root,ref)).href);};
  const driver=await load(m.driver),implementation=await load(m.implementation);
  if(typeof driver.createDriver!=='function')throw Error('Driver must export createDriver(implementation)');
- const identity:FormalInputIdentity={...before.model,commandHash:replayCommandHash(m),driverHash:before.driverHash!,implementationHash:before.implementationHash!,traceHash:trace.traceHash};
+ const identity:FormalInputIdentity={...before.model,commandHash:replayCommandHash(m,before.toolHash),driverHash:before.driverHash!,implementationHash:before.implementationHash!,traceHash:trace.traceHash};
  const {replay}=await formalAdapters();
  const report=await replay.replayTraces({modelId:m.id,identity,traces:trace.traces,implementation,createDriver:driver.createDriver,...(m.canary?{canary:{faultId:m.canary.faultId,implementationHash:before.canaryImplementationHash!,implementation:await load(m.canary.implementation)}}:{})});
  if(hash(before)!==hash(await formalInputIdentity(root,m))||trace.traceHash!==(await formalTraceInputs(root,m)).traceHash)throw Error('Replay inputs changed during execution');

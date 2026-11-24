@@ -1,11 +1,14 @@
 # BehavProof：品質診断・保護CI導入手順
 
-対象：単一パッケージのNode.jsプロジェクト。対応ランナーはVitest 5.1.0とJest 29.7.0 / 30.5.2のみ。モノレポ、他言語、他のCIは対象外。本機能は未リリースのソースに含まれる。
+この手順は開発中のバージョン2の保護CIを対象とします。このチェックアウトをビルドしてCLIを使ってください。公開npm版0.3.1では、同じ版のソースと登録形式を使ってください。
+
+対象は単一パッケージのNode.js 24プロジェクトです。Vitest 5.1.0またはJest 29.7.0 / 30.5.2をプロジェクトに導入します。ProducerはLinux x64で、`bind-recursive=disabled`に対応したDockerを使用します。
 
 ## 0. 前提
 
 - Gitリポジトリであること。`doctor`はGitリポジトリでない場所では単一パッケージとして扱わず、品質がpassでも終了コード1になる。
-- コミット済みの`package-lock.json`があること。`ci plan`は欠けていると前提条件`lockfile`を`missing`と報告する。
+- コミット済みの`package-lock.json`があること。`ci plan`は欠けていると前提条件`lockfile`を`missing`と報告する。保護されたインストールでは、公開npmレジストリから取得できる依存を記録したlockfileVersion 3を使う。
+- `behavproof.config.json`は`schemaVersion: 2`を使う。Quintを採用する場合はモデル、対象範囲、検証条件を登録する。[形式検証の導入手順](formal.ja.md)
 - 品質ポリシーは`quality-baseline-v1`が既定。変更する場合は`--quality-policy`で自作ポリシーを渡す。
 
 ## 1. 診断する：`behavproof doctor`
@@ -64,7 +67,7 @@ fail types.strict: Strict compiler settings are missing or overridden
 ## 3. 計画する：`behavproof ci plan`
 
 ```sh
-behavproof ci plan --repository OWNER/REPO --branch main --sdk-sha <40桁の16進数> --app-id <数値> > plan.json
+behavproof ci plan --repository OWNER/REPO --branch main --sdk-sha "$SDK_SHA" --app-id "$APP_ID" > plan.json
 ```
 
 `ci plan`はファイルを作らない。決定論的な計画を標準出力に出す。含まれるもの：品質ポリシー、producerとpublisherのワークフロー、デプロイ設定ファイルの内容とSHA-256ハッシュ、前提条件、GitHubでの設定手順。`--sdk-sha`にはBehavProofのコミットSHAを40桁で指定する。`--app-id`はGitHub Appの数値ID。15368は使えない。
@@ -127,30 +130,52 @@ behavproof ci apply --plan plan.json
 2. `behavproof-publisher`環境を作る。対象ブランチを信頼するワークフローブランチだけに制限し、登録したレビュアーを必須にし、自己レビューと管理者のバイパスを無効にする。Appの秘密鍵を`BEHAVPROOF_APP_PRIVATE_KEY`としてこの環境に置く。
 3. 保護対象ブランチに厳格なブランチ保護を設定する。管理者にも適用し、人のレビューを必須にし、古いレビューを破棄する設定にし、必須チェックとしてApp由来の`BehavProof protected gate`を選ぶ。
 4. Repository Variablesに3件を登録する。`BEHAVPROOF_WORKFLOW_SHA`、`BEHAVPROOF_REGISTRATION_JSON`、`BEHAVPROOF_REGISTRATION_DIGEST`。
+5. 信頼済みワークフローブランチにも管理者を含む保護を適用し、古いレビューの破棄を有効にして強制更新と削除を禁止する。
+6. 保護対象・信頼済みワークフローブランチとは別に、専用の`behavproof-registry`ブランチを用意する。登録管理者だけに書き込みを許可し、強制更新と削除を禁止する。[登録ブランチの保護設定](formal.ja.md#マージ後の仕様登録)
 
 ### 5-2. 独立したホストで登録する：`behavproof ci enroll`
 
 ```sh
-behavproof ci enroll --workflow-sha <40桁の16進数> --reviewers alice,bob --registration /outside/repo/registration.json --pr 12
+behavproof ci enroll --workflow-sha "$WORKFLOW_SHA" --reviewers alice,bob --registration "$REGISTRATION" --pr 12
 ```
 
 - レビュアーはGitHubのログイン名。英数字とハイフンのみで、先頭と末尾は英数字、最大39文字。1人以上6人以下。
 - `--registration`はリポジトリ外のパスにする。登録ファイルは0600で作られ、48 KiBを超えない。
 - `--pr`は承認の対象になるPR番号。enrollはGitHub AuthorityでそのPRの承認を確認する。
-- 登録内容は、デプロイ、ワークフローのSHA、ファイル一覧（ハッシュ付き）、レビュアー、品質ポリシー、設定、ベースライン、必須テスト。
+- 登録は`schemaVersion: 2`を使う。レビュー済みの`sourceCommit`と`specifications`、デプロイ、ワークフローのSHA、統合ファイルのハッシュ、レビュアー、品質ポリシー、設定、必須テストが含まれる。通常テストのみの場合、`specifications`は空配列になる。
 - `GITHUB_TOKEN`は環境変数で渡す。トークンがない場合は匿名で読み取りを試みる。
+
+### 5-3. 仕様レジストリを初期化する
+
+登録ファイルの絶対パスと、登録時に取得したSHA-256ダイジェストを使います。保護ホストの認証には、ブランチ保護の読み取りと登録ブランチへの書き込みが必要です。
+
+```sh
+behavproof ci init-registry --registration "$REGISTRATION" --digest "$REGISTRATION_DIGEST"
+```
 
 ## 6. 検証する：`behavproof ci verify`
 
 ```sh
-behavproof ci verify --registration /outside/repo/registration.json --digest <sha256>
+behavproof ci verify --registration "$REGISTRATION" --digest "$REGISTRATION_DIGEST"
 ```
 
-`ci verify`は読み取り専用。登録内容とリモートのGitHubの状態を比べ、14件の観測を個別に報告する。観測の対象は、ローカル統合、ピン留めされたワークフロー、独立した信頼登録、環境の分離、必須の上流チェック、発行者に紐づいたブランチ保護など。
+`ci verify`は読み取り専用。登録内容とリモートのGitHubの状態を比べ、観測を個別に報告する。観測の対象は、ローカル統合、ピン留めされたワークフロー、独立した信頼登録、保護された仕様レジストリ、環境の分離、必須の上流チェック、発行者に紐づいたブランチ保護など。
 
 - 権限不足、対応していない保護、App IDの欠落、観測できなかった属性は`unknown`になる。`unknown`はpassではない。
 - 終了コードは0がすべて合格、1が必須項目の不合格、2が入力不正または基盤エラー。
 - `runtimeIsolation`と`pullRequestExecution`は設計上つねに`not-observed`になる。実行時の分離とPR実行は、producerとpublisherの実行そのもので確認する。
+
+## 7. PRで実行し、マージ後の仕様を登録する
+
+信頼済みブランチから、開いているPRの番号を指定してProducerを手動実行します。Producerが成功したら、同じPR番号とProducerのrun IDをPublisherに渡します。PRの最新版に対する`BehavProof protected gate`の結果と専用Appの発行元を確認します。既存の必須チェックは一連の収集・照合・発行を確認するまで維持します。
+
+採用済みの仕様、必須範囲、例外を更新したPRがマージされたら、保護ホストからPublisherが返したチェックIDを指定して登録を進めます。
+
+```sh
+behavproof ci advance --registration "$REGISTRATION" --digest "$REGISTRATION_DIGEST" --pr "$MERGED_PR" --check-id "$CHECK_ID"
+```
+
+`ci advance`は登録されたAppの成功チェック、PRのHEADと基点、マージ結果、直前の登録を照合します。登録とマージ先が一致するまで後続PRに成功結果を発行しません。[マージ後の仕様登録](formal.ja.md#マージ後の仕様登録)
 
 ## 保証の限界（正確な範囲）
 
@@ -168,7 +193,9 @@ behavproof doctor [--quality] [--format console|json|markdown] [--runner vitest|
 behavproof ci plan --repository OWNER/REPO --branch BRANCH --sdk-sha SHA --app-id ID [--workflow-branch BRANCH] [--runner vitest|jest] [--quality-policy <path>] [--config <path>]
 behavproof ci apply --plan <path> [--dry-run]
 behavproof ci enroll --workflow-sha SHA --reviewers a,b --registration <path> --pr <number>
+behavproof ci init-registry --registration <path> --digest <sha256>
 behavproof ci verify --registration <path> --digest <sha256>
+behavproof ci advance --registration <path> --digest <sha256> --pr <number> --check-id <number>
 ```
 
 スキーマは`packages/cli/schemas/quality-policy.schema.json`、`ci-registration.schema.json`、`deployment.schema.json`。詳細は[READMEの品質診断・保護CIの節](../README.md)と[保護された証拠収集の仕様](protected-producer.md)を参照すること。

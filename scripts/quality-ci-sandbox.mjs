@@ -7,6 +7,7 @@ import {fileURLToPath} from 'node:url';
 import {safeRead} from '@behavproof/core';
 import {IMAGE} from './protected-container-image.mjs';
 import {validateStagedSdk} from './staged-sdk.mjs';
+import {formalEvidenceArtifact,assuranceEvidenceArtifact} from '../packages/cli/dist/api.js';
 
 const sdkRoot = fileURLToPath(new URL('..', import.meta.url));
 const registry = 'https://registry.npmjs.org/';
@@ -17,8 +18,7 @@ const rangePattern = /^(?:[A-Za-z][A-Za-z0-9._-]*|[0-9xX*~^<>=][A-Za-z0-9.*+~^<>
 const aliasPattern = new RegExp(`^npm:(${packageName})(?:@(.+))?$`);
 const versionPattern = /^[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/;
 const dependencyKeys = ['dependencies', 'devDependencies', 'optionalDependencies', 'peerDependencies'];
-const requiredReports = ['quality.json', 'native.json', 'contracts.json'];
-const allowedReports = new Set([...requiredReports, 'coverage.lcov']);
+const requiredReports = ['quality.json', 'native.json', 'test-receipt.json'];
 const reportLimit = 10 * 1024 * 1024;
 const reportFrameLimit = 14 * 1024 * 1024;
 const object = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -73,13 +73,14 @@ function bind(source, target, writable = false) {
   return `type=bind,src=${source},dst=${target},bind-recursive=disabled${writable ? '' : ',readonly'}`;
 }
 
-function containerArgs(name, network, uid, gid, tmpSize) {
+function containerArgs(name, network, uid, gid, tmpSize, executableTmp=false) {
   return [
     'run', '--rm', '--name', name, '--platform', 'linux/amd64', '--network', network,
     '--read-only', '--init', '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges',
     '--pids-limit', '256', '--memory', '2g', '--memory-swap', '2g', '--cpus', '2',
-    '--log-driver', 'local', '--log-opt', 'max-size=1m', '--log-opt', 'max-file=1',
-    '--user', `${uid}:${gid}`, '--tmpfs', `/tmp:rw,nosuid,nodev,size=${tmpSize},nr_inodes=150000,mode=0700,uid=${uid},gid=${gid}`,
+    // The local driver requires compression disabled when retention is one file.
+    '--log-driver', 'local', '--log-opt', 'max-size=1m', '--log-opt', 'max-file=1', '--log-opt', 'compress=false',
+    '--user', `${uid}:${gid}`, '--tmpfs', `/tmp:rw,nosuid,nodev,${executableTmp?'exec,':''}size=${tmpSize},nr_inodes=150000,mode=0700,uid=${uid},gid=${gid}`,
     '--env', 'HOME=/tmp', '--env', 'CI=true',
   ];
 }
@@ -106,10 +107,12 @@ function runContainer(docker, args, name, timeout) {
   }
 }
 
-function reportFiles(stdout) {
+function reportFiles(stdout, formalEnabled,assuranceEnabled) {
   if (!Buffer.isBuffer(stdout) || stdout.length > reportFrameLimit) throw Error('Invalid protected quality report frame');
   const frame = JSON.parse(new TextDecoder('utf-8', {fatal: true}).decode(stdout));
-  if (!object(frame) || !requiredReports.every(file => Object.hasOwn(frame, file)) ||
+  const required=[...requiredReports,...(formalEnabled?[formalEvidenceArtifact]:[]),...(assuranceEnabled?[assuranceEvidenceArtifact]:[])];
+  const allowedReports=new Set([...required,'coverage.lcov']);
+  if (!object(frame) || !required.every(file => Object.hasOwn(frame, file)) ||
       !Object.keys(frame).every(file => allowedReports.has(file))) {
     throw Error('Invalid protected quality report inventory');
   }
@@ -130,7 +133,8 @@ const installScript = [
   'cd /tmp/install',
   '/usr/local/bin/npm ci --ignore-scripts --no-audit --no-fund --no-update-notifier --strict-ssl=true ' +
     '--include=dev --include=optional --include=peer --workspaces=false --registry=https://registry.npmjs.org/ ' +
-    '--userconfig=/dev/null --globalconfig=/dev/null --cache=/tmp/npm-cache --fetch-retries=1 --fetch-timeout=30000',
+    '--userconfig=/tmp/install/empty-user-npmrc --globalconfig=/tmp/install/empty-global-npmrc ' +
+    '--cache=/tmp/npm-cache --fetch-retries=1 --fetch-timeout=30000',
   'mkdir -p node_modules',
   'cp -a -- node_modules/. /dependencies/node_modules/',
 ].join('\n');
@@ -146,7 +150,7 @@ async function rejectPrivateSource(root) {
 }
 
 /** Execute no candidate tools on the host and copy only a bounded report envelope back. */
-export async function runQualitySandbox({sourceRoot, stagedSdk, outputDir, requestPath, executionId}, {docker} = {}) {
+export async function runQualitySandbox({sourceRoot, stagedSdk, outputDir, requestPath, executionId, formalToolchain}, {docker} = {}) {
   const uid = process.getuid?.(), gid = process.getgid?.();
   if (!Number.isSafeInteger(uid) || uid <= 0 || !Number.isSafeInteger(gid) || gid < 0) {
     throw Error('Protected quality Docker requires a non-root POSIX host');
@@ -161,6 +165,24 @@ export async function runQualitySandbox({sourceRoot, stagedSdk, outputDir, reque
     safeRead(source, 'package.json'), safeRead(source, 'package-lock.json'),
     safeRead(dirname(requestPath), basename(requestPath)),
   ]);
+  const workerRequest = JSON.parse(new TextDecoder('utf-8', {fatal: true}).decode(requestBytes));
+  if (!object(workerRequest) || typeof workerRequest.runnerVersion !== 'string' || !versionPattern.test(workerRequest.runnerVersion)) {
+    throw Error('Invalid protected quality worker request');
+  }
+  const formalEnabled=workerRequest.formalEnabled===true;
+  const requiresToolchain=formalEnabled&&workerRequest.config?.formal?.models?.length>0;
+  const formalArgs=[];
+  if(requiresToolchain){
+    if(!formalToolchain)throw Error('The protected formal toolchain was not prepared');
+    for(const [key,target] of [['javaHome','/formal/java'],['quintHome','/formal/cache'],['quintRoot','/formal/quint']]){
+      const source=await realpath(formalToolchain[key]);
+      if(!(await lstat(source)).isDirectory())throw Error('Invalid protected formal toolchain path');
+      formalArgs.push('--mount',bind(source,target));
+    }
+    formalArgs.push('--env','JAVA_HOME=/formal/java','--env','QUINT_HOME=/formal/cache',
+      '--env','TMPDIR=/tmp','--env','JVM_ARGS=-Xmx768m',
+      '--env','PATH=/formal/java/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin');
+  }
   validateQualityInstall(JSON.parse(packageBytes.toString('utf8')), JSON.parse(lockBytes.toString('utf8')));
   const sdk = await validateStagedSdk(stagedSdk, {referenceRoot: sdkRoot});
   if (!sdk.inventory.built || sdk.inventory.platform !== 'linux' || sdk.inventory.arch !== 'x64') {
@@ -174,7 +196,7 @@ export async function runQualitySandbox({sourceRoot, stagedSdk, outputDir, reque
     await Promise.all([
       writeFile(join(inputs, 'package.json'), packageBytes, {flag: 'wx', mode: 0o600}),
       writeFile(join(inputs, 'package-lock.json'), lockBytes, {flag: 'wx', mode: 0o600}),
-      writeFile(request, requestBytes, {flag: 'wx', mode: 0o600}),
+      writeFile(request, JSON.stringify({...workerRequest, executionId}), {flag: 'wx', mode: 0o600}),
     ]);
     const execute = docker ?? dockerCommand(dockerConfig);
     const name = `behavproof-quality-${executionId.slice(0, 30)}-${randomUUID()}`;
@@ -185,17 +207,20 @@ export async function runQualitySandbox({sourceRoot, stagedSdk, outputDir, reque
       '--mount', bind(dependencies, '/dependencies/node_modules', true),
       '--entrypoint', '/bin/sh', IMAGE, '-eu', '-c', installScript,
     ], installName, 180000);
-    if (install.status !== 0) throw Error(`Protected npm install failed with exit code ${install.status}`);
+    if (install.status !== 0) throw Error(`Protected npm install failed with exit code ${install.status}: ${JSON.stringify(String(install.stderr??'').slice(-2000))}`);
     const result = runContainer(execute, [
-      ...containerArgs(name, 'none', uid, gid, '512m'),
+      ...containerArgs(name, 'none', uid, gid, requiresToolchain?'1g':'512m', requiresToolchain),
       '--mount', bind(source, '/source'),
       '--mount', bind(sdk.path, '/sdk'),
       '--mount', bind(dependencies, '/dependencies/node_modules'),
       '--mount', bind(request, '/request.json'),
+      ...formalArgs,
       '--entrypoint', '/usr/local/bin/node', IMAGE, '/sdk/packages/cli/dist/quality-ci-worker.js',
-    ], name, 180000);
-    if (result.status !== 0) return result.status;
-    const reports = reportFiles(result.stdout);
+    ], name, requiresToolchain?600000:180000);
+    if (result.status !== 0) {
+      throw Error(`Protected quality worker failed with exit code ${result.status}: ${JSON.stringify(String(result.stderr??'').slice(-2000))}`);
+    }
+    const reports = reportFiles(result.stdout,formalEnabled,!!workerRequest.config?.assurance?.definitions);
     for (const [file, data] of reports) await writeFile(join(output, file), data, {flag: 'wx', mode: 0o600});
     return 0;
   } finally {

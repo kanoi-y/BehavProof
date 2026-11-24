@@ -47,7 +47,7 @@ export class GitHubAuthority {
         if(data.errors||decision?.headRefOid!==expected.headSha||decision?.baseRefOid!==pull.base.sha||decision?.reviewDecision!=='APPROVED')return unknown('Current CODEOWNERS review decision is unavailable');
       }
       if(!validate(object(await this.http.request(path))))return unknown('PR identity changed during verification');
-      const approval=ApprovalSchema.parse({schemaVersion:1,id:hash({content,head:expected.headSha,reviewIds:reviewIds.sort()}),target:content,status:'pass',source:{provider:'github',ref:`https://github.com/${this.http.repository}/pull/${pr}`},approvedBy:approved.sort(),subjectCommitSha:expected.headSha,reasons:[]});
+      const approval=ApprovalSchema.parse({schemaVersion:2,id:hash({content,head:expected.headSha,reviewIds:reviewIds.sort()}),target:content,status:'pass',source:{provider:'github',ref:`https://github.com/${this.http.repository}/pull/${pr}`},approvedBy:approved.sort(),subjectCommitSha:expected.headSha,reasons:[]});
       return {...observed(approval,[path]),approval};
     }catch(error){return unknown(error instanceof Error?error.message:'Approval verification unavailable');}
   }
