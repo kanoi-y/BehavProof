@@ -85,7 +85,9 @@ behavproof ci advance --registration "$REGISTRATION" --digest "$REGISTRATION_DIG
 
 状態Witnessが見つかれば `pass`、指定上限を調べ切って未到達なら `fail`、タイムアウトなど検査未完了なら `unknown` です。必須Actionには、その遷移を記録した認証済みトレースが必要です。仕様変異では、同じ上限と不変条件で正常モデルが成功し、故障モデルから反例が得られることを確認します。
 
-ゲートの `formal.models[].coverage` では、シミュレーションのシード・標本数の設定値と、認証済みトレースで観測した状態・遷移・Action の件数を確認できます。有界検査の記録には、バックエンド、上限、対象Property、Witnessの判定を含めます。シミュレーションのトレースが得られない場合は、観測件数を `null` として理由を記録します。
+ゲートの `formal.models[].coverage` では、シミュレーションのシード・標本数の設定値と、認証済みトレースで観測した状態・遷移・Action の件数を確認できます。Witness を指定した場合、Quint 0.33.1 が同じシードと上限で探索した標本数と、各 Witness を観測したトレース数を `simulation.witnessObservations` に記録します。この集計の母数はエクスポートされた Replay 用トレースの本数とは別です。
+
+有界検査の記録には、バックエンド、上限、対象Property、Witnessの判定を含めます。必須 Witness の到達判定には有界検査の証拠を使います。シミュレーションのトレースや Witness の集計を認証できない場合、該当する観測欄を `null` とし、理由を記録します。
 
 `behavproof impact --base <ref>` の `modelIds` には、変更された `.qnt`、推移的な仕様依存、Driver、対応する実装から影響候補となったモデルを表示します。依存ソースの一覧を解決できない場合は `unknown` として記録します。
 

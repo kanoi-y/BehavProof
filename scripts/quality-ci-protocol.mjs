@@ -3,7 +3,7 @@
 import {mkdir, writeFile} from 'node:fs/promises';
 import {join, dirname} from 'node:path';
 import {
-  canonicalJson, DEFAULT_FORMAL_BACKEND_VERSION, ExecutionManifestSchema, hash, hashBytes, parseConfig,
+  canonicalJson, DEFAULT_FORMAL_BACKEND_VERSION, PROTECTED_QUINT_ENTRY, ExecutionManifestSchema, hash, hashBytes, parseConfig,
   safeRead, safeReadJson, validateManifest,
 } from '@behavproof/core';
 import {gitSubject, collect} from '@behavproof/adapter-reports';
@@ -20,7 +20,7 @@ const args = [wrapperRef];
 export const collectorProducer = {tool:'behavproof-quality-collector', version:'1', collectorVersion:'0.1.0'};
 const json = value => canonicalJson(value) + '\n';
 const equal = (a,b) => hash(a) === hash(b);
-const tooling = {entry:'node_modules/@informalsystems/quint/dist/src/cli.js',version:'0.33.1'};
+const tooling = {entry:PROTECTED_QUINT_ENTRY,version:'0.33.1'};
 const governed = ({formal:_formal,exceptions:_exceptions,...rest}) => rest;
 
 async function write(root,path,content) {

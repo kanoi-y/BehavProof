@@ -8,6 +8,28 @@ type Options={model:FormalModelConfig;stage:FormalStage;toolVersion:string;exitC
 const object=(value:unknown):value is Record<string,unknown>=>!!value&&typeof value==='object'&&!Array.isArray(value);
 const nonemptyStrings=(value:unknown):value is string[]=>Array.isArray(value)&&value.every(x=>typeof x==='string'&&!!x);
 const traceSeed=(raw:unknown)=>{try{return (typeof raw==='string'&&/^(?:\d+|0x[0-9a-f]+)$/i.test(raw)||typeof raw==='number'&&Number.isSafeInteger(raw)&&raw>=0)?BigInt(raw as string|number).toString():undefined;}catch{return undefined;}};
+/** Quint 0.33.1 only emits the witness counters in its terminal summary. */
+export function quintSimulationWitnesses(stdout:string,model:FormalModelConfig):FormalStageResult['simulationWitnesses']{
+ const names=model.witnesses??[];
+ const lines=stdout.replace(/\x1b\[[0-9;]*m/g,'').trimEnd().split(/\r?\n/);
+ const start=lines.indexOf('Witnesses:');
+ const footer=lines.at(-1)?.match(/^Use --seed=(0x[0-9a-f]+) --backend=typescript to reproduce\.$/i);
+ if(start<1||start!==lines.lastIndexOf('Witnesses:')||lines.length!==start+names.length+2||
+  !/^\[ok\] No violation found \(\d+ms at (?:\d+|Infinity) traces\/second\)\.$/.test(lines[start-1]!)||
+  !footer||traceSeed(footer[1])!==traceSeed(model.seed))return;
+ let samplesExplored=0;
+ const counts=[];
+ for(const [index,name] of names.entries()){
+  const row=lines[start+index+1]?.match(/^(\S+) was witnessed in (\d+) trace\(s\) out of (\d+) explored \(\d+\.\d{2}%\)$/);
+  if(row?.[1]!==name)return;
+  const traces=Number(row[2]),samples=Number(row[3]);
+  if(!Number.isSafeInteger(samples)||samples<1||samples>model.maxSamples||traces>samples||
+   index>0&&samples!==samplesExplored)return;
+  samplesExplored=samples;
+  counts.push({name,traces});
+ }
+ if(counts.length)return {samplesExplored,counts};
+}
 /** Version-specific decoding of the CLI --out JSON. A child's exit0 alone
  * never establishes that a stage, test, invariant or backend check occurred. */
 export function normalizeQuint(value:unknown,options:Options):FormalStageResult{

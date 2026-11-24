@@ -4,7 +4,7 @@ import { mkdir, lstat, mkdtemp, readdir, rm, writeFile } from 'node:fs/promises'
 import { join, dirname, resolve, relative, sep } from 'node:path';
 import { tmpdir } from 'node:os';
 import { FormalModelConfigSchema, FormalStageSchema, RelativePathSchema, formalInvariants, formalSelection, hash, hashBytes, safeRead, safeReadJson, type FormalModelConfig, type FormalStage } from '@behavproof/core';
-import { normalizeQuint, APALACHE_VERSION, QUINT_VERSION } from './normalize.js';
+import { normalizeQuint, quintSimulationWitnesses, APALACHE_VERSION, QUINT_VERSION } from './normalize.js';
 import { discoverQuintDefinitions, quintInvariantFingerprint } from './discovery.js';
 const MAX_BYTES=10*1024*1024;
 async function modelSnapshot(root:string,m:FormalModelConfig,read:(path:string)=>Promise<Uint8Array>){
@@ -35,9 +35,10 @@ export async function readModelInputs(root:string,input:FormalModelConfig,read=(
  return {modelHash,sources};
 }
 
-export async function inspectQuintModel(root:string,input:FormalModelConfig,toolRoot=root){
+export async function inspectQuintModel(root:string,input:FormalModelConfig,toolRoot=root,
+ read:(path:string)=>Promise<Uint8Array>=path=>safeRead(root,path)){
  const m=FormalModelConfigSchema.parse(input),selection=formalSelection(m);
- const {files,sources,modelHash}=await modelSnapshot(root,m,path=>safeRead(root,path));
+ const {files,sources,modelHash}=await modelSnapshot(root,m,read);
  const temp=await mkdtemp(join(tmpdir(),'behavproof-quint-discovery-'));
  try{
   for(const [path,bytes] of files){
@@ -112,7 +113,7 @@ export async function runQuint(options:RunQuintOptions){
  const limit={cwd:root,timeoutMs:m.timeoutMs,...(options.maxOutputBytes?{maxOutputBytes:options.maxOutputBytes}:{})};
  const version=entryError?{stdout:'',stderr:'',exitCode:null,completed:false,diagnostics:[entryError]}:await runBounded(process.execPath,[join(toolRoot,m.quint.entry),'--version'],limit);
  const toolVersion=version.completed&&version.exitCode===0?version.stdout.trim():'unavailable';
- let command:string[]=[join(toolRoot,m.quint.entry),stage,m.model,'--out',`${outputDirectory}/quint.json`];
+ const command=[join(toolRoot,m.quint.entry),stage,m.model];
  if(stage==='test'||stage==='run')command.push('--backend','typescript','--seed',m.seed,'--max-samples',String(m.maxSamples));
  const selection=formalSelection(m);
  if(['run','verify','test'].includes(stage))command.push('--main',selection.module);
@@ -122,7 +123,11 @@ export async function runQuint(options:RunQuintOptions){
   else command.push('--invariants',...formalInvariants(m));
   command.push('--max-steps',String(m.maxSteps));
  }
- if(stage==='run')command.push('--mbt','--n-traces',String(m.minTraces),'--out-itf',`${outputDirectory}/trace_{seq}.itf.json`);
+ if(stage==='run')command.push('--mbt','--n-traces',String(m.minTraces));
+ const witnessCommand=stage==='run'&&m.witnesses?.length?
+  [...command,'--verbosity','1','--witnesses',...m.witnesses]:undefined;
+ command.push('--out',`${outputDirectory}/quint.json`);
+ if(stage==='run')command.push('--out-itf',`${outputDirectory}/trace_{seq}.itf.json`);
  if(stage==='verify')command.push('--backend','apalache','--apalache-version',m.quint.apalacheVersion??APALACHE_VERSION,'--server-endpoint',await checkerEndpoint(),'--out-itf',`${outputDirectory}/counterexample.itf.json`);
  const processResult=toolVersion===m.quint.version?await runBounded(process.execPath,command,limit):{...version,completed:false,diagnostics:[...version.diagnostics,'Selected CLI version is missing or mismatched']};
  await writeFile(join(root,outputDirectory,'stdout.txt'),processResult.stdout,{flag:'wx'});await writeFile(join(root,outputDirectory,'stderr.txt'),processResult.stderr,{flag:'wx'});
@@ -130,6 +135,17 @@ export async function runQuint(options:RunQuintOptions){
  const after=await readModelInputs(root,m);if(hash(before)!==hash(after))processResult.diagnostics.push('Model sources changed during execution');
  if(toolHash&&hashBytes(await safeRead(toolRoot,m.quint.entry))!==toolHash)processResult.diagnostics.push('Quint tool changed during execution');
  const result=normalizeQuint(raw,{model:m,stage,toolVersion,exitCode:processResult.exitCode,completed:processResult.completed&&processResult.diagnostics.length===0,diagnostics:processResult.diagnostics});
+ if(witnessCommand&&result.status==='pass'){
+  // --out suppresses the terminal counters. Repeat the same bounded sampling
+  // without writing JSON or replacing the primary run's replay traces.
+  const sample=await runBounded(process.execPath,witnessCommand,limit);
+  if(sample.completed&&sample.exitCode===0&&hash(await readModelInputs(root,m))===hash(before)&&
+   (!toolHash||hashBytes(await safeRead(toolRoot,m.quint.entry))===toolHash)){
+   const observations=quintSimulationWitnesses(sample.stdout,m);
+   if(observations)result.simulationWitnesses=observations;
+  }
+  if(!result.simulationWitnesses)result.diagnostics.push('Quint simulation witness counts are unavailable',...sample.diagnostics);
+ }
  result.stdoutHash=hashBytes(Buffer.from(processResult.stdout));result.stderrHash=hashBytes(Buffer.from(processResult.stderr));result.artifacts=[];
  for(const name of (await readdir(join(root,outputDirectory))).sort()){
   if(!['quint.json','stdout.txt','stderr.txt','counterexample.itf.json'].includes(name)&&!/^trace_\d+\.itf\.json$/.test(name))throw Error('Unexpected formal artifact');

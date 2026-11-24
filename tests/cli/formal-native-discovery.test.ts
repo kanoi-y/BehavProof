@@ -67,6 +67,14 @@ else {
   }
   if(stage==='typecheck'&&entry.includes('invalid mutation'))process.exit(1);
   if(stage==='run'){
+    if(args.includes('--witnesses')){
+      if(args.includes('--out')||args.includes('--out-itf'))process.exit(2);
+      console.log('[ok] No violation found (10ms at 10000 traces/second).');
+      console.log('Witnesses:');
+      console.log('refundReached was witnessed in 0 trace(s) out of 100 explored (0.00%)');
+      console.log('Use --seed=0x2a --backend=typescript to reproduce.');
+      process.exit(0);
+    }
     const output=args[args.indexOf('--out-itf')+1].replace('{seq}','0');
     const states=['init','Refund'].map((action,index)=>({'#meta':{index},n:index,'mbt::actionTaken':action,'mbt::nondetPicks':{}}));
     writeFileSync(output,JSON.stringify({vars:['n','mbt::actionTaken','mbt::nondetPicks'],states}));
@@ -194,6 +202,10 @@ it('gates the protected revision without a Contract and retains its obligation w
         .toBe(scenario==='missing-witness'||scenario==='reapproved-tool'||removed?'unknown':'pass');
       expect.soft(checked.evaluations.find((row:{ruleId:string})=>row.ruleId==='formalActionReachability')?.status)
         .toBe(scenario==='reapproved-tool'||removed?'unknown':'pass');
+      expect.soft(checked.formal.models[0].coverage.simulation.witnessObservations)
+        .toEqual(scenario==='reapproved-tool'||removed?null:{
+          samplesExplored:100,counts:[{name:'refundReached',traces:0}],
+        });
       expect.soft(checked.formal.models[0].binding.status).toBe(removed ? 'fail' : 'pass');
     }
   } finally {

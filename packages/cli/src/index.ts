@@ -16,9 +16,9 @@ import {renderSpecificationDocuments} from './specification-documents.js';
 import {planGitignore} from './gitignore.js';
 import {runTests,declaredTestRunners} from './test-command.js';
 import { config, exists, fileList, git, writeScoped, ref } from './project.js';
-const help=`BehavProof 0.3.1\nCommands: init, test, doctor, check, explain <rule>, impact, docs generate|check, formal discover|check|replay|adequacy, exceptions discover|check, assurance discover|run|map, ci plan|apply|enroll|verify|init-registry|advance\ncheck reads artifacts; it never runs tests. Gate requires --trust-root outside project.\nOptions: --runner jest|vitest --config --base --head --profile --mode audit|gate --format console|json|markdown --output --trust-root --dry-run --check --quality --help --version\n`;
+const help=`BehavProof 0.3.1\nCommands: init, test, doctor, check, explain <rule>, impact, docs generate|check, formal discover|check|replay|adequacy, exceptions discover|check, assurance discover|run|map, ci plan|apply|enroll|verify|init-registry|advance\ncheck reads artifacts; it never runs tests. Gate requires --trust-root outside project.\nci enroll with formal models requires --quint-tool-root outside project.\nOptions: --runner jest|vitest --config --base --head --profile --mode audit|gate --format console|json|markdown --output --trust-root --dry-run --check --quality --help --version\n`;
 async function main(){
- const {values,positionals}=parseArgs({allowPositionals:true,strict:true,options:{config:{type:'string'},base:{type:'string'},head:{type:'string'},profile:{type:'string'},mode:{type:'string'},format:{type:'string'},output:{type:'string'},'trust-root':{type:'string'},'dry-run':{type:'boolean'},check:{type:'boolean'},help:{type:'boolean'},version:{type:'boolean'},root:{type:'string'},model:{type:'string'},runner:{type:'string'},quality:{type:'boolean'},repository:{type:'string'},branch:{type:'string'},'workflow-branch':{type:'string'},'workflow-sha':{type:'string'},'sdk-sha':{type:'string'},'app-id':{type:'string'},plan:{type:'string'},'quality-policy':{type:'string'},registration:{type:'string'},digest:{type:'string'},reviewers:{type:'string'},pr:{type:'string'},'check-id':{type:'string'}}});
+ const {values,positionals}=parseArgs({allowPositionals:true,strict:true,options:{config:{type:'string'},base:{type:'string'},head:{type:'string'},profile:{type:'string'},mode:{type:'string'},format:{type:'string'},output:{type:'string'},'trust-root':{type:'string'},'dry-run':{type:'boolean'},check:{type:'boolean'},help:{type:'boolean'},version:{type:'boolean'},root:{type:'string'},model:{type:'string'},runner:{type:'string'},quality:{type:'boolean'},repository:{type:'string'},branch:{type:'string'},'workflow-branch':{type:'string'},'workflow-sha':{type:'string'},'sdk-sha':{type:'string'},'app-id':{type:'string'},plan:{type:'string'},'quality-policy':{type:'string'},registration:{type:'string'},digest:{type:'string'},reviewers:{type:'string'},pr:{type:'string'},'check-id':{type:'string'},'quint-tool-root':{type:'string'}}});
  const root=resolve(values.root??process.cwd()),[command,sub,...rest]=positionals;
  if(values.version){process.stdout.write('0.3.1\n');return 0;}if(values.help||!command){process.stdout.write(help);return 0;}
  if(rest.length)throw Error('Unexpected command arguments');
@@ -30,7 +30,7 @@ async function main(){
   const args={
     plan:['repository','branch','workflow-branch','sdk-sha','app-id','config','runner','quality-policy','output'],
     apply:['plan','dry-run'],
-    enroll:['workflow-sha','reviewers','registration','pr'],
+    enroll:['workflow-sha','reviewers','registration','pr','quint-tool-root'],
     verify:['registration','digest'],
     'init-registry':['registration','digest'],
     advance:['registration','digest','pr','check-id'],
@@ -50,7 +50,7 @@ async function main(){
   if(!values.registration)throw Error('An external --registration is required');
   const token=process.env.GITHUB_TOKEN;
   if(sub==='enroll'){
-   const result=await enrollCI(root,{pr:Number(values.pr),workflowSha:values['workflow-sha']??'',reviewers:values.reviewers?.split(',')??[],registration:values.registration,...(token?{token}:{})});
+   const result=await enrollCI(root,{pr:Number(values.pr),workflowSha:values['workflow-sha']??'',reviewers:values.reviewers?.split(',')??[],registration:values.registration,...(values['quint-tool-root']?{quintToolRoot:values['quint-tool-root']}:{}),...(token?{token}:{})});
    await emit(canonicalJson(result)+'\n');
    return 0;
   }

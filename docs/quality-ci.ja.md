@@ -140,6 +140,7 @@ behavproof ci enroll --workflow-sha "$WORKFLOW_SHA" --reviewers alice,bob --regi
 ```
 
 - レビュアーはGitHubのログイン名。英数字とハイフンのみで、先頭と末尾は英数字、最大39文字。1人以上6人以下。
+- `formal.models` を登録する場合は、保護ホストが管理する Quint 0.33.1 のインストール先を `--quint-tool-root /absolute/tool-root` で指定します。そのディレクトリ直下の `node_modules/@informalsystems/quint/dist/src/cli.js` を使用します。登録前に対象コミットの Quint ソースと推移的な依存を一時領域で型検査し、未解決の参照、曖昧な定義、役割に合わない型や effect を拒否します。通常テストのみの登録ではこのオプションを省略します。
 - `--registration`はリポジトリ外のパスにする。登録ファイルは0600で作られ、48 KiBを超えない。
 - `--pr`は承認の対象になるPR番号。enrollはGitHub AuthorityでそのPRの承認を確認する。
 - 登録は`schemaVersion: 2`を使う。レビュー済みの`sourceCommit`と`specifications`、デプロイ、ワークフローのSHA、統合ファイルのハッシュ、レビュアー、品質ポリシー、設定、必須テストが含まれる。通常テストのみの場合、`specifications`は空配列になる。
@@ -192,7 +193,7 @@ behavproof ci advance --registration "$REGISTRATION" --digest "$REGISTRATION_DIG
 behavproof doctor [--quality] [--format console|json|markdown] [--runner vitest|jest] [--quality-policy <path>]
 behavproof ci plan --repository OWNER/REPO --branch BRANCH --sdk-sha SHA --app-id ID [--workflow-branch BRANCH] [--runner vitest|jest] [--quality-policy <path>] [--config <path>]
 behavproof ci apply --plan <path> [--dry-run]
-behavproof ci enroll --workflow-sha SHA --reviewers a,b --registration <path> --pr <number>
+behavproof ci enroll --workflow-sha SHA --reviewers a,b --registration <path> --pr <number> [--quint-tool-root <absolute-path>]
 behavproof ci init-registry --registration <path> --digest <sha256>
 behavproof ci verify --registration <path> --digest <sha256>
 behavproof ci advance --registration <path> --digest <sha256> --pr <number> --check-id <number>
